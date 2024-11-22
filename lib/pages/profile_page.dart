@@ -1,0 +1,131 @@
+import 'package:e_online/constants/colors.dart';
+import 'package:e_online/pages/join_as_seller_page.dart';
+import 'package:e_online/widgets/custom_button.dart';
+import 'package:e_online/widgets/heading_text.dart';
+import 'package:e_online/widgets/paragraph_text.dart';
+import 'package:e_online/widgets/spacer.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:icons_plus/icons_plus.dart';
+
+class ProfilePage extends StatelessWidget {
+  const ProfilePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final List<Map<String, dynamic>> settingItems = [
+      {
+        'icon': AntDesign.user_outline,
+        'title': 'Edit Profile',
+        'page': ProfilePage(),
+      },
+      {
+        'icon': Icons.notifications_outlined,
+        'title': 'Customer Support',
+        'page': ProfilePage(),
+      },
+      {
+        'icon': Icons.motorcycle,
+        'title': 'Terms and Conditions',
+        'page': ProfilePage(),
+      },
+      {
+        'icon': AntDesign.setting_outline,
+        'title': 'Privacy Policy',
+        'page': ProfilePage(),
+      },
+    ];
+
+    return Scaffold(
+        appBar: AppBar(
+        title: ParagraphText("My Profile"),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            ClipOval(
+              child: Container(
+                height: 80,
+                width: 80,
+                color: secondaryColor,
+                child: Stack(
+                  children: [
+                    Image.asset(
+                      "assets/images/avatar.png",
+                      height: 80,
+                      width: 80,
+                      fit: BoxFit.cover,
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Icon(
+                        Icons.edit_rounded,
+                        color: Colors.black,
+                        size: 24.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            spacer1(),
+            HeadingText("Robinson Jesca"),
+            ParagraphText("0627707434"),
+            spacer(),
+            HeadingText("Settings"),
+            spacer(),
+            Column(
+              children: settingItems.map((item) {
+                return GestureDetector(
+                  onTap: () {
+                    Get.to(() => item['page'] as Widget);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Row(
+                      children: [
+                        Icon(item['icon']),
+                        const SizedBox(width: 10),
+                        Expanded(child: ParagraphText(item['title'])),
+                        const Spacer(),
+                        Icon(Icons.arrow_forward_ios),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+            spacer1(),
+            Container(
+              margin: const EdgeInsets.only(bottom: 10.0),
+              padding: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                color: primaryColor,
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              child: Column(
+                children: [
+                  Image.asset("assets/images/sellers_bg.png", height: 80.0),
+                  spacer1(),
+                  HeadingText("Join E-Online as a seller"),
+                  spacer(),
+                  ParagraphText(
+                    "List your products and drive sales to your business using E-Online",
+                  ),
+                  spacer2(),
+                  customButton(
+                    onTap: () {
+                      Get.to(() => JoinAsSellerPage());
+                    },
+                    text: "Learn More",
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
