@@ -1,6 +1,5 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/pages/auth/registration_page.dart';
-import 'package:e_online/pages/home_page.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
@@ -14,57 +13,87 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: mainColor,
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Image.asset("assets/images/login_bg.png", height: 80),
-            spacer1(),
-            HeadingText("Login to continue"),
-            spacer(),
-            ParagraphText(
-                "Enter your phone number and click send code to receive verification code"),
-            spacer2(),
-            TextFormField(
-              keyboardType: TextInputType.text,
-              decoration: InputDecoration(
-                label: Text("Phone Number"),
-                labelStyle: TextStyle(color: Colors.black, fontSize: 12),
-                border: OutlineInputBorder(),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: primaryColor,
-                  ),
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Colors.transparent,
-                  ),
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                ),
-                hintText: "Enter your phone number here",
-                hintStyle: TextStyle(color: Colors.black, fontSize: 12),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              spacer2(),
+              Align(
+                alignment: Alignment.center,
+                child: Image.asset("assets/images/login_bg.png", height: 250),
               ),
-            ),
-            spacer3(),
-            customButton(
+              spacer2(),
+              HeadingText("Login to continue"),
+              spacer(),
+              ParagraphText(
+                "Enter your phone number and click\nsend code to receive verification\ncode",
+                textAlign: TextAlign.center,
+              ),
+              spacer2(),
+              Row(
+                children: [
+                  ParagraphText("Phone Number",
+                      fontWeight: FontWeight.bold, textAlign: TextAlign.start),
+                ],
+              ),
+              spacer(),
+              TextFormField(
+                keyboardType: TextInputType.phone,
+                decoration: InputDecoration(
+                  fillColor: bgColor,
+                  filled: true,
+                  labelStyle: TextStyle(color: Colors.black, fontSize: 12),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: primaryColor,
+                    ),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.transparent,
+                    ),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  hintText: "Enter your phone number here",
+                  hintStyle: TextStyle(color: mutedTextColor, fontSize: 12),
+                ),
+              ),
+              spacer3(),
+              customButton(
                 onTap: () {
                   Get.to(() => RegistrationPage());
                 },
-                text: "Login"),
-            spacer(),
-            Row(
-              children: [
-                ParagraphText("Don’t have an account ?"),
-                SizedBox(
-                  width: 5,
-                ),
-                ParagraphText("Register"),
-              ],
-            ),
-          ],
+                text: "Login",
+                width: double.infinity,
+              ),
+              spacer1(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ParagraphText("Don`t have an account?", fontSize: 12),
+                  SizedBox(width: 5),
+                  GestureDetector(
+                    onTap: () {
+                      Get.to(() => RegistrationPage());
+                    },
+                    child: ParagraphText(
+                      "Register",
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: secondaryColor,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

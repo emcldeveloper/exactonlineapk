@@ -1,10 +1,9 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/pages/auth/login_page.dart';
-import 'package:e_online/pages/chat_page.dart';
 import 'package:e_online/pages/favourites_page.dart';
 import 'package:e_online/pages/home_page.dart';
 import 'package:e_online/pages/profile_page.dart';
-import 'package:e_online/pages/trends_page.dart';
+import 'package:e_online/pages/reels_page.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 
@@ -22,7 +21,7 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     List<Widget> pages = [
       HomePage(),
-      TrendsPage(),
+      ReelsPage(),
       LoginPage(),
       FavouritesPage(),
       ProfilePage(),
@@ -51,7 +50,7 @@ class _MainPageState extends State<MainPage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.trending_up),
             activeIcon: Icon(Icons.trending_up_outlined),
-            label: "Trends",
+            label: "Reels",
           ),
            BottomNavigationBarItem(
             icon: Icon(Icons.chat_outlined),

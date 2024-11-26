@@ -8,13 +8,13 @@ Widget spacer() {
 
 Widget spacer1() {
   return SizedBox(
-    height: 15,
+    height: 16,
   );
 }
 
 Widget spacer2() {
   return SizedBox(
-    height: 30,
+    height: 32,
   );
 }
 

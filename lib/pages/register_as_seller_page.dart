@@ -1,5 +1,5 @@
 import 'package:e_online/constants/colors.dart';
-import 'package:e_online/pages/home_page.dart';
+import 'package:e_online/pages/my_shop_page.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
@@ -12,7 +12,7 @@ class RegisterAsSellerPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: mainColor,
          appBar: AppBar(
         leading: GestureDetector(
             onTap: () {
@@ -30,108 +30,133 @@ class RegisterAsSellerPage extends StatelessWidget {
 
       ),
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            TextFormField(
-              keyboardType: TextInputType.text,
-              decoration: InputDecoration(
-                label: Text("Business Name"),
-                labelStyle: TextStyle(color: Colors.black, fontSize: 12),
-                border: OutlineInputBorder(),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: primaryColor,
-                  ),
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Colors.transparent,
-                  ),
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                ),
-                hintText: "Enter business name",
-                hintStyle: TextStyle(color: Colors.black, fontSize: 12),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              spacer(),
+                ParagraphText(
+                "Business Name",
+                fontWeight: FontWeight.bold,
               ),
-            ),
-            spacer(),
-            TextFormField(
-              keyboardType: TextInputType.text,
-              decoration: InputDecoration(
-                label: Text("Business Phone number"),
-                labelStyle: TextStyle(color: Colors.black, fontSize: 12),
-                border: OutlineInputBorder(),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: primaryColor,
+              TextFormField(
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                  fillColor: bgColor,
+                  filled: true,
+                  labelStyle: TextStyle(color: Colors.black, fontSize: 12),
+                  border: OutlineInputBorder(),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: primaryColor,
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   ),
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Colors.transparent,
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.transparent,
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   ),
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  hintText: "Enter business name",
+                  hintStyle: TextStyle(color: Colors.black, fontSize: 12),
                 ),
-                hintText: "Enter phone number",
-                hintStyle: TextStyle(color: Colors.black, fontSize: 12),
               ),
-            ),
-            spacer(),
-            TextFormField(
-              keyboardType: TextInputType.text,
-              decoration: InputDecoration(
-                label: Text("Business Address"),
-                labelStyle: TextStyle(color: Colors.black, fontSize: 12),
-                border: OutlineInputBorder(),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: primaryColor,
-                  ),
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Colors.transparent,
-                  ),
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                ),
-                hintText: "Enter business address",
-                hintStyle: TextStyle(color: Colors.black, fontSize: 12),
+              spacer(),
+                ParagraphText(
+                "Business Phone number",
+                fontWeight: FontWeight.bold,
               ),
-            ),
-            spacer(),
-            TextFormField(
-              keyboardType: TextInputType.multiline,
-              decoration: InputDecoration(
-                label: Text("Short Description"),
-                labelStyle: TextStyle(color: Colors.black, fontSize: 12),
-                border: OutlineInputBorder(),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: primaryColor,
+              TextFormField(
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                  fillColor: bgColor,
+                  filled: true,
+                  labelStyle: TextStyle(color: Colors.black, fontSize: 12),
+                  border: OutlineInputBorder(),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: primaryColor,
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   ),
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Colors.transparent,
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.transparent,
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   ),
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  hintText: "Enter phone number",
+                  hintStyle: TextStyle(color: Colors.black, fontSize: 12),
                 ),
-                hintText: "Write short business description",
-                hintStyle: TextStyle(color: Colors.black, fontSize: 12),
               ),
-            ),
-            spacer3(),
-            customButton(
-                onTap: () {
-                  Get.to(() => HomePage());
-                },
-                text: "Submit Details"),
-        
-          ],
+              spacer(),
+                ParagraphText(
+                "Business Address",
+                fontWeight: FontWeight.bold,
+              ),
+              TextFormField(
+                keyboardType: TextInputType.text,
+                decoration: InputDecoration(
+                  fillColor: bgColor,
+                  filled: true,
+                  labelStyle: TextStyle(color: Colors.black, fontSize: 12),
+                  border: OutlineInputBorder(),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: primaryColor,
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.transparent,
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  ),
+                  hintText: "Enter business address",
+                  hintStyle: TextStyle(color: Colors.black, fontSize: 12),
+                ),
+              ),
+              spacer(),
+                ParagraphText(
+                "Short Description",
+                fontWeight: FontWeight.bold,
+              ),
+              TextFormField(
+                keyboardType: TextInputType.multiline,
+                maxLines: 5,
+                decoration: InputDecoration(
+                  fillColor: bgColor,
+                  filled: true,
+                  labelStyle: TextStyle(color: Colors.black, fontSize: 12),
+                  border: OutlineInputBorder(),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: primaryColor,
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.transparent,
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  ),
+                  hintText: "Write short business description",
+                  hintStyle: TextStyle(color: Colors.black, fontSize: 12),
+                ),
+              ),
+              spacer3(),
+              customButton(
+                  onTap: () {
+                    Get.to(() => MyShopPage());
+                  },
+                  text: "Submit Details"),
+          
+            ],
+          ),
         ),
       ),
     );

@@ -1,24 +1,33 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:flutter/material.dart';
 
-Widget customButton({String? text, onTap, double? width}) {
+Widget customButton({
+  String? text,
+  required VoidCallback onTap,
+  double? width,
+  double? vertical,
+  Color? buttonColor, 
+  Color? textColor,
+}) {
   return GestureDetector(
-    onTap: onTap ?? () {},
+    onTap: onTap,
     child: Container(
       width: width ?? double.infinity,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        color: secondaryColor,
+        borderRadius: BorderRadius.circular(30.0),
+        color: buttonColor ?? secondaryColor,
       ),
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 20.0),
+        padding:  EdgeInsets.symmetric(vertical: vertical ?? 18.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               text ?? "",
-              style:
-                  TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                color: textColor ?? primaryColor,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ],
         ),

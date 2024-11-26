@@ -37,93 +37,100 @@ class ProfilePage extends StatelessWidget {
     ];
 
     return Scaffold(
-        appBar: AppBar(
+      appBar: AppBar(
         title: ParagraphText("My Profile"),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            ClipOval(
-              child: Container(
-                height: 80,
-                width: 80,
-                color: secondaryColor,
-                child: Stack(
-                  children: [
-                    Image.asset(
-                      "assets/images/avatar.png",
-                      height: 80,
-                      width: 80,
-                      fit: BoxFit.cover,
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Icon(
-                        Icons.edit_rounded,
-                        color: Colors.black,
-                        size: 24.0,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              ClipOval(
+                child: Container(
+                  height: 80,
+                  width: 80,
+                  child: Stack(
+                    children: [
+                      Image.asset(
+                        "assets/images/avatar.png",
+                        height: 80,
+                        width: 80,
+                        fit: BoxFit.cover,
                       ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Icon(
+                          AntDesign.edit_fill,
+                          color: Colors.black,
+                          size: 24.0,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              spacer1(),
+              HeadingText("Robinson Jesca"),
+              ParagraphText("0627707434"),
+              spacer(),
+              Row(
+                children: [HeadingText("Settings", textAlign: TextAlign.start)],
+              ),
+              spacer(),
+              Column(
+                children: settingItems.map((item) {
+                  return GestureDetector(
+                    onTap: () {
+                      Get.to(() => item['page'] as Widget);
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Row(
+                        children: [
+                          Icon(item['icon']),
+                          const SizedBox(width: 10),
+                          Expanded(child: ParagraphText(item['title'])),
+                          const Spacer(),
+                          Icon(Icons.arrow_forward_ios),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+              spacer1(),
+              Container(
+                margin: const EdgeInsets.only(bottom: 10.0),
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: bgColor,
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Image.asset("assets/images/sellers_bg.png", height: 80.0),
+                    spacer1(),
+                    HeadingText("Join E-Online as a seller"),
+                    spacer(),
+                    ParagraphText(
+                      "List your products and drive sales to your\nbusiness using E-Online",
+                      textAlign: TextAlign.center,
+                    ),
+                    spacer2(),
+                    customButton(
+                      onTap: () {
+                        Get.to(() => JoinAsSellerPage());
+                      },
+                      text: "Learn More",
+                      vertical: 8.0,
                     ),
                   ],
                 ),
               ),
-            ),
-            spacer1(),
-            HeadingText("Robinson Jesca"),
-            ParagraphText("0627707434"),
-            spacer(),
-            HeadingText("Settings"),
-            spacer(),
-            Column(
-              children: settingItems.map((item) {
-                return GestureDetector(
-                  onTap: () {
-                    Get.to(() => item['page'] as Widget);
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Row(
-                      children: [
-                        Icon(item['icon']),
-                        const SizedBox(width: 10),
-                        Expanded(child: ParagraphText(item['title'])),
-                        const Spacer(),
-                        Icon(Icons.arrow_forward_ios),
-                      ],
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-            spacer1(),
-            Container(
-              margin: const EdgeInsets.only(bottom: 10.0),
-              padding: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                color: primaryColor,
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-              child: Column(
-                children: [
-                  Image.asset("assets/images/sellers_bg.png", height: 80.0),
-                  spacer1(),
-                  HeadingText("Join E-Online as a seller"),
-                  spacer(),
-                  ParagraphText(
-                    "List your products and drive sales to your business using E-Online",
-                  ),
-                  spacer2(),
-                  customButton(
-                    onTap: () {
-                      Get.to(() => JoinAsSellerPage());
-                    },
-                    text: "Learn More",
-                  ),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
