@@ -25,7 +25,7 @@ class _ProductPageState extends State<ProductPage> {
   late bool isFavorite = false;
   late String selectedImage;
   late List<String> productImages;
-  
+
   @override
   void initState() {
     super.initState();
@@ -82,81 +82,60 @@ class _ProductPageState extends State<ProductPage> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(isFavorite ? "Added to Favorites" : "Removed from Favorites"),
+        content:
+            Text(isFavorite ? "Added to Favorites" : "Removed from Favorites"),
       ),
     );
   }
 
-void _showReviewsBottomSheet() {
-  final List<Map<String, dynamic>> sampleReviews = [
-    {
-      'name': 'John Chuma',
-      'comment': 'I used bought this product it is very nice, i would recommend you guys to buy this',
-      'rating': 3,
-    },
-     {
-      'name': 'John Chuma',
-      'comment': 'I used bought this product it is very nice, i would recommend you guys to buy this',
-      'rating': 3,
-    },
-     {
-      'name': 'John Chuma',
-      'comment': 'I used bought this product it is very nice, i would recommend you guys to buy this',
-      'rating': 3,
-    },
-     {
-      'name': 'John Chuma',
-      'comment': 'I used bought this product it is very nice, i would recommend you guys to buy this',
-      'rating': 3,
-    },
-     {
-      'name': 'John Chuma',
-      'comment': 'I used bought this product it is very nice, i would recommend you guys to buy this',
-      'rating': 3,
-    },
-  ];
+  void _showReviewsBottomSheet() {
+    final List<Map<String, dynamic>> sampleReviews = [
+      {
+        'name': 'John Doe',
+        'comment': 'Great product!',
+        'rating': 5,
+      },
+      {
+        'name': 'John Chuma',
+        'comment':
+            'I used bough this product it is very nice , i would recommend you guys to buy this',
+        'rating': 3,
+      },
+      {
+        'name': 'John Doe',
+        'comment': 'Great product!',
+        'rating': 4.5,
+      },
+      {
+        'name': 'John Coe',
+        'comment': 'Great product!',
+        'rating': 2,
+      },
+      {
+        'name': 'John Doe',
+        'comment':
+            'I used bough this product it is very nice , i would recommend you guys to buy this',
+        'rating': 5,
+      },
+    ];
 
- showModalBottomSheet(
-  context: context,
-  isScrollControlled: true,
-  shape: const RoundedRectangleBorder(
-    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-  ),
-  builder: (context) => Padding(
-    padding: EdgeInsets.only(
-      bottom: MediaQuery.of(context).viewInsets.bottom,
-    ),
-    child: ReviewBottomSheet(
-      rating: 4.5,
-      reviews: [
-        {
-          'name': 'John Doe',
-          'comment': 'Great product!',
-          'rating': 5,
-        },
-        // ... more reviews
-      ],
-    ),
-  ),
-);
-
-
-  // showModalBottomSheet(
-  //   context: context,
-  //   isScrollControlled: true,
-  //   backgroundColor: Colors.transparent,
-  //   builder: (context) => DraggableScrollableSheet(
-  //     initialChildSize: 0.75,
-  //     minChildSize: 0.5,
-  //     maxChildSize: 0.95,
-  //     builder: (_, controller) => ReviewBottomSheet(
-  //       rating: widget.productData['rating'] ?? 0,
-  //       reviews: sampleReviews,
-  //     ),
-  //   ),
-  // );
-}
-
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: ReviewBottomSheet(
+          rating: 4.5,
+          reviews: sampleReviews,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -164,25 +143,39 @@ void _showReviewsBottomSheet() {
       {
         'title': "J.Crew T-shirt",
         'price': "25,000 TSH",
-        'imageUrl': ["assets/images/teal_tshirt.png", "assets/images/red_tshirt.png",],
+        'imageUrl': [
+          "assets/images/teal_tshirt.png",
+          "assets/images/red_tshirt.png",
+        ],
         'rating': 4.5,
       },
       {
         'title': "J.Crew T-shirt",
         'price': "25,000 TSH",
-        'imageUrl': ["assets/images/red_tshirt.png", "assets/images/teal_tshirt.png","assets/images/green_tshirt.png"],
+        'imageUrl': [
+          "assets/images/red_tshirt.png",
+          "assets/images/teal_tshirt.png",
+          "assets/images/green_tshirt.png"
+        ],
         'rating': 4.5,
       },
       {
         'title': "J.Crew T-shirt",
         'price': "25,000 TSH",
-        'imageUrl': ["assets/images/black_tshirt.png", "assets/images/teal_tshirt.png",],
+        'imageUrl': [
+          "assets/images/black_tshirt.png",
+          "assets/images/teal_tshirt.png",
+        ],
         'rating': 4.5,
       },
       {
         'title': "J.Crew T-shirt",
         'price': "25,000 TSH",
-        'imageUrl': ["assets/images/green_tshirt.png", "assets/images/black_tshirt.png","assets/images/teal_tshirt.png"],
+        'imageUrl': [
+          "assets/images/green_tshirt.png",
+          "assets/images/black_tshirt.png",
+          "assets/images/teal_tshirt.png"
+        ],
         'rating': 4.5,
       },
     ];
@@ -226,7 +219,7 @@ void _showReviewsBottomSheet() {
                     ),
                   ),
                   Positioned(
-                    top: 8,
+                    top: 15,
                     right: 8,
                     child: GestureDetector(
                       onTap: _toggleFavorite,
@@ -237,7 +230,9 @@ void _showReviewsBottomSheet() {
                             color: Colors.white,
                             padding: const EdgeInsets.all(6.0),
                             child: Icon(
-                              isFavorite ? AntDesign.heart_fill : AntDesign.heart_outline,
+                              isFavorite
+                                  ? AntDesign.heart_fill
+                                  : AntDesign.heart_outline,
                               color: isFavorite ? Colors.red : Colors.black,
                               size: 18.0,
                             ),
@@ -308,14 +303,14 @@ void _showReviewsBottomSheet() {
                           ),
                         ],
                       ),
-                 GestureDetector(
-                      onTap: _showReviewsBottomSheet,
-                      child: ParagraphText(
-                        "View reviews",
-                        color: mutedTextColor,
-                        decoration: TextDecoration.underline,
+                      GestureDetector(
+                        onTap: _showReviewsBottomSheet,
+                        child: ParagraphText(
+                          "View reviews",
+                          color: mutedTextColor,
+                          decoration: TextDecoration.underline,
+                        ),
                       ),
-                    ),
                     ],
                   ),
                 ],

@@ -64,7 +64,7 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
                         children: [
                           const Icon(Icons.star, color: Colors.amber, size: 20),
                           const SizedBox(width: 4),
-                          HeadingText(widget.rating.toStringAsFixed(1)),
+                          ParagraphText(widget.rating.toStringAsFixed(1)),
                         ],
                       ),
                     ],
@@ -78,55 +78,62 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
                   spacer1(),
                   // Reviews list
                   if (widget.reviews.isNotEmpty)
-                    ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: widget.reviews.length,
-                      separatorBuilder: (context, index) => const Divider(),
-                      itemBuilder: (context, index) {
-                        final review = widget.reviews[index];
-                        return Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Avatar with initials
-                            CircleAvatar(
-                              child: ParagraphText(
-                                review['name']?.substring(0, 2).toUpperCase() ?? 'NA',
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            // Name and comment
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ParagraphText(
-                                    review['name'] ?? '',
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  spacer(),
-                                  ParagraphText(review['comment'] ?? ''),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            // Star rating
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: List.generate(
-                                5,
-                                (i) => Icon(
-                                  Icons.star,
-                                  size: 16,
-                                  color: i < (review['rating'] ?? 0)
-                                      ? Colors.amber
-                                      : Colors.grey[300],
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxHeight: MediaQuery.of(context).size.height * 0.4,
+                      ),
+                      child: ListView.separated(
+                        itemCount: widget.reviews.length,
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(height: 10),
+                        itemBuilder: (context, index) {
+                          final review = widget.reviews[index];
+                          return Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Avatar with initials
+                              CircleAvatar(
+                                child: ParagraphText(
+                                  review['name']
+                                          ?.substring(0, 2)
+                                          .toUpperCase() ??
+                                      'NA',
                                 ),
                               ),
-                            ),
-                          ],
-                        );
-                      },
+                              const SizedBox(width: 16),
+                              // Name and comment
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ParagraphText(
+                                      review['name'] ?? '',
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    spacer(),
+                                    ParagraphText(review['comment'] ?? ''),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              // Star rating
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: List.generate(
+                                  5,
+                                  (i) => Icon(
+                                    Icons.star,
+                                    size: 16,
+                                    color: i < (review['rating'] ?? 0)
+                                        ? Colors.amber
+                                        : Colors.grey[300],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
                     ),
                   spacer1(),
                   // Leave review
@@ -141,6 +148,7 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
                               'Leave your review',
                               fontWeight: FontWeight.bold,
                             ),
+                            spacer(),
                             ParagraphText(
                               'Rate this product',
                               color: mutedTextColor,
@@ -149,23 +157,26 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
                           ],
                         ),
                       ),
+                      SizedBox(width: 20),
                       Row(
                         children: List.generate(
                           5,
-                          (index) => IconButton(
-                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                            constraints: const BoxConstraints(),
-                            icon: Icon(
-                              Icons.star,
-                              color: index < selectedRating
-                                  ? Colors.amber
-                                  : Colors.grey[300],
-                            ),
-                            onPressed: () {
+                          (index) => GestureDetector(
+                            onTap: () {
                               setState(() {
                                 selectedRating = index + 1;
                               });
                             },
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 4),
+                              child: Icon(
+                                Icons.star,
+                                color: index < selectedRating
+                                    ? Colors.amber
+                                    : Colors.grey[300],
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -181,6 +192,7 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
                           controller: reviewController,
                           decoration: InputDecoration(
                             hintText: 'Write your review message here',
+                            hintStyle: TextStyle(fontSize: 12),
                             filled: true,
                             fillColor: Colors.grey[100],
                             border: OutlineInputBorder(
@@ -188,28 +200,30 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
                               borderSide: BorderSide.none,
                             ),
                           ),
-                          maxLines: 3,
                         ),
                       ),
                       const SizedBox(width: 8),
-                      customButton(
-                        onTap: () {
-                          if (selectedRating > 0 && reviewController.text.isNotEmpty) {
-                            // Handle review submission here
-                            // You can add the review to your reviews list or send it to an API
-                            Navigator.pop(context, {
-                              'rating': selectedRating,
-                              'comment': reviewController.text,
-                            });
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Please add both rating and review'),
-                              ),
-                            );
-                          }
-                        },
-                        text: "Submit",
+                      SizedBox(
+                        width: 120,
+                        child: customButton(
+                          onTap: () {
+                            if (selectedRating > 0 &&
+                                reviewController.text.isNotEmpty) {
+                              Navigator.pop(context, {
+                                'rating': selectedRating,
+                                'comment': reviewController.text,
+                              });
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content:
+                                      Text('Please add both rating and review'),
+                                ),
+                              );
+                            }
+                          },
+                          text: "Submit",
+                        ),
                       ),
                     ],
                   ),

@@ -1,87 +1,142 @@
-import 'package:e_online/constants/colors.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class PreviewReelPage extends StatelessWidget {
-  const PreviewReelPage({super.key});
+  final Map<String, dynamic> reel;
+
+  PreviewReelPage({required this.reel, super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
+      backgroundColor: Colors.black.withOpacity(0.3),
+      body: Stack(
         children: [
-          GestureDetector(
-            onTap: () => Get.back(),
-            child: Container(
-                decoration: BoxDecoration(
-                  color: secondaryColor,
-                ),
-                child: Icon(Icons.arrow_back_ios_new_outlined,
-                    color: Colors.white)),
-          ),
-          Row(
-            children: [
-              // Profile Picture
-              CircleAvatar(
-                radius: 16,
-                backgroundImage: AssetImage(data['imageUrl']),
-              ),
-              SizedBox(width: 8),
-              // Username
-              Expanded(
-                child: Text(
-                  'Diana Mwakaponda',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              // Likes
-             ParagraphText("Follow"),
-            ],
-          ),
-          ParagraphText(
-              "Lorem ipsum dolor sit amet consectetur. Gravida gravida duis mi teger tellus risus cursus. See More"),
-          spacer(),
-          Container(
-            decoration: BoxDecoration(
-              color: secondaryColor,
+          Positioned.fill(
+            child: Image.asset(
+              reel['imageUrl'],
+              fit: BoxFit.contain,
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.favorite_border, size: 20),
-                    SizedBox(width: 4),
-                    Text(
-                      '12k',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
+          ),
+          Positioned(
+            top: 40,
+            left: 16,
+            child: GestureDetector(
+              onTap: () => Get.back(),
+              child: Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(25),
                 ),
-                Row(
-                  children: [
-                    Icon(Icons.favorite_border, size: 20),
-                    SizedBox(width: 4),
-                    Text(
-                      '200',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
+                child: Icon(
+                  Icons.arrow_back_ios_new_outlined,
+                  color: Colors.white,
                 ),
-                Icon(Icons.favorite_border, size: 20),
-              ],
+              ),
+            ),
+          ),
+          // Content centered at the bottom
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // User info
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 16,
+                              backgroundImage: AssetImage(reel['imageUrl']),
+                            ),
+                            SizedBox(width: 8),
+                            ParagraphText(
+                              reel['title'] ?? 'Diana Mwakaponda',
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ],
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {},
+                        child: ParagraphText(
+                          "Follow",
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  spacer1(),
+                  // Reel description
+                  ParagraphText(
+                    reel['description'] ??
+                        "Lorem ipsum dolor sit amet consectetur. Gravida gravida duis mi teger tellus risus cursus. See More",
+                    color: Colors.white,
+                  ),
+                  spacer1(),
+                  // Action buttons
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.favorite_border,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                            SizedBox(width: 4),
+                            ParagraphText(
+                              '12k',
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.comment,
+                              size: 20,
+                              color: Colors.white,
+                            ),
+                            SizedBox(width: 4),
+                            ParagraphText(
+                              '200',
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ],
+                        ),
+                        Icon(
+                          Icons.share,
+                          size: 20,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],

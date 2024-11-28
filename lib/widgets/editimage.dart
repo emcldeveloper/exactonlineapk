@@ -1,3 +1,4 @@
+import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
@@ -24,7 +25,7 @@ class ImageEditBottomSheet extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox(height: 16),
+            spacer1(),
             Container(
               width: 40,
               height: 4,
@@ -33,7 +34,7 @@ class ImageEditBottomSheet extends StatelessWidget {
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            const SizedBox(height: 16),
+             spacer1(),
             GestureDetector(
               onTap: () {
                 Navigator.pop(context); // Close the bottom sheet
@@ -47,7 +48,7 @@ class ImageEditBottomSheet extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            spacer1(),
             GestureDetector(
               onTap: () {
                 Navigator.pop(context);
@@ -61,7 +62,7 @@ class ImageEditBottomSheet extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
+            spacer1(),
           ],
         ),
       ),

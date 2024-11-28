@@ -1,9 +1,12 @@
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/pages/profile_page.dart';
+import 'package:e_online/pages/search_page.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/product_card.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -22,7 +25,7 @@ class HomePage extends StatelessWidget {
         'category': "clothes",
         'rating': 4.5,
       },
-         {
+      {
         'title': "J.Crew T-shirt",
         'price': "25,000 TSH",
         'imageUrl': [
@@ -34,7 +37,7 @@ class HomePage extends StatelessWidget {
         'category': "Accessories",
         'rating': 4.5,
       },
-         {
+      {
         'title': "J.Crew T-shirt",
         'price': "25,000 TSH",
         'imageUrl': [
@@ -46,7 +49,7 @@ class HomePage extends StatelessWidget {
         'category': "clothes",
         'rating': 4.5,
       },
-         {
+      {
         'title': "J.Crew T-shirt",
         'price': "25,000 TSH",
         'imageUrl': [
@@ -58,7 +61,7 @@ class HomePage extends StatelessWidget {
         'category': "Accessories",
         'rating': 4.5,
       },
-         {
+      {
         'title': "J.Crew T-shirt",
         'price': "25,000 TSH",
         'imageUrl': [
@@ -69,7 +72,7 @@ class HomePage extends StatelessWidget {
         'category': "Decorations",
         'rating': 4.5,
       },
-        {
+      {
         'title': "J.Crew T-shirt",
         'price': "25,000 TSH",
         'imageUrl': [
@@ -182,7 +185,7 @@ class HomePage extends StatelessWidget {
                 crossAxisCount: 2,
                 crossAxisSpacing: 16.0,
                 mainAxisSpacing: 16.0,
-                childAspectRatio: 0.65, 
+                childAspectRatio: 0.65,
               ),
               itemCount: filteredProducts.length,
               itemBuilder: (context, index) {
@@ -209,7 +212,7 @@ class HomePage extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: TabBar(
                 tabAlignment: TabAlignment.start,
-                isScrollable: true, 
+                isScrollable: true,
                 labelColor: Colors.black,
                 unselectedLabelColor: Colors.black.withOpacity(0.5),
                 labelStyle: const TextStyle(
@@ -224,30 +227,39 @@ class HomePage extends StatelessWidget {
                 indicatorColor: Colors.black,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 labelPadding: const EdgeInsets.symmetric(horizontal: 16),
-                tabs: categories.map((category) => 
-                  Tab(
-                    child: Text(
-                      category,
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                  )
-                ).toList(),
+                tabs: categories
+                    .map((category) => Tab(
+                          child: Text(
+                            category,
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        ))
+                    .toList(),
               ),
             ),
           ),
           actions: [
-            const Icon(Icons.search),
-            const SizedBox(width: 16),
-            ClipOval(
-              child: Container(
-                height: 30,
-                width: 30,
-                color: secondaryColor,
-                child: Image.asset(
-                  "assets/images/avatar.png",
+            IconButton(
+              onPressed: () {
+                Get.to(SearchPage());
+              },
+              icon: Icon(Icons.search),
+            ),
+            GestureDetector(
+              onTap: () {
+                Get.to(ProfilePage());
+              },
+              child: ClipOval(
+                child: Container(
                   height: 30,
                   width: 30,
-                  fit: BoxFit.cover,
+                  color: secondaryColor,
+                  child: Image.asset(
+                    "assets/images/avatar.png",
+                    height: 30,
+                    width: 30,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),

@@ -1,5 +1,6 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/pages/auth/login_page.dart';
+import 'package:e_online/pages/chat_page.dart';
 import 'package:e_online/pages/favourites_page.dart';
 import 'package:e_online/pages/home_page.dart';
 import 'package:e_online/pages/profile_page.dart';
@@ -22,7 +23,7 @@ class _MainPageState extends State<MainPage> {
     List<Widget> pages = [
       HomePage(),
       ReelsPage(),
-      LoginPage(),
+      ChatPage(),
       FavouritesPage(),
       ProfilePage(),
     ];
@@ -52,14 +53,14 @@ class _MainPageState extends State<MainPage> {
             activeIcon: Icon(Icons.trending_up_outlined),
             label: "Reels",
           ),
-           BottomNavigationBarItem(
+          BottomNavigationBarItem(
             icon: Icon(Icons.chat_outlined),
             activeIcon: Icon(Icons.chat_rounded),
             label: "Chats",
           ),
           BottomNavigationBarItem(
             icon: Icon(AntDesign.heart_outline),
-            activeIcon: Icon(AntDesign.heart_fill ),
+            activeIcon: Icon(AntDesign.heart_fill),
             label: "Favourites",
           ),
           BottomNavigationBarItem(

@@ -1,0 +1,88 @@
+import 'package:e_online/constants/colors.dart';
+import 'package:e_online/widgets/filter_tiles.dart';
+import 'package:e_online/widgets/horizontal_product_card.dart';
+import 'package:e_online/widgets/search_function.dart';
+import 'package:e_online/widgets/spacer.dart';
+import 'package:flutter/material.dart';
+
+class SearchResultsPage extends StatelessWidget {
+  SearchResultsPage({super.key});
+
+  final List<Map<String, dynamic>> searchedResults = [
+    {
+      'title': "J.Crew T-shirt",
+      'price': "25,000 TSH",
+      'imageUrl': "assets/images/whiteTop.png",
+      'description':
+          "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
+      'rating': 4.5,
+    },
+    {
+      'title': "J.Crew T-shirt",
+      'price': "25,000 TSH",
+      'imageUrl': "assets/images/blueTop.png",
+      'description':
+          "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
+      'rating': 4.5,
+    },
+    {
+      'title': "J.Crew T-shirt",
+      'price': "25,000 TSH",
+      'imageUrl': "assets/images/maroonTop.png",
+      'description':
+          "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
+      'rating': 4.5,
+    },
+    {
+      'title': "J.Crew T-shirt",
+      'price': "25,000 TSH",
+      'imageUrl': "assets/images/peachTop.png",
+      'description':
+          "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
+      'rating': 4.5,
+    },
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: mainColor,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60),
+        child: AppBar(
+          backgroundColor: mainColor,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios, color: Colors.grey),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          title: buildSearchBar(),
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Expanded(
+            child: Column(
+              children: [
+                spacer(),
+                FilterTilesWidget(),
+                spacer(),
+                ListView.builder(
+                  itemCount: searchedResults.length,
+                  itemBuilder: (context, index) {
+                    final item = searchedResults[index];
+
+                    return HorizontalProductCard(data: item);
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

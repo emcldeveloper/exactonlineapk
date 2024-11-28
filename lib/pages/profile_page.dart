@@ -1,4 +1,5 @@
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/pages/auth/login_page.dart';
 import 'package:e_online/pages/join_as_seller_page.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
@@ -22,7 +23,7 @@ class ProfilePage extends StatelessWidget {
       {
         'icon': Icons.notifications_outlined,
         'title': 'Customer Support',
-        'page': ProfilePage(),
+        'page': LoginPage(),
       },
       {
         'icon': Icons.motorcycle,

@@ -1,8 +1,12 @@
+import 'package:e_online/pages/preview_reel_page.dart';
+import 'package:e_online/pages/search_page.dart';
 import 'package:e_online/widgets/following.dart';
 import 'package:e_online/widgets/heading_text.dart';
+import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:get/get.dart';
 
 class ReelsPage extends StatelessWidget {
   const ReelsPage({super.key});
@@ -73,19 +77,15 @@ class ReelsPage extends StatelessWidget {
           actions: [
             IconButton(
               icon: const Icon(Icons.search, color: Colors.black, size: 28),
-              onPressed: () {},
+              onPressed: () {
+                 Get.to(SearchPage());
+              },
             ),
             IconButton(
               icon: const Icon(Icons.add, color: Colors.black, size: 28),
               onPressed: () {},
             ),
           ],
-          // actions: [
-          //   Icon(Icons.search, color: Colors.black, size: 28),
-          //   SizedBox(width: 16),
-          //   Icon(Icons.add, color: Colors.black, size: 28),
-          //   SizedBox(width: 16),
-          // ],
           bottom: PreferredSize(
             preferredSize: Size.fromHeight(48),
             child: Align(
@@ -148,17 +148,21 @@ class ProductMasonryGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: MasonryGridView.count(
-        crossAxisCount: 2,
-        mainAxisSpacing: 16,
-        crossAxisSpacing: 16,
-        itemCount: productItems.length,
-        itemBuilder: (context, index) {
-          return ReelCard(
-            data: productItems[index],
-            index: index,
-          );
-        },
+      child: ConstrainedBox(
+        constraints:
+            BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 200),
+        child: MasonryGridView.count(
+          crossAxisCount: 2,
+          mainAxisSpacing: 16,
+          crossAxisSpacing: 16,
+          itemCount: productItems.length,
+          itemBuilder: (context, index) {
+            return ReelCard(
+              data: productItems[index],
+              index: index,
+            );
+          },
+        ),
       ),
     );
   }
@@ -186,12 +190,22 @@ class ReelCard extends StatelessWidget {
           // Video/Image Container with Duration
           Stack(
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.asset(
-                  data['imageUrl'],
-                  fit: BoxFit.cover,
-                  height: index.isEven ? 280 : 200, // Alternating heights
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PreviewReelPage(reel: data),
+                    ),
+                  );
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.asset(
+                    data['imageUrl'],
+                    fit: BoxFit.cover,
+                    height: index.isEven ? 280 : 200, // Alternating heights
+                  ),
                 ),
               ),
               // Duration indicator
@@ -222,14 +236,11 @@ class ReelCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                ParagraphText(
                   data['description'] ?? 'Lorem ipsum dolor sit amet constur.',
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.black87,
-                  ),
+                  fontSize: 14,
                 ),
                 spacer(),
                 // User Info and Likes
