@@ -1,5 +1,4 @@
 import 'package:e_online/constants/colors.dart';
-import 'package:e_online/pages/categories_products_page.dart';
 import 'package:e_online/pages/search_page.dart';
 import 'package:e_online/widgets/chat_card.dart';
 import 'package:e_online/widgets/heading_text.dart';
@@ -95,7 +94,7 @@ class ChatPage extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
-               Get.to(SearchPage());
+              Get.to(SearchPage());
             },
             icon: Icon(Icons.search),
           ),
@@ -105,8 +104,14 @@ class ChatPage extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            children: chatItems.map((message) {
-              return ChatCard(message);
+            children: chatItems.map((chat) {
+              return GestureDetector(
+                onTap: () {
+                  // Navigate to ConversationPage with data
+                  Get.toNamed('/conversation', arguments: chat);
+                },
+                child: ChatCard(chat),
+              );
             }).toList(),
           ),
         ),
