@@ -88,12 +88,22 @@ class _AddProductPageState extends State<AddProductPage> {
           onTap: () => Get.back(),
           child: Container(
             color: Colors.transparent,
-            child:
-                Icon(Icons.arrow_back_ios_new_outlined, color: secondaryColor),
+            child: Icon(
+              Icons.arrow_back_ios_new_outlined,
+              color: secondaryColor,
+              size: 14.0,
+            ),
           ),
         ),
         title: HeadingText("Add Product"),
         centerTitle: true,
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(1.0),
+          child: Container(
+            color: Colors.grey,
+            height: 1.0,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -186,7 +196,7 @@ class _AddProductPageState extends State<AddProductPage> {
               TextFormField(
                 keyboardType: TextInputType.text,
                 decoration: InputDecoration(
-                  fillColor: bgColor,
+                  fillColor: primaryColor,
                   filled: true,
                   labelStyle: TextStyle(color: Colors.black, fontSize: 12),
                   border: OutlineInputBorder(),
@@ -215,7 +225,7 @@ class _AddProductPageState extends State<AddProductPage> {
               TextFormField(
                 keyboardType: TextInputType.text,
                 decoration: InputDecoration(
-                  fillColor: bgColor,
+                  fillColor: primaryColor,
                   filled: true,
                   labelStyle: TextStyle(color: Colors.black, fontSize: 12),
                   border: OutlineInputBorder(),
@@ -261,7 +271,7 @@ class _AddProductPageState extends State<AddProductPage> {
               TextFormField(
                 keyboardType: TextInputType.text,
                 decoration: InputDecoration(
-                  fillColor: bgColor,
+                  fillColor: primaryColor,
                   filled: true,
                   labelStyle: TextStyle(color: Colors.black, fontSize: 12),
                   border: OutlineInputBorder(),
@@ -319,7 +329,7 @@ class _AddProductPageState extends State<AddProductPage> {
                 keyboardType: TextInputType.multiline,
                 maxLines: 5,
                 decoration: InputDecoration(
-                  fillColor: bgColor,
+                  fillColor: primaryColor,
                   filled: true,
                   labelStyle: TextStyle(color: Colors.black, fontSize: 12),
                   border: OutlineInputBorder(),

@@ -2,6 +2,7 @@ import 'package:e_online/widgets/filter_search.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 final List<Map<String, dynamic>> filters = [
   {
@@ -52,7 +53,7 @@ class _FilterTilesWidgetState extends State<FilterTilesWidget> {
               onTap: () {
                 callFilterSearch(context);
               },
-              child: const Icon(Icons.menu_open_sharp),
+              child: const Icon(AntDesign.account_book_fill),
             ),
           ],
         ),

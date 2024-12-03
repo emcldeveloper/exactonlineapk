@@ -70,7 +70,17 @@ class _MainPageState extends State<MainPage> {
           ),
         ],
       ),
-      body: pages[activeTab],
+      body: Column(
+        children: [
+          Container(
+            height: 1.0,
+            color: Colors.grey,
+          ),
+          Expanded(
+            child: pages[activeTab],
+          ),
+        ],
+      ),
     );
   }
 }

@@ -27,7 +27,8 @@ class ConfirmationCodePage extends StatelessWidget {
               spacer2(),
               Align(
                 alignment: Alignment.center,
-                child: Image.asset("assets/images/login_bg.png", height: 250),
+                child:
+                    Image.asset("assets/images/verification1.png", height: 250),
               ),
               spacer1(),
               HeadingText("Verify your number"),
@@ -35,6 +36,7 @@ class ConfirmationCodePage extends StatelessWidget {
                   textAlign: TextAlign.center),
               spacer2(),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ParagraphText("Verification Code"),
                   ParagraphText("2:56"),

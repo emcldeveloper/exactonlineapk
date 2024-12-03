@@ -1,6 +1,7 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/pages/search_page.dart';
 import 'package:e_online/widgets/filter_tiles.dart';
+import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/horizontal_product_card.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
@@ -54,12 +55,16 @@ class CategoriesProductsPage extends StatelessWidget {
         backgroundColor: mainColor,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: Colors.grey),
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: mutedTextColor,
+            size: 14.0,
+          ),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: ParagraphText(categoryName),
+        title: HeadingText(categoryName),
         centerTitle: true,
         actions: [
           IconButton(
@@ -72,6 +77,13 @@ class CategoriesProductsPage extends StatelessWidget {
             icon: const Icon(Icons.search),
           ),
         ],
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(1.0),
+          child: Container(
+            color: Colors.grey,
+            height: 1.0,
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

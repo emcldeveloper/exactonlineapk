@@ -79,13 +79,27 @@ class MyShopPage extends StatelessWidget {
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () => Get.back(),
-          child: Icon(Icons.arrow_back_ios_new_outlined, color: secondaryColor),
+          child: Icon(
+            Icons.arrow_back_ios_new_outlined,
+            color: mutedTextColor,
+            size: 14.0,
+          ),
         ),
         title: HeadingText("E-Online"),
         actions: [
-          Icon(Icons.settings_outlined),
+          Icon(
+            Icons.settings_outlined,
+            size: 16.0,
+          ),
           const SizedBox(width: 16),
         ],
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(1.0),
+          child: Container(
+            color: Colors.grey,
+            height: 1.0,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(

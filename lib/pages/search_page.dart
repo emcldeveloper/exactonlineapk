@@ -42,7 +42,7 @@ class SearchPage extends StatelessWidget {
           backgroundColor: mainColor,
           elevation: 0,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios, color: Colors.grey),
+            icon: Icon(Icons.arrow_back_ios, color: mutedTextColor),
             onPressed: () {
               Navigator.pop(context);
             },

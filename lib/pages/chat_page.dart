@@ -99,6 +99,13 @@ class ChatPage extends StatelessWidget {
             icon: Icon(Icons.search),
           ),
         ],
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(1.0),
+          child: Container(
+            color: Colors.grey,
+            height: 1.0,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(

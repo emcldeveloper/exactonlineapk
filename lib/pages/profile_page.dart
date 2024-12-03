@@ -39,7 +39,18 @@ class ProfilePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: ParagraphText("My Profile"),
+        leading: GestureDetector(
+          onTap: () => Get.back(),
+          child: Icon(Icons.arrow_back_ios_new_outlined, color: secondaryColor),
+        ),
+        title: HeadingText("My Profile"),
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(1.0),
+          child: Container(
+            color: Colors.grey,
+            height: 1.0,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -105,7 +116,7 @@ class ProfilePage extends StatelessWidget {
                 margin: const EdgeInsets.only(bottom: 10.0),
                 padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
-                  color: bgColor,
+                  color: primaryColor,
                   borderRadius: BorderRadius.circular(20.0),
                 ),
                 child: Column(

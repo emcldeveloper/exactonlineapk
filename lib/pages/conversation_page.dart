@@ -1,3 +1,5 @@
+import 'package:e_online/constants/colors.dart';
+import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -12,7 +14,7 @@ class ConversationPage extends StatefulWidget {
 class _ConversationPageState extends State<ConversationPage> {
   final Map<dynamic, dynamic> chatData =
       Get.arguments as Map<dynamic, dynamic>? ?? {};
-  final List<String> messages = []; 
+  final List<String> messages = [];
   final TextEditingController _messageController = TextEditingController();
 
   void _sendMessage() {
@@ -33,18 +35,30 @@ class _ConversationPageState extends State<ConversationPage> {
           onTap: () {
             Get.back();
           },
-          child: Icon(Icons.arrow_back_ios),
+          child: Icon(
+            Icons.arrow_back_ios,
+            color: mutedTextColor,
+            size: 14.0,
+          ),
         ),
         title: Row(
           children: [
             CircleAvatar(
-              backgroundImage: AssetImage(chatData['avatar'] ?? 'assets/images/avatar.png'),
+              backgroundImage:
+                  AssetImage(chatData['avatar'] ?? 'assets/images/avatar.png'),
             ),
             SizedBox(width: 8),
-            ParagraphText(chatData['name'] ?? 'Unknown'),
+            HeadingText(chatData['name'] ?? 'Unknown'),
           ],
         ),
         centerTitle: false,
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(1.0),
+          child: Container(
+            color: Colors.grey,
+            height: 1.0,
+          ),
+        ),
       ),
       body: Column(
         children: [

@@ -179,19 +179,25 @@ class _ProductPageState extends State<ProductPage> {
         'rating': 4.5,
       },
     ];
-
     return Scaffold(
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () => Get.back(),
           child: Icon(Icons.arrow_back_ios_new_outlined, color: secondaryColor),
         ),
-        title: ParagraphText("Product Details"),
+        title: HeadingText("Product Details"),
         centerTitle: true,
         actions: [
           Icon(Icons.share),
           SizedBox(width: 16),
         ],
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(1.0),
+          child: Container(
+            color: Colors.grey,
+            height: 1.0,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -355,7 +361,7 @@ class _ProductPageState extends State<ProductPage> {
                 onTap: () => Get.to(() => const HomePage()),
                 text: "Message Seller",
                 buttonColor: mutedTextColor,
-                textColor: Colors.black,
+                textColor: primaryColor,
               ),
               spacer2(),
             ],

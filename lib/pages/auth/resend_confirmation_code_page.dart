@@ -35,6 +35,7 @@ class ResendConfirmationCodePage extends StatelessWidget {
                   textAlign: TextAlign.center),
               spacer2(),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ParagraphText("Verification Code"),
                   ParagraphText("Resend Code"),

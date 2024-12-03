@@ -225,7 +225,7 @@ class HomePage extends StatelessWidget {
                 ),
                 indicatorSize: TabBarIndicatorSize.label,
                 indicatorColor: Colors.black,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 1),
                 labelPadding: const EdgeInsets.symmetric(horizontal: 16),
                 tabs: categories
                     .map((category) => Tab(

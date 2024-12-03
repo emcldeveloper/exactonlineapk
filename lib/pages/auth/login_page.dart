@@ -23,7 +23,7 @@ class LoginPage extends StatelessWidget {
               spacer2(),
               Align(
                 alignment: Alignment.center,
-                child: Image.asset("assets/images/login_bg.png", height: 250),
+                child: Image.asset("assets/images/login1.png", height: 250),
               ),
               spacer2(),
               HeadingText("Login to continue"),
@@ -43,7 +43,7 @@ class LoginPage extends StatelessWidget {
               TextFormField(
                 keyboardType: TextInputType.phone,
                 decoration: InputDecoration(
-                  fillColor: bgColor,
+                  fillColor: primaryColor,
                   filled: true,
                   labelStyle: TextStyle(color: Colors.black, fontSize: 12),
                   border: OutlineInputBorder(

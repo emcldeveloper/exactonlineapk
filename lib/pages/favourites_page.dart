@@ -42,7 +42,7 @@ class FavouritesPage extends StatelessWidget {
             "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
         'rating': 4.5,
       },
-       {
+      {
         'title': "J.Crew T-shirt",
         'price': "25,000 TSH",
         'imageUrl': "assets/images/pinkTop.png",
@@ -53,10 +53,18 @@ class FavouritesPage extends StatelessWidget {
     ];
 
     return Scaffold(
+      backgroundColor: mainColor,
       appBar: AppBar(
-        backgroundColor: bgColor,
+        backgroundColor: mainColor,
         elevation: 0,
         title: HeadingText('Favorites'),
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(1.0),
+          child: Container(
+            color: Colors.grey,
+            height: 1.0,
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -64,7 +72,7 @@ class FavouritesPage extends StatelessWidget {
           itemCount: productItems.length,
           itemBuilder: (context, index) {
             final item = productItems[index];
-        
+
             return HorizontalProductCard(data: item);
           },
         ),

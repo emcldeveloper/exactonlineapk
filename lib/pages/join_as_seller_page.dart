@@ -19,7 +19,9 @@ class JoinAsSellerPage extends StatelessWidget {
       {"adv": "Share your products with other people"},
       {"adv": "Drive sales to your business"},
       {"adv": "Get insights about viewers of your products"},
-      {"adv": "Get overall insights: impressions, clicks, profile views, calls"},
+      {
+        "adv": "Get overall insights: impressions, clicks, profile views, calls"
+      },
     ];
 
     return Scaffold(
@@ -33,24 +35,32 @@ class JoinAsSellerPage extends StatelessWidget {
             color: Colors.transparent,
             child: Icon(
               Icons.arrow_back_ios_new_outlined,
-              color: secondaryColor,
+              color: mutedTextColor,
+              size: 14.0,
             ),
           ),
         ),
-        title: ParagraphText("Join as seller"),
+        title: HeadingText("Join as seller"),
         centerTitle: true,
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(1.0),
+          child: Container(
+            color: Colors.grey,
+            height: 1.0,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch, 
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Container(
                 margin: const EdgeInsets.only(bottom: 10.0),
                 padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
-                  color: bgColor,
+                  color: primaryColor,
                   borderRadius: BorderRadius.circular(20.0),
                 ),
                 child: Column(
@@ -77,11 +87,12 @@ class JoinAsSellerPage extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4.0),
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start, 
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(AntDesign.check_circle_fill, color: Colors.green, size: 20.0),
+                        Icon(AntDesign.check_circle_fill,
+                            color: Colors.green, size: 20.0),
                         SizedBox(width: 8.0),
-                        Expanded( 
+                        Expanded(
                           child: ParagraphText(item['adv'] ?? ""),
                         ),
                       ],

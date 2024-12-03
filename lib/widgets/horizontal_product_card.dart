@@ -1,13 +1,64 @@
-import 'package:e_online/constants/colors.dart';
+import 'package:e_online/widgets/seller_product_menu.dart';
+import 'package:flutter/material.dart';
 import 'package:e_online/pages/product_page.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
-import 'package:flutter/material.dart';
+import 'package:e_online/constants/colors.dart';
+import 'package:e_online/widgets/seller_product_menu.dart';
 
-class HorizontalProductCard extends StatelessWidget {
+class HorizontalProductCard extends StatefulWidget {
   final Map<String, dynamic> data;
 
-  const HorizontalProductCard({super.key, required this.data});
+  const HorizontalProductCard({Key? key, required this.data}) : super(key: key);
+
+  @override
+  State<HorizontalProductCard> createState() => _HorizontalProductCardState();
+}
+
+class _HorizontalProductCardState extends State<HorizontalProductCard> {
+  final List<String> _images = []; // Mock data for images
+  late int currentIndex; // Index of the current product
+
+  @override
+  void initState() {
+    super.initState();
+    // Assume the product has an associated index in a larger list
+    currentIndex = 0; // Initialize with default value, update as needed
+  }
+
+  void _showEditBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => ProductEditBottomSheet(
+        onView: () {
+          // Handle view logic
+          Navigator.pop(context);
+        },
+        onReplace: () async {
+          // Logic to replace the product image
+          setState(() {
+            if (currentIndex < _images.length) {
+              _images[currentIndex] = 'new_image_path';
+            }
+          });
+          Navigator.pop(context);
+        },
+        onDelete: () {
+          // Logic to delete the product
+          setState(() {
+            if (currentIndex < _images.length) {
+              _images.removeAt(currentIndex);
+            }
+          });
+          Navigator.pop(context);
+        },
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +67,7 @@ class HorizontalProductCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ProductPage(productData: data),
+            builder: (context) => ProductPage(productData: widget.data),
           ),
         );
       },
@@ -24,86 +75,90 @@ class HorizontalProductCard extends StatelessWidget {
         width: double.infinity,
         margin: const EdgeInsets.symmetric(vertical: 8.0),
         padding: const EdgeInsets.all(8.0),
-        child: Row(
-          children: [
-            // Image Section
-            Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                image: data['imageUrl'] != null
-                    ? DecorationImage(
-                        image: AssetImage(data['imageUrl']),
-                        fit: BoxFit.cover,
+        child: GestureDetector(
+          onTap: _showEditBottomSheet,
+          child: Row(
+            children: [
+              // Image Section
+              Container(
+                width: 100,
+                height: 100,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  image: widget.data['imageUrl'] != null
+                      ? DecorationImage(
+                          image: AssetImage(widget.data['imageUrl']),
+                          fit: BoxFit.cover,
+                        )
+                      : null,
+                  color: Colors.grey[200],
+                ),
+                child: widget.data['imageUrl'] == null
+                    ? Center(
+                        child: Icon(
+                          Icons.image_not_supported,
+                          color: Colors.grey,
+                        ),
                       )
                     : null,
-                color: Colors.grey[200],
               ),
-              child: data['imageUrl'] == null
-                  ? Center(
-                      child: Icon(
-                        Icons.image_not_supported,
-                        color: Colors.grey,
-                      ),
-                    )
-                  : null,
-            ),
-      
-            const SizedBox(width: 12),
-      
-            // Text Section
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Title or Description
-                  ParagraphText(
-                    data['description'] ?? "No description available",
-                    fontWeight: FontWeight.bold,
-                  ),
-                  spacer(),
-                  // Price and Views
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Row(
+
+              const SizedBox(width: 12),
+
+              // Text Section
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Title or Description
+                    ParagraphText(
+                      widget.data['description'] ?? "No description available",
+                      fontWeight: FontWeight.bold,
+                    ),
+                    spacer(),
+                    // Price and Views
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Row(
+                            children: [
+                              ParagraphText(
+                                widget.data['price'] ?? "N/A",
+                              ),
+                              const SizedBox(width: 8),
+                              ParagraphText(
+                                "${widget.data['views'] ?? 0} views",
+                                color: mutedTextColor,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Row(
                           children: [
+                            const Icon(Icons.star,
+                                color: Colors.amber, size: 16),
+                            const SizedBox(width: 4),
                             ParagraphText(
-                              data['price'] ?? "N/A",
-                            ),
-                            const SizedBox(width: 8),
-                            ParagraphText(
-                              "${data['views'] ?? 0} views",
-                              color: mutedTextColor,
+                              (widget.data['rating']?.toString() ?? "0"),
+                              color: Colors.black,
                             ),
                           ],
                         ),
-                      ),
-                       const SizedBox(width: 4),
-                         Row(
-                    children: [
-                      const Icon(Icons.star, color: Colors.amber, size: 16),
-                      const SizedBox(width: 4),
-                      ParagraphText(
-                        (data['rating']?.toString() ?? "0"),
-                        color: Colors.black,
-                      ),
-                    ],
-                  ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(width: 15),
-            // Arrow Icon
-            Icon(
-              Icons.arrow_forward_ios,
-              color: mutedTextColor,
-              size: 16,
-            ),
-          ],
+              const SizedBox(width: 15),
+              // Arrow Icon
+              Icon(
+                Icons.arrow_forward_ios,
+                color: mutedTextColor,
+                size: 16,
+              ),
+            ],
+          ),
         ),
       ),
     );
