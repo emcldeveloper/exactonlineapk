@@ -4,7 +4,6 @@ import 'package:e_online/pages/product_page.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:e_online/constants/colors.dart';
-import 'package:e_online/widgets/seller_product_menu.dart';
 
 class HorizontalProductCard extends StatefulWidget {
   final Map<String, dynamic> data;
@@ -91,13 +90,13 @@ class _HorizontalProductCardState extends State<HorizontalProductCard> {
                           fit: BoxFit.cover,
                         )
                       : null,
-                  color: Colors.grey[200],
+                  color: primaryColor,
                 ),
                 child: widget.data['imageUrl'] == null
                     ? Center(
                         child: Icon(
                           Icons.image_not_supported,
-                          color: Colors.grey,
+                          color: primaryColor,
                         ),
                       )
                     : null,
@@ -105,18 +104,15 @@ class _HorizontalProductCardState extends State<HorizontalProductCard> {
 
               const SizedBox(width: 12),
 
-              // Text Section
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Title or Description
                     ParagraphText(
                       widget.data['description'] ?? "No description available",
                       fontWeight: FontWeight.bold,
                     ),
                     spacer(),
-                    // Price and Views
                     Row(
                       children: [
                         Expanded(
@@ -151,7 +147,6 @@ class _HorizontalProductCardState extends State<HorizontalProductCard> {
                 ),
               ),
               const SizedBox(width: 15),
-              // Arrow Icon
               Icon(
                 Icons.arrow_forward_ios,
                 color: mutedTextColor,

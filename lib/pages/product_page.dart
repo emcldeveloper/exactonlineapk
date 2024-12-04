@@ -180,10 +180,16 @@ class _ProductPageState extends State<ProductPage> {
       },
     ];
     return Scaffold(
+      backgroundColor: mainColor,
       appBar: AppBar(
+        backgroundColor: mainColor,
         leading: GestureDetector(
           onTap: () => Get.back(),
-          child: Icon(Icons.arrow_back_ios_new_outlined, color: secondaryColor),
+          child: Icon(
+            Icons.arrow_back_ios_new_outlined,
+            color: secondaryColor,
+            size: 14.0,
+          ),
         ),
         title: HeadingText("Product Details"),
         centerTitle: true,
@@ -194,7 +200,7 @@ class _ProductPageState extends State<ProductPage> {
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(1.0),
           child: Container(
-            color: Colors.grey,
+            color: primaryColor,
             height: 1.0,
           ),
         ),

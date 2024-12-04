@@ -93,6 +93,7 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
                             children: [
                               // Avatar with initials
                               CircleAvatar(
+                                backgroundColor: primaryColor,
                                 child: ParagraphText(
                                   review['name']
                                           ?.substring(0, 2)
@@ -137,50 +138,61 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
                     ),
                   spacer1(),
                   // Leave review
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ParagraphText(
-                              'Leave your review',
-                              fontWeight: FontWeight.bold,
-                            ),
-                            spacer(),
-                            ParagraphText(
-                              'Rate this product',
-                              color: mutedTextColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ],
-                        ),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(color: primaryColor, width: 1.0),
                       ),
-                      SizedBox(width: 20),
-                      Row(
-                        children: List.generate(
-                          5,
-                          (index) => GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                selectedRating = index + 1;
-                              });
-                            },
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 4),
-                              child: Icon(
-                                Icons.star,
-                                color: index < selectedRating
-                                    ? Colors.amber
-                                    : Colors.grey[300],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ParagraphText(
+                                  'Leave your review',
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16.0,
+                                ),
+                                spacer(),
+                                ParagraphText(
+                                  'Rate this product',
+                                  color: mutedTextColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(width: 20),
+                          Row(
+                            children: List.generate(
+                              5,
+                              (index) => GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    selectedRating = index + 1;
+                                  });
+                                },
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 4),
+                                  child: Icon(
+                                    Icons.star,
+                                    color: index < selectedRating
+                                        ? Colors.amber
+                                        : Colors.grey[300],
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                   spacer1(),
                   // Review input field
@@ -223,6 +235,7 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
                             }
                           },
                           text: "Submit",
+                          rounded: 15.0,
                         ),
                       ),
                     ],

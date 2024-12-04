@@ -6,10 +6,12 @@ class SplashscreenPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: Center(
         child: SizedBox(
-            height: 55,
-            child: const Icon(Icons.shopping_cart),
+          height: 55,
+          width: double.infinity,
+          child: Image.asset("assets/images/EonlineLogo.png"),
         ),
       ),
     );

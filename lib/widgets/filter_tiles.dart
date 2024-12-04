@@ -1,3 +1,4 @@
+import 'package:e_online/constants/colors.dart';
 import 'package:e_online/widgets/filter_search.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
@@ -48,12 +49,12 @@ class _FilterTilesWidgetState extends State<FilterTilesWidget> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            ParagraphText("Search history"),
+            ParagraphText("Filter", fontWeight: FontWeight.bold),
             GestureDetector(
               onTap: () {
                 callFilterSearch(context);
               },
-              child: const Icon(AntDesign.account_book_fill),
+              child: const Icon(AntDesign.menu_fold_outline),
             ),
           ],
         ),
@@ -70,10 +71,11 @@ class _FilterTilesWidgetState extends State<FilterTilesWidget> {
                 });
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
-                  color: isSelected ? Colors.black : Colors.grey[300],
+                  color: isSelected ? Colors.black : primaryColor,
                 ),
                 child: ParagraphText(
                   filter['name'],

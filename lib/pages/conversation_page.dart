@@ -1,6 +1,5 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/widgets/heading_text.dart';
-import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -30,7 +29,9 @@ class _ConversationPageState extends State<ConversationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: mainColor,
       appBar: AppBar(
+        backgroundColor: mainColor,
         leading: GestureDetector(
           onTap: () {
             Get.back();
@@ -55,7 +56,7 @@ class _ConversationPageState extends State<ConversationPage> {
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(1.0),
           child: Container(
-            color: Colors.grey,
+            color: primaryColor,
             height: 1.0,
           ),
         ),
@@ -87,26 +88,48 @@ class _ConversationPageState extends State<ConversationPage> {
               },
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _messageController,
-                    decoration: InputDecoration(
-                      hintText: "Type a message...",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16.0),
+          Container(
+            decoration: BoxDecoration(
+              border: Border(
+                top: BorderSide(color: primaryColor, width: 1.0),
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _messageController,
+                      decoration: InputDecoration(
+                        fillColor: primaryColor,
+                        filled: true,
+                        hintText: "Write your message here",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: primaryColor,
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.transparent,
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.send, color: Theme.of(context).primaryColor),
-                  onPressed: _sendMessage,
-                ),
-              ],
+                  IconButton(
+                    icon:
+                        Icon(Icons.send, color: Theme.of(context).primaryColor),
+                    onPressed: _sendMessage,
+                  ),
+                ],
+              ),
             ),
           ),
         ],

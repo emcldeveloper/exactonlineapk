@@ -61,7 +61,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(1.0),
           child: Container(
-            color: Colors.grey,
+            color: primaryColor,
             height: 1.0,
           ),
         ),
@@ -77,6 +77,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                 "Business Name",
                 fontWeight: FontWeight.bold,
               ),
+              spacer(),
               TextFormField(
                 keyboardType: TextInputType.text,
                 decoration: InputDecoration(
@@ -105,6 +106,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                 "Business Phone number",
                 fontWeight: FontWeight.bold,
               ),
+              spacer(),
               TextFormField(
                 keyboardType: TextInputType.text,
                 decoration: InputDecoration(
@@ -133,6 +135,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                 "Business Address",
                 fontWeight: FontWeight.bold,
               ),
+              spacer(),
               TextFormField(
                 keyboardType: TextInputType.text,
                 decoration: InputDecoration(
@@ -230,6 +233,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                 "Short Description",
                 fontWeight: FontWeight.bold,
               ),
+              spacer(),
               TextFormField(
                 keyboardType: TextInputType.multiline,
                 maxLines: 5,
@@ -260,6 +264,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                     Get.to(() => MyShopPage());
                   },
                   text: "Submit Details"),
+              spacer1(),
             ],
           ),
         ),

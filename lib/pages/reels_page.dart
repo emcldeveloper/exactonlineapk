@@ -1,3 +1,4 @@
+import 'package:e_online/constants/colors.dart';
 import 'package:e_online/pages/preview_reel_page.dart';
 import 'package:e_online/pages/search_page.dart';
 import 'package:e_online/widgets/following.dart';
@@ -67,9 +68,9 @@ class ReelsPage extends StatelessWidget {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: mainColor,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: mainColor,
           elevation: 0,
           title: HeadingText(
             "Reels",

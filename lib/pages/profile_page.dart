@@ -38,16 +38,22 @@ class ProfilePage extends StatelessWidget {
     ];
 
     return Scaffold(
+      backgroundColor: mainColor,
       appBar: AppBar(
+        backgroundColor: mainColor,
         leading: GestureDetector(
           onTap: () => Get.back(),
-          child: Icon(Icons.arrow_back_ios_new_outlined, color: secondaryColor),
+          child: Icon(
+            Icons.arrow_back_ios_new_outlined,
+            color: secondaryColor,
+            size: 14.0,
+          ),
         ),
         title: HeadingText("My Profile"),
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(1.0),
           child: Container(
-            color: Colors.grey,
+            color: primaryColor,
             height: 1.0,
           ),
         ),

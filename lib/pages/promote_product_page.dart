@@ -88,26 +88,22 @@ class _PromoteProductPageState extends State<PromoteProductPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: Image.asset(
-                      "assets/images/shortsleeves.png",
-                      height: 430,
+              ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.asset(
+                  "assets/images/shortsleeves.png",
+                  height: 430,
+                  width: double.infinity,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      height: 200,
                       width: double.infinity,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          height: 200,
-                          width: double.infinity,
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.error),
-                        );
-                      },
-                    ),
-                  ),
-                ],
+                      color: Colors.grey[300],
+                      child: const Icon(Icons.error),
+                    );
+                  },
+                ),
               ),
               spacer(),
               Row(
@@ -143,8 +139,11 @@ class _PromoteProductPageState extends State<PromoteProductPage> {
                       ParagraphText(
                         "Promotion Budget",
                         fontWeight: FontWeight.bold,
+                        color: mutedTextColor,
                       ),
-                      ParagraphText("TZS 250,000", fontWeight: FontWeight.bold),
+                      HeadingText(
+                        "TZS 250,000",
+                      ),
                     ],
                   ),
                 ),
@@ -154,6 +153,7 @@ class _PromoteProductPageState extends State<PromoteProductPage> {
                 "Start Date",
                 fontWeight: FontWeight.bold,
               ),
+              spacer(),
               TextFormField(
                 controller: _startDateController,
                 readOnly: true,
@@ -167,6 +167,23 @@ class _PromoteProductPageState extends State<PromoteProductPage> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: primaryColor,
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.transparent,
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  ),
+                  suffixIcon: Icon(
+                    Icons.calendar_today_outlined,
+                    color: mutedTextColor,
+                    size: 16.0,
+                  ),
                 ),
               ),
               spacer1(),
@@ -174,6 +191,7 @@ class _PromoteProductPageState extends State<PromoteProductPage> {
                 "End Date",
                 fontWeight: FontWeight.bold,
               ),
+              spacer(),
               TextFormField(
                 controller: _endDateController,
                 readOnly: true,
@@ -185,6 +203,23 @@ class _PromoteProductPageState extends State<PromoteProductPage> {
                   hintStyle: TextStyle(color: Colors.black, fontSize: 12),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: primaryColor,
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.transparent,
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  ),
+                  suffixIcon: Icon(
+                    Icons.calendar_today_outlined,
+                    color: mutedTextColor,
+                    size: 16.0,
                   ),
                 ),
               ),

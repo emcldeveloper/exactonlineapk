@@ -54,7 +54,7 @@ class _ProductEditBottomSheetState extends State<ProductEditBottomSheet> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ParagraphText(
-                        "Hide this product",
+                        "Product visibility",
                         fontWeight: FontWeight.bold,
                       ),
                       ParagraphText(
@@ -107,12 +107,12 @@ class _ProductEditBottomSheetState extends State<ProductEditBottomSheet> {
             spacer1(),
             GestureDetector(
               onTap: () {
-                Navigator.pop(context); // Close the bottom sheet
+                Navigator.pop(context); 
                 widget.onReplace();
               },
               child: Row(
                 children: [
-                  const Icon(Icons.upload_file_outlined),
+                  const Icon(Icons.edit_square),
                   const SizedBox(width: 8),
                   ParagraphText("Edit Product"),
                 ],

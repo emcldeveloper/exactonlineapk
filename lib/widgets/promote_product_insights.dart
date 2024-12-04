@@ -46,13 +46,13 @@ class PromoteProductInsightsBottomSheet extends StatelessWidget {
                 ),
               ],
             ),
-            spacer1(),
+            spacer2(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 ParagraphText(
                   "Impressions",
-                  fontWeight: FontWeight.bold,
+                  color: mutedTextColor,
                 ),
                 ParagraphText("25,000", fontWeight: FontWeight.bold),
               ],
@@ -63,9 +63,53 @@ class PromoteProductInsightsBottomSheet extends StatelessWidget {
               children: [
                 ParagraphText(
                   "Clicks",
-                  fontWeight: FontWeight.bold,
+                  color: mutedTextColor,
                 ),
                 ParagraphText("400", fontWeight: FontWeight.bold),
+              ],
+            ),
+            spacer1(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ParagraphText(
+                  "Shares",
+                  color: mutedTextColor,
+                ),
+                ParagraphText("39", fontWeight: FontWeight.bold),
+              ],
+            ),
+            spacer1(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ParagraphText(
+                  "Likes",
+                  color: mutedTextColor,
+                ),
+                ParagraphText("800", fontWeight: FontWeight.bold),
+              ],
+            ),
+            spacer1(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ParagraphText(
+                  "Calls",
+                  color: mutedTextColor,
+                ),
+                ParagraphText("30", fontWeight: FontWeight.bold),
+              ],
+            ),
+            spacer1(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ParagraphText(
+                  "Profile Views",
+                  color: mutedTextColor,
+                ),
+                ParagraphText("72", fontWeight: FontWeight.bold),
               ],
             ),
             spacer1(),

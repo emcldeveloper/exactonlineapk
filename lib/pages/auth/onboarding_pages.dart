@@ -1,3 +1,8 @@
+import 'package:e_online/constants/colors.dart';
+import 'package:e_online/pages/way_page.dart';
+import 'package:e_online/widgets/heading_text.dart';
+import 'package:e_online/widgets/paragraph_text.dart';
+import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 
 class OnboardingPage extends StatefulWidget {
@@ -12,25 +17,25 @@ class _OnboardingPageState extends State<OnboardingPage> {
   final List<Map<String, String>> _onboardingData = [
     {
       "image": "assets/images/onboarding1.png",
-      "title": "Welcome to the Ultimate Shopping Experience",
+      "title": "Welcome to the Ultimate\nShopping Experience",
       "description":
           "Explore a world of endless possibilities with our user-friendly platform, offering convenience, variety, and quality at your fingertips."
     },
     {
       "image": "assets/images/onboarding2.png",
-      "title": "Discover Categories Tailored for You",
+      "title": "Discover Categories\nTailored for You",
       "description":
           "Browse through an extensive collection of curated categories designed to match your interests, making shopping easier and more enjoyable.",
     },
     {
       "image": "assets/images/onboarding3.png",
-      "title": "Exclusive Offers Just for You",
+      "title": "Exclusive Offers Just\nfor You",
       "description":
           "Unlock special discounts and limited-time deals curated to bring you the best value on your favorite items.",
     },
     {
       "image": "assets/images/onboarding4.png",
-      "title": "Fast, Secure, and Easy Checkout",
+      "title": "Fast, Secure, and Easy\nCheckout",
       "description":
           "Enjoy a hassle-free checkout process with multiple payment options, advanced security measures, and lightning-fast order confirmation.",
     },
@@ -45,6 +50,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: mainColor,
       body: SafeArea(
         child: Column(
           children: [
@@ -56,31 +62,26 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 itemBuilder: (context, index) {
                   final data = _onboardingData[index];
                   return Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(30.0),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Image.asset(
                           data["image"]!,
-                          height: 300,
+                          height: 250,
                           fit: BoxFit.contain,
                         ),
-                        SizedBox(height: 24),
-                        Text(
+                        spacer2(),
+                        HeadingText(
                           data["title"]!,
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold,
                           textAlign: TextAlign.center,
                         ),
-                        SizedBox(height: 16),
-                        Text(
+                        spacer1(),
+                        ParagraphText(
                           data["description"]!,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[600],
-                          ),
+                          color: mutedTextColor,
                           textAlign: TextAlign.center,
                         ),
                       ],
@@ -115,9 +116,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       // Skip to last screen
                       _controller.jumpToPage(_onboardingData.length - 1);
                     },
-                    child: Text(
+                    child: ParagraphText(
                       "Skip",
-                      style: TextStyle(color: Colors.grey),
                     ),
                   ),
                   ElevatedButton(
@@ -126,7 +126,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         // Navigate to the next page
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (_) => YourNextPage()),
+                          MaterialPageRoute(builder: (_) => WayPage()),
                         );
                       } else {
                         _controller.nextPage(
@@ -141,24 +141,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: Text("Next"),
+                    child: ParagraphText("Next", color: Colors.white),
                   ),
                 ],
               ),
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class YourNextPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text("Welcome to the App!"),
       ),
     );
   }

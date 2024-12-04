@@ -1,9 +1,9 @@
+import 'package:e_online/constants/colors.dart';
 import 'package:e_online/pages/promoted_product_view_page.dart';
 import 'package:e_online/widgets/custom_button.dart';
+import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
-import 'package:e_online/constants/colors.dart';
-import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:get/get.dart';
 
 class PaymentMethodBottomSheet extends StatelessWidget {
@@ -11,6 +11,13 @@ class PaymentMethodBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final List<Map<String, dynamic>> paymentOptions = [
+      {'imageUrl': 'assets/images/airtel.png'},
+      {'imageUrl': 'assets/images/halopesa.png'},
+      {'imageUrl': 'assets/images/mixxbyYas.jpg'},
+      {'imageUrl': 'assets/images/mpesa.png'},
+    ];
+
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -32,6 +39,7 @@ class PaymentMethodBottomSheet extends StatelessWidget {
             ),
             spacer1(),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
                   child: Column(
@@ -41,10 +49,29 @@ class PaymentMethodBottomSheet extends StatelessWidget {
                         "Pay with mobile money",
                         fontWeight: FontWeight.bold,
                       ),
-                      ParagraphText(
-                        "Enter your phone number to pay",
-                      ),
+                      ParagraphText("Enter your phone number to pay",
+                          color: mutedTextColor),
                     ],
+                  ),
+                ),
+                // Wrap the SizedBox in a Flexible widget to constrain its width
+                Flexible(
+                  child: Wrap(
+                    spacing: 16,
+                    runSpacing: 16,
+                    children: paymentOptions.map((option) {
+                      return Container(
+                        width: 70,
+                        height: 25,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Image.asset(
+                          option['imageUrl'],
+                          fit: BoxFit.contain,
+                        ),
+                      );
+                    }).toList(),
                   ),
                 ),
               ],
@@ -76,18 +103,17 @@ class PaymentMethodBottomSheet extends StatelessWidget {
             spacer1(),
             customButton(
               onTap: () {
-                // Example product data
                 Map<String, dynamic> productData = {
                   "title": "Sample Product",
                   "price": "TZS 250,000",
-                  "description": "This is a sample product."
+                  "description": "This is a sample product.",
                 };
 
                 Get.to(() => PromotedProductViewPage(productData: productData));
               },
               text: "Pay",
             ),
-            spacer1(),
+            spacer2(),
           ],
         ),
       ),

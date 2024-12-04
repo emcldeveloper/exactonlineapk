@@ -84,6 +84,7 @@ class _AddProductPageState extends State<AddProductPage> {
     return Scaffold(
       backgroundColor: mainColor,
       appBar: AppBar(
+        backgroundColor: mainColor,
         leading: GestureDetector(
           onTap: () => Get.back(),
           child: Container(
@@ -100,7 +101,7 @@ class _AddProductPageState extends State<AddProductPage> {
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(1.0),
           child: Container(
-            color: Colors.grey,
+            color: primaryColor,
             height: 1.0,
           ),
         ),

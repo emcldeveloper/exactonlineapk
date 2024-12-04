@@ -1,6 +1,5 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/pages/categories_products_page.dart';
-import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:e_online/widgets/search_function.dart';
@@ -42,7 +41,11 @@ class SearchPage extends StatelessWidget {
           backgroundColor: mainColor,
           elevation: 0,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios, color: mutedTextColor),
+            icon: Icon(
+              Icons.arrow_back_ios,
+              color: mutedTextColor,
+              size: 14.0,
+            ),
             onPressed: () {
               Navigator.pop(context);
             },
@@ -66,24 +69,24 @@ class SearchPage extends StatelessWidget {
                   return Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
-                      color: Colors.grey[300],
+                      color: primaryColor,
                     ),
                     padding: const EdgeInsets.all(8.0),
                     child: ParagraphText(filter['name']),
                   );
                 }).toList(),
               ),
-              spacer(),
-              HeadingText("Categories"),
+              spacer1(),
+              ParagraphText("Categories", fontWeight: FontWeight.bold),
               spacer(),
               GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 4,
-                  childAspectRatio: 0.6,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
+                  childAspectRatio: 0.8,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
                 ),
                 itemCount: categories.length,
                 itemBuilder: (context, index) {
@@ -107,7 +110,7 @@ class SearchPage extends StatelessWidget {
                           padding: const EdgeInsets.all(12.0),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(16),
-                            color: Colors.grey[200],
+                            color: primaryColor,
                           ),
                           child: categories[index]['imageUrl'] != null
                               ? ClipRRect(
@@ -128,6 +131,7 @@ class SearchPage extends StatelessWidget {
                         ParagraphText(
                           categories[index]['name'],
                           fontWeight: FontWeight.bold,
+                          fontSize: 10.0,
                         ),
                       ],
                     ),

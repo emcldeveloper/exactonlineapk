@@ -5,20 +5,20 @@ Widget buildSearchBar() {
   return Container(
     height: 40,
     decoration: BoxDecoration(
-      color: Colors.grey[200],
-      borderRadius: BorderRadius.circular(20),
+      color: primaryColor,
+      borderRadius: BorderRadius.circular(25),
     ),
     child: Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: "Search product here",
-                hintStyle: TextStyle(color: mutedTextColor, fontSize: 14),
-                border: InputBorder.none,
-              ),
+          child: TextField(
+            decoration: InputDecoration(
+              contentPadding:
+                  const EdgeInsets.only(left: 16, right: 16, bottom: 8),
+              hintText: "Search product here",
+              hintStyle: TextStyle(color: mutedTextColor, fontSize: 14),
+              border: InputBorder.none,
             ),
           ),
         ),
@@ -27,13 +27,14 @@ Widget buildSearchBar() {
             // Perform search action
           },
           child: Container(
-            margin: const EdgeInsets.all(4),
+            height: 25,
+            width: 40,
+            margin: const EdgeInsets.symmetric(horizontal: 8),
             decoration: BoxDecoration(
               color: Colors.black,
-              shape: BoxShape.rectangle,
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(Icons.search, color: Colors.white, size: 20),
+            child: const Icon(Icons.search, color: Colors.white, size: 20),
           ),
         ),
       ],

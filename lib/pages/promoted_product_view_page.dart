@@ -37,7 +37,9 @@ class _ProductPageState extends State<PromotedProductViewPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: mainColor,
       appBar: AppBar(
+        backgroundColor: mainColor,
         leading: GestureDetector(
           onTap: () => Get.back(),
           child: Icon(
@@ -51,7 +53,7 @@ class _ProductPageState extends State<PromotedProductViewPage> {
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(1.0),
           child: Container(
-            color: Colors.grey,
+            color: primaryColor,
             height: 1.0,
           ),
         ),
@@ -62,26 +64,22 @@ class _ProductPageState extends State<PromotedProductViewPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Stack(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: Image.asset(
-                      "assets/images/shortsleeves.png",
-                      height: 430,
+              ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.asset(
+                  "assets/images/shortsleeves.png",
+                  height: 430,
+                  width: double.infinity,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      height: 200,
                       width: double.infinity,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          height: 200,
-                          width: double.infinity,
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.error),
-                        );
-                      },
-                    ),
-                  ),
-                ],
+                      color: Colors.grey[300],
+                      child: const Icon(Icons.error),
+                    );
+                  },
+                ),
               ),
               spacer(),
               Row(
@@ -125,6 +123,7 @@ class _ProductPageState extends State<PromotedProductViewPage> {
                   ParagraphText(
                     "Total Amount:",
                     fontWeight: FontWeight.bold,
+                    color: mutedTextColor,
                   ),
                   ParagraphText("TZS 250,000", fontWeight: FontWeight.bold),
                 ],
@@ -136,11 +135,48 @@ class _ProductPageState extends State<PromotedProductViewPage> {
                   ParagraphText(
                     "Tax:",
                     fontWeight: FontWeight.bold,
+                    color: mutedTextColor,
                   ),
                   ParagraphText("TZS 0", fontWeight: FontWeight.bold),
                 ],
               ),
               spacer1(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ParagraphText(
+                    "Paid:",
+                    fontWeight: FontWeight.bold,
+                    color: mutedTextColor,
+                  ),
+                  ParagraphText("TZS 250,000", fontWeight: FontWeight.bold),
+                ],
+              ),
+              spacer1(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ParagraphText(
+                    "Paid At:",
+                    fontWeight: FontWeight.bold,
+                    color: mutedTextColor,
+                  ),
+                  ParagraphText("24/12/2050", fontWeight: FontWeight.bold),
+                ],
+              ),
+              spacer1(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ParagraphText(
+                    "Promotion Duration:",
+                    fontWeight: FontWeight.bold,
+                    color: mutedTextColor,
+                  ),
+                  ParagraphText("7 Days", fontWeight: FontWeight.bold),
+                ],
+              ),
+              spacer3(),
               customButton(
                 onTap: _showInsightsBottomSheet,
                 text: "View Insights",

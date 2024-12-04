@@ -1,5 +1,4 @@
 import 'package:e_online/constants/colors.dart';
-import 'package:e_online/pages/auth/login_page.dart';
 import 'package:e_online/pages/chat_page.dart';
 import 'package:e_online/pages/favourites_page.dart';
 import 'package:e_online/pages/home_page.dart';

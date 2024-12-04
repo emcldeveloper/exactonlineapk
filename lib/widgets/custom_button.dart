@@ -8,13 +8,14 @@ Widget customButton({
   double? vertical,
   Color? buttonColor, 
   Color? textColor,
+  double? rounded,
 }) {
   return GestureDetector(
     onTap: onTap,
     child: Container(
       width: width ?? double.infinity,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30.0),
+        borderRadius: BorderRadius.circular(rounded ?? 30.0),
         color: buttonColor ?? secondaryColor,
       ),
       child: Padding(
