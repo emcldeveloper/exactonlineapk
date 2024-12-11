@@ -1,6 +1,8 @@
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/order_card.dart';
+import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -10,62 +12,11 @@ class MyOrdersPage extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> orderItems = [
-      {
-        'orderNo': "Order #0001",
-        'customer': "From Juma James",
-        'time': "2 days ago",
-        'status': "Pending"
-      },
-        {
-        'orderNo': "Order #0001",
-        'customer': "From Juma James",
-        'time': "2 days ago",
-        'status': "Completed"
-      },
-         {
-        'orderNo': "Order #0001",
-        'customer': "From Juma James",
-        'time': "2 days ago",
-        'status': "Completed"
-      },
-         {
-        'orderNo': "Order #0001",
-        'customer': "From Juma James",
-        'time': "2 days ago",
-        'status': "Completed"
-      },
-         {
-        'orderNo': "Order #0001",
-        'customer': "From Juma James",
-        'time': "2 days ago",
-        'status': "Completed"
-      },
-         {
-        'orderNo': "Order #0001",
-        'customer': "From Juma James",
-        'time': "2 days ago",
-        'status': "Completed"
-      },
-         {
-        'orderNo': "Order #0001",
-        'customer': "From Juma James",
-        'time': "2 days ago",
-        'status': "Completed"
-      },
-         {
-        'orderNo': "Order #0001",
-        'customer': "From Juma James",
-        'time': "2 days ago",
-        'status': "Completed"
-      },
-    ];
-
     return Scaffold(
       backgroundColor: mainColor,
       appBar: AppBar(
         backgroundColor: mainColor,
-        leading: GestureDetector(
+        leading: InkWell(
           onTap: () => Get.back(),
           child: Icon(
             Icons.arrow_back_ios_new_outlined,
@@ -86,11 +37,16 @@ class MyOrdersPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child:  Column(
-                  children: orderItems.map((item) {
-                    return OrderCard(data: item);
-                  }).toList(),
-                ),
+          child: Column(
+            children: orderItems.map((item) {
+              return Column(
+                children: [
+                  OrderCard(data: item),
+                  spacer1(),
+                ],
+              );
+            }).toList(),
+          ),
         ),
       ),
     );

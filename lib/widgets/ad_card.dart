@@ -1,5 +1,5 @@
-import 'package:e_online/widgets/promote_product_insights.dart';
 import 'package:flutter/material.dart';
+import 'package:e_online/widgets/promote_product_insights.dart';
 import 'package:e_online/pages/product_page.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
@@ -11,17 +11,16 @@ class AdCard extends StatefulWidget {
   const AdCard({Key? key, required this.data}) : super(key: key);
 
   @override
-  State<AdCard> createState() => _HorizontalProductCardState();
+  State<AdCard> createState() => _AdCardState();
 }
 
-class _HorizontalProductCardState extends State<AdCard> {
-  late int currentIndex; // Index of the current product
+class _AdCardState extends State<AdCard> {
+  late int currentIndex;
 
   @override
   void initState() {
     super.initState();
-    // Assume the product has an associated index in a larger list
-    currentIndex = 0; // Initialize with default value, update as needed
+    currentIndex = 0;
   }
 
   void _showInsightsBottomSheet() {
@@ -60,15 +59,17 @@ class _HorizontalProductCardState extends State<AdCard> {
                 height: 100,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
-                  image: widget.data['imageUrl'] != null
+                  image: widget.data['imageUrl'] != null &&
+                          widget.data['imageUrl'].isNotEmpty
                       ? DecorationImage(
-                          image: AssetImage(widget.data['imageUrl']),
+                          image: AssetImage(widget.data['imageUrl'][0]),
                           fit: BoxFit.cover,
                         )
                       : null,
                   color: primaryColor,
                 ),
-                child: widget.data['imageUrl'] == null
+                child: (widget.data['imageUrl'] == null ||
+                        widget.data['imageUrl'].isEmpty)
                     ? Center(
                         child: Icon(
                           Icons.image_not_supported,
@@ -85,7 +86,7 @@ class _HorizontalProductCardState extends State<AdCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ParagraphText(
-                      widget.data['description'] ?? "No description available",
+                      widget.data['title'] ?? "No title available",
                       fontWeight: FontWeight.bold,
                     ),
                     spacer(),
@@ -99,7 +100,7 @@ class _HorizontalProductCardState extends State<AdCard> {
                               ),
                               const SizedBox(width: 8),
                               ParagraphText(
-                                "TZS ${widget.data['views'] ?? 0}",
+                                "Views: ${widget.data['views'] ?? 0}",
                                 color: mutedTextColor,
                               ),
                             ],
@@ -107,22 +108,21 @@ class _HorizontalProductCardState extends State<AdCard> {
                         ),
                       ],
                     ),
-                    ParagraphText("free delivery", color: Colors.red)
+                    ParagraphText("Free delivery", color: Colors.red)
                   ],
                 ),
               ),
               const SizedBox(width: 15),
-               Container(
-          decoration: BoxDecoration(
-            color: Colors.yellow,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ParagraphText("Ad"),
-
-          ),
-        ),
+              Container(
+                width: 60,
+                height: 30,
+                decoration: BoxDecoration(
+                  color: Colors.yellow,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                alignment: Alignment.center,
+                child: ParagraphText("Ad"),
+              ),
             ],
           ),
         ),

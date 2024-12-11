@@ -14,7 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
 class ProductPage extends StatefulWidget {
-  final Map<dynamic, dynamic> productData;
+  final Map<String, dynamic> productData;
 
   const ProductPage({required this.productData, Key? key}) : super(key: key);
 
@@ -149,7 +149,7 @@ class _ProductPageState extends State<ProductPage> {
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
-        child: ReportSellerBottomSheet(),
+        child: const ReportSellerBottomSheet(),
       ),
     );
   }
@@ -165,6 +165,8 @@ class _ProductPageState extends State<ProductPage> {
           "assets/images/red_tshirt.png",
         ],
         'rating': 4.5,
+        'size': "2xl",
+        'color': "Black",
       },
       {
         'title': "J.Crew T-shirt",
@@ -175,6 +177,8 @@ class _ProductPageState extends State<ProductPage> {
           "assets/images/green_tshirt.png"
         ],
         'rating': 4.5,
+        'size': "xl",
+        'color': "Black",
       },
       {
         'title': "J.Crew T-shirt",
@@ -184,6 +188,8 @@ class _ProductPageState extends State<ProductPage> {
           "assets/images/teal_tshirt.png",
         ],
         'rating': 4.5,
+        'size': "s",
+        'color': "Black",
       },
       {
         'title': "J.Crew T-shirt",
@@ -194,13 +200,15 @@ class _ProductPageState extends State<ProductPage> {
           "assets/images/teal_tshirt.png"
         ],
         'rating': 4.5,
+        'size': "5xl",
+        'color': "Black",
       },
     ];
     return Scaffold(
       backgroundColor: mainColor,
       appBar: AppBar(
         backgroundColor: mainColor,
-        leading: GestureDetector(
+        leading: InkWell(
           onTap: () => Get.back(),
           child: Icon(
             Icons.arrow_back_ios_new_outlined,
@@ -212,12 +220,12 @@ class _ProductPageState extends State<ProductPage> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.shopping_bag_outlined,
-                color: Colors.black, size: 28),
+            icon: const Icon(Icons.shopping_bag_outlined, size: 24),
             onPressed: () {},
           ),
           IconButton(
-            icon: const Icon(Icons.share, color: Colors.black, size: 28),
+            icon:
+                const Icon(Icons.share_outlined, color: Colors.black, size: 24),
             onPressed: () {},
           ),
         ],
@@ -320,6 +328,7 @@ class _ProductPageState extends State<ProductPage> {
                         ParagraphText(
                           widget.productData['title'] ?? '',
                           fontWeight: FontWeight.bold,
+                          fontSize: 14.0,
                         ),
                         ParagraphText(
                           widget.productData['price'] ?? '',
@@ -356,6 +365,44 @@ class _ProductPageState extends State<ProductPage> {
                 "Lorem ipsum dolor sit amet consectetur. Congue gravida ullamcorper ac diam eget facilisis tincidunt. Cursus massa etiam tempor magnis.",
               ),
               spacer1(),
+              ParagraphText(
+                "Specifications",
+                fontWeight: FontWeight.bold,
+                fontSize: 14.0,
+              ),
+              Row(
+                children: [
+                  ParagraphText(
+                    "Size",
+                    fontWeight: FontWeight.bold,
+                    color: mutedTextColor,
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  ParagraphText(
+                    widget.productData['size'] ?? '',
+                    fontWeight: FontWeight.bold,
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  ParagraphText(
+                    "Color",
+                    fontWeight: FontWeight.bold,
+                    color: mutedTextColor,
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  ParagraphText(
+                    widget.productData['color'] ?? '',
+                    fontWeight: FontWeight.bold,
+                  ),
+                ],
+              ),
+              spacer1(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -383,27 +430,27 @@ class _ProductPageState extends State<ProductPage> {
               ),
               spacer1(),
               customButton(
-                onTap: () => Get.to(() =>  HomePage()),
+                onTap: () => Get.to(() => HomePage()),
                 text: "Add to Cart",
               ),
               spacer(),
               customButton(
-                onTap: () => Get.to(() =>  HomePage()),
+                onTap: () => Get.to(() => HomePage()),
                 text: "Call Seller",
-                buttonColor: mutedTextColor,
-                textColor: primaryColor,
+                buttonColor: primaryColor,
+                textColor: Colors.black,
               ),
               spacer(),
               customButton(
                 onTap: () => Get.to(() => HomePage()),
                 text: "Message Seller",
-                buttonColor: mutedTextColor,
-                textColor: primaryColor,
+                buttonColor: primaryColor,
+                textColor: Colors.black,
               ),
               spacer(),
               customButton(
                 onTap: () {
-                  _showReportSellerBottomSheet;
+                  _showReportSellerBottomSheet();
                 },
                 text: "Report seller",
                 buttonColor: Colors.transparent,

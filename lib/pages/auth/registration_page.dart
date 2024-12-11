@@ -111,7 +111,7 @@ class RegistrationPage extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ParagraphText("Already registered ? ", fontSize: 12),
+                  ParagraphText("Already registered ? "),
                   SizedBox(width: 5),
                   GestureDetector(
                     onTap: () {
@@ -119,7 +119,6 @@ class RegistrationPage extends StatelessWidget {
                     },
                     child: ParagraphText(
                       "Login",
-                      fontSize: 12,
                       fontWeight: FontWeight.bold,
                       color: secondaryColor,
                     ),

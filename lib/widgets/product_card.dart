@@ -6,11 +6,11 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
-
 class ProductCard extends StatefulWidget {
-  final Map<dynamic, dynamic> data;
-
-  const ProductCard({required this.data, Key? key}) : super(key: key);
+  final Map<String, dynamic> data;
+  final double? height;
+  const ProductCard({required this.data, this.height, Key? key})
+      : super(key: key);
 
   @override
   _ProductCardState createState() => _ProductCardState();
@@ -54,7 +54,8 @@ class _ProductCardState extends State<ProductCard> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(isFavorite ? "Added to Favorites" : "Removed from Favorites"),
+        content:
+            Text(isFavorite ? "Added to Favorites" : "Removed from Favorites"),
       ),
     );
   }
@@ -71,7 +72,7 @@ class _ProductCardState extends State<ProductCard> {
         );
       },
       child: Container(
-        width: 175,
+        width: 135,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -92,7 +93,7 @@ class _ProductCardState extends State<ProductCard> {
                     borderRadius: BorderRadius.circular(16),
                     child: Image.asset(
                       widget.data['imageUrl'][0],
-                      height: 170,
+                      height: widget.height ?? 135,
                       width: double.infinity,
                       fit: BoxFit.cover,
                     ),
@@ -110,7 +111,9 @@ class _ProductCardState extends State<ProductCard> {
                           color: Colors.white,
                           padding: const EdgeInsets.all(6.0),
                           child: Icon(
-                            isFavorite ? AntDesign.heart_fill : AntDesign.heart_outline,
+                            isFavorite
+                                ? AntDesign.heart_fill
+                                : AntDesign.heart_outline,
                             color: isFavorite ? Colors.red : Colors.black,
                             size: 18.0,
                           ),

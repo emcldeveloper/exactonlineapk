@@ -77,7 +77,7 @@ class LoginPage extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ParagraphText("Don`t have an account?", fontSize: 12),
+                  ParagraphText("Don`t have an account?"),
                   SizedBox(width: 5),
                   GestureDetector(
                     onTap: () {
@@ -85,7 +85,6 @@ class LoginPage extends StatelessWidget {
                     },
                     child: ParagraphText(
                       "Register",
-                      fontSize: 12,
                       fontWeight: FontWeight.bold,
                       color: secondaryColor,
                     ),

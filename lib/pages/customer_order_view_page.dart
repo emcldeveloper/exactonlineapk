@@ -1,57 +1,26 @@
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/horizontal_product_card.dart';
+import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CustomerOrderViewPage extends StatelessWidget {
-  const CustomerOrderViewPage({super.key});
+  final Map<String, dynamic> orderData;
 
-  // This widget is the root of your application.
+  const CustomerOrderViewPage({Key? key, required this.orderData})
+      : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> orderItems = [
-      {
-        'title': "J.Crew T-shirt",
-        'price': "25,000 TSH",
-        'imageUrl': "assets/images/teal_tshirt.png",
-        'description':
-            "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
-        'rating': 4.5,
-      },
-      {
-        'title': "J.Crew T-shirt",
-        'price': "25,000 TSH",
-        'imageUrl': "assets/images/red_tshirt.png",
-        'description':
-            "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
-        'rating': 4.5,
-      },
-      {
-        'title': "J.Crew T-shirt",
-        'price': "25,000 TSH",
-        'imageUrl': "assets/images/black_tshirt.png",
-        'description':
-            "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
-        'rating': 4.5,
-      },
-      {
-        'title': "J.Crew T-shirt",
-        'price': "25,000 TSH",
-        'imageUrl': "assets/images/green_tshirt.png",
-        'description':
-            "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
-        'rating': 4.5,
-      },
-    ];
-
     return Scaffold(
       backgroundColor: mainColor,
       appBar: AppBar(
         backgroundColor: mainColor,
-        leading: GestureDetector(
+        leading: InkWell(
           onTap: () => Get.back(),
           child: Icon(
             Icons.arrow_back_ios_new_outlined,
@@ -59,10 +28,11 @@ class CustomerOrderViewPage extends StatelessWidget {
             size: 14.0,
           ),
         ),
-        title: HeadingText("Order #0001"),
+        // Use the name from orderData in the title
+        title: HeadingText("Order ${orderData['orderNo']}"),
         centerTitle: true,
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
+          preferredSize: const Size.fromHeight(1.0),
           child: Container(
             color: primaryColor,
             height: 1.0,
@@ -72,16 +42,23 @@ class CustomerOrderViewPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child:  Container(
-            child: Column(
-              children: [
-                Column(
-                        children: orderItems.map((item) {
-                          return HorizontalProductCard(data: item);
-                        }).toList(),
-                      ),
-              spacer2(),
-                 spacer1(),
+          child: Column(
+            children: [
+              Column(
+                children: productItems.map((item) {
+                  return HorizontalProductCard(data: item);
+                }).toList(),
+              ),
+              spacer(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ParagraphText("Total Price"),
+                  ParagraphText("TZS 120,0000",
+                      fontWeight: FontWeight.bold, fontSize: 17)
+                ],
+              ),
+              spacer3(),
               customButton(
                 onTap: () {},
                 text: "Call Customer",
@@ -90,12 +67,11 @@ class CustomerOrderViewPage extends StatelessWidget {
               customButton(
                 onTap: () {},
                 text: "Chat with Customer",
-                buttonColor: mutedTextColor,
-                textColor: primaryColor,
+                buttonColor: primaryColor,
+                textColor: Colors.black,
               ),
               spacer3(),
-              ],
-            ),
+            ],
           ),
         ),
       ),

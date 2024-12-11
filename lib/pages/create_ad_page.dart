@@ -10,16 +10,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
-class AddProductPage extends StatefulWidget {
-  const AddProductPage({super.key});
+class CreateAdPage extends StatefulWidget {
+  const CreateAdPage({super.key});
 
   @override
-  State<AddProductPage> createState() => _AddProductPageState();
+  State<CreateAdPage> createState() => _CreateAdPageState();
 }
 
-class _AddProductPageState extends State<AddProductPage> {
-  bool _isChecked = true;
-  bool _isSwitched = false;
+class _CreateAdPageState extends State<CreateAdPage> {
   List<XFile> _images = [];
   final ImagePicker _picker = ImagePicker();
   DateTime? _startDate;
@@ -111,7 +109,7 @@ class _AddProductPageState extends State<AddProductPage> {
       backgroundColor: mainColor,
       appBar: AppBar(
         backgroundColor: mainColor,
-        leading: GestureDetector(
+        leading: InkWell(
           onTap: () => Get.back(),
           child: Container(
             color: Colors.transparent,
@@ -215,23 +213,6 @@ class _AddProductPageState extends State<AddProductPage> {
                   ],
                 ),
               spacer1(),
-              Row(
-                children: [
-                  Checkbox(
-                    value: _isChecked,
-                    onChanged: (bool? newValue) {
-                      setState(() {
-                        _isChecked = newValue ?? false;
-                      });
-                    },
-                    activeColor: secondaryColor,
-                  ),
-                  ParagraphText(
-                    "Price include delivery",
-                  ),
-                ],
-              ),
-              spacer1(),
               ParagraphText(
                 "Start Date",
                 fontWeight: FontWeight.bold,
@@ -316,7 +297,7 @@ class _AddProductPageState extends State<AddProductPage> {
                     );
                     return;
                   }
-                  Get.to(() =>  HomePage());
+                  Get.to(() => HomePage());
                 },
                 text: "Create an Ad",
               ),

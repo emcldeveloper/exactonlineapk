@@ -28,7 +28,7 @@ class JoinAsSellerPage extends StatelessWidget {
       backgroundColor: mainColor,
       appBar: AppBar(
         backgroundColor: mainColor,
-        leading: GestureDetector(
+        leading: InkWell(
           onTap: () {
             Get.back();
           },

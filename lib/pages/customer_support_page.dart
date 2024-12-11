@@ -8,8 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:icons_plus/icons_plus.dart';
 
-class JoinAsSellerPage extends StatelessWidget {
-  const JoinAsSellerPage({super.key});
+class CustomerSupportPage extends StatelessWidget {
+  const CustomerSupportPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class JoinAsSellerPage extends StatelessWidget {
       backgroundColor: mainColor,
       appBar: AppBar(
         backgroundColor: mainColor,
-        leading: GestureDetector(
+        leading: InkWell(
           onTap: () {
             Get.back();
           },
@@ -40,34 +40,33 @@ class JoinAsSellerPage extends StatelessWidget {
           ),
         ),
       ),
-      body: SingleChildScrollView(
+      body: Container(
+        height: MediaQuery.of(context).size.height,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              ClipOval(
-                child: Container(
-                  height: 80,
-                  width: 80,
-                  child: Stack(
-                    children: [
-                      Image.asset(
-                        "assets/images/avatar.png",
-                        height: 80,
-                        width: 80,
-                        fit: BoxFit.cover,
+              Container(
+                height: 80,
+                width: 80,
+                child: Stack(
+                  children: [
+                    Image.asset(
+                      "assets/images/avatar.png",
+                      height: 80,
+                      width: 80,
+                      fit: BoxFit.cover,
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Brand(
+                        Brands.whatsapp,
+                        size: 24.0,
                       ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Brand(
-                          Brands.whatsapp,
-                          size: 24.0,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
               spacer1(),
@@ -77,13 +76,14 @@ class JoinAsSellerPage extends StatelessWidget {
                 "Contact us via +255627707434 or press the button below to reach use via our whatsapp number",
                 textAlign: TextAlign.center,
               ),
-              spacer3(),
+              Spacer(),
               customButton(
                 onTap: () {
                   Get.to(() => ChatPage());
                 },
                 text: "Chat on whatsappp",
               ),
+              spacer3()
             ],
           ),
         ),

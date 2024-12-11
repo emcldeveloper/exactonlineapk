@@ -1,4 +1,5 @@
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/pages/preview_reel_page.dart';
 import 'package:e_online/pages/search_page.dart';
 import 'package:e_online/widgets/following.dart';
@@ -14,56 +15,6 @@ class ReelsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> productItems = [
-      {
-        'title': "J.Crew T-shirt",
-        'price': "25,000 TSH",
-        'imageUrl': "assets/images/braids.png",
-        'description':
-            "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
-        'rating': 4.5,
-      },
-      {
-        'title': "Hand Jewelry",
-        'price': "25,000 TSH",
-        'imageUrl': "assets/images/heinken.png",
-        'description':
-            "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
-        'rating': 4.5,
-      },
-      {
-        'title': "Pink Top",
-        'price': "25,000 TSH",
-        'imageUrl': "assets/images/greenwatch.png",
-        'description':
-            "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
-        'rating': 4.5,
-      },
-      {
-        'title': "Smart Watch",
-        'price': "25,000 TSH",
-        'imageUrl': "assets/images/jergens.png",
-        'description':
-            "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
-        'rating': 4.5,
-      },
-      {
-        'title': "Earrings",
-        'price': "25,000 TSH",
-        'imageUrl': "assets/images/rays.png",
-        'description':
-            "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
-        'rating': 4.5,
-      },
-      {
-        'title': "Braids",
-        'price': "25,000 TSH",
-        'imageUrl': "assets/images/kevita.png",
-        'description':
-            "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
-        'rating': 4.5,
-      },
-    ];
 
     return DefaultTabController(
       length: 2,
@@ -203,9 +154,11 @@ class ReelCard extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Image.asset(
-                    data['imageUrl'],
+                    (data['imageUrl'] as List<String>).isNotEmpty
+                        ? (data['imageUrl'] as List<String>).first
+                        : "assets/images/defaultImage.png", 
                     fit: BoxFit.cover,
-                    height: index.isEven ? 280 : 200, // Alternating heights
+                    height: index.isEven ? 280 : 200,
                   ),
                 ),
               ),
@@ -250,7 +203,7 @@ class ReelCard extends StatelessWidget {
                     // Profile Picture
                     CircleAvatar(
                       radius: 16,
-                      backgroundImage: AssetImage(data['imageUrl']),
+                      backgroundImage: AssetImage('assets/images/avatar.png'),
                     ),
                     SizedBox(width: 8),
                     // Username

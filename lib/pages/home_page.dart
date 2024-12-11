@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/pages/profile_page.dart';
 import 'package:e_online/pages/search_page.dart';
 import 'package:e_online/widgets/heading_text.dart';
@@ -18,89 +19,15 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentPage = 0;
-   final List<String> carouselImages = [
-      "assets/images/hometanks.png",
-      "assets/images/hometanks.png",
-      "assets/images/hometanks.png",
-      "assets/images/hometanks.png",
-    ];
+  final List<String> carouselImages = [
+    "assets/images/homePromo.png",
+    "assets/images/homePromo.png",
+    "assets/images/homePromo.png",
+    "assets/images/homePromo.png",
+  ];
 
   @override
   Widget build(BuildContext context) {
-
-    final List<Map<dynamic, dynamic>> productItems = [
-      {
-        'title': "J.Crew T-shirt",
-        'price': "25,000 TSH",
-        'imageUrl': [
-          "assets/images/coloredTop.png",
-          "assets/images/coloredTop.png",
-          "assets/images/coloredTop.png",
-          "assets/images/coloredTop.png",
-        ],
-        'category': "clothes",
-        'rating': 4.5,
-      },
-      {
-        'title': "J.Crew T-shirt",
-        'price': "25,000 TSH",
-        'imageUrl': [
-          "assets/images/handJewerly.png",
-          "assets/images/handJewerly.png",
-          "assets/images/handJewerly.png",
-          "assets/images/handJewerly.png",
-        ],
-        'category': "Accessories",
-        'rating': 4.5,
-      },
-      {
-        'title': "J.Crew T-shirt",
-        'price': "25,000 TSH",
-        'imageUrl': [
-          "assets/images/pinkTop.png",
-          "assets/images/pinkTop.png",
-          "assets/images/pinkTop.png",
-          "assets/images/pinkTop.png",
-        ],
-        'category': "clothes",
-        'rating': 4.5,
-      },
-      {
-        'title': "J.Crew T-shirt",
-        'price': "25,000 TSH",
-        'imageUrl': [
-          "assets/images/earrings.png",
-          "assets/images/earrings.png",
-          "assets/images/earrings.png",
-          "assets/images/earrings.png",
-        ],
-        'category': "Accessories",
-        'rating': 4.5,
-      },
-      {
-        'title': "J.Crew T-shirt",
-        'price': "25,000 TSH",
-        'imageUrl': [
-          "assets/images/braids.png",
-          "assets/images/braids.png",
-          "assets/images/braids.png",
-        ],
-        'category': "Decorations",
-        'rating': 4.5,
-      },
-      {
-        'title': "J.Crew T-shirt",
-        'price': "25,000 TSH",
-        'imageUrl': [
-          "assets/images/watch.png",
-          "assets/images/watch.png",
-          "assets/images/watch.png",
-        ],
-        'category': "Electronics",
-        'rating': 4.5,
-      },
-    ];
-
     final categories = [
       "All",
       "Electronics",
@@ -110,11 +37,12 @@ class _HomePageState extends State<HomePage> {
       "Appliances"
     ];
 
-    List<Map<dynamic, dynamic>> filterProducts(String category) {
+    List<Map<String, dynamic>> filterProducts(String category) {
       if (category == "All") return productItems;
       return productItems
           .where((product) =>
-              product['category'].toLowerCase() == category.toLowerCase())
+              (product['category'] ?? '').toLowerCase() ==
+              category.toLowerCase())
           .toList();
     }
 
@@ -159,85 +87,108 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
               spacer1(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  HeadingText("New Arrival"),
-                  ParagraphText(
-                    "See All",
-                    color: mutedTextColor,
-                    decoration: TextDecoration.underline,
-                  ),
-                ],
-              ),
-              spacer1(),
-              SizedBox(
-                height: 240,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: filteredProducts.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 16.0),
-                      child: ProductCard(data: filteredProducts[index]),
-                    );
-                  },
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ParagraphText("New Arrival",
+                                fontWeight: FontWeight.bold, fontSize: 15.0),
+                            ParagraphText("Filtered products for you"),
+                          ],
+                        ),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          color: mutedTextColor,
+                          size: 15,
+                        )
+                      ],
+                    ),
+                    spacer1(),
+                    SizedBox(
+                      height: 250,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: filteredProducts.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 16.0),
+                            child: ProductCard(data: filteredProducts[index]),
+                          );
+                        },
+                      ),
+                    ),
+                    spacer(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ParagraphText("For You",
+                                fontWeight: FontWeight.bold, fontSize: 15.0),
+                            ParagraphText("Filtered products for you"),
+                          ],
+                        ),
+                        ParagraphText(
+                          "See All",
+                          color: mutedTextColor,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ],
+                    ),
+                    spacer1(),
+                    SizedBox(
+                      height: 250,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: filteredProducts.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 16.0),
+                            child: ProductCard(data: filteredProducts[index]),
+                          );
+                        },
+                      ),
+                    ),
+                    spacer(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        HeadingText("All Products"),
+                        ParagraphText(
+                          "See All",
+                          color: mutedTextColor,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ],
+                    ),
+                    spacer1(),
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 16.0,
+                        mainAxisSpacing: 16.0,
+                        childAspectRatio: 0.65,
+                      ),
+                      itemCount: filteredProducts.length,
+                      itemBuilder: (context, index) {
+                        return ProductCard(
+                            data: filteredProducts[index], height: 175);
+                      },
+                    ),
+                    spacer(),
+                  ],
                 ),
               ),
-              spacer(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  HeadingText("For You"),
-                  ParagraphText(
-                    "See All",
-                    color: mutedTextColor,
-                    decoration: TextDecoration.underline,
-                  ),
-                ],
-              ),
-              spacer1(),
-              SizedBox(
-                height: 240,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: filteredProducts.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 16.0),
-                      child: ProductCard(data: filteredProducts[index]),
-                    );
-                  },
-                ),
-              ),
-              spacer(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  HeadingText("All Products"),
-                  ParagraphText(
-                    "See All",
-                    color: mutedTextColor,
-                    decoration: TextDecoration.underline,
-                  ),
-                ],
-              ),
-              spacer1(),
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16.0,
-                  mainAxisSpacing: 16.0,
-                  childAspectRatio: 0.65,
-                ),
-                itemCount: filteredProducts.length,
-                itemBuilder: (context, index) {
-                  return ProductCard(data: filteredProducts[index]);
-                },
-              ),
-              spacer(),
             ],
           ),
         ),
@@ -286,8 +237,7 @@ class _HomePageState extends State<HomePage> {
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.shopping_bag_outlined,
-                  color: Colors.black, size: 28),
+              icon: const Icon(Icons.shopping_bag_outlined, size: 24),
               onPressed: () {},
             ),
             IconButton(
@@ -296,7 +246,7 @@ class _HomePageState extends State<HomePage> {
               },
               icon: Icon(Icons.search),
             ),
-            GestureDetector(
+            InkWell(
               onTap: () {
                 Get.to(ProfilePage());
               },
@@ -319,15 +269,11 @@ class _HomePageState extends State<HomePage> {
         ),
         body: TabBarView(
           children: categories.map((category) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: buildProductList(category),
-            );
+            return buildProductList(category);
           }).toList(),
         ),
       ),
     );
-    
   }
 
   carouselIndicator() {

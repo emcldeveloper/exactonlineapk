@@ -1,0 +1,254 @@
+final List<Map<String, dynamic>> productItems = [
+  {
+    'title': "J.Crew T-shirt",
+    'price': "25,000 TSH",
+    'imageUrl': [
+      "assets/images/coloredTop.png",
+      "assets/images/coloredTop.png",
+      "assets/images/coloredTop.png",
+      "assets/images/coloredTop.png",
+    ],
+    'category': "clothes",
+    'rating': 4.5,
+    'size': "2xl",
+    'color': "Black",
+  },
+  {
+    'title': "J.Crew T-shirt",
+    'price': "25,000 TSH",
+    'imageUrl': [
+      "assets/images/handJewerly.png",
+      "assets/images/handJewerly.png",
+      "assets/images/handJewerly.png",
+      "assets/images/handJewerly.png",
+    ],
+    'category': "Accessories",
+    'rating': 4.5,
+    'size': "2xl",
+    'color': "Black",
+  },
+  {
+    'title': "J.Crew T-shirt",
+    'price': "25,000 TSH",
+    'imageUrl': [
+      "assets/images/pinkTop.png",
+      "assets/images/pinkTop.png",
+      "assets/images/pinkTop.png",
+      "assets/images/pinkTop.png",
+    ],
+    'category': "clothes",
+    'rating': 4.5,
+    'size': "2xl",
+    'color': "Black",
+  },
+  {
+    'title': "J.Crew T-shirt",
+    'price': "25,000 TSH",
+    'imageUrl': [
+      "assets/images/earrings.png",
+      "assets/images/earrings.png",
+      "assets/images/earrings.png",
+      "assets/images/earrings.png",
+    ],
+    'category': "Accessories",
+    'rating': 4.5,
+    'size': "2xl",
+    'color': "Black",
+  },
+  {
+    'title': "J.Crew T-shirt",
+    'price': "25,000 TSH",
+    'imageUrl': [
+      "assets/images/braids.png",
+      "assets/images/braids.png",
+      "assets/images/braids.png",
+    ],
+    'category': "Decorations",
+    'rating': 4.5,
+    'size': "2xl",
+    'color': "Black",
+  },
+  {
+    'title': "J.Crew T-shirt",
+    'price': "25,000 TSH",
+    'imageUrl': [
+      "assets/images/watch.png",
+      "assets/images/watch.png",
+      "assets/images/watch.png",
+    ],
+    'category': "Electronics",
+    'rating': 4.5,
+    'size': "2xl",
+    'color': "Black",
+  },
+  {
+    'title': "J.Crew T-shirt",
+    'price': "25,000 TSH",
+    'imageUrl': [
+      "assets/images/watch1.png",
+      "assets/images/watch2.png",
+      "assets/images/watch1.png",
+      "assets/images/watch3.png",
+    ],
+    'category': "Electronics",
+    'rating': 4.5,
+    'size': "2xl",
+    'color': "Black",
+  },
+  {
+    'title': "J.Crew T-shirt",
+    'price': "25,000 TSH",
+    'imageUrl': [
+      "assets/images/whitejacket.png",
+      "assets/images/coloredTop.png",
+      "assets/images/whitejacket.png",
+      "assets/images/coloredTop.png",
+    ],
+    'category': "clothes",
+    'rating': 4.5,
+    'size': "2xl",
+    'color': "Black",
+  },
+  {
+    'title': "J.Crew T-shirt",
+    'price': "25,000 TSH",
+    'imageUrl': [
+      "assets/images/shoes.png",
+      "assets/images/shoes.png",
+      "assets/images/shoes.png",
+      "assets/images/shoes.png",
+    ],
+    'category': "shoes",
+    'rating': 4.5,
+    'size': "2xl",
+    'color': "Black",
+  },
+  {
+    'title': "J.Crew T-shirt",
+    'price': "25,000 TSH",
+    'imageUrl': ["assets/images/braids.png"],
+    'description':
+        "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
+    'rating': 4.5,
+    'size': "2xl",
+    'color': "Black",
+  },
+  {
+    'title': "Hand Jewelry",
+    'price': "25,000 TSH",
+    'imageUrl': ["assets/images/heinken.png"],
+    'description':
+        "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
+    'rating': 4.5,
+    'size': "2xl",
+    'color': "Black",
+  },
+  {
+    'title': "Pink Top",
+    'price': "25,000 TSH",
+    'imageUrl': ["assets/images/greenwatch.png"],
+    'description':
+        "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
+    'rating': 4.5,
+    'size': "2xl",
+    'color': "Black",
+  },
+  {
+    'title': "Smart Watch",
+    'price': "25,000 TSH",
+    'imageUrl': ["assets/images/jergens.png"],
+    'description':
+        "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
+    'rating': 4.5,
+    'size': "2xl",
+    'color': "Black",
+  },
+  {
+    'title': "Earrings",
+    'price': "25,000 TSH",
+    'imageUrl': ["assets/images/rays.png"],
+    'description':
+        "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
+    'rating': 4.5,
+    'size': "2xl",
+    'color': "Black",
+  },
+  {
+    'title': "Braids",
+    'price': "25,000 TSH",
+    'imageUrl': ["assets/images/kevita.png"],
+    'description':
+        "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
+    'rating': 4.5,
+    'size': "2xl",
+    'color': "Black",
+  },
+];
+
+final List<Map<String, dynamic>> orderItems = [
+  {
+    'orderNo': "#0001",
+    'customer': "From Juma James",
+    'time': "2 days ago",
+    'status': "Pending"
+  },
+  {
+    'orderNo': "#0001",
+    'customer': "From Juma James",
+    'time': "2 days ago",
+    'status': "Completed"
+  },
+  {
+    'orderNo': "#0001",
+    'customer': "From Juma James",
+    'time': "2 days ago",
+    'status': "Completed"
+  },
+  {
+    'orderNo': "#0001",
+    'customer': "From Juma James",
+    'time': "2 days ago",
+    'status': "Completed"
+  },
+  {
+    'orderNo': "#0001",
+    'customer': "From Juma James",
+    'time': "2 days ago",
+    'status': "Completed"
+  },
+  {
+    'orderNo': "#0001",
+    'customer': "From Juma James",
+    'time': "2 days ago",
+    'status': "Completed"
+  },
+  {
+    'orderNo': "#0001",
+    'customer': "From Juma James",
+    'time': "2 days ago",
+    'status': "Completed"
+  },
+  {
+    'orderNo': "#0001",
+    'customer': "From Juma James",
+    'time': "2 days ago",
+    'status': "Completed"
+  },
+];
+
+  final List<Map<String, dynamic>> categories = [
+    {'name': 'Electronics', 'imageUrl': 'assets/images/electronics.png'},
+    {'name': 'Accessories', 'imageUrl': 'assets/images/diamond.png'},
+    {'name': 'Clothes', 'imageUrl': 'assets/images/clothes.png'},
+    {'name': 'Shoes', 'imageUrl': 'assets/images/pinksneakers.png'},
+    {'name': 'Toys & Hobbies', 'imageUrl': 'assets/images/toy.png'},
+    {'name': 'Tools', 'imageUrl': 'assets/images/tools.png'},
+    {'name': 'Automotive', 'imageUrl': 'assets/images/scooter.png'},
+    {'name': 'Beauty', 'imageUrl': 'assets/images/beautifulwoman.png'},
+    {'name': 'Health', 'imageUrl': 'assets/images/hospital.png'},
+    {'name': 'Kids', 'imageUrl': 'assets/images/youngkids.png'},
+    {'name': 'Mothers', 'imageUrl': 'assets/images/motherandbaby.png'},
+    {'name': 'Security', 'imageUrl': 'assets/images/Datasecurity.png'},
+    {'name': 'Protection', 'imageUrl': 'assets/images/protect.png'},
+    {'name': 'Cars', 'imageUrl': 'assets/images/smartcar.png'},
+  ];

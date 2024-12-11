@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:icons_plus/icons_plus.dart';
 
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+class EditProfilePage extends StatelessWidget {
+  const EditProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,7 @@ class ProfilePage extends StatelessWidget {
       backgroundColor: mainColor,
       appBar: AppBar(
         backgroundColor: mainColor,
-        leading: GestureDetector(
+        leading: InkWell(
             onTap: () {
               Get.back();
             },
@@ -43,120 +43,134 @@ class ProfilePage extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              ClipOval(
-                child: Container(
-                  height: 80,
-                  width: 80,
-                  child: Stack(
-                    children: [
-                      Image.asset(
+              Container(
+                height: 80,
+                width: 80,
+                child: Stack(
+                  children: [
+                    ClipOval(
+                      child: Image.asset(
                         "assets/images/avatar.png",
                         height: 80,
                         width: 80,
                         fit: BoxFit.cover,
                       ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Icon(
-                          AntDesign.edit_fill,
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        decoration: BoxDecoration(
                           color: Colors.black,
-                          size: 24.0,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Center(
+                          child: Icon(
+                            AntDesign.edit_fill,
+                            color: Colors.white,
+                            size: 22.0,
+                          ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
               spacer1(),
-              ParagraphText(
-                "Username",
-                fontWeight: FontWeight.bold,
-              ),
-              TextFormField(
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                  fillColor: primaryColor,
-                  filled: true,
-                  labelStyle: TextStyle(color: Colors.black, fontSize: 12),
-                  border: OutlineInputBorder(),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: primaryColor,
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ParagraphText(
+                    "Username",
+                    fontWeight: FontWeight.bold,
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.transparent,
+                  spacer(),
+                  TextFormField(
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      fillColor: primaryColor,
+                      filled: true,
+                      labelStyle: TextStyle(color: Colors.black, fontSize: 12),
+                      border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: primaryColor,
+                        ),
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.transparent,
+                        ),
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      ),
+                      hintText: "Enter business name",
+                      hintStyle: TextStyle(color: Colors.black, fontSize: 12),
                     ),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   ),
-                  hintText: "Enter business name",
-                  hintStyle: TextStyle(color: Colors.black, fontSize: 12),
-                ),
-              ),
-              spacer(),
-              ParagraphText(
-                "Phone number",
-                fontWeight: FontWeight.bold,
-              ),
-              TextFormField(
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                  fillColor: primaryColor,
-                  filled: true,
-                  labelStyle: TextStyle(color: Colors.black, fontSize: 12),
-                  border: OutlineInputBorder(),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: primaryColor,
+                  spacer(),
+                  ParagraphText(
+                    "Phone number",
+                    fontWeight: FontWeight.bold,
+                  ),
+                  spacer(),
+                  TextFormField(
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      fillColor: primaryColor,
+                      filled: true,
+                      labelStyle: TextStyle(color: Colors.black, fontSize: 12),
+                      border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: primaryColor,
+                        ),
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.transparent,
+                        ),
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      ),
+                      hintText: "Enter phone number",
+                      hintStyle: TextStyle(color: Colors.black, fontSize: 12),
                     ),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.transparent,
+                  spacer(),
+                  ParagraphText(
+                    "Email address (optional)",
+                    fontWeight: FontWeight.bold,
+                  ),
+                  spacer(),
+                  TextFormField(
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      fillColor: primaryColor,
+                      filled: true,
+                      labelStyle: TextStyle(color: Colors.black, fontSize: 12),
+                      border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: primaryColor,
+                        ),
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.transparent,
+                        ),
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      ),
+                      hintText: "Enter business address",
+                      hintStyle: TextStyle(color: Colors.black, fontSize: 12),
                     ),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   ),
-                  hintText: "Enter phone number",
-                  hintStyle: TextStyle(color: Colors.black, fontSize: 12),
-                ),
+                ],
               ),
-              spacer(),
-              ParagraphText(
-                "Email address (optional)",
-                fontWeight: FontWeight.bold,
-              ),
-              TextFormField(
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                  fillColor: primaryColor,
-                  filled: true,
-                  labelStyle: TextStyle(color: Colors.black, fontSize: 12),
-                  border: OutlineInputBorder(),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: primaryColor,
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.transparent,
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                  ),
-                  hintText: "Enter business address",
-                  hintStyle: TextStyle(color: Colors.black, fontSize: 12),
-                ),
-              ),
-              spacer1(),
+              spacer3(),
               customButton(
-                onTap: () {
-                  Get.to(() => ProfilePage());
-                },
+                onTap: () {},
                 text: "Save Changes",
               ),
             ],

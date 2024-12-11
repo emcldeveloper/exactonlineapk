@@ -1,84 +1,55 @@
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/pages/add_product_page.dart';
+import 'package:e_online/pages/add_reel_page.dart';
+import 'package:e_online/pages/create_ad_page.dart';
+import 'package:e_online/pages/reels_page.dart';
+import 'package:e_online/widgets/ad_card.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/horizontal_product_card.dart';
+import 'package:e_online/widgets/order_card.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class MyShopPage extends StatelessWidget {
+class MyShopPage extends StatefulWidget {
   const MyShopPage({super.key});
 
   @override
+  _MyShopPageState createState() => _MyShopPageState();
+}
+
+class _MyShopPageState extends State<MyShopPage> {
+  final List<Map<String, dynamic>> tilesItems = [
+    {'points': "248", 'title': "Impressions"},
+    {'points': "88", 'title': "Clicks"},
+    {'points': "49", 'title': "Shares"},
+    {'points': "23", 'title': "Calls"},
+    {'points': "982", 'title': "Likes"},
+    {'points': "20", 'title': "Profile Views"},
+  ];
+
+  final navCategories = [
+    "Shop Products",
+    "Reels",
+    "My Orders",
+    "Promoted",
+    "Ads",
+  ];
+
+  int _currentIndex = 0;
+
+  @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> tilesItems = [
-      {'points': "248", 'title': "Impressions"},
-      {'points': "88", 'title': "Clicks"},
-      {'points': "49", 'title': "Shares"},
-      {'points': "23", 'title': "Calls"},
-      {'points': "982", 'title': "Likes"},
-      {'points': "20", 'title': "Profile Views"},
-    ];
-
-    final List<Map<String, dynamic>> productItems = [
-      {
-        'title': "J.Crew T-shirt",
-        'price': "25,000 TSH",
-        'imageUrl': "assets/images/teal_tshirt.png",
-        'description': "Short description of the product.",
-        'rating': 4.5,
-      },
-      {
-        'title': "J.Crew T-shirt",
-        'price': "25,000 TSH",
-        'imageUrl': "assets/images/teal_tshirt.png",
-        'description':
-            "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
-        'rating': 4.5,
-      },
-      {
-        'title': "J.Crew T-shirt",
-        'price': "25,000 TSH",
-        'imageUrl': "assets/images/red_tshirt.png",
-        'description':
-            "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
-        'rating': 4.5,
-      },
-      {
-        'title': "J.Crew T-shirt",
-        'price': "25,000 TSH",
-        'imageUrl': "assets/images/black_tshirt.png",
-        'description':
-            "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
-        'rating': 4.5,
-      },
-      {
-        'title': "J.Crew T-shirt",
-        'price': "25,000 TSH",
-        'imageUrl': "assets/images/green_tshirt.png",
-        'description':
-            "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
-        'rating': 4.5,
-      },
-    ];
-
-    final navCategories = [
-      "Shop Products",
-      "Reels",
-      "My Orders",
-      "Promoted",
-      "Ads",
-    ];
-
     return DefaultTabController(
       length: navCategories.length,
       child: Scaffold(
         backgroundColor: mainColor,
         appBar: AppBar(
           backgroundColor: mainColor,
-          leading: GestureDetector(
+          leading: InkWell(
             onTap: () => Get.back(),
             child: Icon(
               Icons.arrow_back_ios_new_outlined,
@@ -86,30 +57,15 @@ class MyShopPage extends StatelessWidget {
               size: 14.0,
             ),
           ),
-          title: HeadingText("E-Online"),
+          title: HeadingText("My Shop"),
+          centerTitle: true,
           actions: [
             Icon(
               Icons.settings_outlined,
-              size: 16.0,
+              size: 20.0,
             ),
             const SizedBox(width: 16),
           ],
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(48.0),
-            child: TabBar(
-              isScrollable: true,
-              labelColor: Colors.black,
-              unselectedLabelColor: Colors.black.withOpacity(0.5),
-              labelStyle: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
-              indicatorColor: Colors.black,
-              tabs: navCategories.map((category) {
-                return Tab(text: category);
-              }).toList(),
-            ),
-          ),
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -123,7 +79,7 @@ class MyShopPage extends StatelessWidget {
                     children: [
                       ParagraphText(
                         item['points'],
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w700,
                       ),
                       ParagraphText(item['title']),
                     ],
@@ -132,28 +88,40 @@ class MyShopPage extends StatelessWidget {
               ),
               spacer1(),
               customButton(
-                onTap: () {
-                  Get.to(() => const AddProductPage());
-                },
-                text: "Add New Product",
+                onTap: () => handleButtonAction(),
+                text: getButtonText(),
                 vertical: 8.0,
               ),
               spacer1(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  HeadingText("My Products (${productItems.length})"),
-                  const Icon(Icons.menu_open_sharp),
-                ],
+              PreferredSize(
+                preferredSize: const Size.fromHeight(48.0),
+                child: TabBar(
+                  onTap: (index) {
+                    setState(() {
+                      _currentIndex = index;
+                    });
+                  },
+                  isScrollable: true,
+                  tabAlignment: TabAlignment.start,
+                  labelColor: Colors.black,
+                  unselectedLabelColor: Colors.black.withOpacity(0.5),
+                  labelStyle: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  indicatorColor: Colors.black,
+                  tabs: navCategories.map((category) {
+                    return Tab(text: category);
+                  }).toList(),
+                ),
               ),
-              spacer(),
-              // TabBarView
+              spacer1(),
               Expanded(
                 child: TabBarView(
                   children: navCategories.map((category) {
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: buildProductList(productItems),
+                      child: buildPageContent(),
                     );
                   }).toList(),
                 ),
@@ -163,6 +131,81 @@ class MyShopPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String getButtonText() {
+    switch (_currentIndex) {
+      case 0:
+        return "Add New Product";
+      case 1:
+        return "Add Reel";
+      case 2:
+        return "Add Order";
+      case 3:
+        return "Promote Product";
+      case 4:
+        return "Create Ad";
+      default:
+        return "Action";
+    }
+  }
+
+  void handleButtonAction() {
+    switch (_currentIndex) {
+      case 0:
+        Get.to(() => const AddProductPage());
+        break;
+      case 1:
+        Get.to(() => const AddReelPage());
+        break;
+      case 2:
+        Get.to(() => const AddProductPage());
+        break;
+      case 3:
+        // Implement Promote Product action
+        break;
+      case 4:
+        Get.to(() => const CreateAdPage());
+        break;
+    }
+  }
+
+  Widget buildPageContent() {
+    switch (_currentIndex) {
+      case 0:
+        return buildProductList(productItems);
+      case 1:
+        return ProductMasonryGrid(productItems: productItems);
+      case 2:
+        return SingleChildScrollView(
+          child: Column(
+            children: orderItems.map((item) {
+              return Column(
+                children: [
+                  OrderCard(data: item),
+                  spacer1(),
+                ],
+              );
+            }).toList(),
+          ),
+        );
+      case 3:
+        return Center(child: ParagraphText("Promoted content here"));
+      case 4:
+        return ListView.builder(
+          itemCount: productItems.length,
+          itemBuilder: (context, index) {
+            return Column(
+              children: [
+                AdCard(data: productItems[index]),
+                spacer1(),
+              ],
+            );
+          },
+        );
+      default:
+        return Container();
+    }
   }
 
   Widget buildProductList(List<Map<String, dynamic>> productItems) {

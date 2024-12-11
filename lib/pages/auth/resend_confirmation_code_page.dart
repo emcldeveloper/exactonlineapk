@@ -73,7 +73,7 @@ class ResendConfirmationCodePage extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ParagraphText("Need to go back ? ", fontSize: 12),
+                  ParagraphText("Need to go back ? "),
                   SizedBox(width: 5),
                   GestureDetector(
                     onTap: () {
@@ -81,7 +81,6 @@ class ResendConfirmationCodePage extends StatelessWidget {
                     },
                     child: ParagraphText(
                       "Login",
-                      fontSize: 12,
                       fontWeight: FontWeight.bold,
                       color: secondaryColor,
                     ),

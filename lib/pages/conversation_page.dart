@@ -1,5 +1,6 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/widgets/heading_text.dart';
+import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,8 +12,8 @@ class ConversationPage extends StatefulWidget {
 }
 
 class _ConversationPageState extends State<ConversationPage> {
-  final Map<dynamic, dynamic> chatData =
-      Get.arguments as Map<dynamic, dynamic>? ?? {};
+  final Map<String, dynamic> chatData =
+      Get.arguments as Map<String, dynamic>? ?? {};
   final List<String> messages = [];
   final TextEditingController _messageController = TextEditingController();
 
@@ -32,7 +33,7 @@ class _ConversationPageState extends State<ConversationPage> {
       backgroundColor: mainColor,
       appBar: AppBar(
         backgroundColor: mainColor,
-        leading: GestureDetector(
+        leading: InkWell(
           onTap: () {
             Get.back();
           },
@@ -105,6 +106,7 @@ class _ConversationPageState extends State<ConversationPage> {
                         fillColor: primaryColor,
                         filled: true,
                         hintText: "Write your message here",
+                        hintStyle: TextStyle(fontSize: 12.0),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(16.0),
                         ),
@@ -112,26 +114,39 @@ class _ConversationPageState extends State<ConversationPage> {
                           borderSide: BorderSide(
                             color: primaryColor,
                           ),
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                          borderRadius: BorderRadius.all(Radius.circular(30.0)),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(
                             color: Colors.transparent,
                           ),
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                          borderRadius: BorderRadius.all(Radius.circular(30.0)),
                         ),
                       ),
                     ),
                   ),
-                  IconButton(
-                    icon:
-                        Icon(Icons.send, color: Theme.of(context).primaryColor),
-                    onPressed: _sendMessage,
+                  SizedBox(
+                    width: 8,
                   ),
+                  InkWell(
+                      onTap: _sendMessage,
+                      child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(13.0),
+                            child: Transform.rotate(
+                                angle: 5.5,
+                                child: Icon(Icons.send_outlined,
+                                    color: Colors.white)),
+                          ))),
                 ],
               ),
             ),
           ),
+          spacer1(),
         ],
       ),
     );

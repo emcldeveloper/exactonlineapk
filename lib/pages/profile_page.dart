@@ -1,5 +1,6 @@
 import 'package:e_online/constants/colors.dart';
-import 'package:e_online/pages/auth/login_page.dart';
+import 'package:e_online/pages/customer_support_page.dart';
+import 'package:e_online/pages/edit_profile_page.dart';
 import 'package:e_online/pages/join_as_seller_page.dart';
 import 'package:e_online/pages/my_orders_page.dart';
 import 'package:e_online/widgets/custom_button.dart';
@@ -16,7 +17,7 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Map<String, dynamic>> settingItems = [
-       {
+      {
         'icon': AntDesign.shopping_outline,
         'title': 'My Orders',
         'page': MyOrdersPage(),
@@ -24,12 +25,12 @@ class ProfilePage extends StatelessWidget {
       {
         'icon': AntDesign.user_outline,
         'title': 'Edit Profile',
-        'page': ProfilePage(),
+        'page': EditProfilePage(),
       },
       {
         'icon': Icons.notifications_outlined,
         'title': 'Customer Support',
-        'page': LoginPage(),
+        'page': CustomerSupportPage(),
       },
       {
         'icon': Icons.motorcycle,
@@ -47,7 +48,7 @@ class ProfilePage extends StatelessWidget {
       backgroundColor: mainColor,
       appBar: AppBar(
         backgroundColor: mainColor,
-        leading: GestureDetector(
+        leading: InkWell(
           onTap: () => Get.back(),
           child: Icon(
             Icons.arrow_back_ios_new_outlined,
@@ -69,29 +70,37 @@ class ProfilePage extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              ClipOval(
-                child: Container(
-                  height: 80,
-                  width: 80,
-                  child: Stack(
-                    children: [
-                      Image.asset(
+              Container(
+                height: 80,
+                width: 80,
+                child: Stack(
+                  children: [
+                    ClipOval(
+                      child: Image.asset(
                         "assets/images/avatar.png",
                         height: 80,
                         width: 80,
                         fit: BoxFit.cover,
                       ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Icon(
-                          AntDesign.edit_fill,
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        decoration: BoxDecoration(
                           color: Colors.black,
-                          size: 24.0,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Center(
+                          child: Icon(
+                            AntDesign.edit_outline,
+                            color: Colors.white,
+                            size: 22.0,
+                          ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
               spacer1(),
@@ -104,7 +113,7 @@ class ProfilePage extends StatelessWidget {
               spacer(),
               Column(
                 children: settingItems.map((item) {
-                  return GestureDetector(
+                  return InkWell(
                     onTap: () {
                       Get.to(() => item['page'] as Widget);
                     },
@@ -116,7 +125,10 @@ class ProfilePage extends StatelessWidget {
                           const SizedBox(width: 10),
                           Expanded(child: ParagraphText(item['title'])),
                           const Spacer(),
-                          Icon(Icons.arrow_forward_ios),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            size: 15,
+                          ),
                         ],
                       ),
                     ),

@@ -85,7 +85,7 @@ class _AddProductPageState extends State<AddProductPage> {
       backgroundColor: mainColor,
       appBar: AppBar(
         backgroundColor: mainColor,
-        leading: GestureDetector(
+        leading: InkWell(
           onTap: () => Get.back(),
           child: Container(
             color: Colors.transparent,
@@ -320,7 +320,175 @@ class _AddProductPageState extends State<AddProductPage> {
                   ),
                 ],
               ),
-              spacer(),
+              spacer1(),
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ParagraphText(
+                          "RAM",
+                          fontWeight: FontWeight.bold,
+                        ),
+                        spacer(),
+                        TextFormField(
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            fillColor: Colors.grey[200],
+                            filled: true,
+                            labelStyle: const TextStyle(
+                                color: Colors.black, fontSize: 12),
+                            border: const OutlineInputBorder(),
+                            focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.teal,
+                              ),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                            ),
+                            enabledBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.transparent,
+                              ),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                            ),
+                            hintText: "Enter value",
+                            hintStyle: const TextStyle(
+                                color: Colors.black, fontSize: 12),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ParagraphText(
+                          "STORAGE",
+                          fontWeight: FontWeight.bold,
+                        ),
+                        spacer(),
+                        TextFormField(
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            fillColor: Colors.grey[200],
+                            filled: true,
+                            labelStyle: const TextStyle(
+                                color: Colors.black, fontSize: 12),
+                            border: const OutlineInputBorder(),
+                            focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.teal,
+                              ),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                            ),
+                            enabledBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.transparent,
+                              ),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                            ),
+                            hintText: "Enter value",
+                            hintStyle: const TextStyle(
+                                color: Colors.black, fontSize: 12),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              spacer1(),
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ParagraphText(
+                          "MODEL",
+                          fontWeight: FontWeight.bold,
+                        ),
+                        spacer(),
+                        TextFormField(
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            fillColor: Colors.grey[200],
+                            filled: true,
+                            labelStyle: const TextStyle(
+                                color: Colors.black, fontSize: 12),
+                            border: const OutlineInputBorder(),
+                            focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.teal,
+                              ),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                            ),
+                            enabledBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.transparent,
+                              ),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                            ),
+                            hintText: "Enter value",
+                            hintStyle: const TextStyle(
+                                color: Colors.black, fontSize: 12),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ParagraphText(
+                          "COLOR",
+                          fontWeight: FontWeight.bold,
+                        ),
+                        spacer(),
+                        TextFormField(
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            fillColor: Colors.grey[200],
+                            filled: true,
+                            labelStyle: const TextStyle(
+                                color: Colors.black, fontSize: 12),
+                            border: const OutlineInputBorder(),
+                            focusedBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.teal,
+                              ),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                            ),
+                            enabledBorder: const OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.transparent,
+                              ),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10.0)),
+                            ),
+                            hintText: "Enter value",
+                            hintStyle: const TextStyle(
+                                color: Colors.black, fontSize: 12),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              spacer1(),
               ParagraphText(
                 "Product description",
                 fontWeight: FontWeight.bold,

@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 class ChatPage extends StatelessWidget {
   ChatPage({super.key});
 
-  final List<Map<dynamic, dynamic>> chatItems = [
+  final List<Map<String, dynamic>> chatItems = [
     {
       'avatar': "assets/images/avatar.png",
       'name': "James Jackson",
@@ -114,10 +114,9 @@ class ChatPage extends StatelessWidget {
             children: chatItems.map((chat) {
               return GestureDetector(
                 onTap: () {
-                  // Navigate to ConversationPage with data
                   Get.toNamed('/conversation', arguments: chat);
                 },
-                child: ChatCard(chat),
+                child: chatCard(chat),
               );
             }).toList(),
           ),

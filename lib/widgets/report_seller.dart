@@ -50,7 +50,7 @@ class ReportSellerBottomSheet extends StatelessWidget {
             spacer1(),
             TextFormField(
               keyboardType: TextInputType.multiline,
-              maxLines: 5,
+              maxLines: 4,
               decoration: InputDecoration(
                 fillColor: primaryColor,
                 filled: true,

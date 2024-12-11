@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: "E-Online",
-      theme: ThemeData(textTheme: GoogleFonts.figtreeTextTheme()),
+      theme: ThemeData(textTheme: GoogleFonts.interTextTheme()),
       home: FutureBuilder(
         future: Future.delayed(const Duration(seconds: 4)),
         builder: (context, snapshot) {

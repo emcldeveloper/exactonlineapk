@@ -86,7 +86,7 @@ class _HorizontalProductCardState extends State<HorizontalProductCard> {
                   borderRadius: BorderRadius.circular(16),
                   image: widget.data['imageUrl'] != null
                       ? DecorationImage(
-                          image: AssetImage(widget.data['imageUrl']),
+                          image: AssetImage(widget.data['imageUrl'][0]),
                           fit: BoxFit.cover,
                         )
                       : null,

@@ -75,7 +75,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         HeadingText(
                           data["title"]!,
                           fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
                           textAlign: TextAlign.center,
                         ),
                         spacer1(),
@@ -83,6 +82,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           data["description"]!,
                           color: mutedTextColor,
                           textAlign: TextAlign.center,
+                          fontSize: 15.0,
                         ),
                       ],
                     ),
@@ -118,6 +118,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     },
                     child: ParagraphText(
                       "Skip",
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   ElevatedButton(
@@ -138,10 +139,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(15),
                       ),
                     ),
-                    child: ParagraphText("Next", color: Colors.white),
+                    child: ParagraphText(
+                      "Next",
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ],
               ),

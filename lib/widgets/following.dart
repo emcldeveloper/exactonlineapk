@@ -1,3 +1,4 @@
+import 'package:e_online/pages/seller_profile_page.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
@@ -93,29 +94,43 @@ Widget ReelsFollowingTab() {
         ),
         itemCount: profiles.length,
         itemBuilder: (context, index) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              ClipOval(
-                child: Container(
-                  height: 80,
-                  width: 80,
-                  child: Image.asset(
-                    profiles[index]['imageUrl'],
+          return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SellerProfilePage(
+                      name: profiles[index]['name'],
+                      followers: profiles[index]['followers'],
+                      imageUrl: profiles[index]['imageUrl'],
+                    ),
+                  ),
+                );
+              },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                ClipOval(
+                  child: Container(
                     height: 80,
                     width: 80,
-                    fit: BoxFit.cover,
+                    child: Image.asset(
+                      profiles[index]['imageUrl'],
+                      height: 80,
+                      width: 80,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
-              ),
-              spacer(),
-              ParagraphText(
-                profiles[index]['name'],
-                fontWeight: FontWeight.bold,
-              ),
-              spacer(),
-              ParagraphText(profiles[index]['followers']),
-            ],
+                spacer(),
+                ParagraphText(
+                  profiles[index]['name'],
+                  fontWeight: FontWeight.bold,
+                ),
+                spacer(),
+                ParagraphText(profiles[index]['followers']),
+              ],
+            ),
           );
         },
       ),

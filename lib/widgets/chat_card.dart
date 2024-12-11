@@ -5,22 +5,19 @@ import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-Widget ChatCard(Map<dynamic, dynamic> message) {
+Widget chatCard(Map<String, dynamic> message) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 8.0),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        // Avatar with image
         CircleAvatar(
           radius: 24,
           backgroundImage: AssetImage(
-            message['avatar'] ??
-                'assets/images/default_avatar.png', // Default image
+            message['avatar'] ?? 'assets/images/default_avatar.png',
           ),
         ),
         const SizedBox(width: 12),
-        // Name and message column
         Expanded(
           child: GestureDetector(
             onTap: () {
@@ -32,28 +29,17 @@ Widget ChatCard(Map<dynamic, dynamic> message) {
                 ParagraphText(
                   message['name'] ?? 'Unknown',
                   fontWeight: FontWeight.bold,
+                  fontSize: 14.0,
                 ),
                 spacer(),
                 ParagraphText(
                   message['message'] ?? '',
                   color: mutedTextColor,
-                  maxLines: 1,
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        // Arrow icon
-        GestureDetector(
-          onTap: () {
-            Get.to(() => ConversationPage(), arguments: message);
-          },
-          child: Icon(
-            Icons.arrow_forward_ios_outlined,
-            color: mutedTextColor,
-            size: 16,
           ),
         ),
       ],

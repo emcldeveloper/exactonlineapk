@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class PromotedProductViewPage extends StatefulWidget {
-  final Map<dynamic, dynamic> productData;
+  final Map<String, dynamic> productData;
 
   const PromotedProductViewPage({required this.productData, Key? key})
       : super(key: key);
@@ -40,7 +40,7 @@ class _ProductPageState extends State<PromotedProductViewPage> {
       backgroundColor: mainColor,
       appBar: AppBar(
         backgroundColor: mainColor,
-        leading: GestureDetector(
+        leading: InkWell(
           onTap: () => Get.back(),
           child: Icon(
             Icons.arrow_back_ios_new_outlined,
