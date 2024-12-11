@@ -1,6 +1,7 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/pages/auth/login_page.dart';
 import 'package:e_online/pages/join_as_seller_page.dart';
+import 'package:e_online/pages/my_orders_page.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
@@ -15,6 +16,11 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Map<String, dynamic>> settingItems = [
+       {
+        'icon': AntDesign.shopping_outline,
+        'title': 'My Orders',
+        'page': MyOrdersPage(),
+      },
       {
         'icon': AntDesign.user_outline,
         'title': 'Edit Profile',

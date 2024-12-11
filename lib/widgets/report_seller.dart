@@ -1,23 +1,14 @@
 import 'package:e_online/constants/colors.dart';
-import 'package:e_online/pages/promoted_product_view_page.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
-class PaymentMethodBottomSheet extends StatelessWidget {
-  const PaymentMethodBottomSheet({super.key});
+class ReportSellerBottomSheet extends StatelessWidget {
+  const ReportSellerBottomSheet({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> paymentOptions = [
-      {'imageUrl': 'assets/images/airtel.png'},
-      {'imageUrl': 'assets/images/halopesa.png'},
-      {'imageUrl': 'assets/images/mixxbyYas.jpg'},
-      {'imageUrl': 'assets/images/mpesa.png'},
-    ];
-
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -46,38 +37,20 @@ class PaymentMethodBottomSheet extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ParagraphText(
-                        "Pay with mobile money",
+                        "Report this seller",
                         fontWeight: FontWeight.bold,
                       ),
-                      ParagraphText("Enter your phone number to pay", color: mutedTextColor),
+                      ParagraphText("Reasons for reporting this seller",
+                          color: mutedTextColor),
                     ],
-                  ),
-                ),
-                // Wrap the SizedBox in a Flexible widget to constrain its width
-                Flexible(
-                  child: Wrap(
-                    spacing: 16,
-                    runSpacing: 16,
-                    children: paymentOptions.map((option) {
-                      return Container(
-                        width: 70,
-                        height: 25,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Image.asset(
-                          option['imageUrl'],
-                          fit: BoxFit.contain,
-                        ),
-                      );
-                    }).toList(),
                   ),
                 ),
               ],
             ),
             spacer1(),
             TextFormField(
-              keyboardType: TextInputType.text,
+              keyboardType: TextInputType.multiline,
+              maxLines: 5,
               decoration: InputDecoration(
                 fillColor: primaryColor,
                 filled: true,
@@ -95,22 +68,14 @@ class PaymentMethodBottomSheet extends StatelessWidget {
                   ),
                   borderRadius: BorderRadius.all(Radius.circular(10.0)),
                 ),
-                hintText: "Write your phone number",
+                hintText: "Write reasons for reporting this seller",
                 hintStyle: TextStyle(color: Colors.black, fontSize: 12),
               ),
             ),
             spacer1(),
             customButton(
-              onTap: () {
-                Map<String, dynamic> productData = {
-                  "title": "Sample Product",
-                  "price": "TZS 250,000",
-                  "description": "This is a sample product.",
-                };
-
-                Get.to(() => PromotedProductViewPage(productData: productData));
-              },
-              text: "Pay",
+              onTap: () {},
+              text: "Submit Report",
             ),
             spacer2(),
           ],

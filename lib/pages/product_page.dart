@@ -4,6 +4,7 @@ import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/product_card.dart';
+import 'package:e_online/widgets/report_seller.dart';
 import 'package:e_online/widgets/reviews.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
@@ -137,6 +138,22 @@ class _ProductPageState extends State<ProductPage> {
     );
   }
 
+  void _showReportSellerBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: ReportSellerBottomSheet(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final List<Map<String, dynamic>> relatedItems = [
@@ -194,8 +211,15 @@ class _ProductPageState extends State<ProductPage> {
         title: HeadingText("Product Details"),
         centerTitle: true,
         actions: [
-          Icon(Icons.share),
-          SizedBox(width: 16),
+          IconButton(
+            icon: const Icon(Icons.shopping_bag_outlined,
+                color: Colors.black, size: 28),
+            onPressed: () {},
+          ),
+          IconButton(
+            icon: const Icon(Icons.share, color: Colors.black, size: 28),
+            onPressed: () {},
+          ),
         ],
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(1.0),
@@ -359,15 +383,31 @@ class _ProductPageState extends State<ProductPage> {
               ),
               spacer1(),
               customButton(
-                onTap: () => Get.to(() => const HomePage()),
-                text: "Call Seller",
+                onTap: () => Get.to(() =>  HomePage()),
+                text: "Add to Cart",
               ),
               spacer(),
               customButton(
-                onTap: () => Get.to(() => const HomePage()),
+                onTap: () => Get.to(() =>  HomePage()),
+                text: "Call Seller",
+                buttonColor: mutedTextColor,
+                textColor: primaryColor,
+              ),
+              spacer(),
+              customButton(
+                onTap: () => Get.to(() => HomePage()),
                 text: "Message Seller",
                 buttonColor: mutedTextColor,
                 textColor: primaryColor,
+              ),
+              spacer(),
+              customButton(
+                onTap: () {
+                  _showReportSellerBottomSheet;
+                },
+                text: "Report seller",
+                buttonColor: Colors.transparent,
+                textColor: Colors.red,
               ),
               spacer2(),
             ],

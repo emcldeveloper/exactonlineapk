@@ -22,6 +22,32 @@ class _AddProductPageState extends State<AddProductPage> {
   bool _isSwitched = false;
   List<XFile> _images = [];
   final ImagePicker _picker = ImagePicker();
+  DateTime? _startDate;
+  DateTime? _endDate;
+  final TextEditingController _startDateController = TextEditingController();
+  final TextEditingController _endDateController = TextEditingController();
+
+  Future<void> _selectDate(BuildContext context,
+      TextEditingController controller, DateTime? current) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: current ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+
+    if (pickedDate != null) {
+      setState(() {
+        controller.text =
+            "${pickedDate.day}-${pickedDate.month}-${pickedDate.year}";
+        if (controller == _startDateController) {
+          _startDate = pickedDate;
+        } else {
+          _endDate = pickedDate;
+        }
+      });
+    }
+  }
 
   Future<void> _pickImages() async {
     try {
@@ -96,7 +122,7 @@ class _AddProductPageState extends State<AddProductPage> {
             ),
           ),
         ),
-        title: HeadingText("Add Product"),
+        title: HeadingText("Create an Ad"),
         centerTitle: true,
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(1.0),
@@ -114,7 +140,7 @@ class _AddProductPageState extends State<AddProductPage> {
             children: [
               spacer(),
               ParagraphText(
-                "Product Images",
+                "Upload Image",
                 fontWeight: FontWeight.bold,
               ),
               spacer(),
@@ -135,7 +161,7 @@ class _AddProductPageState extends State<AddProductPage> {
                           Icon(Icons.cloud_upload,
                               size: 50, color: Colors.black),
                           spacer(),
-                          ParagraphText("Select product images"),
+                          ParagraphText("Upload files here*"),
                         ],
                       ),
                     ),
@@ -189,64 +215,6 @@ class _AddProductPageState extends State<AddProductPage> {
                   ],
                 ),
               spacer1(),
-              ParagraphText(
-                "Product Name",
-                fontWeight: FontWeight.bold,
-              ),
-              spacer(),
-              TextFormField(
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                  fillColor: primaryColor,
-                  filled: true,
-                  labelStyle: TextStyle(color: Colors.black, fontSize: 12),
-                  border: OutlineInputBorder(),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: primaryColor,
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.transparent,
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                  ),
-                  hintText: "Enter product name",
-                  hintStyle: TextStyle(color: Colors.black, fontSize: 12),
-                ),
-              ),
-              spacer(),
-              ParagraphText(
-                "Product Price",
-                fontWeight: FontWeight.bold,
-              ),
-              spacer(),
-              TextFormField(
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                  fillColor: primaryColor,
-                  filled: true,
-                  labelStyle: TextStyle(color: Colors.black, fontSize: 12),
-                  border: OutlineInputBorder(),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: primaryColor,
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.transparent,
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                  ),
-                  hintText: "Enter product price",
-                  hintStyle: TextStyle(color: Colors.black, fontSize: 12),
-                ),
-              ),
-              spacer(),
               Row(
                 children: [
                   Checkbox(
@@ -263,19 +231,25 @@ class _AddProductPageState extends State<AddProductPage> {
                   ),
                 ],
               ),
-              spacer(),
+              spacer1(),
               ParagraphText(
-                "Product link (optional)",
+                "Start Date",
                 fontWeight: FontWeight.bold,
               ),
               spacer(),
               TextFormField(
-                keyboardType: TextInputType.text,
+                controller: _startDateController,
+                readOnly: true,
+                onTap: () =>
+                    _selectDate(context, _startDateController, _startDate),
                 decoration: InputDecoration(
                   fillColor: primaryColor,
                   filled: true,
-                  labelStyle: TextStyle(color: Colors.black, fontSize: 12),
-                  border: OutlineInputBorder(),
+                  hintText: "Select a date",
+                  hintStyle: TextStyle(color: Colors.black, fontSize: 12),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  ),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
                       color: primaryColor,
@@ -288,52 +262,31 @@ class _AddProductPageState extends State<AddProductPage> {
                     ),
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   ),
-                  hintText: "Paste the link here...",
-                  hintStyle: TextStyle(color: Colors.black, fontSize: 12),
+                  suffixIcon: Icon(
+                    Icons.calendar_today_outlined,
+                    color: mutedTextColor,
+                    size: 16.0,
+                  ),
                 ),
               ),
               spacer(),
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ParagraphText(
-                          "Hide this product",
-                          fontWeight: FontWeight.bold,
-                        ),
-                        ParagraphText(
-                          "When you hide product, customers won't see it ",
-                        ),
-                      ],
-                    ),
-                  ),
-                  Switch(
-                    value: _isSwitched,
-                    activeColor: Colors.black,
-                    onChanged: (bool value) {
-                      setState(() {
-                        _isSwitched = value;
-                      });
-                    },
-                  ),
-                ],
-              ),
-              spacer(),
               ParagraphText(
-                "Product description",
+                "End Date",
                 fontWeight: FontWeight.bold,
               ),
               spacer(),
               TextFormField(
-                keyboardType: TextInputType.multiline,
-                maxLines: 5,
+                controller: _endDateController,
+                readOnly: true,
+                onTap: () => _selectDate(context, _endDateController, _endDate),
                 decoration: InputDecoration(
                   fillColor: primaryColor,
                   filled: true,
-                  labelStyle: TextStyle(color: Colors.black, fontSize: 12),
-                  border: OutlineInputBorder(),
+                  hintText: "Select a date",
+                  hintStyle: TextStyle(color: Colors.black, fontSize: 12),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  ),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
                       color: primaryColor,
@@ -346,8 +299,11 @@ class _AddProductPageState extends State<AddProductPage> {
                     ),
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   ),
-                  hintText: "Write short product description",
-                  hintStyle: TextStyle(color: Colors.black, fontSize: 12),
+                  suffixIcon: Icon(
+                    Icons.calendar_today_outlined,
+                    color: mutedTextColor,
+                    size: 16.0,
+                  ),
                 ),
               ),
               spacer3(),
@@ -360,9 +316,9 @@ class _AddProductPageState extends State<AddProductPage> {
                     );
                     return;
                   }
-                  Get.to(() => HomePage());
+                  Get.to(() =>  HomePage());
                 },
-                text: "Add Product",
+                text: "Create an Ad",
               ),
             ],
           ),

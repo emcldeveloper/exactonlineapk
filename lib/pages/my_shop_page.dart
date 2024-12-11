@@ -11,36 +11,25 @@ import 'package:get/get.dart';
 class MyShopPage extends StatelessWidget {
   const MyShopPage({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     final List<Map<String, dynamic>> tilesItems = [
-      {
-        'points': "248",
-        'title': "impressions",
-      },
-      {
-        'points': "88",
-        'title': "clicks",
-      },
-      {
-        'points': "49",
-        'title': "Shares",
-      },
-      {
-        'points': "23",
-        'title': "Calls",
-      },
-      {
-        'points': "982",
-        'title': "Likes",
-      },
-      {
-        'points': "20",
-        'title': "Profile views",
-      },
+      {'points': "248", 'title': "Impressions"},
+      {'points': "88", 'title': "Clicks"},
+      {'points': "49", 'title': "Shares"},
+      {'points': "23", 'title': "Calls"},
+      {'points': "982", 'title': "Likes"},
+      {'points': "20", 'title': "Profile Views"},
     ];
+
     final List<Map<String, dynamic>> productItems = [
+      {
+        'title': "J.Crew T-shirt",
+        'price': "25,000 TSH",
+        'imageUrl': "assets/images/teal_tshirt.png",
+        'description': "Short description of the product.",
+        'rating': 4.5,
+      },
       {
         'title': "J.Crew T-shirt",
         'price': "25,000 TSH",
@@ -74,78 +63,114 @@ class MyShopPage extends StatelessWidget {
         'rating': 4.5,
       },
     ];
-    return Scaffold(
-      backgroundColor: mainColor,
-      appBar: AppBar(
+
+    final navCategories = [
+      "Shop Products",
+      "Reels",
+      "My Orders",
+      "Promoted",
+      "Ads",
+    ];
+
+    return DefaultTabController(
+      length: navCategories.length,
+      child: Scaffold(
         backgroundColor: mainColor,
-        leading: GestureDetector(
-          onTap: () => Get.back(),
-          child: Icon(
-            Icons.arrow_back_ios_new_outlined,
-            color: mutedTextColor,
-            size: 14.0,
+        appBar: AppBar(
+          backgroundColor: mainColor,
+          leading: GestureDetector(
+            onTap: () => Get.back(),
+            child: Icon(
+              Icons.arrow_back_ios_new_outlined,
+              color: mutedTextColor,
+              size: 14.0,
+            ),
           ),
-        ),
-        title: HeadingText("E-Online"),
-        actions: [
-          Icon(
-            Icons.settings_outlined,
-            size: 16.0,
-          ),
-          const SizedBox(width: 16),
-        ],
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
-          child: Container(
-            color: primaryColor,
-            height: 1.0,
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Container(
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: tilesItems.map((item) {
-                    return Column(
-                      children: [
-                        ParagraphText(item['points'],
-                            fontWeight: FontWeight.bold),
-                        ParagraphText(item['title']),
-                      ],
-                    );
-                  }).toList(),
-                ),
-                spacer1(),
-                customButton(
-                    onTap: () {
-                      Get.to(() => AddProductPage());
-                    },
-                    text: "Add new Product",
-                    vertical: 8.0),
-                spacer1(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    HeadingText("My Products (4)"),
-                    Icon(Icons.menu_open_sharp),
-                  ],
-                ),
-                spacer(),
-                Column(
-                  children: productItems.map((item) {
-                    return HorizontalProductCard(data: item);
-                  }).toList(),
-                ),
-              ],
+          title: HeadingText("E-Online"),
+          actions: [
+            Icon(
+              Icons.settings_outlined,
+              size: 16.0,
+            ),
+            const SizedBox(width: 16),
+          ],
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(48.0),
+            child: TabBar(
+              isScrollable: true,
+              labelColor: Colors.black,
+              unselectedLabelColor: Colors.black.withOpacity(0.5),
+              labelStyle: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+              ),
+              indicatorColor: Colors.black,
+              tabs: navCategories.map((category) {
+                return Tab(text: category);
+              }).toList(),
             ),
           ),
         ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              // Metrics Tiles
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: tilesItems.map((item) {
+                  return Column(
+                    children: [
+                      ParagraphText(
+                        item['points'],
+                        fontWeight: FontWeight.bold,
+                      ),
+                      ParagraphText(item['title']),
+                    ],
+                  );
+                }).toList(),
+              ),
+              spacer1(),
+              customButton(
+                onTap: () {
+                  Get.to(() => const AddProductPage());
+                },
+                text: "Add New Product",
+                vertical: 8.0,
+              ),
+              spacer1(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  HeadingText("My Products (${productItems.length})"),
+                  const Icon(Icons.menu_open_sharp),
+                ],
+              ),
+              spacer(),
+              // TabBarView
+              Expanded(
+                child: TabBarView(
+                  children: navCategories.map((category) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: buildProductList(productItems),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
+    );
+  }
+
+  Widget buildProductList(List<Map<String, dynamic>> productItems) {
+    return ListView.builder(
+      itemCount: productItems.length,
+      itemBuilder: (context, index) {
+        return HorizontalProductCard(data: productItems[index]);
+      },
     );
   }
 }
