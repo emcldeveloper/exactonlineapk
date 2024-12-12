@@ -73,7 +73,6 @@ class _HorizontalProductCardState extends State<HorizontalProductCard> {
       child: Container(
         width: double.infinity,
         margin: const EdgeInsets.symmetric(vertical: 8.0),
-        padding: const EdgeInsets.all(8.0),
         child: GestureDetector(
           onTap: _showEditBottomSheet,
           child: Row(

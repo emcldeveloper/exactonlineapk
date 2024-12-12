@@ -4,12 +4,14 @@ import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/pages/cart_page.dart';
 import 'package:e_online/pages/profile_page.dart';
 import 'package:e_online/pages/search_page.dart';
+import 'package:e_online/pages/see_all_page.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/product_card.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -103,10 +105,15 @@ class _HomePageState extends State<HomePage> {
                             ParagraphText("Filtered products for you"),
                           ],
                         ),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          color: mutedTextColor,
-                          size: 15,
+                        InkWell(
+                          onTap: () {
+                            Get.to(SeeAllPage());
+                          },
+                          child: Icon(
+                            Icons.arrow_forward_ios,
+                            color: mutedTextColor,
+                            size: 15,
+                          ),
                         )
                       ],
                     ),
@@ -136,11 +143,16 @@ class _HomePageState extends State<HomePage> {
                             ParagraphText("Filtered products for you"),
                           ],
                         ),
-                        ParagraphText(
-                          "See All",
-                          color: mutedTextColor,
-                          decoration: TextDecoration.underline,
-                        ),
+                        InkWell(
+                          onTap: () {
+                            Get.to(SeeAllPage());
+                          },
+                          child: Icon(
+                            Icons.arrow_forward_ios,
+                            color: mutedTextColor,
+                            size: 15,
+                          ),
+                        )
                       ],
                     ),
                     spacer1(),

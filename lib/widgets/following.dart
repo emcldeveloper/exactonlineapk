@@ -1,3 +1,4 @@
+import 'package:e_online/constants/colors.dart';
 import 'package:e_online/pages/seller_profile_page.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
@@ -95,18 +96,18 @@ Widget ReelsFollowingTab() {
         itemCount: profiles.length,
         itemBuilder: (context, index) {
           return GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SellerProfilePage(
-                      name: profiles[index]['name'],
-                      followers: profiles[index]['followers'],
-                      imageUrl: profiles[index]['imageUrl'],
-                    ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SellerProfilePage(
+                    name: profiles[index]['name'],
+                    followers: profiles[index]['followers'],
+                    imageUrl: profiles[index]['imageUrl'],
                   ),
-                );
-              },
+                ),
+              );
+            },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -125,10 +126,10 @@ Widget ReelsFollowingTab() {
                 spacer(),
                 ParagraphText(
                   profiles[index]['name'],
-                  fontWeight: FontWeight.bold,
                 ),
                 spacer(),
-                ParagraphText(profiles[index]['followers']),
+                ParagraphText(profiles[index]['followers'],
+                    color: mutedTextColor),
               ],
             ),
           );

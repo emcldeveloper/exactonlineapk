@@ -259,6 +259,125 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
             ),
           ),
         ),
+        spacer(),
+        ParagraphText("Agent Address", fontWeight: FontWeight.bold),
+        spacer(),
+        TextFormField(
+          keyboardType: TextInputType.text,
+          decoration: InputDecoration(
+            fillColor: primaryColor,
+            filled: true,
+            hintText: "Enter agent address",
+            hintStyle: const TextStyle(color: Colors.black, fontSize: 12),
+            border: const OutlineInputBorder(),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: primaryColor),
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            ),
+            enabledBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.transparent),
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            ),
+          ),
+        ),
+        spacer(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ParagraphText(
+              "Upload Agent National ID Number",
+              fontWeight: FontWeight.bold,
+            ),
+            // Display the Icon only if there are files
+            if (_files.isNotEmpty)
+              GestureDetector(
+                onTap: () {
+                  _pickFiles();
+                },
+                child: Icon(
+                  Icons.add,
+                  color: mutedTextColor,
+                  size: 16.0,
+                ),
+              ),
+          ],
+        ),
+        spacer(),
+        _files.isEmpty
+            ? Center(
+                child: GestureDetector(
+                  onTap: _pickFiles,
+                  child: Container(
+                    height: 200,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.cloud_upload, size: 50, color: Colors.black),
+                        spacer(),
+                        ParagraphText("Upload files here*"),
+                      ],
+                    ),
+                  ),
+                ),
+              )
+            : Column(
+                children: _files
+                    .asMap()
+                    .entries
+                    .map(
+                      (entry) => ListTile(
+                        leading: const Icon(
+                          Icons.picture_as_pdf,
+                          color: Colors.red,
+                        ),
+                        title: Text(entry.value.name),
+                        trailing: GestureDetector(
+                          onTap: () => _removeFile(entry.key),
+                          child: const Icon(
+                            Icons.close,
+                            color: Colors.black,
+                            size: 16.0,
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
+        spacer(),
+        ParagraphText(
+          "Short Description",
+          fontWeight: FontWeight.bold,
+        ),
+        spacer(),
+        TextFormField(
+          keyboardType: TextInputType.multiline,
+          maxLines: 5,
+          decoration: InputDecoration(
+            fillColor: primaryColor,
+            filled: true,
+            labelStyle: TextStyle(color: Colors.black, fontSize: 12),
+            border: OutlineInputBorder(),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: primaryColor,
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.transparent,
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            ),
+            hintText: "Write short agent description",
+            hintStyle: TextStyle(color: Colors.black, fontSize: 12),
+          ),
+        ),
       ],
     );
   }
