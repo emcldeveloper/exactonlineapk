@@ -1,4 +1,5 @@
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/pages/cart_page.dart';
 import 'package:e_online/pages/home_page.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
@@ -430,7 +431,7 @@ class _ProductPageState extends State<ProductPage> {
               ),
               spacer1(),
               customButton(
-                onTap: () => Get.to(() => const HomePage()),
+                onTap: () => Get.to(() => const CartPage()),
                 text: "Add to Cart",
               ),
               spacer(),

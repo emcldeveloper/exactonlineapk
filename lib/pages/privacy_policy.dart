@@ -1,4 +1,5 @@
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -31,13 +32,13 @@ class _PrivacyPolicyPageState extends State<PrivacyPolicy> {
           icon: const Icon(
             Icons.arrow_back_ios,
             color: Colors.black,
-            size: 22,
+            size: 14,
           ),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: ParagraphText(
+        title: HeadingText(
           'Terms and conditions',
           color: Colors.black,
           fontWeight: FontWeight.bold,

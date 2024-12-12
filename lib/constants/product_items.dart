@@ -12,6 +12,8 @@ final List<Map<String, dynamic>> productItems = [
     'rating': 4.5,
     'size': "2xl",
     'color': "Black",
+    'shipping': "free shipping",
+    'type': "ad",
   },
   {
     'title': "J.Crew T-shirt",
@@ -26,6 +28,8 @@ final List<Map<String, dynamic>> productItems = [
     'rating': 4.5,
     'size': "2xl",
     'color': "Black",
+    'shipping': 2000,
+    'type': "product",
   },
   {
     'title': "J.Crew T-shirt",
@@ -40,6 +44,8 @@ final List<Map<String, dynamic>> productItems = [
     'rating': 4.5,
     'size': "2xl",
     'color': "Black",
+    'shipping': "free shipping",
+    'type': "ad",
   },
   {
     'title': "J.Crew T-shirt",
@@ -54,6 +60,8 @@ final List<Map<String, dynamic>> productItems = [
     'rating': 4.5,
     'size': "2xl",
     'color': "Black",
+    'shipping': 2000,
+    'type': "product",
   },
   {
     'title': "J.Crew T-shirt",
@@ -67,6 +75,8 @@ final List<Map<String, dynamic>> productItems = [
     'rating': 4.5,
     'size': "2xl",
     'color': "Black",
+    'shipping': 2000,
+    'type': "product",
   },
   {
     'title': "J.Crew T-shirt",
@@ -80,6 +90,8 @@ final List<Map<String, dynamic>> productItems = [
     'rating': 4.5,
     'size': "2xl",
     'color': "Black",
+    'shipping': 2000,
+    'type': "product",
   },
   {
     'title': "J.Crew T-shirt",
@@ -94,6 +106,8 @@ final List<Map<String, dynamic>> productItems = [
     'rating': 4.5,
     'size': "2xl",
     'color': "Black",
+    'shipping': "free shipping",
+    'type': "product",
   },
   {
     'title': "J.Crew T-shirt",
@@ -108,6 +122,8 @@ final List<Map<String, dynamic>> productItems = [
     'rating': 4.5,
     'size': "2xl",
     'color': "Black",
+    'shipping': "free shipping",
+    'type': "ad",
   },
   {
     'title': "J.Crew T-shirt",
@@ -122,6 +138,8 @@ final List<Map<String, dynamic>> productItems = [
     'rating': 4.5,
     'size': "2xl",
     'color': "Black",
+    'shipping': 2000,
+    'type': "product",
   },
   {
     'title': "J.Crew T-shirt",
@@ -132,6 +150,8 @@ final List<Map<String, dynamic>> productItems = [
     'rating': 4.5,
     'size': "2xl",
     'color': "Black",
+    'shipping': 2000,
+    'type': "product",
   },
   {
     'title': "Hand Jewelry",
@@ -142,6 +162,8 @@ final List<Map<String, dynamic>> productItems = [
     'rating': 4.5,
     'size': "2xl",
     'color': "Black",
+    'shipping': "free shipping",
+    'type': "ad",
   },
   {
     'title': "Pink Top",
@@ -152,6 +174,8 @@ final List<Map<String, dynamic>> productItems = [
     'rating': 4.5,
     'size': "2xl",
     'color': "Black",
+    'shipping': 2000,
+    'type': "product",
   },
   {
     'title': "Smart Watch",
@@ -162,6 +186,8 @@ final List<Map<String, dynamic>> productItems = [
     'rating': 4.5,
     'size': "2xl",
     'color': "Black",
+    'shipping': "free shipping",
+    'type': "product",
   },
   {
     'title': "Earrings",
@@ -172,6 +198,8 @@ final List<Map<String, dynamic>> productItems = [
     'rating': 4.5,
     'size': "2xl",
     'color': "Black",
+    'shipping': 2000,
+    'type': "product",
   },
   {
     'title': "Braids",
@@ -182,6 +210,8 @@ final List<Map<String, dynamic>> productItems = [
     'rating': 4.5,
     'size': "2xl",
     'color': "Black",
+    'shipping': "free shipping",
+    'type': "ad",
   },
 ];
 
@@ -236,19 +266,19 @@ final List<Map<String, dynamic>> orderItems = [
   },
 ];
 
-  final List<Map<String, dynamic>> categories = [
-    {'name': 'Electronics', 'imageUrl': 'assets/images/electronics.png'},
-    {'name': 'Accessories', 'imageUrl': 'assets/images/diamond.png'},
-    {'name': 'Clothes', 'imageUrl': 'assets/images/clothes.png'},
-    {'name': 'Shoes', 'imageUrl': 'assets/images/pinksneakers.png'},
-    {'name': 'Toys & Hobbies', 'imageUrl': 'assets/images/toy.png'},
-    {'name': 'Tools', 'imageUrl': 'assets/images/tools.png'},
-    {'name': 'Automotive', 'imageUrl': 'assets/images/scooter.png'},
-    {'name': 'Beauty', 'imageUrl': 'assets/images/beautifulwoman.png'},
-    {'name': 'Health', 'imageUrl': 'assets/images/hospital.png'},
-    {'name': 'Kids', 'imageUrl': 'assets/images/youngkids.png'},
-    {'name': 'Mothers', 'imageUrl': 'assets/images/motherandbaby.png'},
-    {'name': 'Security', 'imageUrl': 'assets/images/Datasecurity.png'},
-    {'name': 'Protection', 'imageUrl': 'assets/images/protect.png'},
-    {'name': 'Cars', 'imageUrl': 'assets/images/smartcar.png'},
-  ];
+final List<Map<String, dynamic>> categories = [
+  {'name': 'Electronics', 'imageUrl': 'assets/images/electronics.png'},
+  {'name': 'Accessories', 'imageUrl': 'assets/images/diamond.png'},
+  {'name': 'Clothes', 'imageUrl': 'assets/images/clothes.png'},
+  {'name': 'Shoes', 'imageUrl': 'assets/images/pinksneakers.png'},
+  {'name': 'Toys & Hobbies', 'imageUrl': 'assets/images/toy.png'},
+  {'name': 'Tools', 'imageUrl': 'assets/images/tools.png'},
+  {'name': 'Automotive', 'imageUrl': 'assets/images/scooter.png'},
+  {'name': 'Beauty', 'imageUrl': 'assets/images/beautifulwoman.png'},
+  {'name': 'Health', 'imageUrl': 'assets/images/hospital.png'},
+  {'name': 'Kids', 'imageUrl': 'assets/images/youngkids.png'},
+  {'name': 'Mothers', 'imageUrl': 'assets/images/motherandbaby.png'},
+  {'name': 'Security', 'imageUrl': 'assets/images/Datasecurity.png'},
+  {'name': 'Protection', 'imageUrl': 'assets/images/protect.png'},
+  {'name': 'Cars', 'imageUrl': 'assets/images/smartcar.png'},
+];

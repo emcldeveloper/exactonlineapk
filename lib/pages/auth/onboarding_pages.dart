@@ -76,7 +76,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         spacer2(),
                         HeadingText(
                           data["title"]!,
-                          fontSize: 20.0,
                           textAlign: TextAlign.center,
                         ),
                         spacer1(),
@@ -84,28 +83,31 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           data["description"]!,
                           color: mutedTextColor,
                           textAlign: TextAlign.center,
-                          fontSize: 15.0,
+                        ),
+                        spacer2(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(
+                            _onboardingData.length,
+                            (index) => AnimatedContainer(
+                              duration: const Duration(milliseconds: 300),
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 4.0),
+                              width: _currentPage == index ? 12 : 8,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                color: _currentPage == index
+                                    ? Colors.black
+                                    : Colors.grey,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                            ),
+                          ),
                         ),
                       ],
                     ),
                   );
                 },
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                _onboardingData.length,
-                (index) => AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                  width: _currentPage == index ? 12 : 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: _currentPage == index ? Colors.black : Colors.grey,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
               ),
             ),
             Padding(

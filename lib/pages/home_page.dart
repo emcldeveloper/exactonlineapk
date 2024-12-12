@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/constants/product_items.dart';
+import 'package:e_online/pages/cart_page.dart';
 import 'package:e_online/pages/profile_page.dart';
 import 'package:e_online/pages/search_page.dart';
 import 'package:e_online/widgets/heading_text.dart';
@@ -213,11 +214,11 @@ class _HomePageState extends State<HomePage> {
                 labelColor: Colors.black,
                 unselectedLabelColor: Colors.black.withOpacity(0.5),
                 labelStyle: const TextStyle(
-                  fontSize: 14,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
                 unselectedLabelStyle: const TextStyle(
-                  fontSize: 14,
+                  fontSize: 16,
                   fontWeight: FontWeight.normal,
                 ),
                 indicatorSize: TabBarIndicatorSize.label,
@@ -236,16 +237,18 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           actions: [
-            IconButton(
-              icon: const Icon(Icons.shopping_bag_outlined, size: 24),
-              onPressed: () {},
-            ),
-            IconButton(
-              onPressed: () {
-                Get.to(SearchPage());
-              },
-              icon: const Icon(Icons.search),
-            ),
+            InkWell(
+                onTap: () {
+                  Get.to(CartPage());
+                },
+                child: Icon(Icons.shopping_bag_outlined, size: 24)),
+            const SizedBox(width: 8),
+            InkWell(
+                onTap: () {
+                  Get.to(SearchPage());
+                },
+                child: const Icon(Icons.search)),
+            const SizedBox(width: 8),
             InkWell(
               onTap: () {
                 Get.to(const ProfilePage());

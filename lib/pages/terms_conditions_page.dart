@@ -1,5 +1,5 @@
 import 'package:e_online/constants/colors.dart';
-import 'package:e_online/widgets/paragraph_text.dart';
+import 'package:e_online/widgets/heading_text.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -39,7 +39,7 @@ class _TermsConditionsPageState extends State<TermsConditionsPage> {
             Navigator.pop(context);
           },
         ),
-        title: ParagraphText(
+        title: HeadingText(
           'Terms and conditions',
           color: Colors.black,
           fontWeight: FontWeight.bold,

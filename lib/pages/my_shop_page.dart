@@ -107,7 +107,7 @@ class _MyShopPageState extends State<MyShopPage> {
                   labelColor: Colors.black,
                   unselectedLabelColor: Colors.black.withOpacity(0.5),
                   labelStyle: const TextStyle(
-                    fontSize: 14,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
                   indicatorColor: Colors.black,

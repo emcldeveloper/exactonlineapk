@@ -16,7 +16,7 @@ class RegisterAsSellerPage extends StatefulWidget {
 }
 
 class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
-  final List<PlatformFile> _files = [];
+  List<PlatformFile> _files = [];
   String? selectedBusiness = "Business"; // Default selection
 
   final List<Map<String, String>> businessType = [
@@ -61,7 +61,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
             border: const OutlineInputBorder(),
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(color: primaryColor),
-              borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
             ),
             enabledBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: Colors.transparent),
@@ -82,7 +82,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
             border: const OutlineInputBorder(),
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(color: primaryColor),
-              borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
             ),
             enabledBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: Colors.transparent),
@@ -103,7 +103,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
             border: const OutlineInputBorder(),
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(color: primaryColor),
-              borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
             ),
             enabledBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: Colors.transparent),
@@ -148,7 +148,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.cloud_upload, size: 50, color: Colors.black),
+                        Icon(Icons.cloud_upload, size: 50, color: Colors.black),
                         spacer(),
                         ParagraphText("Upload files here*"),
                       ],
@@ -191,22 +191,22 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
           decoration: InputDecoration(
             fillColor: primaryColor,
             filled: true,
-            labelStyle: const TextStyle(color: Colors.black, fontSize: 12),
-            border: const OutlineInputBorder(),
+            labelStyle: TextStyle(color: Colors.black, fontSize: 12),
+            border: OutlineInputBorder(),
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(
                 color: primaryColor,
               ),
-              borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
             ),
-            enabledBorder: const OutlineInputBorder(
+            enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(
                 color: Colors.transparent,
               ),
               borderRadius: BorderRadius.all(Radius.circular(10.0)),
             ),
             hintText: "Write short business description",
-            hintStyle: const TextStyle(color: Colors.black, fontSize: 12),
+            hintStyle: TextStyle(color: Colors.black, fontSize: 12),
           ),
         ),
       ],
@@ -230,7 +230,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
             border: const OutlineInputBorder(),
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(color: primaryColor),
-              borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
             ),
             enabledBorder: const OutlineInputBorder(
               borderSide: BorderSide(color: Colors.transparent),
@@ -247,13 +247,13 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
             fillColor: primaryColor,
             filled: true,
             hintText: "Enter license number",
-            hintStyle: const TextStyle(color: Colors.black, fontSize: 12),
-            border: const OutlineInputBorder(),
+            hintStyle: TextStyle(color: Colors.black, fontSize: 12),
+            border: OutlineInputBorder(),
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(color: primaryColor),
-              borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
             ),
-            enabledBorder: const OutlineInputBorder(
+            enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.transparent),
               borderRadius: BorderRadius.all(Radius.circular(10.0)),
             ),
@@ -282,7 +282,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
         title: HeadingText("Register your business"),
         centerTitle: true,
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1.0),
+          preferredSize: Size.fromHeight(1.0),
           child: Divider(color: primaryColor, height: 1.0),
         ),
       ),
@@ -303,7 +303,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                             selectedBusiness = value!;
                           });
                         },
-                        activeColor: primaryColor,
+                        activeColor: secondaryColor,
                       ),
                       ParagraphText(type['name']!),
                     ],
@@ -316,7 +316,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
               spacer3(),
               customButton(
                 onTap: () {
-                  Get.to(() => const MyShopPage());
+                  Get.to(() => MyShopPage());
                 },
                 text: "Submit Details",
               ),

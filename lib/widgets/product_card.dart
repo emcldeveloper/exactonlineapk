@@ -128,28 +128,35 @@ class _ProductCardState extends State<ProductCard> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ParagraphText(
-                    widget.data['title'],
-                    fontWeight: FontWeight.bold,
-                  ),
-                  spacer(),
                   Row(
                     children: [
+                      if (widget.data['type'] == "ad")
+                        Container(
+                          width: 40,
+                          height: 25,
+                          decoration: BoxDecoration(
+                            color: Colors.yellow,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          alignment: Alignment.center,
+                          child: ParagraphText("Ad"),
+                        ),
+                      if (widget.data['type'] == "ad") SizedBox(width: 8),
                       Expanded(
                         child: ParagraphText(
-                          widget.data['price'],
+                          widget.data['title'],
+                          maxLines: 1,
                         ),
-                      ),
-                      const SizedBox(width: 4),
-                      Row(
-                        children: [
-                          const Icon(Icons.star, color: Colors.amber, size: 16),
-                          const SizedBox(width: 2),
-                          ParagraphText(widget.data['rating'].toString()),
-                        ],
                       ),
                     ],
                   ),
+                  ParagraphText(widget.data['price'],
+                      fontWeight: FontWeight.bold, fontSize: 16.0),
+                  if (widget.data['shipping'] == "free shipping")
+                    ParagraphText(
+                      widget.data['shipping'],
+                      color: Colors.red,
+                    ),
                 ],
               ),
             ),

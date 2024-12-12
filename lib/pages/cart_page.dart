@@ -1,4 +1,5 @@
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/horizontal_product_card.dart';
@@ -12,40 +13,6 @@ class CartPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> productItems = [
-      {
-        'title': "J.Crew T-shirt",
-        'price': "25,000 TSH",
-        'imageUrl': "assets/images/teal_tshirt.png",
-        'description':
-            "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
-        'rating': 4.5,
-      },
-      {
-        'title': "J.Crew T-shirt",
-        'price': "25,000 TSH",
-        'imageUrl': "assets/images/red_tshirt.png",
-        'description':
-            "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
-        'rating': 4.5,
-      },
-      {
-        'title': "J.Crew T-shirt",
-        'price': "25,000 TSH",
-        'imageUrl': "assets/images/black_tshirt.png",
-        'description':
-            "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
-        'rating': 4.5,
-      },
-      {
-        'title': "J.Crew T-shirt",
-        'price': "25,000 TSH",
-        'imageUrl': "assets/images/green_tshirt.png",
-        'description':
-            "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
-        'rating': 4.5,
-      },
-    ];
     return Scaffold(
       backgroundColor: mainColor,
       appBar: AppBar(
@@ -75,26 +42,38 @@ class CartPage extends StatelessWidget {
         ),
       ),
       body: SingleChildScrollView(
-          child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            HeadingText("Selected products"),
-            ParagraphText("You have selected 3 products"),
-            spacer(),
-            Column(
-              children: productItems.map((item) {
-                return HorizontalProductCard(data: item);
-              }).toList(),
-            ),
-            spacer3(),
-            customButton(
-              onTap: () {},
-              text: "Submit Order",
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              spacer(),
+              HeadingText("Selected products"),
+              ParagraphText("You have selected 3 products"),
+              spacer(),
+              Column(
+                children: productItems.map((item) {
+                  return HorizontalProductCard(data: item);
+                }).toList(),
+              ),
+              spacer(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ParagraphText("Total Price"),
+                  ParagraphText("TZS 120,0000",
+                      fontWeight: FontWeight.bold, fontSize: 17)
+                ],
+              ),
+              spacer3(),
+              customButton(
+                onTap: () {},
+                text: "Submit Order",
+              ),
+              spacer3(),
+            ],
+          ),
         ),
-      )),
+      ),
     );
   }
 }
