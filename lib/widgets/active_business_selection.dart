@@ -4,15 +4,29 @@ import 'package:flutter/material.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 
-class ActiveBusinessSelection extends StatelessWidget {
+class ActiveBusinessSelection extends StatefulWidget {
   const ActiveBusinessSelection({super.key});
+
+  @override
+  State<ActiveBusinessSelection> createState() =>
+      _ActiveBusinessSelectionState();
+}
+
+class _ActiveBusinessSelectionState extends State<ActiveBusinessSelection> {
+  String? selectedBusiness;
+
+  final List<Map<String, String>> businesses = [
+    {"name": "Business 1", "details": "Business 1 details"},
+    {"name": "Business 2", "details": "Business 2 details"},
+    {"name": "Business 3", "details": "Business 3 details"},
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      decoration: BoxDecoration(
+        color: mainColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -34,32 +48,59 @@ class ActiveBusinessSelection extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
             spacer2(),
-
-               Row(
-              children: [
-
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            ...businesses.map((business) {
+              return Column(
+                children: [
+                  Row(
                     children: [
-                      ParagraphText(
-                        "Product promotion insights",
-                        fontWeight: FontWeight.bold,
+                      Radio<String>(
+                        value: business['name']!,
+                        groupValue: selectedBusiness,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedBusiness = value;
+                          });
+                        },
+                        activeColor: secondaryColor,
                       ),
-                      ParagraphText(
-                        "View product insights",
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ParagraphText(
+                              business['name']!,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            ParagraphText(
+                              business['details']!,
+                              fontSize: 12,
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
+                  spacer1(),
+                ],
+              );
+            }),
             spacer1(),
-               customButton(
-                onTap: () {},
-                text: "Save selection",
-              ),
-              spacer3(),
+            customButton(
+              onTap: () {
+                if (selectedBusiness != null) {
+                  Navigator.pop(context, selectedBusiness);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Please select a business."),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                }
+              },
+              text: "Save selection",
+            ),
+            spacer3(),
           ],
         ),
       ),

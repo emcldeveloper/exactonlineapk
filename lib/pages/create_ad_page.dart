@@ -18,7 +18,7 @@ class CreateAdPage extends StatefulWidget {
 }
 
 class _CreateAdPageState extends State<CreateAdPage> {
-  List<XFile> _images = [];
+  final List<XFile> _images = [];
   final ImagePicker _picker = ImagePicker();
   DateTime? _startDate;
   DateTime? _endDate;
@@ -123,7 +123,7 @@ class _CreateAdPageState extends State<CreateAdPage> {
         title: HeadingText("Create an Ad"),
         centerTitle: true,
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
+          preferredSize: const Size.fromHeight(1.0),
           child: Container(
             color: primaryColor,
             height: 1.0,
@@ -156,7 +156,7 @@ class _CreateAdPageState extends State<CreateAdPage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.cloud_upload,
+                          const Icon(Icons.cloud_upload,
                               size: 50, color: Colors.black),
                           spacer(),
                           ParagraphText("Upload files here*"),
@@ -227,17 +227,17 @@ class _CreateAdPageState extends State<CreateAdPage> {
                   fillColor: primaryColor,
                   filled: true,
                   hintText: "Select a date",
-                  hintStyle: TextStyle(color: Colors.black, fontSize: 12),
-                  border: OutlineInputBorder(
+                  hintStyle: const TextStyle(color: Colors.black, fontSize: 12),
+                  border: const OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
                       color: primaryColor,
                     ),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                   ),
-                  enabledBorder: OutlineInputBorder(
+                  enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(
                       color: Colors.transparent,
                     ),
@@ -264,17 +264,17 @@ class _CreateAdPageState extends State<CreateAdPage> {
                   fillColor: primaryColor,
                   filled: true,
                   hintText: "Select a date",
-                  hintStyle: TextStyle(color: Colors.black, fontSize: 12),
-                  border: OutlineInputBorder(
+                  hintStyle: const TextStyle(color: Colors.black, fontSize: 12),
+                  border: const OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
                       color: primaryColor,
                     ),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                   ),
-                  enabledBorder: OutlineInputBorder(
+                  enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(
                       color: Colors.transparent,
                     ),
@@ -297,7 +297,7 @@ class _CreateAdPageState extends State<CreateAdPage> {
                     );
                     return;
                   }
-                  Get.to(() => HomePage());
+                  Get.to(() => const HomePage());
                 },
                 text: "Create an Ad",
               ),

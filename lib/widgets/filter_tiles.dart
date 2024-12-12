@@ -18,6 +18,8 @@ final List<Map<String, dynamic>> filters = [
 ];
 
 class FilterTilesWidget extends StatefulWidget {
+  const FilterTilesWidget({super.key});
+
   @override
   _FilterTilesWidgetState createState() => _FilterTilesWidgetState();
 }
@@ -36,7 +38,7 @@ class _FilterTilesWidgetState extends State<FilterTilesWidget> {
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
-        child: FilterSearchBottomSheet(),
+        child: const FilterSearchBottomSheet(),
       ),
     );
   }

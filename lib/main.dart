@@ -51,7 +51,7 @@ class EntryPoint extends StatelessWidget {
         if (snapshot.data == true) {
           return const WayPage();
         }
-        return OnboardingPage();
+        return const OnboardingPage();
       },
     );
   }

@@ -10,10 +10,10 @@ class ReviewBottomSheet extends StatefulWidget {
   final List<Map<String, dynamic>> reviews;
 
   const ReviewBottomSheet({
-    Key? key,
+    super.key,
     required this.rating,
     this.reviews = const [],
-  }) : super(key: key);
+  });
 
   @override
   State<ReviewBottomSheet> createState() => _ReviewBottomSheetState();
@@ -167,7 +167,7 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
                               ],
                             ),
                           ),
-                          SizedBox(width: 20),
+                          const SizedBox(width: 20),
                           Row(
                             children: List.generate(
                               5,
@@ -204,7 +204,7 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
                           controller: reviewController,
                           decoration: InputDecoration(
                             hintText: 'Write your review message here',
-                            hintStyle: TextStyle(fontSize: 12),
+                            hintStyle: const TextStyle(fontSize: 12),
                             filled: true,
                             fillColor: Colors.grey[100],
                             border: OutlineInputBorder(

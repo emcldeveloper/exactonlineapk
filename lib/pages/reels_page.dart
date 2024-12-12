@@ -38,7 +38,7 @@ class ReelsPage extends StatelessWidget {
               onPressed: () {},
             ),
           ],
-          bottom: PreferredSize(
+          bottom: const PreferredSize(
             preferredSize: Size.fromHeight(48),
             child: Align(
               alignment: Alignment.centerLeft,
@@ -167,12 +167,12 @@ class ReelCard extends StatelessWidget {
                 right: 8,
                 bottom: 8,
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.black.withOpacity(0.7),
                     borderRadius: BorderRadius.circular(4),
                   ),
-                  child: Text(
+                  child: const Text(
                     '0:30',
                     style: TextStyle(
                       color: Colors.white,
@@ -198,7 +198,7 @@ class ReelCard extends StatelessWidget {
                 ),
                 spacer(),
                 // User Info and Likes
-                Row(
+                const Row(
                   children: [
                     // Profile Picture
                     CircleAvatar(

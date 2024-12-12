@@ -20,7 +20,7 @@ class AddProductPage extends StatefulWidget {
 class _AddProductPageState extends State<AddProductPage> {
   bool _isChecked = true;
   bool _isSwitched = false;
-  List<XFile> _images = [];
+  final List<XFile> _images = [];
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _pickImages() async {
@@ -99,7 +99,7 @@ class _AddProductPageState extends State<AddProductPage> {
         title: HeadingText("Add Product"),
         centerTitle: true,
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
+          preferredSize: const Size.fromHeight(1.0),
           child: Container(
             color: primaryColor,
             height: 1.0,
@@ -132,7 +132,7 @@ class _AddProductPageState extends State<AddProductPage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.cloud_upload,
+                          const Icon(Icons.cloud_upload,
                               size: 50, color: Colors.black),
                           spacer(),
                           ParagraphText("Select product images"),
@@ -199,22 +199,22 @@ class _AddProductPageState extends State<AddProductPage> {
                 decoration: InputDecoration(
                   fillColor: primaryColor,
                   filled: true,
-                  labelStyle: TextStyle(color: Colors.black, fontSize: 12),
-                  border: OutlineInputBorder(),
+                  labelStyle: const TextStyle(color: Colors.black, fontSize: 12),
+                  border: const OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
                       color: primaryColor,
                     ),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                   ),
-                  enabledBorder: OutlineInputBorder(
+                  enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(
                       color: Colors.transparent,
                     ),
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   ),
                   hintText: "Enter product name",
-                  hintStyle: TextStyle(color: Colors.black, fontSize: 12),
+                  hintStyle: const TextStyle(color: Colors.black, fontSize: 12),
                 ),
               ),
               spacer(),
@@ -228,22 +228,22 @@ class _AddProductPageState extends State<AddProductPage> {
                 decoration: InputDecoration(
                   fillColor: primaryColor,
                   filled: true,
-                  labelStyle: TextStyle(color: Colors.black, fontSize: 12),
-                  border: OutlineInputBorder(),
+                  labelStyle: const TextStyle(color: Colors.black, fontSize: 12),
+                  border: const OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
                       color: primaryColor,
                     ),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                   ),
-                  enabledBorder: OutlineInputBorder(
+                  enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(
                       color: Colors.transparent,
                     ),
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   ),
                   hintText: "Enter product price",
-                  hintStyle: TextStyle(color: Colors.black, fontSize: 12),
+                  hintStyle: const TextStyle(color: Colors.black, fontSize: 12),
                 ),
               ),
               spacer(),
@@ -274,22 +274,22 @@ class _AddProductPageState extends State<AddProductPage> {
                 decoration: InputDecoration(
                   fillColor: primaryColor,
                   filled: true,
-                  labelStyle: TextStyle(color: Colors.black, fontSize: 12),
-                  border: OutlineInputBorder(),
+                  labelStyle: const TextStyle(color: Colors.black, fontSize: 12),
+                  border: const OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
                       color: primaryColor,
                     ),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                   ),
-                  enabledBorder: OutlineInputBorder(
+                  enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(
                       color: Colors.transparent,
                     ),
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   ),
                   hintText: "Paste the link here...",
-                  hintStyle: TextStyle(color: Colors.black, fontSize: 12),
+                  hintStyle: const TextStyle(color: Colors.black, fontSize: 12),
                 ),
               ),
               spacer(),
@@ -319,6 +319,11 @@ class _AddProductPageState extends State<AddProductPage> {
                     },
                   ),
                 ],
+              ),
+              spacer1(),
+              ParagraphText(
+                "Product Specifications",
+                fontWeight: FontWeight.bold,
               ),
               spacer1(),
               Row(
@@ -500,22 +505,22 @@ class _AddProductPageState extends State<AddProductPage> {
                 decoration: InputDecoration(
                   fillColor: primaryColor,
                   filled: true,
-                  labelStyle: TextStyle(color: Colors.black, fontSize: 12),
-                  border: OutlineInputBorder(),
+                  labelStyle: const TextStyle(color: Colors.black, fontSize: 12),
+                  border: const OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
                       color: primaryColor,
                     ),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                   ),
-                  enabledBorder: OutlineInputBorder(
+                  enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(
                       color: Colors.transparent,
                     ),
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   ),
                   hintText: "Write short product description",
-                  hintStyle: TextStyle(color: Colors.black, fontSize: 12),
+                  hintStyle: const TextStyle(color: Colors.black, fontSize: 12),
                 ),
               ),
               spacer3(),
@@ -528,7 +533,7 @@ class _AddProductPageState extends State<AddProductPage> {
                     );
                     return;
                   }
-                  Get.to(() => HomePage());
+                  Get.to(() => const HomePage());
                 },
                 text: "Add Product",
               ),

@@ -3,6 +3,8 @@ import 'package:e_online/pages/customer_support_page.dart';
 import 'package:e_online/pages/edit_profile_page.dart';
 import 'package:e_online/pages/join_as_seller_page.dart';
 import 'package:e_online/pages/my_orders_page.dart';
+import 'package:e_online/pages/privacy_policy.dart';
+import 'package:e_online/pages/terms_conditions_page.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
@@ -20,27 +22,27 @@ class ProfilePage extends StatelessWidget {
       {
         'icon': AntDesign.shopping_outline,
         'title': 'My Orders',
-        'page': MyOrdersPage(),
+        'page': const MyOrdersPage(),
       },
       {
         'icon': AntDesign.user_outline,
         'title': 'Edit Profile',
-        'page': EditProfilePage(),
+        'page': const EditProfilePage(),
       },
       {
         'icon': Icons.notifications_outlined,
         'title': 'Customer Support',
-        'page': CustomerSupportPage(),
+        'page': const CustomerSupportPage(),
       },
       {
         'icon': Icons.motorcycle,
         'title': 'Terms and Conditions',
-        'page': ProfilePage(),
+        'page': const TermsConditionsPage(),
       },
       {
         'icon': AntDesign.setting_outline,
         'title': 'Privacy Policy',
-        'page': ProfilePage(),
+        'page': PrivacyPolicy(),
       },
     ];
 
@@ -58,7 +60,7 @@ class ProfilePage extends StatelessWidget {
         ),
         title: HeadingText("My Profile"),
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
+          preferredSize: const Size.fromHeight(1.0),
           child: Container(
             color: primaryColor,
             height: 1.0,
@@ -70,7 +72,7 @@ class ProfilePage extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              Container(
+              SizedBox(
                 height: 80,
                 width: 80,
                 child: Stack(
@@ -91,7 +93,7 @@ class ProfilePage extends StatelessWidget {
                           color: Colors.black,
                           borderRadius: BorderRadius.circular(15),
                         ),
-                        child: Center(
+                        child: const Center(
                           child: Icon(
                             AntDesign.edit_outline,
                             color: Colors.white,
@@ -125,7 +127,7 @@ class ProfilePage extends StatelessWidget {
                           const SizedBox(width: 10),
                           Expanded(child: ParagraphText(item['title'])),
                           const Spacer(),
-                          Icon(
+                          const Icon(
                             Icons.arrow_forward_ios,
                             size: 15,
                           ),
@@ -157,7 +159,7 @@ class ProfilePage extends StatelessWidget {
                     spacer2(),
                     customButton(
                       onTap: () {
-                        Get.to(() => JoinAsSellerPage());
+                        Get.to(() => const JoinAsSellerPage());
                       },
                       text: "Learn More",
                       vertical: 8.0,

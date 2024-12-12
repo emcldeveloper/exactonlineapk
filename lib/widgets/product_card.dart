@@ -9,8 +9,7 @@ import 'dart:convert';
 class ProductCard extends StatefulWidget {
   final Map<String, dynamic> data;
   final double? height;
-  const ProductCard({required this.data, this.height, Key? key})
-      : super(key: key);
+  const ProductCard({required this.data, this.height, super.key});
 
   @override
   _ProductCardState createState() => _ProductCardState();
@@ -71,7 +70,7 @@ class _ProductCardState extends State<ProductCard> {
           ),
         );
       },
-      child: Container(
+      child: SizedBox(
         width: 135,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

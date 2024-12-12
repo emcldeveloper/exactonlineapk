@@ -45,7 +45,7 @@ class LoginPage extends StatelessWidget {
                 decoration: InputDecoration(
                   fillColor: primaryColor,
                   filled: true,
-                  labelStyle: TextStyle(color: Colors.black, fontSize: 12),
+                  labelStyle: const TextStyle(color: Colors.black, fontSize: 12),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
                   ),
@@ -56,7 +56,7 @@ class LoginPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Colors.transparent,
                     ),
                     borderRadius: BorderRadius.circular(10.0),
@@ -68,7 +68,7 @@ class LoginPage extends StatelessWidget {
               spacer3(),
               customButton(
                 onTap: () {
-                  Get.to(() => RegistrationPage());
+                  Get.to(() => const RegistrationPage());
                 },
                 text: "Login",
                 width: double.infinity,
@@ -78,10 +78,10 @@ class LoginPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ParagraphText("Don`t have an account?"),
-                  SizedBox(width: 5),
+                  const SizedBox(width: 5),
                   GestureDetector(
                     onTap: () {
-                      Get.to(() => RegistrationPage());
+                      Get.to(() => const RegistrationPage());
                     },
                     child: ParagraphText(
                       "Register",

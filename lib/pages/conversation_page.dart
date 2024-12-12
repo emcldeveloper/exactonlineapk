@@ -49,13 +49,13 @@ class _ConversationPageState extends State<ConversationPage> {
               backgroundImage:
                   AssetImage(chatData['avatar'] ?? 'assets/images/avatar.png'),
             ),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
             HeadingText(chatData['name'] ?? 'Unknown'),
           ],
         ),
         centerTitle: false,
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
+          preferredSize: const Size.fromHeight(1.0),
           child: Container(
             color: primaryColor,
             height: 1.0,
@@ -106,7 +106,7 @@ class _ConversationPageState extends State<ConversationPage> {
                         fillColor: primaryColor,
                         filled: true,
                         hintText: "Write your message here",
-                        hintStyle: TextStyle(fontSize: 12.0),
+                        hintStyle: const TextStyle(fontSize: 12.0),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(16.0),
                         ),
@@ -114,9 +114,9 @@ class _ConversationPageState extends State<ConversationPage> {
                           borderSide: BorderSide(
                             color: primaryColor,
                           ),
-                          borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                          borderRadius: const BorderRadius.all(Radius.circular(30.0)),
                         ),
-                        enabledBorder: OutlineInputBorder(
+                        enabledBorder: const OutlineInputBorder(
                           borderSide: BorderSide(
                             color: Colors.transparent,
                           ),
@@ -125,7 +125,7 @@ class _ConversationPageState extends State<ConversationPage> {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 8,
                   ),
                   InkWell(
@@ -139,7 +139,7 @@ class _ConversationPageState extends State<ConversationPage> {
                             padding: const EdgeInsets.all(13.0),
                             child: Transform.rotate(
                                 angle: 5.5,
-                                child: Icon(Icons.send_outlined,
+                                child: const Icon(Icons.send_outlined,
                                     color: Colors.white)),
                           ))),
                 ],
@@ -175,7 +175,7 @@ class ChatBubble extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: TextStyle(fontSize: 14),
+        style: const TextStyle(fontSize: 14),
       ),
     );
   }

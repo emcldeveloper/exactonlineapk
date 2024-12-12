@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({super.key});
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> {
       }
 
       return SingleChildScrollView(
-        child: Container(
+        child: SizedBox(
           width: double.infinity,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,7 +77,7 @@ class _HomePageState extends State<HomePage> {
                     items: carouselImages.map((i) {
                       return Builder(
                         builder: (BuildContext context) {
-                          return Image.asset("$i", fit: BoxFit.contain);
+                          return Image.asset(i, fit: BoxFit.contain);
                         },
                       );
                     }).toList(),
@@ -244,11 +244,11 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {
                 Get.to(SearchPage());
               },
-              icon: Icon(Icons.search),
+              icon: const Icon(Icons.search),
             ),
             InkWell(
               onTap: () {
-                Get.to(ProfilePage());
+                Get.to(const ProfilePage());
               },
               child: ClipOval(
                 child: Container(

@@ -33,30 +33,29 @@ class CustomerSupportPage extends StatelessWidget {
         title: HeadingText("Customer support"),
         centerTitle: true,
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
+          preferredSize: const Size.fromHeight(1.0),
           child: Container(
             color: primaryColor,
             height: 1.0,
           ),
         ),
       ),
-      body: Container(
+      body: SizedBox(
         height: MediaQuery.of(context).size.height,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
+              spacer1(),
+              SizedBox(
                 height: 80,
                 width: 80,
                 child: Stack(
                   children: [
-                    Image.asset(
-                      "assets/images/avatar.png",
-                      height: 80,
-                      width: 80,
-                      fit: BoxFit.cover,
+                    const Icon(
+                      Icons.headset_mic_rounded,
+                      size: 80,
                     ),
                     Positioned(
                       bottom: 0,
@@ -76,7 +75,7 @@ class CustomerSupportPage extends StatelessWidget {
                 "Contact us via +255627707434 or press the button below to reach use via our whatsapp number",
                 textAlign: TextAlign.center,
               ),
-              Spacer(),
+              const Spacer(),
               customButton(
                 onTap: () {
                   Get.to(() => ChatPage());

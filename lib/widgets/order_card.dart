@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 class OrderCard extends StatelessWidget {
   final Map<String, dynamic> data;
 
-  const OrderCard({Key? key, required this.data}) : super(key: key);
+  const OrderCard({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {

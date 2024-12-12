@@ -18,7 +18,7 @@ final List<Map<String, dynamic>> filters = [
 ];
 
 class FilterSearchBottomSheet extends StatefulWidget {
-  FilterSearchBottomSheet({Key? key}) : super(key: key);
+  const FilterSearchBottomSheet({super.key});
 
   @override
   _FilterSearchBottomSheetState createState() => _FilterSearchBottomSheetState();

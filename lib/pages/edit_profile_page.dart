@@ -31,7 +31,7 @@ class EditProfilePage extends StatelessWidget {
         title: HeadingText("Edit Profile"),
         centerTitle: true,
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
+          preferredSize: const Size.fromHeight(1.0),
           child: Container(
             color: primaryColor,
             height: 1.0,
@@ -43,7 +43,7 @@ class EditProfilePage extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              Container(
+              SizedBox(
                 height: 80,
                 width: 80,
                 child: Stack(
@@ -64,7 +64,7 @@ class EditProfilePage extends StatelessWidget {
                           color: Colors.black,
                           borderRadius: BorderRadius.circular(15),
                         ),
-                        child: Center(
+                        child: const Center(
                           child: Icon(
                             AntDesign.edit_fill,
                             color: Colors.white,
@@ -90,22 +90,22 @@ class EditProfilePage extends StatelessWidget {
                     decoration: InputDecoration(
                       fillColor: primaryColor,
                       filled: true,
-                      labelStyle: TextStyle(color: Colors.black, fontSize: 12),
-                      border: OutlineInputBorder(),
+                      labelStyle: const TextStyle(color: Colors.black, fontSize: 12),
+                      border: const OutlineInputBorder(),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: primaryColor,
                         ),
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                       ),
-                      enabledBorder: OutlineInputBorder(
+                      enabledBorder: const OutlineInputBorder(
                         borderSide: BorderSide(
                           color: Colors.transparent,
                         ),
                         borderRadius: BorderRadius.all(Radius.circular(10.0)),
                       ),
                       hintText: "Enter business name",
-                      hintStyle: TextStyle(color: Colors.black, fontSize: 12),
+                      hintStyle: const TextStyle(color: Colors.black, fontSize: 12),
                     ),
                   ),
                   spacer(),
@@ -119,22 +119,22 @@ class EditProfilePage extends StatelessWidget {
                     decoration: InputDecoration(
                       fillColor: primaryColor,
                       filled: true,
-                      labelStyle: TextStyle(color: Colors.black, fontSize: 12),
-                      border: OutlineInputBorder(),
+                      labelStyle: const TextStyle(color: Colors.black, fontSize: 12),
+                      border: const OutlineInputBorder(),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: primaryColor,
                         ),
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                       ),
-                      enabledBorder: OutlineInputBorder(
+                      enabledBorder: const OutlineInputBorder(
                         borderSide: BorderSide(
                           color: Colors.transparent,
                         ),
                         borderRadius: BorderRadius.all(Radius.circular(10.0)),
                       ),
                       hintText: "Enter phone number",
-                      hintStyle: TextStyle(color: Colors.black, fontSize: 12),
+                      hintStyle: const TextStyle(color: Colors.black, fontSize: 12),
                     ),
                   ),
                   spacer(),
@@ -148,22 +148,22 @@ class EditProfilePage extends StatelessWidget {
                     decoration: InputDecoration(
                       fillColor: primaryColor,
                       filled: true,
-                      labelStyle: TextStyle(color: Colors.black, fontSize: 12),
-                      border: OutlineInputBorder(),
+                      labelStyle: const TextStyle(color: Colors.black, fontSize: 12),
+                      border: const OutlineInputBorder(),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: primaryColor,
                         ),
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                       ),
-                      enabledBorder: OutlineInputBorder(
+                      enabledBorder: const OutlineInputBorder(
                         borderSide: BorderSide(
                           color: Colors.transparent,
                         ),
                         borderRadius: BorderRadius.all(Radius.circular(10.0)),
                       ),
                       hintText: "Enter business address",
-                      hintStyle: TextStyle(color: Colors.black, fontSize: 12),
+                      hintStyle: const TextStyle(color: Colors.black, fontSize: 12),
                     ),
                   ),
                 ],

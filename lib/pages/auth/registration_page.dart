@@ -46,7 +46,7 @@ class RegistrationPage extends StatelessWidget {
                 decoration: InputDecoration(
                   fillColor: primaryColor,
                   filled: true,
-                  labelStyle: TextStyle(color: Colors.black, fontSize: 12),
+                  labelStyle: const TextStyle(color: Colors.black, fontSize: 12),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
                   ),
@@ -57,7 +57,7 @@ class RegistrationPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Colors.transparent,
                     ),
                     borderRadius: BorderRadius.circular(10.0),
@@ -79,7 +79,7 @@ class RegistrationPage extends StatelessWidget {
                 decoration: InputDecoration(
                   fillColor: primaryColor,
                   filled: true,
-                  labelStyle: TextStyle(color: Colors.black, fontSize: 12),
+                  labelStyle: const TextStyle(color: Colors.black, fontSize: 12),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
                   ),
@@ -90,7 +90,7 @@ class RegistrationPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Colors.transparent,
                     ),
                     borderRadius: BorderRadius.circular(10.0),
@@ -102,7 +102,7 @@ class RegistrationPage extends StatelessWidget {
               spacer3(),
               customButton(
                 onTap: () {
-                  Get.to(() => ConfirmationCodePage());
+                  Get.to(() => const ConfirmationCodePage());
                 },
                 text: "Register",
                 width: double.infinity,
@@ -112,10 +112,10 @@ class RegistrationPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ParagraphText("Already registered ? "),
-                  SizedBox(width: 5),
+                  const SizedBox(width: 5),
                   GestureDetector(
                     onTap: () {
-                      Get.to(() => LoginPage());
+                      Get.to(() => const LoginPage());
                     },
                     child: ParagraphText(
                       "Login",

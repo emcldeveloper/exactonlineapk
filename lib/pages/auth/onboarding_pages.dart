@@ -6,6 +6,8 @@ import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 
 class OnboardingPage extends StatefulWidget {
+  const OnboardingPage({super.key});
+
   @override
   _OnboardingPageState createState() => _OnboardingPageState();
 }
@@ -95,8 +97,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
               children: List.generate(
                 _onboardingData.length,
                 (index) => AnimatedContainer(
-                  duration: Duration(milliseconds: 300),
-                  margin: EdgeInsets.symmetric(horizontal: 4.0),
+                  duration: const Duration(milliseconds: 300),
+                  margin: const EdgeInsets.symmetric(horizontal: 4.0),
                   width: _currentPage == index ? 12 : 8,
                   height: 8,
                   decoration: BoxDecoration(
@@ -127,11 +129,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         // Navigate to the next page
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (_) => WayPage()),
+                          MaterialPageRoute(builder: (_) => const WayPage()),
                         );
                       } else {
                         _controller.nextPage(
-                          duration: Duration(milliseconds: 300),
+                          duration: const Duration(milliseconds: 300),
                           curve: Curves.easeInOut,
                         );
                       }

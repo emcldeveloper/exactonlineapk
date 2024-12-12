@@ -44,7 +44,7 @@ class ResendConfirmationCodePage extends StatelessWidget {
               spacer(),
               Form(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8.0),
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: PinCodeTextField(
                     length: 5,
                     appContext: context,
@@ -66,7 +66,7 @@ class ResendConfirmationCodePage extends StatelessWidget {
               spacer3(),
               customButton(
                   onTap: () {
-                    Get.to(() => HomePage());
+                    Get.to(() => const HomePage());
                   },
                   text: "Verify Account"),
               spacer1(),
@@ -74,10 +74,10 @@ class ResendConfirmationCodePage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   ParagraphText("Need to go back ? "),
-                  SizedBox(width: 5),
+                  const SizedBox(width: 5),
                   GestureDetector(
                     onTap: () {
-                      Get.to(() => LoginPage());
+                      Get.to(() => const LoginPage());
                     },
                     child: ParagraphText(
                       "Login",

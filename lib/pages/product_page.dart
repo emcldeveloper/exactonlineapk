@@ -16,7 +16,7 @@ import 'dart:convert';
 class ProductPage extends StatefulWidget {
   final Map<String, dynamic> productData;
 
-  const ProductPage({required this.productData, Key? key}) : super(key: key);
+  const ProductPage({required this.productData, super.key});
 
   @override
   State<ProductPage> createState() => _ProductPageState();
@@ -230,7 +230,7 @@ class _ProductPageState extends State<ProductPage> {
           ),
         ],
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
+          preferredSize: const Size.fromHeight(1.0),
           child: Container(
             color: primaryColor,
             height: 1.0,
@@ -377,7 +377,7 @@ class _ProductPageState extends State<ProductPage> {
                     fontWeight: FontWeight.bold,
                     color: mutedTextColor,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 8,
                   ),
                   ParagraphText(
@@ -393,7 +393,7 @@ class _ProductPageState extends State<ProductPage> {
                     fontWeight: FontWeight.bold,
                     color: mutedTextColor,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 8,
                   ),
                   ParagraphText(
@@ -430,19 +430,19 @@ class _ProductPageState extends State<ProductPage> {
               ),
               spacer1(),
               customButton(
-                onTap: () => Get.to(() => HomePage()),
+                onTap: () => Get.to(() => const HomePage()),
                 text: "Add to Cart",
               ),
               spacer(),
               customButton(
-                onTap: () => Get.to(() => HomePage()),
+                onTap: () => Get.to(() => const HomePage()),
                 text: "Call Seller",
                 buttonColor: primaryColor,
                 textColor: Colors.black,
               ),
               spacer(),
               customButton(
-                onTap: () => Get.to(() => HomePage()),
+                onTap: () => Get.to(() => const HomePage()),
                 text: "Message Seller",
                 buttonColor: primaryColor,
                 textColor: Colors.black,

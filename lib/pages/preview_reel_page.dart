@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 class PreviewReelPage extends StatefulWidget {
   final Map<String, dynamic> reel;
 
-  PreviewReelPage({required this.reel, super.key});
+  const PreviewReelPage({required this.reel, super.key});
 
   @override
   State<PreviewReelPage> createState() => _PreviewReelPageState();
@@ -61,12 +61,12 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
               child: GestureDetector(
                 onTap: () => Get.back(),
                 child: Container(
-                  padding: EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: Colors.black.withOpacity(0.5),
                     borderRadius: BorderRadius.circular(25),
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.arrow_back_ios_new_outlined,
                     color: Colors.white,
                     size: 20.0,
@@ -80,12 +80,12 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
               child: GestureDetector(
                 onTap: toggleBlockingReel,
                 child: Container(
-                  padding: EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: Colors.black.withOpacity(0.5),
                     borderRadius: BorderRadius.circular(25),
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.more_vert_sharp,
                     color: Colors.white,
                     size: 20.0,
@@ -102,12 +102,12 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                   onTap: blockReel,
                   child: Container(
                     width: 150.0,
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       color: primaryColor.withOpacity(0.7),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Row(
+                    child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
@@ -156,12 +156,12 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                           Expanded(
                             child: Row(
                               children: [
-                                CircleAvatar(
+                                const CircleAvatar(
                                   radius: 16,
                                   backgroundImage:
                                       AssetImage('assets/images/avatar.png'),
                                 ),
-                                SizedBox(width: 8),
+                                const SizedBox(width: 8),
                                 ParagraphText(
                                   widget.reel['title'] ?? 'Diana Mwakaponda',
                                   color: Colors.white,
@@ -191,7 +191,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                       // Action buttons
                       Container(
                         width: double.infinity,
-                        padding: EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                             horizontal: 30.0, vertical: 8.0),
                         decoration: BoxDecoration(
                           color: Colors.black.withOpacity(0.8),
@@ -202,12 +202,12 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                           children: [
                             Row(
                               children: [
-                                Icon(
+                                const Icon(
                                   Icons.favorite_border,
                                   size: 20,
                                   color: Colors.white,
                                 ),
-                                SizedBox(width: 4),
+                                const SizedBox(width: 4),
                                 ParagraphText(
                                   '12k',
                                   color: Colors.white,
@@ -218,12 +218,12 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                             ),
                             Row(
                               children: [
-                                Icon(
+                                const Icon(
                                   Icons.comment,
                                   size: 20,
                                   color: Colors.white,
                                 ),
-                                SizedBox(width: 4),
+                                const SizedBox(width: 4),
                                 ParagraphText(
                                   '200',
                                   color: Colors.white,
@@ -231,7 +231,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                                 ),
                               ],
                             ),
-                            Icon(
+                            const Icon(
                               Icons.share,
                               size: 20,
                               color: Colors.white,

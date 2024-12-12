@@ -111,7 +111,7 @@ Widget ReelsFollowingTab() {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 ClipOval(
-                  child: Container(
+                  child: SizedBox(
                     height: 80,
                     width: 80,
                     child: Image.asset(

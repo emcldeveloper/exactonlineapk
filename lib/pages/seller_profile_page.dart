@@ -13,7 +13,7 @@ class SellerProfilePage extends StatelessWidget {
   final String followers;
   final String imageUrl;
 
-  const SellerProfilePage({
+  const SellerProfilePage({super.key, 
     required this.name,
     required this.followers,
     required this.imageUrl,
@@ -43,7 +43,7 @@ class SellerProfilePage extends StatelessWidget {
                   color: Colors.black, size: 20),
               onTap: () {},
             ),
-            SizedBox(
+            const SizedBox(
               width: 8,
             ),
             InkWell(
@@ -51,7 +51,7 @@ class SellerProfilePage extends StatelessWidget {
                   color: Colors.black, size: 20),
               onTap: () {},
             ),
-            SizedBox(
+            const SizedBox(
               width: 8,
             ),
             InkWell(
@@ -59,12 +59,12 @@ class SellerProfilePage extends StatelessWidget {
               child: const Icon(Icons.message_outlined,
                   color: Colors.black, size: 20),
             ),
-            SizedBox(
+            const SizedBox(
               width: 16,
             ),
           ],
           bottom: PreferredSize(
-            preferredSize: Size.fromHeight(1.0),
+            preferredSize: const Size.fromHeight(1.0),
             child: Container(
               color: primaryColor,
               height: 1.0,
@@ -78,7 +78,7 @@ class SellerProfilePage extends StatelessWidget {
               child: Row(
                 children: [
                   ClipOval(
-                    child: Container(
+                    child: SizedBox(
                       height: 80,
                       width: 80,
                       child: Image.asset(
@@ -89,7 +89,7 @@ class SellerProfilePage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,21 +136,21 @@ class SellerProfilePage extends StatelessWidget {
               labelColor: Colors.black,
               unselectedLabelColor: mutedTextColor,
               tabAlignment: TabAlignment.start,
-              labelStyle: TextStyle(
+              labelStyle: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
-              unselectedLabelStyle: TextStyle(
+              unselectedLabelStyle: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.normal,
               ),
-              indicator: UnderlineTabIndicator(
+              indicator: const UnderlineTabIndicator(
                 borderSide: BorderSide(
                   width: 2,
                   color: Colors.black,
                 ),
               ),
-              tabs: [
+              tabs: const [
                 Tab(text: "Shop Products"),
                 Tab(text: "Reels"),
               ],

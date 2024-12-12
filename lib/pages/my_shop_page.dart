@@ -4,6 +4,7 @@ import 'package:e_online/pages/add_product_page.dart';
 import 'package:e_online/pages/add_reel_page.dart';
 import 'package:e_online/pages/create_ad_page.dart';
 import 'package:e_online/pages/reels_page.dart';
+import 'package:e_online/pages/setting_myshop_page.dart';
 import 'package:e_online/widgets/ad_card.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
@@ -59,12 +60,12 @@ class _MyShopPageState extends State<MyShopPage> {
           ),
           title: HeadingText("My Shop"),
           centerTitle: true,
-          actions: [
+          actions: const [
             Icon(
               Icons.settings_outlined,
               size: 20.0,
             ),
-            const SizedBox(width: 16),
+            SizedBox(width: 16),
           ],
         ),
         body: Padding(
@@ -162,7 +163,7 @@ class _MyShopPageState extends State<MyShopPage> {
         Get.to(() => const AddProductPage());
         break;
       case 3:
-        // Implement Promote Product action
+        Get.to(() => const SettingMyshopPage());
         break;
       case 4:
         Get.to(() => const CreateAdPage());

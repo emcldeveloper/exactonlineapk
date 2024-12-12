@@ -8,10 +8,10 @@ class ImageEditBottomSheet extends StatelessWidget {
   final VoidCallback onDelete;
 
   const ImageEditBottomSheet({
-    Key? key,
+    super.key,
     required this.onReplace,
     required this.onDelete,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

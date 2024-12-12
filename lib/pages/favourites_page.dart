@@ -59,7 +59,7 @@ class FavouritesPage extends StatelessWidget {
         elevation: 0,
         title: HeadingText('Favorites'),
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
+          preferredSize: const Size.fromHeight(1.0),
           child: Container(
             color: primaryColor,
             height: 1.0,

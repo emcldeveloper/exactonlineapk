@@ -20,11 +20,11 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     List<Widget> pages = [
-      HomePage(),
-      ReelsPage(),
+      const HomePage(),
+      const ReelsPage(),
       ChatPage(),
-      FavouritesPage(),
-      ProfilePage(),
+      const FavouritesPage(),
+      const ProfilePage(),
     ];
 
     return Scaffold(

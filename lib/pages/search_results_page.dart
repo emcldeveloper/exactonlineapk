@@ -5,7 +5,7 @@ import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 
 class SearchResultsPage extends StatefulWidget {
-  SearchResultsPage({super.key});
+  const SearchResultsPage({super.key});
 
   @override
   State<SearchResultsPage> createState() => _SearchResultsPageState();
@@ -114,7 +114,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(Icons.search, color: Colors.white, size: 20),
+              child: const Icon(Icons.search, color: Colors.white, size: 20),
             ),
           ),
         ],
@@ -127,7 +127,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
     return Scaffold(
       backgroundColor: mainColor,
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(60),
+        preferredSize: const Size.fromHeight(60),
         child: AppBar(
           backgroundColor: mainColor,
           elevation: 0,
@@ -146,12 +146,12 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
           child: Column(
             children: [
               spacer(),
-              FilterTilesWidget(),
+              const FilterTilesWidget(),
               spacer(),
               // Display filtered results
               ListView.builder(
                 shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: filteredResults.length,
                 itemBuilder: (context, index) {
                   final item = filteredResults[index];

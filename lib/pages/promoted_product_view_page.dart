@@ -10,8 +10,7 @@ import 'package:get/get.dart';
 class PromotedProductViewPage extends StatefulWidget {
   final Map<String, dynamic> productData;
 
-  const PromotedProductViewPage({required this.productData, Key? key})
-      : super(key: key);
+  const PromotedProductViewPage({required this.productData, super.key});
 
   @override
   State<PromotedProductViewPage> createState() => _ProductPageState();
@@ -29,7 +28,7 @@ class _ProductPageState extends State<PromotedProductViewPage> {
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
-        child: PromoteProductInsightsBottomSheet(),
+        child: const PromoteProductInsightsBottomSheet(),
       ),
     );
   }
@@ -51,7 +50,7 @@ class _ProductPageState extends State<PromotedProductViewPage> {
         title: HeadingText("Promote Product"),
         centerTitle: true,
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
+          preferredSize: const Size.fromHeight(1.0),
           child: Container(
             color: primaryColor,
             height: 1.0,

@@ -44,7 +44,7 @@ class JoinAsSellerPage extends StatelessWidget {
         title: HeadingText("Join as seller"),
         centerTitle: true,
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
+          preferredSize: const Size.fromHeight(1.0),
           child: Container(
             color: primaryColor,
             height: 1.0,
@@ -90,9 +90,9 @@ class JoinAsSellerPage extends StatelessWidget {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(AntDesign.check_circle_fill,
+                        const Icon(AntDesign.check_circle_fill,
                             color: Colors.green, size: 20.0),
-                        SizedBox(width: 8.0),
+                        const SizedBox(width: 8.0),
                         Expanded(
                           child: ParagraphText(item['adv'] ?? ""),
                         ),
@@ -104,7 +104,7 @@ class JoinAsSellerPage extends StatelessWidget {
               spacer3(),
               customButton(
                 onTap: () {
-                  Get.to(() => RegisterAsSellerPage());
+                  Get.to(() => const RegisterAsSellerPage());
                 },
                 text: "Join Now",
               ),

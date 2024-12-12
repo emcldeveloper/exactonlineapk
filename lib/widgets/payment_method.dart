@@ -81,22 +81,22 @@ class PaymentMethodBottomSheet extends StatelessWidget {
               decoration: InputDecoration(
                 fillColor: primaryColor,
                 filled: true,
-                labelStyle: TextStyle(color: Colors.black, fontSize: 12),
-                border: OutlineInputBorder(),
+                labelStyle: const TextStyle(color: Colors.black, fontSize: 12),
+                border: const OutlineInputBorder(),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
                     color: primaryColor,
                   ),
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                 ),
-                enabledBorder: OutlineInputBorder(
+                enabledBorder: const OutlineInputBorder(
                   borderSide: BorderSide(
                     color: Colors.transparent,
                   ),
                   borderRadius: BorderRadius.all(Radius.circular(10.0)),
                 ),
                 hintText: "Write your phone number",
-                hintStyle: TextStyle(color: Colors.black, fontSize: 12),
+                hintStyle: const TextStyle(color: Colors.black, fontSize: 12),
               ),
             ),
             spacer1(),

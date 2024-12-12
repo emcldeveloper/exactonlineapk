@@ -27,7 +27,7 @@ class MyOrdersPage extends StatelessWidget {
         title: HeadingText("My Orders"),
         centerTitle: true,
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
+          preferredSize: const Size.fromHeight(1.0),
           child: Container(
             color: primaryColor,
             height: 1.0,

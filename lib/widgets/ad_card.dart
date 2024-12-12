@@ -8,7 +8,7 @@ import 'package:e_online/constants/colors.dart';
 class AdCard extends StatefulWidget {
   final Map<String, dynamic> data;
 
-  const AdCard({Key? key, required this.data}) : super(key: key);
+  const AdCard({super.key, required this.data});
 
   @override
   State<AdCard> createState() => _AdCardState();
@@ -30,7 +30,7 @@ class _AdCardState extends State<AdCard> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) => PromoteProductInsightsBottomSheet(),
+      builder: (context) => const PromoteProductInsightsBottomSheet(),
     );
   }
 
@@ -112,9 +112,9 @@ class _AdCardState extends State<AdCard> {
                   ],
                 ),
               ),
-              const SizedBox(width: 15),
+              const SizedBox(width: 10),
               Container(
-                width: 60,
+                width: 50,
                 height: 30,
                 decoration: BoxDecoration(
                   color: Colors.yellow,

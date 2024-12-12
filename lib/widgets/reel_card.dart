@@ -48,12 +48,12 @@ class ReelCard extends StatelessWidget {
                 right: 8,
                 bottom: 8,
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.black.withOpacity(0.7),
                     borderRadius: BorderRadius.circular(4),
                   ),
-                  child: Text(
+                  child: const Text(
                     '0:30',
                     style: TextStyle(
                       color: Colors.white,
@@ -86,9 +86,9 @@ class ReelCard extends StatelessWidget {
                       radius: 16,
                       backgroundImage: AssetImage(data['imageUrl']),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     // Username
-                    Expanded(
+                    const Expanded(
                       child: Text(
                         'Diana Mwakaponda',
                         style: TextStyle(
@@ -99,7 +99,7 @@ class ReelCard extends StatelessWidget {
                       ),
                     ),
                     // Likes
-                    Row(
+                    const Row(
                       children: [
                         Icon(Icons.favorite_border, size: 20),
                         SizedBox(width: 4),

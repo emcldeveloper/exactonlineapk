@@ -8,7 +8,7 @@ import 'package:e_online/constants/colors.dart';
 class HorizontalProductCard extends StatefulWidget {
   final Map<String, dynamic> data;
 
-  const HorizontalProductCard({Key? key, required this.data}) : super(key: key);
+  const HorizontalProductCard({super.key, required this.data});
 
   @override
   State<HorizontalProductCard> createState() => _HorizontalProductCardState();

@@ -8,7 +8,7 @@ Widget sellerShopProducts() {
   return SingleChildScrollView(
     child: Column(
       children: [
-        FilterTilesWidget(),
+        const FilterTilesWidget(),
         spacer1(),
         GridView.builder(
           shrinkWrap: true,

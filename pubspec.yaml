@@ -45,6 +45,7 @@ dependencies:
   hive: ^2.2.3
   file_picker: ^8.1.4
   carousel_slider: ^5.0.0
+  webview_flutter: ^4.10.0
 
 dev_dependencies:
   flutter_test:

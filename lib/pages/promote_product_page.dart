@@ -10,8 +10,7 @@ import 'package:get/get.dart';
 class PromoteProductPage extends StatefulWidget {
   final Map<String, dynamic> productData;
 
-  const PromoteProductPage({required this.productData, Key? key})
-      : super(key: key);
+  const PromoteProductPage({required this.productData, super.key});
 
   @override
   State<PromoteProductPage> createState() => _PromoteProductPageState();
@@ -56,7 +55,7 @@ class _PromoteProductPageState extends State<PromoteProductPage> {
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
-        child: PaymentMethodBottomSheet(),
+        child: const PaymentMethodBottomSheet(),
       ),
     );
   }
@@ -78,7 +77,7 @@ class _PromoteProductPageState extends State<PromoteProductPage> {
         title: HeadingText("Product Details"),
         centerTitle: true,
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
+          preferredSize: const Size.fromHeight(1.0),
           child: Container(color: Colors.grey, height: 1.0),
         ),
       ),
@@ -126,7 +125,7 @@ class _PromoteProductPageState extends State<PromoteProductPage> {
               ),
               spacer1(),
               Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   border: Border.symmetric(
                     horizontal: BorderSide(color: Colors.grey),
                   ),
@@ -163,17 +162,17 @@ class _PromoteProductPageState extends State<PromoteProductPage> {
                   fillColor: primaryColor,
                   filled: true,
                   hintText: "Select a date",
-                  hintStyle: TextStyle(color: Colors.black, fontSize: 12),
-                  border: OutlineInputBorder(
+                  hintStyle: const TextStyle(color: Colors.black, fontSize: 12),
+                  border: const OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
                       color: primaryColor,
                     ),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                   ),
-                  enabledBorder: OutlineInputBorder(
+                  enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(
                       color: Colors.transparent,
                     ),
@@ -200,17 +199,17 @@ class _PromoteProductPageState extends State<PromoteProductPage> {
                   fillColor: primaryColor,
                   filled: true,
                   hintText: "Select a date",
-                  hintStyle: TextStyle(color: Colors.black, fontSize: 12),
-                  border: OutlineInputBorder(
+                  hintStyle: const TextStyle(color: Colors.black, fontSize: 12),
+                  border: const OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
                       color: primaryColor,
                     ),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                   ),
-                  enabledBorder: OutlineInputBorder(
+                  enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(
                       color: Colors.transparent,
                     ),

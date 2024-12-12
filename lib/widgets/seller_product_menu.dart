@@ -13,11 +13,11 @@ class ProductEditBottomSheet extends StatefulWidget {
   final VoidCallback onDelete;
 
   const ProductEditBottomSheet({
-    Key? key,
+    super.key,
     required this.onView,
     required this.onReplace,
     required this.onDelete,
-  }) : super(key: key);
+  });
 
   @override
   State<ProductEditBottomSheet> createState() => _ProductEditBottomSheetState();
@@ -26,7 +26,7 @@ class ProductEditBottomSheet extends StatefulWidget {
 class _ProductEditBottomSheetState extends State<ProductEditBottomSheet> {
   @override
   Widget build(BuildContext context) {
-    bool _isSwitched = false;
+    bool isSwitched = false;
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -64,11 +64,11 @@ class _ProductEditBottomSheetState extends State<ProductEditBottomSheet> {
                   ),
                 ),
                 Switch(
-                  value: _isSwitched,
+                  value: isSwitched,
                   activeColor: Colors.black,
                   onChanged: (bool value) {
                     setState(() {
-                      _isSwitched = value;
+                      isSwitched = value;
                     });
                   },
                 ),
@@ -94,7 +94,7 @@ class _ProductEditBottomSheetState extends State<ProductEditBottomSheet> {
             spacer1(),
             GestureDetector(
               onTap: () {
-                Get.to(PromoteProductInsightsBottomSheet());
+                Get.to(const PromoteProductInsightsBottomSheet());
               },
               child: Row(
                 children: [

@@ -59,15 +59,15 @@ class CartPage extends StatelessWidget {
           ),
         ),
         title: HeadingText("Submit Order"),
-        actions: [
+        actions: const [
           Icon(
             Icons.settings_outlined,
             size: 16.0,
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: 16),
         ],
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
+          preferredSize: const Size.fromHeight(1.0),
           child: Container(
             color: primaryColor,
             height: 1.0,

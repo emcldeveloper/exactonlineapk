@@ -11,8 +11,7 @@ import 'package:get/get.dart';
 class CustomerOrderViewPage extends StatelessWidget {
   final Map<String, dynamic> orderData;
 
-  const CustomerOrderViewPage({Key? key, required this.orderData})
-      : super(key: key);
+  const CustomerOrderViewPage({super.key, required this.orderData});
 
   @override
   Widget build(BuildContext context) {
