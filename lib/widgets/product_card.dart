@@ -112,7 +112,7 @@ class _ProductCardState extends State<ProductCard> {
                             isFavorite
                                 ? AntDesign.heart_fill
                                 : AntDesign.heart_outline,
-                            color: isFavorite ? Colors.red : Colors.black,
+                            color: isFavorite ? Colors.red[800] : Colors.black,
                             size: 18.0,
                           ),
                         ),
@@ -132,28 +132,30 @@ class _ProductCardState extends State<ProductCard> {
                       if (widget.data['type'] == "ad")
                         Container(
                           width: 40,
-                          height: 25,
+                          height: 20,
                           decoration: BoxDecoration(
                             color: Colors.yellow,
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(5),
                           ),
                           alignment: Alignment.center,
-                          child: ParagraphText("Ad"),
+                          child: ParagraphText("Ad", fontSize: 12),
                         ),
                       if (widget.data['type'] == "ad") const SizedBox(width: 8),
                       Expanded(
                         child: ParagraphText(
                           widget.data['title'],
+                          fontSize: 12,
                           maxLines: 1,
                         ),
                       ),
                     ],
                   ),
                   ParagraphText(widget.data['price'],
-                      fontWeight: FontWeight.bold, fontSize: 16.0),
+                      fontWeight: FontWeight.bold, fontSize: 15.0),
                   if (widget.data['shipping'] == "free shipping")
                     ParagraphText(
                       widget.data['shipping'],
+                      fontSize: 12,
                       color: Colors.red,
                     ),
                 ],

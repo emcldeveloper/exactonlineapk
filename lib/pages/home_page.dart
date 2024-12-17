@@ -12,6 +12,7 @@ import 'package:e_online/widgets/product_card.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -119,7 +120,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     spacer1(),
                     SizedBox(
-                      height: 250,
+                      height: 230,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: filteredProducts.length,
@@ -131,7 +132,6 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                     ),
-                    spacer(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -157,7 +157,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     spacer1(),
                     SizedBox(
-                      height: 250,
+                      height: 230,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: filteredProducts.length,
@@ -169,7 +169,6 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                     ),
-                    spacer(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -189,13 +188,13 @@ class _HomePageState extends State<HomePage> {
                           const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         crossAxisSpacing: 16.0,
-                        mainAxisSpacing: 16.0,
-                        childAspectRatio: 0.65,
+                        mainAxisSpacing: 2.0,
+                        childAspectRatio: 0.70,
                       ),
                       itemCount: filteredProducts.length,
                       itemBuilder: (context, index) {
                         return ProductCard(
-                            data: filteredProducts[index], height: 175);
+                            data: filteredProducts[index], height: 170);
                       },
                     ),
                     spacer(),
@@ -215,13 +214,14 @@ class _HomePageState extends State<HomePage> {
         appBar: AppBar(
           backgroundColor: mainColor,
           elevation: 0,
-          title: HeadingText("E-Online"),
+          title: HeadingText("ExactOnline"),
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(kToolbarHeight),
             child: Align(
               alignment: Alignment.centerLeft,
               child: TabBar(
                 tabAlignment: TabAlignment.start,
+                dividerColor: const Color.fromARGB(255, 234, 234, 234),
                 isScrollable: true,
                 labelColor: Colors.black,
                 unselectedLabelColor: Colors.black.withOpacity(0.5),
@@ -241,7 +241,7 @@ class _HomePageState extends State<HomePage> {
                     .map((category) => Tab(
                           child: Text(
                             category,
-                            style: const TextStyle(fontSize: 14),
+                            style: const TextStyle(fontSize: 15),
                           ),
                         ))
                     .toList(),
@@ -259,7 +259,7 @@ class _HomePageState extends State<HomePage> {
                 onTap: () {
                   Get.to(SearchPage());
                 },
-                child: const Icon(Icons.search)),
+                child: const Icon(AntDesign.search_outline)),
             const SizedBox(width: 8),
             InkWell(
                 onTap: () {
@@ -309,7 +309,9 @@ class _HomePageState extends State<HomePage> {
               child: Container(
                 height: 7,
                 width: i == _currentPage ? 15 : 7,
-                color: i == _currentPage ? secondaryColor : Colors.grey,
+                color: i == _currentPage
+                    ? secondaryColor
+                    : const Color(0xffEBEBEB),
               ),
             ),
           );

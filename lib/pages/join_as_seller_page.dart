@@ -75,7 +75,7 @@ class JoinAsSellerPage extends StatelessWidget {
                     HeadingText("Are you a seller?"),
                     spacer(),
                     ParagraphText(
-                      "Explore all possibilities you can unlock by\njoining E-Online platform as a seller",
+                      "Explore all possibilities you can unlock by\njoining ExactOnline platform as a seller",
                       textAlign: TextAlign.center,
                     ),
                   ],
