@@ -1,12 +1,19 @@
 import 'package:e_online/constants/colors.dart';
-import 'package:e_online/pages/search_page.dart';
 import 'package:e_online/widgets/chat_card.dart';
 import 'package:e_online/widgets/heading_text.dart';
+import 'package:e_online/widgets/search_function.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ChatPage extends StatelessWidget {
+class ChatPage extends StatefulWidget {
   ChatPage({super.key});
+
+  @override
+  State<ChatPage> createState() => _ChatPageState();
+}
+
+class _ChatPageState extends State<ChatPage> {
+  bool _isSearching = false;
 
   final List<Map<String, dynamic>> chatItems = [
     {
@@ -87,26 +94,7 @@ class ChatPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: mainColor,
-      appBar: AppBar(
-        backgroundColor: mainColor,
-        elevation: 0,
-        title: HeadingText("Chats"),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Get.to(SearchPage());
-            },
-            icon: const Icon(Icons.search),
-          ),
-        ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1.0),
-          child: Container(
-            color: primaryColor,
-            height: 1.0,
-          ),
-        ),
-      ),
+      appBar: _isSearching ? _buildSearchAppBar() : _buildDefaultAppBar(),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -120,6 +108,62 @@ class ChatPage extends StatelessWidget {
               );
             }).toList(),
           ),
+        ),
+      ),
+    );
+  }
+
+  // Default AppBar with search icon
+  AppBar _buildDefaultAppBar() {
+    return AppBar(
+      backgroundColor: mainColor,
+      elevation: 0,
+      title: HeadingText("Chats"),
+      actions: [
+        InkWell(
+            onTap: () {
+              setState(() {
+                _isSearching = true;
+              });
+            },
+            child: const Icon(Icons.search)),
+        SizedBox(
+          width: 16.0,
+        )
+      ],
+      bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(1.0),
+        child: Container(
+          color: primaryColor,
+          height: 1.0,
+        ),
+      ),
+    );
+  }
+
+  // Search AppBar
+  AppBar _buildSearchAppBar() {
+    return AppBar(
+      backgroundColor: mainColor,
+      elevation: 0,
+      title: buildSearchBar(),
+      leading: IconButton(
+        icon: Icon(
+          Icons.arrow_back_ios_new_outlined,
+          color: mutedTextColor,
+          size: 14.0,
+        ),
+        onPressed: () {
+          setState(() {
+            _isSearching = false;
+          });
+        },
+      ),
+      bottom: PreferredSize(
+        preferredSize: const Size.fromHeight(1.0),
+        child: Container(
+          color: Colors.black,
+          height: 1.0,
         ),
       ),
     );

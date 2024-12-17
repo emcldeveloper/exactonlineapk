@@ -1,21 +1,18 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/pages/preview_reel_page.dart';
-import 'package:e_online/pages/search_page.dart';
 import 'package:e_online/widgets/following.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:get/get.dart';
 
 class ReelsPage extends StatelessWidget {
   const ReelsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -26,18 +23,6 @@ class ReelsPage extends StatelessWidget {
           title: HeadingText(
             "Reels",
           ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.search, color: Colors.black, size: 28),
-              onPressed: () {
-                 Get.to(SearchPage());
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.add, color: Colors.black, size: 28),
-              onPressed: () {},
-            ),
-          ],
           bottom: const PreferredSize(
             preferredSize: Size.fromHeight(48),
             child: Align(
@@ -48,11 +33,11 @@ class ReelsPage extends StatelessWidget {
                 labelColor: Colors.black,
                 unselectedLabelColor: Colors.grey,
                 labelStyle: TextStyle(
-                  fontSize: 16,
+                  fontSize: 15,
                   fontWeight: FontWeight.bold,
                 ),
                 unselectedLabelStyle: TextStyle(
-                  fontSize: 16,
+                  fontSize: 15,
                   fontWeight: FontWeight.normal,
                 ),
                 indicator: UnderlineTabIndicator(
@@ -62,10 +47,12 @@ class ReelsPage extends StatelessWidget {
                   ),
                   insets: EdgeInsets.symmetric(horizontal: 0),
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                labelPadding: EdgeInsets.only(right: 24, bottom: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 1),
+                labelPadding: const EdgeInsets.symmetric(horizontal: 16),
                 tabs: [
-                  Tab(text: "All"),
+                  Tab(
+                    text: "All",
+                  ),
                   Tab(text: "Following"),
                 ],
               ),
@@ -77,13 +64,7 @@ class ReelsPage extends StatelessWidget {
             // All Tab
             ProductMasonryGrid(productItems: productItems),
             // Following Tab
-
             ReelsFollowingTab(),
-            // ProductMasonryGrid(
-            //   productItems: productItems
-            //       .where((item) => item['category'] == "Following")
-            //       .toList(),
-            // ),
           ],
         ),
       ),
@@ -156,7 +137,7 @@ class ReelCard extends StatelessWidget {
                   child: Image.asset(
                     (data['imageUrl'] as List<String>).isNotEmpty
                         ? (data['imageUrl'] as List<String>).first
-                        : "assets/images/defaultImage.png", 
+                        : "assets/images/defaultImage.png",
                     fit: BoxFit.cover,
                     height: index.isEven ? 280 : 200,
                   ),
@@ -167,7 +148,8 @@ class ReelCard extends StatelessWidget {
                 right: 8,
                 bottom: 8,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.black.withOpacity(0.7),
                     borderRadius: BorderRadius.circular(4),
@@ -202,7 +184,7 @@ class ReelCard extends StatelessWidget {
                   children: [
                     // Profile Picture
                     CircleAvatar(
-                      radius: 16,
+                      radius: 12,
                       backgroundImage: AssetImage('assets/images/avatar.png'),
                     ),
                     SizedBox(width: 8),
@@ -211,7 +193,7 @@ class ReelCard extends StatelessWidget {
                       child: Text(
                         'Diana Mwakaponda',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -220,12 +202,12 @@ class ReelCard extends StatelessWidget {
                     // Likes
                     Row(
                       children: [
-                        Icon(Icons.favorite_border, size: 20),
+                        Icon(Icons.favorite_border, size: 14),
                         SizedBox(width: 4),
                         Text(
                           '12k',
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: 12,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
