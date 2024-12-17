@@ -158,10 +158,11 @@ class ProfilePage extends StatelessWidget {
                   children: [
                     Image.asset("assets/images/sellers_bg.png", height: 80.0),
                     spacer1(),
-                    HeadingText("Join ExactOnline as a seller"),
+                    HeadingText("Join ExactOnline as a seller", fontSize: 16.0),
                     spacer(),
                     ParagraphText(
                       "List your products and drive sales to your\nbusiness using ExactOnline",
+                      fontSize: 12.0,
                       textAlign: TextAlign.center,
                     ),
                     spacer2(),

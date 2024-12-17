@@ -6,7 +6,7 @@ Widget customButton({
   required VoidCallback onTap,
   double? width,
   double? vertical,
-  Color? buttonColor, 
+  Color? buttonColor,
   Color? textColor,
   double? rounded,
 }) {
@@ -19,7 +19,7 @@ Widget customButton({
         color: buttonColor ?? secondaryColor,
       ),
       child: Padding(
-        padding:  EdgeInsets.symmetric(vertical: vertical ?? 18.0),
+        padding: EdgeInsets.symmetric(vertical: vertical ?? 18.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -27,6 +27,7 @@ Widget customButton({
               text ?? "",
               style: TextStyle(
                 color: textColor ?? primaryColor,
+                fontSize: 12,
                 fontWeight: FontWeight.bold,
               ),
             ),
