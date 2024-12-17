@@ -281,14 +281,6 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                 ),
               ),
               spacer1(),
-              customButton(
-                onTap: () {},
-                text: "Delete Business",
-                vertical: 8.0,
-                textColor: Colors.red[800],
-                buttonColor: Colors.red[50],
-              ),
-              spacer1(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -316,8 +308,14 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        CircleAvatar(
+                          radius: 20,
+                          backgroundImage: AssetImage(
+                            'assets/images/avatar.png',
+                          ),
+                        ),
+                        const SizedBox(width: 12),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -333,11 +331,6 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                               ),
                             ],
                           ),
-                        ),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          color: mutedTextColor,
-                          size: 16,
                         ),
                         const SizedBox(width: 8),
                       ],
