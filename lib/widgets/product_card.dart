@@ -152,7 +152,7 @@ class _ProductCardState extends State<ProductCard> {
                   ),
                   ParagraphText(widget.data['price'],
                       fontWeight: FontWeight.bold, fontSize: 15.0),
-                  if (widget.data['shipping'] == "free shipping")
+                  if (widget.data['shipping'] == "Free Shipping")
                     ParagraphText(
                       widget.data['shipping'],
                       fontSize: 12,

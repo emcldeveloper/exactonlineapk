@@ -12,6 +12,7 @@ import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -21,32 +22,32 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<Map<String, dynamic>> settingItems = [
       {
-        'icon': AntDesign.shop_outline,
+        'icon': HugeIcons.strokeRoundedStore01,
         'title': 'My Shop',
         'page': const FreeTrialPage(),
       },
       {
-        'icon': AntDesign.shopping_outline,
+        'icon': HugeIcons.strokeRoundedShoppingBag02,
         'title': 'My Orders',
         'page': const MyOrdersPage(),
       },
       {
-        'icon': AntDesign.user_outline,
+        'icon': HugeIcons.strokeRoundedEditUser02,
         'title': 'Edit Profile',
         'page': const EditProfilePage(),
       },
       {
-        'icon': Icons.notifications_outlined,
+        'icon': HugeIcons.strokeRoundedCustomerSupport,
         'title': 'Customer Support',
         'page': const CustomerSupportPage(),
       },
       {
-        'icon': Icons.motorcycle,
+        'icon': HugeIcons.strokeRoundedFileValidation,
         'title': 'Terms and Conditions',
         'page': const TermsConditionsPage(),
       },
       {
-        'icon': AntDesign.setting_outline,
+        'icon': HugeIcons.strokeRoundedLegalDocument01,
         'title': 'Privacy Policy',
         'page': const PrivacyPolicy(),
       },
@@ -92,11 +93,14 @@ class ProfilePage extends StatelessWidget {
                           color: Colors.black,
                           borderRadius: BorderRadius.circular(15),
                         ),
-                        child: const Center(
-                          child: Icon(
-                            AntDesign.edit_outline,
-                            color: Colors.white,
-                            size: 22.0,
+                        child: Padding(
+                          padding: const EdgeInsets.all(6),
+                          child: const Center(
+                            child: HugeIcon(
+                              icon: HugeIcons.strokeRoundedPencilEdit02,
+                              color: Colors.white,
+                              size: 14.0,
+                            ),
                           ),
                         ),
                       ),
@@ -119,10 +123,14 @@ class ProfilePage extends StatelessWidget {
                       Get.to(() => item['page'] as Widget);
                     },
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      padding: EdgeInsets.symmetric(vertical: 8.0),
                       child: Row(
                         children: [
-                          Icon(item['icon']),
+                          HugeIcon(
+                            icon: item['icon'],
+                            color: Colors.black,
+                            size: 20.0,
+                          ),
                           const SizedBox(width: 10),
                           Expanded(child: ParagraphText(item['title'])),
                           const Spacer(),

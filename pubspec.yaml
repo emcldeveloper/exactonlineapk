@@ -75,6 +75,9 @@ flutter:
 
   assets:
      - assets/images/
+     - assets/ads/
+     - assets/products/
+
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

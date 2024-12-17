@@ -6,6 +6,7 @@ import 'package:e_online/pages/notifications_page.dart';
 import 'package:e_online/pages/profile_page.dart';
 import 'package:e_online/pages/search_page.dart';
 import 'package:e_online/pages/see_all_page.dart';
+import 'package:e_online/widgets/ads_carousel.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/product_card.dart';
@@ -24,10 +25,10 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _currentPage = 0;
   final List<String> carouselImages = [
-    "assets/images/homePromo.png",
-    "assets/images/homePromo.png",
-    "assets/images/homePromo.png",
-    "assets/images/homePromo.png",
+    "assets/ads/ad1.jpg",
+    "assets/ads/ad2.jpg",
+    "assets/ads/ad3.jpg",
+    "assets/ads/ad4.jpg",
   ];
 
   @override
@@ -63,39 +64,15 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              AdsCarousel(),
+              spacer(),
+              carouselIndicator(),
+              spacer1(),
               Column(
                 children: [
-                  CarouselSlider(
-                    options: CarouselOptions(
-                      autoPlay: true,
-                      autoPlayInterval: const Duration(seconds: 4),
-                      initialPage: 0,
-                      height: 160,
-                      viewportFraction: 1,
-                      onPageChanged: (value, _) {
-                        setState(() {
-                          _currentPage = value;
-                        });
-                      },
-                    ),
-                    items: carouselImages.map((i) {
-                      return Builder(
-                        builder: (BuildContext context) {
-                          return Image.asset(i, fit: BoxFit.contain);
-                        },
-                      );
-                    }).toList(),
-                  ),
-                  spacer(),
-                  carouselIndicator(),
-                ],
-              ),
-              spacer1(),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Column(
-                  children: [
-                    Row(
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Column(
@@ -118,8 +95,11 @@ class _HomePageState extends State<HomePage> {
                         )
                       ],
                     ),
-                    spacer1(),
-                    SizedBox(
+                  ),
+                  spacer1(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: SizedBox(
                       height: 230,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
@@ -132,7 +112,16 @@ class _HomePageState extends State<HomePage> {
                         },
                       ),
                     ),
-                    Row(
+                  ),
+                  Container(
+                    height: 8,
+                    width: double.infinity,
+                    color: const Color.fromARGB(255, 242, 242, 242),
+                  ),
+                  spacer1(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Column(
@@ -155,21 +144,37 @@ class _HomePageState extends State<HomePage> {
                         )
                       ],
                     ),
-                    spacer1(),
-                    SizedBox(
+                  ),
+                  spacer1(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: SizedBox(
                       height: 230,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: filteredProducts.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 16.0),
-                            child: ProductCard(data: filteredProducts[index]),
-                          );
-                        },
-                      ),
+                      child: Builder(builder: (context) {
+                        var newProductList = List.of(filteredProducts)
+                          ..shuffle();
+                        return ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: filteredProducts.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 16.0),
+                              child: ProductCard(data: newProductList[index]),
+                            );
+                          },
+                        );
+                      }),
                     ),
-                    Row(
+                  ),
+                  Container(
+                    height: 8,
+                    width: double.infinity,
+                    color: const Color.fromARGB(255, 242, 242, 242),
+                  ),
+                  spacer1(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         HeadingText("All Products"),
@@ -180,8 +185,11 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ],
                     ),
-                    spacer1(),
-                    GridView.builder(
+                  ),
+                  spacer1(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       gridDelegate:
@@ -197,9 +205,9 @@ class _HomePageState extends State<HomePage> {
                             data: filteredProducts[index], height: 170);
                       },
                     ),
-                    spacer(),
-                  ],
-                ),
+                  ),
+                  spacer(),
+                ],
               ),
             ],
           ),

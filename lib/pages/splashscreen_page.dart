@@ -1,3 +1,4 @@
+import 'package:e_online/widgets/heading_text.dart';
 import 'package:flutter/material.dart';
 
 class SplashscreenPage extends StatelessWidget {
@@ -6,13 +7,10 @@ class SplashscreenPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       body: Center(
-        child: SizedBox(
-          height: 55,
-          width: double.infinity,
-          child: Image.asset("assets/images/EonlineLogo.png"),
-        ),
+        child: HeadingText("ExactOnline",
+            textAlign: TextAlign.center, fontSize: 30.0),
       ),
     );
   }
