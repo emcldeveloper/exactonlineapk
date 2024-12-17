@@ -77,7 +77,7 @@ class _SettingShopDetailsBottomSheetState extends State<SettingShopDetails> {
                       });
                     },
                   ),
-                  Text("Open 24 hours")
+                  const Text("Open 24 hours")
                 ],
               ),
               Row(
@@ -95,7 +95,7 @@ class _SettingShopDetailsBottomSheetState extends State<SettingShopDetails> {
                       });
                     },
                   ),
-                  Text("Closed")
+                  const Text("Closed")
                 ],
               )
             ],

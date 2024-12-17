@@ -48,7 +48,7 @@ class ProfilePage extends StatelessWidget {
       {
         'icon': AntDesign.setting_outline,
         'title': 'Privacy Policy',
-        'page': PrivacyPolicy(),
+        'page': const PrivacyPolicy(),
       },
     ];
 
