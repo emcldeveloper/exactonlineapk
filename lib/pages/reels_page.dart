@@ -7,6 +7,7 @@ import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class ReelsPage extends StatelessWidget {
   const ReelsPage({super.key});
@@ -203,7 +204,11 @@ class ReelCard extends StatelessWidget {
                     // Likes
                     Row(
                       children: [
-                        Icon(Icons.favorite_border, size: 14),
+                        HugeIcon(
+                          icon: HugeIcons.strokeRoundedFavourite,
+                          color: Colors.black,
+                          size: 14.0,
+                        ),
                         SizedBox(width: 4),
                         Text(
                           '12k',

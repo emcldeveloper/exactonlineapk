@@ -5,6 +5,7 @@ import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/horizontal_product_card.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class CategoriesProductsPage extends StatelessWidget {
   final String categoryName;
@@ -73,7 +74,11 @@ class CategoriesProductsPage extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => SearchPage()),
               );
             },
-            icon: const Icon(Icons.search),
+            icon: HugeIcon(
+              icon: HugeIcons.strokeRoundedSearch01,
+              color: Colors.black,
+              size: 24.0,
+            ),
           ),
         ],
         bottom: PreferredSize(

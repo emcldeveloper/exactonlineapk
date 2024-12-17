@@ -48,7 +48,11 @@ class NotificationsPage extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            color: Colors.black,
+            size: 16.0,
+          ),
           onPressed: () {
             Navigator.pop(context);
           },

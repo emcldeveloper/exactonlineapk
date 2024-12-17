@@ -89,7 +89,7 @@ Widget ReelsFollowingTab() {
       child: GridView.builder(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
-          childAspectRatio: 0.75,
+          childAspectRatio: 0.80,
           crossAxisSpacing: 16,
           mainAxisSpacing: 16,
         ),
@@ -124,12 +124,13 @@ Widget ReelsFollowingTab() {
                   ),
                 ),
                 spacer(),
-                ParagraphText(
-                  profiles[index]['name'],
-                ),
+                ParagraphText(profiles[index]['name'],
+                    textAlign: TextAlign.center, fontSize: 12.0),
                 spacer(),
                 ParagraphText(profiles[index]['followers'],
-                    color: mutedTextColor),
+                    color: mutedTextColor,
+                    textAlign: TextAlign.center,
+                    fontSize: 11.0),
               ],
             ),
           );

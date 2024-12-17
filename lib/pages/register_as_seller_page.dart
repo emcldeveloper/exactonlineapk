@@ -7,6 +7,7 @@ import 'package:e_online/widgets/spacer.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class RegisterAsSellerPage extends StatefulWidget {
   const RegisterAsSellerPage({super.key});
@@ -125,9 +126,9 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                 onTap: () {
                   _pickFiles();
                 },
-                child: Icon(
-                  Icons.add,
-                  color: mutedTextColor,
+                child: HugeIcon(
+                  icon: HugeIcons.strokeRoundedAdd01,
+                  color: Colors.grey,
                   size: 16.0,
                 ),
               ),
@@ -148,7 +149,11 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.cloud_upload, size: 50, color: Colors.black),
+                        HugeIcon(
+                          icon: HugeIcons.strokeRoundedUpload01,
+                          color: Colors.black,
+                          size: 50.0,
+                        ),
                         spacer(),
                         ParagraphText("Upload files here*"),
                       ],
@@ -162,9 +167,10 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                     .entries
                     .map(
                       (entry) => ListTile(
-                        leading: const Icon(
-                          Icons.picture_as_pdf,
+                        leading: HugeIcon(
+                          icon: HugeIcons.strokeRoundedPdf01,
                           color: Colors.red,
+                          size: 24.0,
                         ),
                         title: Text(entry.value.name),
                         trailing: GestureDetector(
@@ -294,9 +300,9 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                 onTap: () {
                   _pickFiles();
                 },
-                child: Icon(
-                  Icons.add,
-                  color: mutedTextColor,
+                child: HugeIcon(
+                  icon: HugeIcons.strokeRoundedAdd01,
+                  color: Colors.grey,
                   size: 16.0,
                 ),
               ),
@@ -317,7 +323,11 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.cloud_upload, size: 50, color: Colors.black),
+                        HugeIcon(
+                          icon: HugeIcons.strokeRoundedUpload01,
+                          color: Colors.black,
+                          size: 50.0,
+                        ),
                         spacer(),
                         ParagraphText("Upload files here*"),
                       ],
@@ -331,9 +341,10 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                     .entries
                     .map(
                       (entry) => ListTile(
-                        leading: const Icon(
-                          Icons.picture_as_pdf,
+                        leading: HugeIcon(
+                          icon: HugeIcons.strokeRoundedPdf01,
                           color: Colors.red,
+                          size: 24.0,
                         ),
                         title: Text(entry.value.name),
                         trailing: GestureDetector(
@@ -393,9 +404,9 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
             Get.back();
           },
           child: Icon(
-            Icons.arrow_back_ios_new_outlined,
+            Icons.arrow_back_ios,
             color: mutedTextColor,
-            size: 14.0,
+            size: 16.0,
           ),
         ),
         title: HeadingText("Register your business"),

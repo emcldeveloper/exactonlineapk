@@ -8,6 +8,7 @@ import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CreateAdPage extends StatefulWidget {
@@ -114,9 +115,9 @@ class _CreateAdPageState extends State<CreateAdPage> {
           child: Container(
             color: Colors.transparent,
             child: Icon(
-              Icons.arrow_back_ios_new_outlined,
+              Icons.arrow_back_ios,
               color: secondaryColor,
-              size: 14.0,
+              size: 16.0,
             ),
           ),
         ),
@@ -156,8 +157,11 @@ class _CreateAdPageState extends State<CreateAdPage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.cloud_upload,
-                              size: 50, color: Colors.black),
+                          HugeIcon(
+                            icon: HugeIcons.strokeRoundedUpload01,
+                            color: Colors.black,
+                            size: 50.0,
+                          ),
                           spacer(),
                           ParagraphText("Upload files here*"),
                         ],
@@ -202,7 +206,11 @@ class _CreateAdPageState extends State<CreateAdPage> {
                       children: [
                         ElevatedButton.icon(
                           onPressed: _pickSingleImage,
-                          icon: const Icon(Icons.add_photo_alternate),
+                          icon: HugeIcon(
+                            icon: HugeIcons.strokeRoundedAdd01,
+                            color: Colors.black,
+                            size: 24.0,
+                          ),
                           label: const Text("Add More"),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: secondaryColor,
@@ -243,9 +251,9 @@ class _CreateAdPageState extends State<CreateAdPage> {
                     ),
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   ),
-                  suffixIcon: Icon(
-                    Icons.calendar_today_outlined,
-                    color: mutedTextColor,
+                  suffixIcon: HugeIcon(
+                    icon: HugeIcons.strokeRoundedCalendar01,
+                    color: Colors.grey,
                     size: 16.0,
                   ),
                 ),
@@ -280,9 +288,9 @@ class _CreateAdPageState extends State<CreateAdPage> {
                     ),
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   ),
-                  suffixIcon: Icon(
-                    Icons.calendar_today_outlined,
-                    color: mutedTextColor,
+                  suffixIcon: HugeIcon(
+                    icon: HugeIcons.strokeRoundedCalendar01,
+                    color: Colors.grey,
                     size: 16.0,
                   ),
                 ),

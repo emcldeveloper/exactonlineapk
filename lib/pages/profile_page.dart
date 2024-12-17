@@ -12,6 +12,7 @@ import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -93,10 +94,10 @@ class ProfilePage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(15),
                         ),
                         child: const Center(
-                          child: Icon(
-                            AntDesign.edit_outline,
+                          child: HugeIcon(
+                            icon: HugeIcons.strokeRoundedEdit02,
                             color: Colors.white,
-                            size: 22.0,
+                            size: 24.0,
                           ),
                         ),
                       ),
@@ -128,7 +129,7 @@ class ProfilePage extends StatelessWidget {
                           const Spacer(),
                           const Icon(
                             Icons.arrow_forward_ios,
-                            size: 15,
+                            size: 16,
                           ),
                         ],
                       ),

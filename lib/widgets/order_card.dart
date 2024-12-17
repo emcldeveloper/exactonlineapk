@@ -3,6 +3,7 @@ import 'package:e_online/pages/customer_order_view_page.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class OrderCard extends StatelessWidget {
   final Map<String, dynamic> data;
@@ -21,10 +22,10 @@ class OrderCard extends StatelessWidget {
           Expanded(
             child: Row(
               children: [
-                Icon(
-                  Icons.shopping_basket_outlined,
-                  size: 28,
-                  color: mutedTextColor,
+                HugeIcon(
+                  icon: HugeIcons.strokeRoundedShoppingBasket01,
+                  color: Colors.grey,
+                  size: 28.0,
                 ),
                 const SizedBox(
                   width: 10,

@@ -19,7 +19,7 @@ class SeeAllPage extends StatelessWidget {
           icon: const Icon(
             Icons.arrow_back_ios,
             color: Colors.black,
-            size: 14,
+            size: 16.0,
           ),
           onPressed: () {
             Navigator.pop(context);

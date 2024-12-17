@@ -3,6 +3,7 @@ import 'package:e_online/widgets/filter_tiles.dart';
 import 'package:e_online/widgets/horizontal_product_card.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class SearchResultsPage extends StatefulWidget {
   const SearchResultsPage({super.key});
@@ -73,7 +74,8 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
           final title = item['title'].toString().toLowerCase();
           final description = item['description'].toString().toLowerCase();
           final searchLower = searchQuery.toLowerCase();
-          return title.contains(searchLower) || description.contains(searchLower);
+          return title.contains(searchLower) ||
+              description.contains(searchLower);
         }).toList();
       }
     });
@@ -114,7 +116,11 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(Icons.search, color: Colors.white, size: 20),
+              child: HugeIcon(
+                icon: HugeIcons.strokeRoundedSearch01,
+                color: Colors.white,
+                size: 24.0,
+              ),
             ),
           ),
         ],
@@ -132,7 +138,11 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
           backgroundColor: mainColor,
           elevation: 0,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios, color: mutedTextColor),
+            icon: Icon(
+              Icons.arrow_back_ios,
+              color: mutedTextColor,
+              size: 16.0,
+            ),
             onPressed: () {
               Navigator.pop(context);
             },

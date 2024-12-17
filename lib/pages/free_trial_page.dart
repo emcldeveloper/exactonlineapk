@@ -21,9 +21,9 @@ class FreeTrialPage extends StatelessWidget {
         centerTitle: true,
         leading: IconButton(
           icon: Icon(
-            Icons.arrow_back_ios_new_outlined,
+            Icons.arrow_back_ios,
             color: mutedTextColor,
-            size: 14.0,
+            size: 16.0,
           ),
           onPressed: () {
             Navigator.pop(context);

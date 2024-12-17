@@ -6,6 +6,7 @@ import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 class JoinAsSellerPage extends StatelessWidget {
@@ -35,9 +36,9 @@ class JoinAsSellerPage extends StatelessWidget {
           child: Container(
             color: Colors.transparent,
             child: Icon(
-              Icons.arrow_back_ios_new_outlined,
+              Icons.arrow_back_ios,
               color: mutedTextColor,
-              size: 14.0,
+              size: 16.0,
             ),
           ),
         ),
@@ -90,8 +91,11 @@ class JoinAsSellerPage extends StatelessWidget {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(AntDesign.check_circle_fill,
-                            color: Colors.green, size: 20.0),
+                        HugeIcon(
+                          icon: HugeIcons.strokeRoundedCheckmarkCircle01,
+                          color: Colors.green,
+                          size: 24.0,
+                        ),
                         const SizedBox(width: 8.0),
                         Expanded(
                           child: ParagraphText(item['adv'] ?? ""),

@@ -12,6 +12,7 @@ import 'package:e_online/widgets/product_card.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 class HomePage extends StatefulWidget {
@@ -113,7 +114,7 @@ class _HomePageState extends State<HomePage> {
                           child: Icon(
                             Icons.arrow_forward_ios,
                             color: mutedTextColor,
-                            size: 15,
+                            size: 16.0,
                           ),
                         )
                       ],
@@ -150,7 +151,7 @@ class _HomePageState extends State<HomePage> {
                           child: Icon(
                             Icons.arrow_forward_ios,
                             color: mutedTextColor,
-                            size: 15,
+                            size: 16.0,
                           ),
                         )
                       ],
@@ -250,22 +251,35 @@ class _HomePageState extends State<HomePage> {
           ),
           actions: [
             InkWell(
-                onTap: () {
-                  Get.to(const CartPage());
-                },
-                child: const Icon(Icons.shopping_bag_outlined, size: 24)),
+              onTap: () {
+                Get.to(const CartPage());
+              },
+              child: HugeIcon(
+                icon: HugeIcons.strokeRoundedShoppingBag03,
+                color: Colors.black,
+                size: 24.0,
+              ),
+            ),
             const SizedBox(width: 8),
             InkWell(
                 onTap: () {
                   Get.to(SearchPage());
                 },
-                child: const Icon(AntDesign.search_outline)),
+                child: HugeIcon(
+                  icon: HugeIcons.strokeRoundedSearch01,
+                  color: Colors.black,
+                  size: 24.0,
+                )),
             const SizedBox(width: 8),
             InkWell(
                 onTap: () {
                   Get.to(const NotificationsPage());
                 },
-                child: const Icon(Icons.notifications_none_outlined)),
+                child: HugeIcon(
+                  icon: HugeIcons.strokeRoundedNotification01,
+                  color: Colors.black,
+                  size: 24.0,
+                )),
             const SizedBox(width: 8),
             InkWell(
               onTap: () {

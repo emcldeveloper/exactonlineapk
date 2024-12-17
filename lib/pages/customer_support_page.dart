@@ -6,6 +6,7 @@ import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 class CustomerSupportPage extends StatelessWidget {
@@ -24,9 +25,9 @@ class CustomerSupportPage extends StatelessWidget {
           child: Container(
             color: Colors.transparent,
             child: Icon(
-              Icons.arrow_back_ios_new_outlined,
+              Icons.arrow_back_ios,
               color: mutedTextColor,
-              size: 14.0,
+              size: 16.0,
             ),
           ),
         ),
@@ -53,9 +54,10 @@ class CustomerSupportPage extends StatelessWidget {
                 width: 80,
                 child: Stack(
                   children: [
-                    const Icon(
-                      Icons.headset_mic_rounded,
-                      size: 80,
+                    HugeIcon(
+                      icon: HugeIcons.strokeRoundedHeadset,
+                      color: Colors.black,
+                      size: 80.0,
                     ),
                     Positioned(
                       bottom: 0,

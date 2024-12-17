@@ -33,9 +33,9 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
         leading: InkWell(
           onTap: () => Get.back(),
           child: Icon(
-            Icons.arrow_back_ios_new_outlined,
+            Icons.arrow_back_ios,
             color: mutedTextColor,
-            size: 14.0,
+            size: 16.0,
           ),
         ),
         // Use the name from orderData in the title

@@ -4,6 +4,7 @@ import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class PreviewReelPage extends StatefulWidget {
   final Map<String, dynamic> reel;
@@ -84,9 +85,9 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                     borderRadius: BorderRadius.circular(25),
                   ),
                   child: const Icon(
-                    Icons.arrow_back_ios_new_outlined,
+                    Icons.arrow_back_ios,
                     color: Colors.white,
-                    size: 20.0,
+                    size: 16.0,
                   ),
                 ),
               ),
@@ -127,10 +128,10 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.lock_outline,
-                          size: 16,
+                        HugeIcon(
+                          icon: HugeIcons.strokeRoundedSquareLock02,
                           color: Colors.black,
+                          size: 24.0,
                         ),
                         SizedBox(width: 4),
                         Text(
@@ -219,10 +220,10 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                           children: [
                             Row(
                               children: [
-                                const Icon(
-                                  Icons.favorite_border,
-                                  size: 20,
+                                HugeIcon(
+                                  icon: HugeIcons.strokeRoundedFavourite,
                                   color: Colors.white,
+                                  size: 24.0,
                                 ),
                                 const SizedBox(width: 4),
                                 ParagraphText(
@@ -235,10 +236,10 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                             ),
                             Row(
                               children: [
-                                const Icon(
-                                  Icons.comment,
-                                  size: 20,
+                                HugeIcon(
+                                  icon: HugeIcons.strokeRoundedComment01,
                                   color: Colors.white,
+                                  size: 24.0,
                                 ),
                                 const SizedBox(width: 4),
                                 ParagraphText(
@@ -248,10 +249,10 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                                 ),
                               ],
                             ),
-                            const Icon(
-                              Icons.share,
-                              size: 20,
+                            HugeIcon(
+                              icon: HugeIcons.strokeRoundedShare01,
                               color: Colors.white,
+                              size: 24.0,
                             ),
                           ],
                         ),

@@ -54,9 +54,9 @@ class OrderProductsForCustomerPage extends StatelessWidget {
         leading: InkWell(
           onTap: () => Get.back(),
           child: Icon(
-            Icons.arrow_back_ios_new_outlined,
+            Icons.arrow_back_ios,
             color: mutedTextColor,
-            size: 14.0,
+            size: 16.0,
           ),
         ),
         title: HeadingText("Order #0001"),
@@ -72,27 +72,27 @@ class OrderProductsForCustomerPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child:  Column(
+          child: Column(
             children: [
               Column(
-                      children: orderItems.map((item) {
-                        return HorizontalProductCard(data: item);
-                      }).toList(),
-                    ),
-            spacer2(),
-               spacer1(),
-            customButton(
-              onTap: () {},
-              text: "Call Seller",
-            ),
-            spacer(),
-            customButton(
-              onTap: () {},
-              text: "Chat with Seller",
-              buttonColor: mutedTextColor,
-              textColor: primaryColor,
-            ),
-            spacer3(),
+                children: orderItems.map((item) {
+                  return HorizontalProductCard(data: item);
+                }).toList(),
+              ),
+              spacer2(),
+              spacer1(),
+              customButton(
+                onTap: () {},
+                text: "Call Seller",
+              ),
+              spacer(),
+              customButton(
+                onTap: () {},
+                text: "Chat with Seller",
+                buttonColor: mutedTextColor,
+                textColor: primaryColor,
+              ),
+              spacer3(),
             ],
           ),
         ),

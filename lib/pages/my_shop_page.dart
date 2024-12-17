@@ -14,6 +14,7 @@ import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class MyShopPage extends StatefulWidget {
   const MyShopPage({super.key});
@@ -53,9 +54,9 @@ class _MyShopPageState extends State<MyShopPage> {
           leading: InkWell(
             onTap: () => Get.back(),
             child: Icon(
-              Icons.arrow_back_ios_new_outlined,
+              Icons.arrow_back_ios,
               color: mutedTextColor,
-              size: 14.0,
+              size: 16.0,
             ),
           ),
           title: HeadingText("My Shop"),
@@ -65,9 +66,10 @@ class _MyShopPageState extends State<MyShopPage> {
               onTap: () {
                 Get.to(() => const SettingMyshopPage());
               },
-              child: const Icon(
-                Icons.settings_outlined,
-                size: 20.0,
+              child: HugeIcon(
+                icon: HugeIcons.strokeRoundedSettings01,
+                color: Colors.black,
+                size: 24.0,
               ),
             ),
             const SizedBox(width: 16),

@@ -10,6 +10,7 @@ import 'package:e_online/widgets/reviews.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -212,22 +213,29 @@ class _ProductPageState extends State<ProductPage> {
         leading: InkWell(
           onTap: () => Get.back(),
           child: Icon(
-            Icons.arrow_back_ios_new_outlined,
+            Icons.arrow_back_ios,
             color: secondaryColor,
-            size: 14.0,
+            size: 16.0,
           ),
         ),
         title: HeadingText("Product Details"),
         centerTitle: true,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.shopping_bag_outlined, size: 24),
-            onPressed: () {},
+          HugeIcon(
+            icon: HugeIcons.strokeRoundedShoppingBag01,
+            color: Colors.black,
+            size: 24.0,
           ),
-          IconButton(
-            icon:
-                const Icon(Icons.share_outlined, color: Colors.black, size: 24),
-            onPressed: () {},
+          SizedBox(
+            width: 8.0,
+          ),
+          HugeIcon(
+            icon: HugeIcons.strokeRoundedShare01,
+            color: Colors.black,
+            size: 24.0,
+          ),
+          SizedBox(
+            width: 8.0,
           ),
         ],
         bottom: PreferredSize(
@@ -342,7 +350,11 @@ class _ProductPageState extends State<ProductPage> {
                     children: [
                       Row(
                         children: [
-                          const Icon(Icons.star, color: Colors.amber, size: 16),
+                          HugeIcon(
+                            icon: HugeIcons.strokeRoundedStar,
+                            color: Colors.amber,
+                            size: 16.0,
+                          ),
                           const SizedBox(width: 2),
                           ParagraphText(
                             (widget.productData['rating'] ?? 0).toString(),

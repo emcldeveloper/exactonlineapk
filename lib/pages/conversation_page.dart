@@ -3,6 +3,7 @@ import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class ConversationPage extends StatefulWidget {
   const ConversationPage({super.key});
@@ -40,7 +41,7 @@ class _ConversationPageState extends State<ConversationPage> {
           child: Icon(
             Icons.arrow_back_ios,
             color: mutedTextColor,
-            size: 14.0,
+            size: 16.0,
           ),
         ),
         title: Row(
@@ -114,7 +115,8 @@ class _ConversationPageState extends State<ConversationPage> {
                           borderSide: BorderSide(
                             color: primaryColor,
                           ),
-                          borderRadius: const BorderRadius.all(Radius.circular(30.0)),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(30.0)),
                         ),
                         enabledBorder: const OutlineInputBorder(
                           borderSide: BorderSide(
@@ -138,9 +140,13 @@ class _ConversationPageState extends State<ConversationPage> {
                           child: Padding(
                             padding: const EdgeInsets.all(13.0),
                             child: Transform.rotate(
-                                angle: 5.5,
-                                child: const Icon(Icons.send_outlined,
-                                    color: Colors.white)),
+                              angle: 6.3,
+                              child: HugeIcon(
+                                icon: HugeIcons.strokeRoundedSent,
+                                color: Colors.white,
+                                size: 24.0,
+                              ),
+                            ),
                           ))),
                 ],
               ),

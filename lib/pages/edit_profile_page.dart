@@ -5,7 +5,7 @@ import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:icons_plus/icons_plus.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class EditProfilePage extends StatelessWidget {
   const EditProfilePage({super.key});
@@ -23,9 +23,9 @@ class EditProfilePage extends StatelessWidget {
             child: Container(
               color: Colors.transparent,
               child: Icon(
-                Icons.arrow_back_ios_new_outlined,
+                Icons.arrow_back_ios,
                 color: mutedTextColor,
-                size: 14.0,
+                size: 16.0,
               ),
             )),
         title: HeadingText("Edit Profile"),
@@ -65,10 +65,10 @@ class EditProfilePage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(15),
                         ),
                         child: const Center(
-                          child: Icon(
-                            AntDesign.edit_fill,
+                          child: HugeIcon(
+                            icon: HugeIcons.strokeRoundedEdit01,
                             color: Colors.white,
-                            size: 22.0,
+                            size: 24.0,
                           ),
                         ),
                       ),
@@ -90,13 +90,15 @@ class EditProfilePage extends StatelessWidget {
                     decoration: InputDecoration(
                       fillColor: primaryColor,
                       filled: true,
-                      labelStyle: const TextStyle(color: Colors.black, fontSize: 12),
+                      labelStyle:
+                          const TextStyle(color: Colors.black, fontSize: 12),
                       border: const OutlineInputBorder(),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: primaryColor,
                         ),
-                        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10.0)),
                       ),
                       enabledBorder: const OutlineInputBorder(
                         borderSide: BorderSide(
@@ -105,7 +107,8 @@ class EditProfilePage extends StatelessWidget {
                         borderRadius: BorderRadius.all(Radius.circular(10.0)),
                       ),
                       hintText: "Enter business name",
-                      hintStyle: const TextStyle(color: Colors.black, fontSize: 12),
+                      hintStyle:
+                          const TextStyle(color: Colors.black, fontSize: 12),
                     ),
                   ),
                   spacer(),
@@ -119,13 +122,15 @@ class EditProfilePage extends StatelessWidget {
                     decoration: InputDecoration(
                       fillColor: primaryColor,
                       filled: true,
-                      labelStyle: const TextStyle(color: Colors.black, fontSize: 12),
+                      labelStyle:
+                          const TextStyle(color: Colors.black, fontSize: 12),
                       border: const OutlineInputBorder(),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: primaryColor,
                         ),
-                        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10.0)),
                       ),
                       enabledBorder: const OutlineInputBorder(
                         borderSide: BorderSide(
@@ -134,7 +139,8 @@ class EditProfilePage extends StatelessWidget {
                         borderRadius: BorderRadius.all(Radius.circular(10.0)),
                       ),
                       hintText: "Enter phone number",
-                      hintStyle: const TextStyle(color: Colors.black, fontSize: 12),
+                      hintStyle:
+                          const TextStyle(color: Colors.black, fontSize: 12),
                     ),
                   ),
                   spacer(),
@@ -148,13 +154,15 @@ class EditProfilePage extends StatelessWidget {
                     decoration: InputDecoration(
                       fillColor: primaryColor,
                       filled: true,
-                      labelStyle: const TextStyle(color: Colors.black, fontSize: 12),
+                      labelStyle:
+                          const TextStyle(color: Colors.black, fontSize: 12),
                       border: const OutlineInputBorder(),
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
                           color: primaryColor,
                         ),
-                        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10.0)),
                       ),
                       enabledBorder: const OutlineInputBorder(
                         borderSide: BorderSide(
@@ -163,7 +171,8 @@ class EditProfilePage extends StatelessWidget {
                         borderRadius: BorderRadius.all(Radius.circular(10.0)),
                       ),
                       hintText: "Enter business address",
-                      hintStyle: const TextStyle(color: Colors.black, fontSize: 12),
+                      hintStyle:
+                          const TextStyle(color: Colors.black, fontSize: 12),
                     ),
                   ),
                 ],
