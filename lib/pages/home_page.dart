@@ -309,7 +309,9 @@ class _HomePageState extends State<HomePage> {
               child: Container(
                 height: 7,
                 width: i == _currentPage ? 15 : 7,
-                color: i == _currentPage ? secondaryColor : const Color(0xffEBEBEB),
+                color: i == _currentPage
+                    ? secondaryColor
+                    : const Color(0xffEBEBEB),
               ),
             ),
           );
