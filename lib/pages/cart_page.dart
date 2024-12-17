@@ -1,9 +1,13 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/constants/product_items.dart';
+import 'package:e_online/pages/home_page.dart';
+import 'package:e_online/pages/my_orders_page.dart';
+import 'package:e_online/pages/setting_myshop_page.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/horizontal_product_card.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
+import 'package:e_online/widgets/popup_alert.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -26,12 +30,18 @@ class CartPage extends StatelessWidget {
           ),
         ),
         title: HeadingText("Submit Order"),
-        actions: const [
-          Icon(
-            Icons.settings_outlined,
-            size: 16.0,
+        centerTitle: true,
+        actions: [
+          InkWell(
+            onTap: () {
+              Get.to(const SettingMyshopPage());
+            },
+            child: const Icon(
+              Icons.settings_outlined,
+              size: 20.0,
+            ),
           ),
-          SizedBox(width: 16),
+          const SizedBox(width: 16),
         ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
@@ -45,10 +55,12 @@ class CartPage extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               spacer(),
               HeadingText("Selected products"),
-              ParagraphText("You have selected 3 products"),
+              ParagraphText("You have selected 3 products",
+                  color: mutedTextColor),
               spacer(),
               Column(
                 children: productItems.map((item) {
@@ -66,7 +78,25 @@ class CartPage extends StatelessWidget {
               ),
               spacer3(),
               customButton(
-                onTap: () {},
+                onTap: () {
+                  showPopupAlert(
+                    context,
+                    iconAsset: "assets/images/successmark.png",
+                    heading: "Ordered successfully",
+                    text: "Your order is submitted successfully",
+                    button1Text: "Shop",
+                    button1Action: () {
+                      Navigator.of(context).pop(); // Close the second popup
+                      Get.to(const HomePage());
+                    },
+                    button2Text: "View orders",
+                    button2Action: () {
+                      Navigator.of(context)
+                          .pop(); // Close the second popup and perform any additional action
+                      Get.to(const MyOrdersPage());
+                    },
+                  );
+                },
                 text: "Submit Order",
               ),
               spacer3(),

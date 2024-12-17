@@ -1,6 +1,7 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/pages/customer_support_page.dart';
 import 'package:e_online/pages/edit_profile_page.dart';
+import 'package:e_online/pages/free_trial_page.dart';
 import 'package:e_online/pages/join_as_seller_page.dart';
 import 'package:e_online/pages/my_orders_page.dart';
 import 'package:e_online/pages/privacy_policy.dart';
@@ -19,6 +20,11 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Map<String, dynamic>> settingItems = [
+      {
+        'icon': AntDesign.shop_outline,
+        'title': 'My Shop',
+        'page': const FreeTrialPage(),
+      },
       {
         'icon': AntDesign.shopping_outline,
         'title': 'My Orders',
@@ -50,15 +56,8 @@ class ProfilePage extends StatelessWidget {
       backgroundColor: mainColor,
       appBar: AppBar(
         backgroundColor: mainColor,
-        leading: InkWell(
-          onTap: () => Get.back(),
-          child: Icon(
-            Icons.arrow_back_ios_new_outlined,
-            color: secondaryColor,
-            size: 14.0,
-          ),
-        ),
         title: HeadingText("My Profile"),
+        centerTitle: true,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
           child: Container(

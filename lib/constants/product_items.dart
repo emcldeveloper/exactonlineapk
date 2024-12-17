@@ -1,5 +1,6 @@
 final List<Map<String, dynamic>> productItems = [
   {
+    'id': 1,
     'title': "J.Crew T-shirt",
     'price': "25,000 TSH",
     'imageUrl': [
@@ -16,6 +17,7 @@ final List<Map<String, dynamic>> productItems = [
     'type': "ad",
   },
   {
+    'id': 2,
     'title': "J.Crew T-shirt",
     'price': "25,000 TSH",
     'imageUrl': [
@@ -32,6 +34,7 @@ final List<Map<String, dynamic>> productItems = [
     'type': "product",
   },
   {
+    'id': 3,
     'title': "J.Crew T-shirt",
     'price': "25,000 TSH",
     'imageUrl': [
@@ -48,6 +51,7 @@ final List<Map<String, dynamic>> productItems = [
     'type': "ad",
   },
   {
+    'id': 4,
     'title': "J.Crew T-shirt",
     'price': "25,000 TSH",
     'imageUrl': [
@@ -64,6 +68,7 @@ final List<Map<String, dynamic>> productItems = [
     'type': "product",
   },
   {
+    'id': 5,
     'title': "J.Crew T-shirt",
     'price': "25,000 TSH",
     'imageUrl': [
@@ -79,6 +84,7 @@ final List<Map<String, dynamic>> productItems = [
     'type': "product",
   },
   {
+    'id': 5,
     'title': "J.Crew T-shirt",
     'price': "25,000 TSH",
     'imageUrl': [
@@ -94,6 +100,7 @@ final List<Map<String, dynamic>> productItems = [
     'type': "product",
   },
   {
+    'id': 6,
     'title': "J.Crew T-shirt",
     'price': "25,000 TSH",
     'imageUrl': [
@@ -110,6 +117,7 @@ final List<Map<String, dynamic>> productItems = [
     'type': "product",
   },
   {
+    'id': 7,
     'title': "J.Crew T-shirt",
     'price': "25,000 TSH",
     'imageUrl': [
@@ -126,6 +134,7 @@ final List<Map<String, dynamic>> productItems = [
     'type': "ad",
   },
   {
+    'id': 8,
     'title': "J.Crew T-shirt",
     'price': "25,000 TSH",
     'imageUrl': [
@@ -142,6 +151,7 @@ final List<Map<String, dynamic>> productItems = [
     'type': "product",
   },
   {
+    'id': 9,
     'title': "J.Crew T-shirt",
     'price': "25,000 TSH",
     'imageUrl': ["assets/images/braids.png"],
@@ -154,6 +164,7 @@ final List<Map<String, dynamic>> productItems = [
     'type': "product",
   },
   {
+    'id': 10,
     'title': "Hand Jewelry",
     'price': "25,000 TSH",
     'imageUrl': ["assets/images/heinken.png"],
@@ -166,6 +177,7 @@ final List<Map<String, dynamic>> productItems = [
     'type': "ad",
   },
   {
+    'id': 11,
     'title': "Pink Top",
     'price': "25,000 TSH",
     'imageUrl': ["assets/images/greenwatch.png"],
@@ -178,6 +190,7 @@ final List<Map<String, dynamic>> productItems = [
     'type': "product",
   },
   {
+    'id': 12,
     'title': "Smart Watch",
     'price': "25,000 TSH",
     'imageUrl': ["assets/images/jergens.png"],
@@ -190,6 +203,7 @@ final List<Map<String, dynamic>> productItems = [
     'type': "product",
   },
   {
+    'id': 13,
     'title': "Earrings",
     'price': "25,000 TSH",
     'imageUrl': ["assets/images/rays.png"],
@@ -202,6 +216,7 @@ final List<Map<String, dynamic>> productItems = [
     'type': "product",
   },
   {
+    'id': 14,
     'title': "Braids",
     'price': "25,000 TSH",
     'imageUrl': ["assets/images/kevita.png"],
@@ -283,36 +298,35 @@ final List<Map<String, dynamic>> categories = [
   {'name': 'Cars', 'imageUrl': 'assets/images/smartcar.png'},
 ];
 
-
-  final List<Map<String, String>> subscriptions = [
-    {
-      "type": "Yearly",
-      "price": "TZS 300000",
-      "duration": "1 YEAR",
-      "promotion": "20%",
-      "discount": "TZS 140000",
-      "trial period": "14 days",
-      "priority": "BEST VALUE",
-      "status": "Active",
-    },
-    {
-      "type": "6 months",
-      "price": "TZS 200000",
-      "duration": "6 months",
-      "promotion": "15%",
-      "discount": "TZS 120000",
-      "trial period": "14 days",
-      "priority": "RECOMMENDED",
-       "status": "InActive",
-    },
-    {
-      "type": "3 months",
-      "price": "TZS 100000",
-      "duration": "6 months",
-      "promotion": "10%",
-      "discount": "TZS 70000",
-      "trial period": "14 days",
-      "priority": "",
-       "status": "InActive",
-    },
-  ];
+final List<Map<String, String>> subscriptions = [
+  {
+    "type": "Yearly",
+    "price": "TZS 300000",
+    "duration": "1 year",
+    "promotion": "20%",
+    "discount": "TZS 140000",
+    "trial period": "14 days",
+    "priority": "BEST VALUE",
+    "status": "Active",
+  },
+  {
+    "type": "6 months",
+    "price": "TZS 200000",
+    "duration": "6 Months",
+    "promotion": "15%",
+    "discount": "TZS 120000",
+    "trial period": "14 days",
+    "priority": "RECOMMENDED",
+    "status": "InActive",
+  },
+  {
+    "type": "3 months",
+    "price": "TZS 100000",
+    "duration": "3 Months",
+    "promotion": "10%",
+    "discount": "TZS 70000",
+    "trial period": "14 days",
+    "priority": "",
+    "status": "InActive",
+  },
+];

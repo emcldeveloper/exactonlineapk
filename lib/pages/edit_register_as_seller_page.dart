@@ -17,7 +17,7 @@ class EditRegisterAsSellerPage extends StatefulWidget {
 }
 
 class _EditRegisterAsSellerPageState extends State<EditRegisterAsSellerPage> {
-  List<PlatformFile> _files = [];
+  final List<PlatformFile> _files = [];
   String? selectedBusiness = "Business"; // Default selection
 
   void _pickFiles() async {
@@ -59,7 +59,7 @@ class _EditRegisterAsSellerPageState extends State<EditRegisterAsSellerPage> {
         title: HeadingText("Edit Business Information"),
         centerTitle: true,
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(1.0),
+          preferredSize: const Size.fromHeight(1.0),
           child: Divider(color: primaryColor, height: 1.0),
         ),
       ),
@@ -82,7 +82,7 @@ class _EditRegisterAsSellerPageState extends State<EditRegisterAsSellerPage> {
                   border: const OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: primaryColor),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                   ),
                   enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.transparent),
@@ -104,7 +104,7 @@ class _EditRegisterAsSellerPageState extends State<EditRegisterAsSellerPage> {
                   border: const OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: primaryColor),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                   ),
                   enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.transparent),
@@ -125,7 +125,7 @@ class _EditRegisterAsSellerPageState extends State<EditRegisterAsSellerPage> {
                   border: const OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: primaryColor),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                   ),
                   enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.transparent),
@@ -170,7 +170,7 @@ class _EditRegisterAsSellerPageState extends State<EditRegisterAsSellerPage> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.cloud_upload,
+                              const Icon(Icons.cloud_upload,
                                   size: 50, color: Colors.black),
                               spacer(),
                               ParagraphText("Upload files here*"),
@@ -214,28 +214,28 @@ class _EditRegisterAsSellerPageState extends State<EditRegisterAsSellerPage> {
                 decoration: InputDecoration(
                   fillColor: primaryColor,
                   filled: true,
-                  labelStyle: TextStyle(color: Colors.black, fontSize: 12),
-                  border: OutlineInputBorder(),
+                  labelStyle: const TextStyle(color: Colors.black, fontSize: 12),
+                  border: const OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
                       color: primaryColor,
                     ),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                   ),
-                  enabledBorder: OutlineInputBorder(
+                  enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(
                       color: Colors.transparent,
                     ),
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   ),
                   hintText: "Write short business description",
-                  hintStyle: TextStyle(color: Colors.black, fontSize: 12),
+                  hintStyle: const TextStyle(color: Colors.black, fontSize: 12),
                 ),
               ),
               spacer3(),
               customButton(
                 onTap: () {
-                  Get.to(() => MyShopPage());
+                  Get.to(() => const MyShopPage());
                 },
                 text: "Submit Details",
               ),

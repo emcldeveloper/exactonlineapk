@@ -32,7 +32,7 @@ class OrderCard extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ParagraphText("Order ${data['orderNo']}" ?? "N/A",
+                    ParagraphText("Order ${data['orderNo']}",
                         fontWeight: FontWeight.bold, fontSize: 14.0),
                     ParagraphText(data['customer'] ?? "N/A"),
                     ParagraphText(data['time'] ?? "N/A"),

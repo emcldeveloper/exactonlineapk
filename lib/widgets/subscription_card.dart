@@ -1,5 +1,4 @@
 import 'package:e_online/constants/colors.dart';
-import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
@@ -10,11 +9,11 @@ class SubscriptionCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const SubscriptionCard({
-    Key? key,
+    super.key,
     required this.data,
     required this.isActive,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,51 +29,56 @@ class SubscriptionCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            spacer1(),
+            spacer(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    HeadingText(
-                      data["type"]!,
-                      color: isActive ? Colors.white : Colors.black,
-                    ),
-                    const SizedBox(width: 8),
-                    if (data["priority"] != null &&
-                        data["priority"]!
-                            .isNotEmpty) // Check for non-empty priority
-                      Container(
-                        width: 140,
-                        height: 30,
-                        decoration: BoxDecoration(
-                          color: Colors.yellow,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        alignment: Alignment.center,
-                        child: ParagraphText(data["priority"]!,
-                            fontWeight: FontWeight.bold),
+                Expanded(
+                  child: Row(
+                    children: [
+                      ParagraphText(
+                        data["type"]!,
+                        fontWeight: FontWeight.bold,
+                        color: isActive ? Colors.white : Colors.black,
                       ),
-                  ],
+                      const SizedBox(width: 8),
+                      if (data["priority"] != null &&
+                          data["priority"]!
+                              .isNotEmpty) // Check for non-empty priority
+                        Container(
+                          width: 120,
+                          height: 30,
+                          decoration: BoxDecoration(
+                            color: Colors.amber,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          alignment: Alignment.center,
+                          child: ParagraphText(data["priority"]!,
+                              fontSize: 10.0, fontWeight: FontWeight.bold),
+                        ),
+                    ],
+                  ),
                 ),
-                const SizedBox(width: 8),
                 ParagraphText(
                   data["discount"]!,
                   color: isActive ? Colors.white : Colors.black,
+                  decoration: TextDecoration.lineThrough,
                 ),
               ],
             ),
-            spacer1(),
+            spacer(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                ParagraphText(
-                  'save ${data["promotion"]!}',
-                  color: isActive ? Colors.white : Colors.black,
+                Expanded(
+                  child: ParagraphText(
+                    '.save ${data["promotion"]!}',
+                    color: isActive ? Colors.white : Colors.black,
+                  ),
                 ),
-                const SizedBox(width: 8),
-                HeadingText(
+                ParagraphText(
                   data["price"]!,
+                  fontWeight: FontWeight.bold,
                   color: isActive ? Colors.white : Colors.black,
                 )
               ],
@@ -83,30 +87,33 @@ class SubscriptionCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                RichText(
-                  text: TextSpan(
-                    children: [
-                      const TextSpan(
-                        text: 'Get ',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                      TextSpan(
-                        text: '${data["trial period"]!}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: isActive ? Colors.white : Colors.black,
+                Expanded(
+                  child: RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'Get ',
+                          style: TextStyle(
+                              color: isActive ? Colors.white : Colors.black),
                         ),
-                      ),
-                      const TextSpan(
-                        text: ' free',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    ],
-                    style: TextStyle(
-                        color: isActive ? Colors.white : Colors.black),
+                        TextSpan(
+                          text: data["trial period"]!,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: isActive ? Colors.white : Colors.black,
+                          ),
+                        ),
+                        TextSpan(
+                          text: ' free',
+                          style: TextStyle(
+                              color: isActive ? Colors.white : Colors.black),
+                        ),
+                      ],
+                      style: TextStyle(
+                          color: isActive ? Colors.white : Colors.black),
+                    ),
                   ),
                 ),
-                const SizedBox(width: 8),
                 ParagraphText(
                   data["duration"]!,
                   color: isActive ? Colors.white : Colors.black,

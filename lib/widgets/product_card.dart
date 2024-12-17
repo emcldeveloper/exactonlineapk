@@ -1,6 +1,5 @@
 import 'package:e_online/pages/product_page.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
-import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -141,7 +140,7 @@ class _ProductCardState extends State<ProductCard> {
                           alignment: Alignment.center,
                           child: ParagraphText("Ad"),
                         ),
-                      if (widget.data['type'] == "ad") SizedBox(width: 8),
+                      if (widget.data['type'] == "ad") const SizedBox(width: 8),
                       Expanded(
                         child: ParagraphText(
                           widget.data['title'],

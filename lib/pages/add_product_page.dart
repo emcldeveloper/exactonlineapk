@@ -174,9 +174,6 @@ class _AddProductPageState extends State<AddProductPage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          HugeIcon(
-                              icon: HugeIcons.strokeRoundedUpload03,
-                              color: Colors.black),
                           const Icon(Icons.cloud_upload,
                               size: 50, color: Colors.black),
                           spacer(),
@@ -372,24 +369,24 @@ class _AddProductPageState extends State<AddProductPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                    child: const Text(
+                  const Expanded(
+                    child: Text(
                       "Product colors",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                   InkWell(
-                    onTap: _openColorPicker, // Call the color picker on tap
-                    child: const Icon(
+                    onTap: _openColorPicker, 
+                    child: Icon(
                       Icons.add,
-                      color: Colors.black,
+                      color: mutedTextColor,
                       size: 24.0,
                     ),
                   ),
                   const SizedBox(width: 8),
                 ],
               ),
-              const SizedBox(height: 16),
+              spacer1(),
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
@@ -400,7 +397,7 @@ class _AddProductPageState extends State<AddProductPage> {
                     decoration: BoxDecoration(
                       color: color,
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.black, width: 1),
+                      border: Border.all(color: Colors.transparent, width: 1),
                     ),
                   );
                 }).toList(),

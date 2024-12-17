@@ -8,8 +8,13 @@ import 'package:e_online/constants/colors.dart';
 
 class HorizontalProductCard extends StatefulWidget {
   final Map<String, dynamic> data;
+  final VoidCallback? onDelete;
 
-  const HorizontalProductCard({super.key, required this.data});
+  const HorizontalProductCard({
+    super.key,
+    required this.data,
+    this.onDelete,
+  });
 
   @override
   State<HorizontalProductCard> createState() => _HorizontalProductCardState();
@@ -18,12 +23,36 @@ class HorizontalProductCard extends StatefulWidget {
 class _HorizontalProductCardState extends State<HorizontalProductCard> {
   final List<String> _images = []; // Mock data for images
   late int currentIndex; // Index of the current product
+  void _deleteProduct() {
+    // Handle product deletion and trigger callback
+    if (widget.onDelete != null) {
+      widget.onDelete!();
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     // Assume the product has an associated index in a larger list
     currentIndex = 0; // Initialize with default value, update as needed
+  }
+
+  void _showConfirmationPopup() {
+    showPopupAlert(
+      context,
+      iconAsset: "assets/images/closeicon.jpg",
+      heading: "Are you sure?",
+      text: "Confirm removing product from an order",
+      button1Text: "No",
+      button1Action: () {
+        Navigator.of(context).pop(); // Close the popup
+      },
+      button2Text: "Remove",
+      button2Action: () {
+        Navigator.of(context).pop(); // Close the first popup
+        _deleteProduct(); // Show the second popup
+      },
+    );
   }
 
   void _showEditBottomSheet() {
@@ -148,44 +177,11 @@ class _HorizontalProductCardState extends State<HorizontalProductCard> {
               ),
               const SizedBox(width: 15),
               InkWell(
-                onTap: () {
-                  // Show the first popup
-                  showPopupAlert(
-                    context,
-                    icon: Icons.warning_amber_outlined,
-                    heading: "Are you sure?",
-                    text: "Do you really want to perform this action?",
-                    button1Text: "No",
-                    button1Action: () {
-                      Navigator.of(context).pop(); // Close the popup
-                    },
-                    button2Text: "Yes",
-                    button2Action: () {
-                      Navigator.of(context).pop(); // Close the first popup
-                      // Show the second popup
-                      showPopupAlert(
-                        context,
-                        icon: Icons.info_outline,
-                        heading: "Action Confirmed",
-                        text: "Your action has been successfully confirmed!",
-                        button1Text: "Dismiss",
-                        button1Action: () {
-                          Navigator.of(context).pop(); // Close the second popup
-                        },
-                        button2Text: "Proceed",
-                        button2Action: () {
-                          Navigator.of(context)
-                              .pop(); // Close the second popup and perform any additional action
-                          // Add further actions here if needed
-                        },
-                      );
-                    },
-                  );
-                },
+                onTap: _showConfirmationPopup,
                 child: Icon(
-                  Icons.cancel_outlined,
+                  Icons.close,
                   color: mutedTextColor,
-                  size: 16,
+                  size: 20,
                 ),
               ),
             ],

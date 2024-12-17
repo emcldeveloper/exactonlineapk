@@ -1,89 +1,86 @@
-import 'package:e_online/constants/colors.dart';
+import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
+import 'package:e_online/constants/colors.dart';
+import 'package:e_online/widgets/paragraph_text.dart';
 
-class BlockingReel extends StatefulWidget {
-  @override
-  _BlockingReelWidgetState createState() => _BlockingReelWidgetState();
-}
+class BlockingReel extends StatelessWidget {
+  const BlockingReel({super.key});
 
-class _BlockingReelWidgetState extends State<BlockingReel> {
-  bool isBlockContainerVisible = false;
-
-  void toggleBlockContainer() {
-    setState(() {
-      isBlockContainerVisible = !isBlockContainerVisible;
-    });
-  }
-
-  void blockReel() {
-    // Add logic to block the reel here
-    print('Reel blocked');
-    // Hide the container after blocking
-    setState(() {
-      isBlockContainerVisible = false;
-    });
-  }
+  final List<Map<String, String>> _stats = const [
+    {"text": "Problem involving someone under 18"},
+    {"text": "Bullying, harassment or abuse"},
+    {"text": "Violent, hateful or disturbing content"},
+    {"text": "Selling or promoting restricted items"},
+    {"text": "Adult content"},
+    {"text": "Scam, fraud or false information"},
+    {"text": "I don`t want to see this"},
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        // The BlockingReel button
-        Positioned(
-          top: 40,
-          right: 16,
-          child: GestureDetector(
-            onTap: toggleBlockContainer,
-            child: Container(
-              padding: EdgeInsets.all(8),
+    return Container(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            spacer1(),
+            Container(
+              width: 40,
+              height: 4,
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(25),
-              ),
-              child: Icon(
-                Icons.more_vert_sharp,
-                color: Colors.white,
-                size: 20.0,
+                color: mutedTextColor,
+                borderRadius: BorderRadius.circular(2),
               ),
             ),
-          ),
-        ),
-        // The Block container
-        if (isBlockContainerVisible)
-          Positioned(
-            top: 83,
-            right: 16,
-            child: GestureDetector(
-              onTap: blockReel,
-              child: Container(
-                width: 150.0,
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: primaryColor.withOpacity(0.7),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.lock_outline,
-                      size: 16,
-                      color: Colors.black,
-                    ),
-                    SizedBox(width: 4),
-                    Text(
-                      'Block this reel',
-                      style: TextStyle(
-                        color: Colors.black,
+            spacer1(),
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ParagraphText(
+                        "Why are you blocking this post?",
                         fontWeight: FontWeight.bold,
                       ),
+                      ParagraphText(
+                        "Select the reasons why you want to block this post",
+                        color: mutedTextColor,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            spacer2(),
+            // Dynamic list of rows
+            ..._stats.map((stat) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ParagraphText(
+                      stat['text'] ?? "",
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      color: mutedTextColor,
+                      size: 16.0,
                     ),
                   ],
                 ),
-              ),
-            ),
-          ),
-      ],
+              );
+            }),
+            spacer1(),
+          ],
+        ),
+      ),
     );
   }
 }

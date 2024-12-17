@@ -8,10 +8,21 @@ import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class CustomerOrderViewPage extends StatelessWidget {
+class CustomerOrderViewPage extends StatefulWidget {
   final Map<String, dynamic> orderData;
 
   const CustomerOrderViewPage({super.key, required this.orderData});
+
+  @override
+  State<CustomerOrderViewPage> createState() => _CustomerOrderViewPageState();
+}
+
+class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
+  void _removeProduct(int index) {
+    setState(() {
+      productItems.removeAt(index);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +39,7 @@ class CustomerOrderViewPage extends StatelessWidget {
           ),
         ),
         // Use the name from orderData in the title
-        title: HeadingText("Order ${orderData['orderNo']}"),
+        title: HeadingText("Order ${widget.orderData['orderNo']}"),
         centerTitle: true,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
@@ -44,9 +55,12 @@ class CustomerOrderViewPage extends StatelessWidget {
           child: Column(
             children: [
               Column(
-                children: productItems.map((item) {
-                  return HorizontalProductCard(data: item);
-                }).toList(),
+                children: List.generate(productItems.length, (index) {
+                  return HorizontalProductCard(
+                    data: productItems[index],
+                    onDelete: () => _removeProduct(index),
+                  );
+                }),
               ),
               spacer(),
               Row(

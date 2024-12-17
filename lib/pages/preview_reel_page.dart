@@ -1,4 +1,5 @@
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/widgets/blocking_reel.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
@@ -30,9 +31,25 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
     }
   }
 
+  void _showBlockingReasonsBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: const BlockingReel(),
+      ),
+    );
+  }
+
   void blockReel() {
     // Add logic to block the reel here
-    print('Reel blocked');
+    _showBlockingReasonsBottomSheet();
     // Hide the container after blocking
     setState(() {
       isBlockingReelVisible = false;

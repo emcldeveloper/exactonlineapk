@@ -1,8 +1,9 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/widgets/custom_button.dart';
-import 'package:e_online/widgets/paragraph_text.dart';
+import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/payment_method.dart';
+import 'package:e_online/widgets/spacer.dart';
 import 'package:e_online/widgets/subscription_card.dart';
 import 'package:flutter/material.dart';
 
@@ -41,15 +42,17 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: mutedTextColor,
+            size: 16.0,
+          ),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: ParagraphText(
+        title: HeadingText(
           "Select Subscription",
-          color: Colors.black,
-          fontWeight: FontWeight.bold,
         ),
       ),
       body: SingleChildScrollView(
@@ -73,12 +76,14 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                   );
                 }).toList(),
               ),
-              const SizedBox(height: 16),
+              spacer3(),
+              spacer3(),
+              spacer3(),
               customButton(
                 onTap: () {
                   _showPaymentBottomSheet(context, "Subscribe");
                 },
-                text: "Continue",
+                text: "Subscribe",
               ),
             ],
           ),

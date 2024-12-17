@@ -63,14 +63,14 @@ class _MyShopPageState extends State<MyShopPage> {
           actions: [
             InkWell(
               onTap: () {
-                Get.to(() => SettingMyshopPage());
+                Get.to(() => const SettingMyshopPage());
               },
-              child: Icon(
+              child: const Icon(
                 Icons.settings_outlined,
                 size: 20.0,
               ),
             ),
-            SizedBox(width: 16),
+            const SizedBox(width: 16),
           ],
         ),
         body: Padding(

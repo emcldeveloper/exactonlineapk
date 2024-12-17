@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/pages/cart_page.dart';
+import 'package:e_online/pages/notifications_page.dart';
 import 'package:e_online/pages/profile_page.dart';
 import 'package:e_online/pages/search_page.dart';
 import 'package:e_online/pages/see_all_page.dart';
@@ -107,7 +108,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         InkWell(
                           onTap: () {
-                            Get.to(SeeAllPage());
+                            Get.to(const SeeAllPage());
                           },
                           child: Icon(
                             Icons.arrow_forward_ios,
@@ -145,7 +146,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         InkWell(
                           onTap: () {
-                            Get.to(SeeAllPage());
+                            Get.to(const SeeAllPage());
                           },
                           child: Icon(
                             Icons.arrow_forward_ios,
@@ -251,15 +252,21 @@ class _HomePageState extends State<HomePage> {
           actions: [
             InkWell(
                 onTap: () {
-                  Get.to(CartPage());
+                  Get.to(const CartPage());
                 },
-                child: Icon(Icons.shopping_bag_outlined, size: 24)),
+                child: const Icon(Icons.shopping_bag_outlined, size: 24)),
             const SizedBox(width: 8),
             InkWell(
                 onTap: () {
                   Get.to(SearchPage());
                 },
                 child: const Icon(Icons.search)),
+            const SizedBox(width: 8),
+            InkWell(
+                onTap: () {
+                  Get.to(const NotificationsPage());
+                },
+                child: const Icon(Icons.notifications_none_outlined)),
             const SizedBox(width: 8),
             InkWell(
               onTap: () {
