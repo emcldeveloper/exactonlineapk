@@ -1,9 +1,11 @@
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/widgets/active_business_selection.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
+import 'package:e_online/widgets/subscription_card.dart';
 import 'package:flutter/material.dart';
 
 class SettingMyshopPage extends StatelessWidget {
@@ -16,6 +18,11 @@ class SettingMyshopPage extends StatelessWidget {
       {"name": "Bamba shop", "createdAt": "created at 27/10/2024"},
       {"name": "Niko shop", "createdAt": "created at 26/10/2024"},
     ];
+
+ final activeSubscription = subscriptions.firstWhere(
+      (sub) => sub["status"] == "Active",
+      orElse: () => {},
+    );
 
     void showSelectBusinessBottomSheet() {
       showModalBottomSheet(
@@ -52,6 +59,18 @@ class SettingMyshopPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            ParagraphText(
+              "My Subscription",
+              fontWeight: FontWeight.bold,
+            ),
+            spacer1(),
+            activeSubscription.isNotEmpty
+                ? SubscriptionCard(data: activeSubscription, isActive: activeSubscription["status"] == "Active", onTap: (){})
+                : ParagraphText(
+                    "No Active Subscription",
+                    color: mutedTextColor,
+                  ),
+            spacer1(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

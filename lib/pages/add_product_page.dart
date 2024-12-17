@@ -7,7 +7,9 @@ import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddProductPage extends StatefulWidget {
@@ -22,6 +24,46 @@ class _AddProductPageState extends State<AddProductPage> {
   bool _isSwitched = false;
   final List<XFile> _images = [];
   final ImagePicker _picker = ImagePicker();
+  List<Color> selectedColors = [];
+
+  void _openColorPicker() {
+    Color pickedColor = Colors.blue; // Default color for the picker
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Pick a Color"),
+          content: SingleChildScrollView(
+            child: ColorPicker(
+              pickerColor: pickedColor,
+              onColorChanged: (Color color) {
+                pickedColor = color;
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text("Cancel"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text("Select"),
+              onPressed: () {
+                setState(() {
+                  selectedColors
+                      .add(pickedColor); // Add the picked color to the list
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   Future<void> _pickImages() async {
     try {
@@ -132,6 +174,9 @@ class _AddProductPageState extends State<AddProductPage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+                          HugeIcon(
+                              icon: HugeIcons.strokeRoundedUpload03,
+                              color: Colors.black),
                           const Icon(Icons.cloud_upload,
                               size: 50, color: Colors.black),
                           spacer(),
@@ -199,7 +244,8 @@ class _AddProductPageState extends State<AddProductPage> {
                 decoration: InputDecoration(
                   fillColor: primaryColor,
                   filled: true,
-                  labelStyle: const TextStyle(color: Colors.black, fontSize: 12),
+                  labelStyle:
+                      const TextStyle(color: Colors.black, fontSize: 12),
                   border: const OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
@@ -228,7 +274,8 @@ class _AddProductPageState extends State<AddProductPage> {
                 decoration: InputDecoration(
                   fillColor: primaryColor,
                   filled: true,
-                  labelStyle: const TextStyle(color: Colors.black, fontSize: 12),
+                  labelStyle:
+                      const TextStyle(color: Colors.black, fontSize: 12),
                   border: const OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
@@ -274,7 +321,8 @@ class _AddProductPageState extends State<AddProductPage> {
                 decoration: InputDecoration(
                   fillColor: primaryColor,
                   filled: true,
-                  labelStyle: const TextStyle(color: Colors.black, fontSize: 12),
+                  labelStyle:
+                      const TextStyle(color: Colors.black, fontSize: 12),
                   border: const OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
@@ -319,6 +367,43 @@ class _AddProductPageState extends State<AddProductPage> {
                     },
                   ),
                 ],
+              ),
+              spacer1(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: const Text(
+                      "Product colors",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: _openColorPicker, // Call the color picker on tap
+                    child: const Icon(
+                      Icons.add,
+                      color: Colors.black,
+                      size: 24.0,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: selectedColors.map((color) {
+                  return Container(
+                    width: 30,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      color: color,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.black, width: 1),
+                    ),
+                  );
+                }).toList(),
               ),
               spacer1(),
               ParagraphText(
@@ -505,7 +590,8 @@ class _AddProductPageState extends State<AddProductPage> {
                 decoration: InputDecoration(
                   fillColor: primaryColor,
                   filled: true,
-                  labelStyle: const TextStyle(color: Colors.black, fontSize: 12),
+                  labelStyle:
+                      const TextStyle(color: Colors.black, fontSize: 12),
                   border: const OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(

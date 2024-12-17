@@ -282,3 +282,37 @@ final List<Map<String, dynamic>> categories = [
   {'name': 'Protection', 'imageUrl': 'assets/images/protect.png'},
   {'name': 'Cars', 'imageUrl': 'assets/images/smartcar.png'},
 ];
+
+
+  final List<Map<String, String>> subscriptions = [
+    {
+      "type": "Yearly",
+      "price": "TZS 300000",
+      "duration": "1 YEAR",
+      "promotion": "20%",
+      "discount": "TZS 140000",
+      "trial period": "14 days",
+      "priority": "BEST VALUE",
+      "status": "Active",
+    },
+    {
+      "type": "6 months",
+      "price": "TZS 200000",
+      "duration": "6 months",
+      "promotion": "15%",
+      "discount": "TZS 120000",
+      "trial period": "14 days",
+      "priority": "RECOMMENDED",
+       "status": "InActive",
+    },
+    {
+      "type": "3 months",
+      "price": "TZS 100000",
+      "duration": "6 months",
+      "promotion": "10%",
+      "discount": "TZS 70000",
+      "trial period": "14 days",
+      "priority": "",
+       "status": "InActive",
+    },
+  ];

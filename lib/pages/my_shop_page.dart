@@ -60,10 +60,15 @@ class _MyShopPageState extends State<MyShopPage> {
           ),
           title: HeadingText("My Shop"),
           centerTitle: true,
-          actions: const [
-            Icon(
-              Icons.settings_outlined,
-              size: 20.0,
+          actions: [
+            InkWell(
+              onTap: () {
+                Get.to(() => SettingMyshopPage());
+              },
+              child: Icon(
+                Icons.settings_outlined,
+                size: 20.0,
+              ),
             ),
             SizedBox(width: 16),
           ],

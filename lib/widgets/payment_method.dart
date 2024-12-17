@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class PaymentMethodBottomSheet extends StatelessWidget {
-  const PaymentMethodBottomSheet({super.key});
+ final String buttonText;
+
+  const PaymentMethodBottomSheet({super.key, required this.buttonText});
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +112,7 @@ class PaymentMethodBottomSheet extends StatelessWidget {
 
                 Get.to(() => PromotedProductViewPage(productData: productData));
               },
-              text: "Pay",
+               text: buttonText,
             ),
             spacer2(),
           ],

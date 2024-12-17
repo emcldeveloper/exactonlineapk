@@ -1,5 +1,6 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/pages/my_shop_page.dart';
+import 'package:e_online/pages/subscription_page.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
@@ -435,7 +436,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
               spacer3(),
               customButton(
                 onTap: () {
-                  Get.to(() => MyShopPage());
+                  Get.to(() => SubscriptionPage());
                 },
                 text: "Submit Details",
               ),

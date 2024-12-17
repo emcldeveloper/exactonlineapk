@@ -1,3 +1,4 @@
+import 'package:e_online/widgets/popup_alert.dart';
 import 'package:e_online/widgets/seller_product_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:e_online/pages/product_page.dart';
@@ -146,10 +147,46 @@ class _HorizontalProductCardState extends State<HorizontalProductCard> {
                 ),
               ),
               const SizedBox(width: 15),
-              Icon(
-                Icons.arrow_forward_ios,
-                color: mutedTextColor,
-                size: 16,
+              InkWell(
+                onTap: () {
+                  // Show the first popup
+                  showPopupAlert(
+                    context,
+                    icon: Icons.warning_amber_outlined,
+                    heading: "Are you sure?",
+                    text: "Do you really want to perform this action?",
+                    button1Text: "No",
+                    button1Action: () {
+                      Navigator.of(context).pop(); // Close the popup
+                    },
+                    button2Text: "Yes",
+                    button2Action: () {
+                      Navigator.of(context).pop(); // Close the first popup
+                      // Show the second popup
+                      showPopupAlert(
+                        context,
+                        icon: Icons.info_outline,
+                        heading: "Action Confirmed",
+                        text: "Your action has been successfully confirmed!",
+                        button1Text: "Dismiss",
+                        button1Action: () {
+                          Navigator.of(context).pop(); // Close the second popup
+                        },
+                        button2Text: "Proceed",
+                        button2Action: () {
+                          Navigator.of(context)
+                              .pop(); // Close the second popup and perform any additional action
+                          // Add further actions here if needed
+                        },
+                      );
+                    },
+                  );
+                },
+                child: Icon(
+                  Icons.cancel_outlined,
+                  color: mutedTextColor,
+                  size: 16,
+                ),
               ),
             ],
           ),
