@@ -139,7 +139,6 @@ class ReelCard extends StatelessWidget {
                     (data['imageUrl'] as List<String>).isNotEmpty
                         ? (data['imageUrl'] as List<String>).first
                         : "assets/images/defaultImage.png",
-                        : "assets/images/defaultImage.png",
                     fit: BoxFit.cover,
                     height: index.isEven ? 280 : 200,
                   ),
@@ -150,8 +149,6 @@ class ReelCard extends StatelessWidget {
                 right: 8,
                 bottom: 8,
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
