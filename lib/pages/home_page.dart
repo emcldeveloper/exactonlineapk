@@ -265,7 +265,7 @@ class _HomePageState extends State<HomePage> {
               child: HugeIcon(
                 icon: HugeIcons.strokeRoundedShoppingBag03,
                 color: Colors.black,
-                size: 24.0,
+                size: 20.0,
               ),
             ),
             const SizedBox(width: 8),
@@ -276,7 +276,7 @@ class _HomePageState extends State<HomePage> {
                 child: HugeIcon(
                   icon: HugeIcons.strokeRoundedSearch01,
                   color: Colors.black,
-                  size: 24.0,
+                  size: 20.0,
                 )),
             const SizedBox(width: 8),
             InkWell(
@@ -286,7 +286,7 @@ class _HomePageState extends State<HomePage> {
                 child: HugeIcon(
                   icon: HugeIcons.strokeRoundedNotification01,
                   color: Colors.black,
-                  size: 24.0,
+                  size: 20.0,
                 )),
             const SizedBox(width: 8),
             InkWell(

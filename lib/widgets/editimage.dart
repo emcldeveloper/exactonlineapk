@@ -35,7 +35,7 @@ class ImageEditBottomSheet extends StatelessWidget {
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-             spacer1(),
+            spacer1(),
             GestureDetector(
               onTap: () {
                 Navigator.pop(context); // Close the bottom sheet
@@ -44,10 +44,10 @@ class ImageEditBottomSheet extends StatelessWidget {
               child: Row(
                 children: [
                   HugeIcon(
-                  icon: HugeIcons.strokeRoundedUpload01,
-                  color: Colors.black,
-                  size: 24.0,
-                ),
+                    icon: HugeIcons.strokeRoundedUpload01,
+                    color: Colors.black,
+                    size: 20.0,
+                  ),
                   const SizedBox(width: 8),
                   ParagraphText("Change image file"),
                 ],

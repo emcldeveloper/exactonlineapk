@@ -68,7 +68,7 @@ class EditProfilePage extends StatelessWidget {
                           child: HugeIcon(
                             icon: HugeIcons.strokeRoundedEdit01,
                             color: Colors.white,
-                            size: 24.0,
+                            size: 20.0,
                           ),
                         ),
                       ),

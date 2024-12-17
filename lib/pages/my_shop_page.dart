@@ -69,7 +69,7 @@ class _MyShopPageState extends State<MyShopPage> {
               child: HugeIcon(
                 icon: HugeIcons.strokeRoundedSettings01,
                 color: Colors.black,
-                size: 24.0,
+                size: 20.0,
               ),
             ),
             const SizedBox(width: 16),

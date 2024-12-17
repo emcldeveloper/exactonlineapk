@@ -191,7 +191,7 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                               child: HugeIcon(
                                 icon: HugeIcons.strokeRoundedDelete01,
                                 color: Colors.grey,
-                                size: 24.0,
+                                size: 20.0,
                               ),
                             ),
                             const SizedBox(width: 8),
@@ -200,7 +200,7 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                               child: HugeIcon(
                                 icon: HugeIcons.strokeRoundedEdit01,
                                 color: Colors.grey,
-                                size: 24.0,
+                                size: 20.0,
                               ),
                             ),
                           ],
@@ -230,7 +230,7 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                           child: HugeIcon(
                             icon: HugeIcons.strokeRoundedLocation01,
                             color: Colors.grey,
-                            size: 24.0,
+                            size: 20.0,
                           ),
                         ),
                       ],
@@ -266,7 +266,7 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                                       child: HugeIcon(
                                         icon: HugeIcons.strokeRoundedEdit01,
                                         color: Colors.grey,
-                                        size: 24.0,
+                                        size: 20.0,
                                       ),
                                     ),
                                   ],
@@ -294,7 +294,7 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                   HugeIcon(
                     icon: HugeIcons.strokeRoundedAdd01,
                     color: Colors.black,
-                    size: 24.0,
+                    size: 20.0,
                   ),
                   const SizedBox(width: 8),
                 ],

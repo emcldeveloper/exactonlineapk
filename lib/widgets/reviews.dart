@@ -66,7 +66,7 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
                           HugeIcon(
                             icon: HugeIcons.strokeRoundedStar,
                             color: Colors.amber,
-                            size: 24.0,
+                            size: 20.0,
                           ),
                           const SizedBox(width: 4),
                           ParagraphText(widget.rating.toStringAsFixed(1)),

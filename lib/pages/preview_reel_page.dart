@@ -131,7 +131,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                         HugeIcon(
                           icon: HugeIcons.strokeRoundedSquareLock02,
                           color: Colors.black,
-                          size: 24.0,
+                          size: 20.0,
                         ),
                         SizedBox(width: 4),
                         Text(
@@ -223,7 +223,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                                 HugeIcon(
                                   icon: HugeIcons.strokeRoundedFavourite,
                                   color: Colors.white,
-                                  size: 24.0,
+                                  size: 20.0,
                                 ),
                                 const SizedBox(width: 4),
                                 ParagraphText(
@@ -239,7 +239,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                                 HugeIcon(
                                   icon: HugeIcons.strokeRoundedComment01,
                                   color: Colors.white,
-                                  size: 24.0,
+                                  size: 20.0,
                                 ),
                                 const SizedBox(width: 4),
                                 ParagraphText(
@@ -252,7 +252,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                             HugeIcon(
                               icon: HugeIcons.strokeRoundedShare01,
                               color: Colors.white,
-                              size: 24.0,
+                              size: 20.0,
                             ),
                           ],
                         ),

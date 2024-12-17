@@ -46,55 +46,55 @@ class _MainPageState extends State<MainPage> {
           BottomNavigationBarItem(
             icon: Image.asset(
               "assets/icons/home-2.png",
-              width: 24.0,
+              width: 20.0,
             ),
             activeIcon: Image.asset(
               "assets/icons/home-1.png",
-              width: 24.0,
+              width: 20.0,
             ),
             label: "Home",
           ),
           BottomNavigationBarItem(
             icon: Image.asset(
               "assets/icons/trend-up-1.png",
-              width: 24.0,
+              width: 20.0,
             ),
             activeIcon: Image.asset(
               "assets/icons/trend-up-2.png",
-              width: 24.0,
+              width: 20.0,
             ),
             label: "Reels",
           ),
           BottomNavigationBarItem(
             icon: Image.asset(
               "assets/icons/message-1.png",
-              width: 24.0,
+              width: 20.0,
             ),
             activeIcon: Image.asset(
               "assets/icons/message-2.png",
-              width: 24.0,
+              width: 20.0,
             ),
             label: "Chats",
           ),
           BottomNavigationBarItem(
             icon: Image.asset(
               "assets/icons/heart.png",
-              width: 24.0,
+              width: 20.0,
             ),
             activeIcon: Image.asset(
               "assets/icons/favorite.png",
-              width: 24.0,
+              width: 20.0,
             ),
             label: "Favourites",
           ),
           BottomNavigationBarItem(
             icon: Image.asset(
               "assets/icons/person-1.png",
-              width: 24.0,
+              width: 20.0,
             ),
             activeIcon: Image.asset(
               "assets/icons/person-2.png",
-              width: 24.0,
+              width: 20.0,
             ),
             label: "Profile",
           ),

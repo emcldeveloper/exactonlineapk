@@ -224,7 +224,7 @@ class _ProductPageState extends State<ProductPage> {
           HugeIcon(
             icon: HugeIcons.strokeRoundedShoppingBag01,
             color: Colors.black,
-            size: 24.0,
+            size: 20.0,
           ),
           SizedBox(
             width: 8.0,
@@ -232,7 +232,7 @@ class _ProductPageState extends State<ProductPage> {
           HugeIcon(
             icon: HugeIcons.strokeRoundedShare01,
             color: Colors.black,
-            size: 24.0,
+            size: 20.0,
           ),
           SizedBox(
             width: 8.0,

@@ -170,7 +170,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                         leading: HugeIcon(
                           icon: HugeIcons.strokeRoundedPdf01,
                           color: Colors.red,
-                          size: 24.0,
+                          size: 20.0,
                         ),
                         title: Text(entry.value.name),
                         trailing: GestureDetector(
@@ -344,7 +344,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                         leading: HugeIcon(
                           icon: HugeIcons.strokeRoundedPdf01,
                           color: Colors.red,
-                          size: 24.0,
+                          size: 20.0,
                         ),
                         title: Text(entry.value.name),
                         trailing: GestureDetector(
