@@ -9,6 +9,7 @@ import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddProductPage extends StatefulWidget {
@@ -133,7 +134,7 @@ class _AddProductPageState extends State<AddProductPage> {
             child: Icon(
               Icons.arrow_back_ios_new_outlined,
               color: secondaryColor,
-              size: 14.0,
+              size: 16.0,
             ),
           ),
         ),
@@ -173,8 +174,11 @@ class _AddProductPageState extends State<AddProductPage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.cloud_upload,
-                              size: 50, color: Colors.black),
+                          HugeIcon(
+                            icon: HugeIcons.strokeRoundedCloudUpload,
+                            color: Colors.black,
+                            size: 50.0,
+                          ),
                           spacer(),
                           ParagraphText("Select product images"),
                         ],
@@ -219,8 +223,15 @@ class _AddProductPageState extends State<AddProductPage> {
                       children: [
                         ElevatedButton.icon(
                           onPressed: _pickSingleImage,
-                          icon: const Icon(Icons.add_photo_alternate),
-                          label: const Text("Add More"),
+                          icon: HugeIcon(
+                            icon: HugeIcons.strokeRoundedAdd01,
+                            color: Colors.white,
+                            size: 24.0,
+                          ),
+                          label: ParagraphText(
+                            "Add More",
+                            color: Colors.white,
+                          ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: secondaryColor,
                           ),
@@ -375,10 +386,10 @@ class _AddProductPageState extends State<AddProductPage> {
                     ),
                   ),
                   InkWell(
-                    onTap: _openColorPicker, 
-                    child: Icon(
-                      Icons.add,
-                      color: mutedTextColor,
+                    onTap: _openColorPicker,
+                    child: HugeIcon(
+                      icon: HugeIcons.strokeRoundedAdd01,
+                      color: Colors.grey,
                       size: 24.0,
                     ),
                   ),

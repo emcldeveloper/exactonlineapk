@@ -7,6 +7,7 @@ import 'package:e_online/widgets/seller_shop_products.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class SellerProfilePage extends StatelessWidget {
   final String name;
@@ -31,17 +32,20 @@ class SellerProfilePage extends StatelessWidget {
           leading: InkWell(
             onTap: () => Get.back(),
             child: Icon(
-              Icons.arrow_back_ios_new_outlined,
+              Icons.arrow_back_ios,
               color: mutedTextColor,
-              size: 14.0,
+              size: 16.0,
             ),
           ),
           title: HeadingText("Shop Details"),
           centerTitle: true,
           actions: [
             InkWell(
-              child: const Icon(Icons.location_on_outlined,
-                  color: Colors.black, size: 20),
+              child: HugeIcon(
+                icon: HugeIcons.strokeRoundedLocation01,
+                color: Colors.black,
+                size: 24.0,
+              ),
               onTap: () {},
             ),
             const SizedBox(
@@ -49,7 +53,7 @@ class SellerProfilePage extends StatelessWidget {
             ),
             InkWell(
               child: const Icon(Icons.local_phone_outlined,
-                  color: Colors.black, size: 20),
+                  color: Colors.black, size: 24),
               onTap: () {},
             ),
             const SizedBox(
@@ -57,8 +61,11 @@ class SellerProfilePage extends StatelessWidget {
             ),
             InkWell(
               onTap: () {},
-              child: const Icon(Icons.message_outlined,
-                  color: Colors.black, size: 20),
+              child: HugeIcon(
+                icon: HugeIcons.strokeRoundedMessage01,
+                color: Colors.black,
+                size: 24.0,
+              ),
             ),
             const SizedBox(
               width: 16,

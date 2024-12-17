@@ -6,6 +6,7 @@ import 'package:e_online/widgets/payment_method.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class PromoteProductPage extends StatefulWidget {
   final Map<String, dynamic> productData;
@@ -69,9 +70,9 @@ class _PromoteProductPageState extends State<PromoteProductPage> {
         leading: InkWell(
           onTap: () => Get.back(),
           child: Icon(
-            Icons.arrow_back_ios_new_outlined,
+            Icons.arrow_back_ios,
             color: mutedTextColor,
-            size: 14.0,
+            size: 16.0,
           ),
         ),
         title: HeadingText("Product Details"),
@@ -159,31 +160,32 @@ class _PromoteProductPageState extends State<PromoteProductPage> {
                 onTap: () =>
                     _selectDate(context, _startDateController, _startDate),
                 decoration: InputDecoration(
-                  fillColor: primaryColor,
-                  filled: true,
-                  hintText: "Select a date",
-                  hintStyle: const TextStyle(color: Colors.black, fontSize: 12),
-                  border: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: primaryColor,
+                    fillColor: primaryColor,
+                    filled: true,
+                    hintText: "Select a date",
+                    hintStyle:
+                        const TextStyle(color: Colors.black, fontSize: 12),
+                    border: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     ),
-                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-                  ),
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.transparent,
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: primaryColor,
+                      ),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(10.0)),
                     ),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                  ),
-                  suffixIcon: Icon(
-                    Icons.calendar_today_outlined,
-                    color: mutedTextColor,
-                    size: 16.0,
-                  ),
-                ),
+                    enabledBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.transparent,
+                      ),
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    ),
+                    suffixIcon: HugeIcon(
+                      icon: HugeIcons.strokeRoundedCalendar01,
+                      color: Colors.black,
+                      size: 16.0,
+                    )),
               ),
               spacer1(),
               ParagraphText(
@@ -215,9 +217,9 @@ class _PromoteProductPageState extends State<PromoteProductPage> {
                     ),
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   ),
-                  suffixIcon: Icon(
-                    Icons.calendar_today_outlined,
-                    color: mutedTextColor,
+                  suffixIcon: HugeIcon(
+                    icon: HugeIcons.strokeRoundedCalendar01,
+                    color: Colors.black,
                     size: 16.0,
                   ),
                 ),

@@ -5,7 +5,6 @@ import 'package:e_online/pages/home_page.dart';
 import 'package:e_online/pages/profile_page.dart';
 import 'package:e_online/pages/reels_page.dart';
 import 'package:flutter/material.dart';
-import 'package:icons_plus/icons_plus.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -43,30 +42,60 @@ class _MainPageState extends State<MainPage> {
             activeTab = value;
           });
         },
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(AntDesign.home_outline),
-            activeIcon: Icon(AntDesign.home_fill),
+            icon: Image.asset(
+              "assets/icons/home-2.png",
+              width: 24.0,
+            ),
+            activeIcon: Image.asset(
+              "assets/icons/home-1.png",
+              width: 24.0,
+            ),
             label: "Home",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.trending_up),
-            activeIcon: Icon(Icons.trending_up_outlined),
+            icon: Image.asset(
+              "assets/icons/trend-up-1.png",
+              width: 24.0,
+            ),
+            activeIcon: Image.asset(
+              "assets/icons/trend-up-2.png",
+              width: 24.0,
+            ),
             label: "Reels",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.chat_outlined),
-            activeIcon: Icon(Icons.chat_rounded),
+            icon: Image.asset(
+              "assets/icons/message-1.png",
+              width: 24.0,
+            ),
+            activeIcon: Image.asset(
+              "assets/icons/message-2.png",
+              width: 24.0,
+            ),
             label: "Chats",
           ),
           BottomNavigationBarItem(
-            icon: Icon(AntDesign.heart_outline),
-            activeIcon: Icon(AntDesign.heart_fill),
+            icon: Image.asset(
+              "assets/icons/heart.png",
+              width: 24.0,
+            ),
+            activeIcon: Image.asset(
+              "assets/icons/favorite.png",
+              width: 24.0,
+            ),
             label: "Favourites",
           ),
           BottomNavigationBarItem(
-            icon: Icon(AntDesign.user_outline),
-            activeIcon: Icon(AntDesign.user_switch_outline),
+            icon: Image.asset(
+              "assets/icons/person-1.png",
+              width: 24.0,
+            ),
+            activeIcon: Image.asset(
+              "assets/icons/person-2.png",
+              width: 24.0,
+            ),
             label: "Profile",
           ),
         ],

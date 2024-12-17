@@ -28,7 +28,7 @@ class SearchPage extends StatelessWidget {
             icon: Icon(
               Icons.arrow_back_ios,
               color: mutedTextColor,
-              size: 14.0,
+              size: 16.0,
             ),
             onPressed: () {
               Navigator.pop(context);

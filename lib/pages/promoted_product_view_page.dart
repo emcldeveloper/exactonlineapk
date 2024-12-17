@@ -42,9 +42,9 @@ class _ProductPageState extends State<PromotedProductViewPage> {
         leading: InkWell(
           onTap: () => Get.back(),
           child: Icon(
-            Icons.arrow_back_ios_new_outlined,
+            Icons.arrow_back_ios,
             color: mutedTextColor,
-            size: 14.0,
+            size: 16.0,
           ),
         ),
         title: HeadingText("Promote Product"),

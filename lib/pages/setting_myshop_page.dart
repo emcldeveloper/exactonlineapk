@@ -8,6 +8,7 @@ import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/setting_shop_details.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:e_online/widgets/subscription_card.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class SettingMyshopPage extends StatefulWidget {
   const SettingMyshopPage({super.key});
@@ -97,7 +98,7 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
           icon: const Icon(
             Icons.arrow_back_ios,
             color: Colors.black,
-            size: 20,
+            size: 16,
           ),
           onPressed: () {
             Navigator.pop(context);
@@ -187,19 +188,19 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                           children: [
                             InkWell(
                               onTap: () {},
-                              child: Icon(
-                                Icons.delete_outline,
-                                color: mutedTextColor,
-                                size: 20.0,
+                              child: HugeIcon(
+                                icon: HugeIcons.strokeRoundedDelete01,
+                                color: Colors.grey,
+                                size: 24.0,
                               ),
                             ),
                             const SizedBox(width: 8),
                             InkWell(
                               onTap: () {},
-                              child: Icon(
-                                Icons.edit,
-                                color: mutedTextColor,
-                                size: 20.0,
+                              child: HugeIcon(
+                                icon: HugeIcons.strokeRoundedEdit01,
+                                color: Colors.grey,
+                                size: 24.0,
                               ),
                             ),
                           ],
@@ -226,10 +227,10 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                         ),
                         InkWell(
                           onTap: () {},
-                          child: Icon(
-                            Icons.location_on,
-                            color: mutedTextColor,
-                            size: 20.0,
+                          child: HugeIcon(
+                            icon: HugeIcons.strokeRoundedLocation01,
+                            color: Colors.grey,
+                            size: 24.0,
                           ),
                         ),
                       ],
@@ -262,10 +263,10 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                                       onTap: () {
                                         showSetTimeBottomSheet(day);
                                       },
-                                      child: Icon(
-                                        Icons.edit,
-                                        color: mutedTextColor,
-                                        size: 20.0,
+                                      child: HugeIcon(
+                                        icon: HugeIcons.strokeRoundedEdit01,
+                                        color: Colors.grey,
+                                        size: 24.0,
                                       ),
                                     ),
                                   ],
@@ -290,8 +291,8 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const Icon(
-                    Icons.add,
+                  HugeIcon(
+                    icon: HugeIcons.strokeRoundedAdd01,
                     color: Colors.black,
                     size: 24.0,
                   ),

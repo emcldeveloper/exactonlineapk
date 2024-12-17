@@ -4,6 +4,7 @@ import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class ReviewBottomSheet extends StatefulWidget {
   final double rating;
@@ -62,7 +63,11 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
                       HeadingText('Product reviews'),
                       Row(
                         children: [
-                          const Icon(Icons.star, color: Colors.amber, size: 20),
+                          HugeIcon(
+                            icon: HugeIcons.strokeRoundedStar,
+                            color: Colors.amber,
+                            size: 24.0,
+                          ),
                           const SizedBox(width: 4),
                           ParagraphText(widget.rating.toStringAsFixed(1)),
                         ],

@@ -7,6 +7,7 @@ import 'package:e_online/widgets/spacer.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class EditRegisterAsSellerPage extends StatefulWidget {
   const EditRegisterAsSellerPage({super.key});
@@ -51,9 +52,9 @@ class _EditRegisterAsSellerPageState extends State<EditRegisterAsSellerPage> {
             Get.back();
           },
           child: Icon(
-            Icons.arrow_back_ios_new_outlined,
+            Icons.arrow_back_ios,
             color: mutedTextColor,
-            size: 14.0,
+            size: 16.0,
           ),
         ),
         title: HeadingText("Edit Business Information"),
@@ -147,9 +148,9 @@ class _EditRegisterAsSellerPageState extends State<EditRegisterAsSellerPage> {
                       onTap: () {
                         _pickFiles();
                       },
-                      child: Icon(
-                        Icons.add,
-                        color: mutedTextColor,
+                      child: HugeIcon(
+                        icon: HugeIcons.strokeRoundedAdd01,
+                        color: Colors.black,
                         size: 16.0,
                       ),
                     ),
@@ -170,8 +171,11 @@ class _EditRegisterAsSellerPageState extends State<EditRegisterAsSellerPage> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(Icons.cloud_upload,
-                                  size: 50, color: Colors.black),
+                              HugeIcon(
+                                icon: HugeIcons.strokeRoundedUpload01,
+                                color: Colors.black,
+                                size: 50.0,
+                              ),
                               spacer(),
                               ParagraphText("Upload files here*"),
                             ],
@@ -185,19 +189,19 @@ class _EditRegisterAsSellerPageState extends State<EditRegisterAsSellerPage> {
                           .entries
                           .map(
                             (entry) => ListTile(
-                              leading: const Icon(
-                                Icons.picture_as_pdf,
+                              leading: HugeIcon(
+                                icon: HugeIcons.strokeRoundedPdf01,
                                 color: Colors.red,
+                                size: 24.0,
                               ),
                               title: Text(entry.value.name),
                               trailing: GestureDetector(
-                                onTap: () => _removeFile(entry.key),
-                                child: const Icon(
-                                  Icons.close,
-                                  color: Colors.black,
-                                  size: 16.0,
-                                ),
-                              ),
+                                  onTap: () => _removeFile(entry.key),
+                                  child: HugeIcon(
+                                    icon: HugeIcons.strokeRoundedCancel01,
+                                    color: Colors.black,
+                                    size: 16.0,
+                                  )),
                             ),
                           )
                           .toList(),
@@ -214,7 +218,8 @@ class _EditRegisterAsSellerPageState extends State<EditRegisterAsSellerPage> {
                 decoration: InputDecoration(
                   fillColor: primaryColor,
                   filled: true,
-                  labelStyle: const TextStyle(color: Colors.black, fontSize: 12),
+                  labelStyle:
+                      const TextStyle(color: Colors.black, fontSize: 12),
                   border: const OutlineInputBorder(),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(

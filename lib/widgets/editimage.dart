@@ -2,6 +2,7 @@ import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class ImageEditBottomSheet extends StatelessWidget {
   final VoidCallback onReplace;
@@ -42,7 +43,11 @@ class ImageEditBottomSheet extends StatelessWidget {
               },
               child: Row(
                 children: [
-                  const Icon(Icons.upload_file_outlined),
+                  HugeIcon(
+                  icon: HugeIcons.strokeRoundedUpload01,
+                  color: Colors.black,
+                  size: 24.0,
+                ),
                   const SizedBox(width: 8),
                   ParagraphText("Change image file"),
                 ],

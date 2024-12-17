@@ -4,6 +4,7 @@ import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/search_function.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class ChatPage extends StatefulWidget {
   ChatPage({super.key});
@@ -121,12 +122,17 @@ class _ChatPageState extends State<ChatPage> {
       title: HeadingText("Chats"),
       actions: [
         InkWell(
-            onTap: () {
-              setState(() {
-                _isSearching = true;
-              });
-            },
-            child: const Icon(Icons.search)),
+          onTap: () {
+            setState(() {
+              _isSearching = true;
+            });
+          },
+          child: HugeIcon(
+            icon: HugeIcons.strokeRoundedSearch01,
+            color: Colors.black,
+            size: 24.0,
+          ),
+        ),
         SizedBox(
           width: 16.0,
         )
@@ -149,9 +155,9 @@ class _ChatPageState extends State<ChatPage> {
       title: buildSearchBar(),
       leading: IconButton(
         icon: Icon(
-          Icons.arrow_back_ios_new_outlined,
+          Icons.arrow_back_ios,
           color: mutedTextColor,
-          size: 14.0,
+          size: 16.0,
         ),
         onPressed: () {
           setState(() {

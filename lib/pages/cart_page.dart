@@ -11,6 +11,7 @@ import 'package:e_online/widgets/popup_alert.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class CartPage extends StatelessWidget {
   const CartPage({super.key});
@@ -26,7 +27,7 @@ class CartPage extends StatelessWidget {
           child: Icon(
             Icons.arrow_back_ios_new_outlined,
             color: mutedTextColor,
-            size: 14.0,
+            size: 16.0,
           ),
         ),
         title: HeadingText("Submit Order"),
@@ -36,9 +37,10 @@ class CartPage extends StatelessWidget {
             onTap: () {
               Get.to(const SettingMyshopPage());
             },
-            child: const Icon(
-              Icons.settings_outlined,
-              size: 20.0,
+            child: HugeIcon(
+              icon: HugeIcons.strokeRoundedSettings01,
+              color: Colors.black,
+              size: 24.0,
             ),
           ),
           const SizedBox(width: 16),

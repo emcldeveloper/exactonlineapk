@@ -1,6 +1,7 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class NotificationCard extends StatelessWidget {
   final Map<String, dynamic> data;
@@ -25,9 +26,10 @@ class NotificationCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   alignment: Alignment.center,
-                  child: Icon(
-                    Icons.notifications_none,
-                    color: mutedTextColor,
+                  child: HugeIcon(
+                    icon: HugeIcons.strokeRoundedNotification01,
+                    color: Colors.grey,
+                    size: 24.0,
                   ),
                 ),
                 const SizedBox(

@@ -2,6 +2,7 @@ import 'package:e_online/pages/preview_reel_page.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class ReelCard extends StatelessWidget {
   final Map<String, dynamic> data;
@@ -48,7 +49,8 @@ class ReelCard extends StatelessWidget {
                 right: 8,
                 bottom: 8,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.black.withOpacity(0.7),
                     borderRadius: BorderRadius.circular(4),
@@ -101,7 +103,11 @@ class ReelCard extends StatelessWidget {
                     // Likes
                     const Row(
                       children: [
-                        Icon(Icons.favorite_border, size: 20),
+                        HugeIcon(
+                          icon: HugeIcons.strokeRoundedFavourite,
+                          color: Colors.black,
+                          size: 24.0,
+                        ),
                         SizedBox(width: 4),
                         Text(
                           '12k',

@@ -13,6 +13,7 @@ import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -136,7 +137,7 @@ class ProfilePage extends StatelessWidget {
                           const Spacer(),
                           const Icon(
                             Icons.arrow_forward_ios,
-                            size: 15,
+                            size: 16,
                           ),
                         ],
                       ),
