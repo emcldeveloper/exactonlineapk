@@ -13,7 +13,8 @@ class SellerProfilePage extends StatelessWidget {
   final String followers;
   final String imageUrl;
 
-  const SellerProfilePage({super.key, 
+  const SellerProfilePage({
+    super.key,
     required this.name,
     required this.followers,
     required this.imageUrl,
@@ -134,6 +135,7 @@ class SellerProfilePage extends StatelessWidget {
             TabBar(
               isScrollable: true,
               labelColor: Colors.black,
+              dividerColor: const Color.fromARGB(255, 234, 234, 234),
               unselectedLabelColor: mutedTextColor,
               tabAlignment: TabAlignment.start,
               labelStyle: const TextStyle(

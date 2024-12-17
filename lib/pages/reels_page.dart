@@ -15,7 +15,6 @@ class ReelsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -30,7 +29,7 @@ class ReelsPage extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.search, color: Colors.black, size: 28),
               onPressed: () {
-                 Get.to(SearchPage());
+                Get.to(SearchPage());
               },
             ),
             IconButton(
@@ -46,6 +45,7 @@ class ReelsPage extends StatelessWidget {
                 tabAlignment: TabAlignment.start,
                 isScrollable: true,
                 labelColor: Colors.black,
+                dividerColor: const Color.fromARGB(255, 234, 234, 234),
                 unselectedLabelColor: Colors.grey,
                 labelStyle: TextStyle(
                   fontSize: 16,
@@ -156,7 +156,7 @@ class ReelCard extends StatelessWidget {
                   child: Image.asset(
                     (data['imageUrl'] as List<String>).isNotEmpty
                         ? (data['imageUrl'] as List<String>).first
-                        : "assets/images/defaultImage.png", 
+                        : "assets/images/defaultImage.png",
                     fit: BoxFit.cover,
                     height: index.isEven ? 280 : 200,
                   ),
@@ -167,7 +167,8 @@ class ReelCard extends StatelessWidget {
                 right: 8,
                 bottom: 8,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.black.withOpacity(0.7),
                     borderRadius: BorderRadius.circular(4),

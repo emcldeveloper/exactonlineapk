@@ -17,8 +17,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      title: "E-Online",
-      theme: ThemeData(textTheme: GoogleFonts.interTextTheme()),
+      title: "ExactOnline",
+      theme: ThemeData(textTheme: GoogleFonts.poppinsTextTheme()),
       home: FutureBuilder(
         future: Future.delayed(const Duration(seconds: 4)),
         builder: (context, snapshot) {

@@ -10,7 +10,7 @@ import 'package:e_online/widgets/spacer.dart';
 import 'package:e_online/widgets/subscription_card.dart';
 
 class SettingMyshopPage extends StatefulWidget {
-  const SettingMyshopPage({Key? key}) : super(key: key);
+  const SettingMyshopPage({super.key});
 
   @override
   State<SettingMyshopPage> createState() => _SettingMyshopPageState();
@@ -309,7 +309,7 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Row(
                       children: [
-                        CircleAvatar(
+                        const CircleAvatar(
                           radius: 20,
                           backgroundImage: AssetImage(
                             'assets/images/avatar.png',

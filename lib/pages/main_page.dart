@@ -31,10 +31,12 @@ class _MainPageState extends State<MainPage> {
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: mainColor,
         selectedItemColor: secondaryColor,
-        unselectedItemColor: Colors.black,
+        unselectedItemColor: mutedTextColor,
         showSelectedLabels: true,
         currentIndex: activeTab,
         showUnselectedLabels: true,
+        unselectedLabelStyle: TextStyle(fontSize: 11),
+        selectedLabelStyle: TextStyle(fontSize: 11),
         type: BottomNavigationBarType.fixed,
         onTap: (value) {
           setState(() {

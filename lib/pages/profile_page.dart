@@ -48,7 +48,7 @@ class ProfilePage extends StatelessWidget {
       {
         'icon': AntDesign.setting_outline,
         'title': 'Privacy Policy',
-        'page': PrivacyPolicy(),
+        'page': const PrivacyPolicy(),
       },
     ];
 
@@ -149,10 +149,10 @@ class ProfilePage extends StatelessWidget {
                   children: [
                     Image.asset("assets/images/sellers_bg.png", height: 80.0),
                     spacer1(),
-                    HeadingText("Join E-Online as a seller"),
+                    HeadingText("Join ExactOnline as a seller"),
                     spacer(),
                     ParagraphText(
-                      "List your products and drive sales to your\nbusiness using E-Online",
+                      "List your products and drive sales to your\nbusiness using ExactOnline",
                       textAlign: TextAlign.center,
                     ),
                     spacer2(),
