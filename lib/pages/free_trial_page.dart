@@ -32,6 +32,13 @@ class FreeTrialPage extends StatelessWidget {
         title: HeadingText(
           "14 days Free Trial",
         ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1.0),
+          child: Container(
+            color: const Color.fromARGB(255, 242, 242, 242),
+            height: 1.0,
+          ),
+        ),
       ),
       body: Container(
         child: Padding(

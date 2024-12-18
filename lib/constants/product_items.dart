@@ -325,3 +325,34 @@ final List<Map<String, String>> subscriptions = [
     "status": "InActive",
   },
 ];
+
+const List<Map<String, dynamic>> reelItems = [
+  {
+    "imageUrl": ["assets/images/diamond.png"],
+    "videoUrl": "assets/videos/reel1.mp4",
+    "thumbnailUrl": null,
+    "description": "Beautiful scenery.",
+    "likes": 1200,
+    "allReels": [
+      {
+        "imageUrl": ["assets/images/image1.png"],
+        "videoUrl": "assets/videos/reel1.mp4",
+        "description": "Scenery description."
+      },
+    ],
+  },
+  {
+    "imageUrl": ["assets/images/braids.png"],
+    "videoUrl": "assets/videos/reel2.mp4",
+    "thumbnailUrl": "assets/videos/product4.",
+    "description": "Amazing video.",
+    "likes": 2300,
+    "allReels": [
+      {
+        "imageUrl": [],
+        "videoUrl": "assets/videos/reel2.mp4",
+        "description": "Video description."
+      },
+    ],
+  },
+];

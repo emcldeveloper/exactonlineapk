@@ -2,7 +2,6 @@ import 'package:e_online/constants/colors.dart';
 import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/pages/home_page.dart';
 import 'package:e_online/pages/my_orders_page.dart';
-import 'package:e_online/pages/setting_myshop_page.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/horizontal_product_card.dart';
@@ -11,7 +10,6 @@ import 'package:e_online/widgets/popup_alert.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hugeicons/hugeicons.dart';
 
 class CartPage extends StatelessWidget {
   const CartPage({super.key});
@@ -35,7 +33,7 @@ class CartPage extends StatelessWidget {
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
           child: Container(
-            color: primaryColor,
+            color: const Color.fromARGB(255, 242, 242, 242),
             height: 1.0,
           ),
         ),

@@ -26,15 +26,14 @@ class SubscriptionCard extends StatelessWidget {
           color: isActive ? Colors.black : primaryColor,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            spacer(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Row(
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
                     children: [
                       ParagraphText(
                         data["type"]!,
@@ -46,49 +45,37 @@ class SubscriptionCard extends StatelessWidget {
                           data["priority"]!
                               .isNotEmpty) // Check for non-empty priority
                         Container(
-                          width: 120,
-                          height: 30,
+                          width: 110,
+                          height: 20,
                           decoration: BoxDecoration(
-                            color: Colors.amber,
-                            borderRadius: BorderRadius.circular(10),
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.orange,
+                                Colors.amber
+                              ], // Define gradient colors
+                              begin: Alignment
+                                  .centerLeft, // Start from the left center
+                              end: Alignment
+                                  .centerRight, // End at the right center
+                            ),
+                            borderRadius:
+                                BorderRadius.circular(10), // Rounded edges
                           ),
                           alignment: Alignment.center,
-                          child: ParagraphText(data["priority"]!,
-                              fontSize: 10.0, fontWeight: FontWeight.bold),
+                          child: ParagraphText(
+                            data["priority"]!,
+                            fontSize: 10.0,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                     ],
                   ),
-                ),
-                ParagraphText(
-                  data["discount"]!,
-                  color: isActive ? Colors.white : Colors.black,
-                  decoration: TextDecoration.lineThrough,
-                ),
-              ],
-            ),
-            spacer(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: ParagraphText(
+                  spacer(),
+                  ParagraphText(
                     '.save ${data["promotion"]!}',
                     color: isActive ? Colors.white : Colors.black,
                   ),
-                ),
-                ParagraphText(
-                  data["price"]!,
-                  fontWeight: FontWeight.bold,
-                  color: isActive ? Colors.white : Colors.black,
-                )
-              ],
-            ),
-            spacer(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: RichText(
+                  RichText(
                     text: TextSpan(
                       children: [
                         TextSpan(
@@ -113,11 +100,26 @@ class SubscriptionCard extends StatelessWidget {
                           color: isActive ? Colors.white : Colors.black),
                     ),
                   ),
-                ),
+                ],
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                ParagraphText(data["discount"]!,
+                    color: isActive ? Colors.white : Colors.black,
+                    decoration: TextDecoration.lineThrough,
+                    textAlign: TextAlign.center),
                 ParagraphText(
-                  data["duration"]!,
+                  data["price"]!,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16.0,
                   color: isActive ? Colors.white : Colors.black,
+                  textAlign: TextAlign.center,
                 ),
+                ParagraphText(data["duration"]!,
+                    color: isActive ? Colors.white : Colors.black,
+                    textAlign: TextAlign.center),
               ],
             ),
           ],

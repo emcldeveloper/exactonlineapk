@@ -39,6 +39,13 @@ class SearchPage extends StatelessWidget {
             ),
           ),
           title: buildSearchBar(),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(1.0),
+            child: Container(
+              color: const Color.fromARGB(255, 242, 242, 242),
+              height: 1.0,
+            ),
+          ),
         ),
       ),
       body: SingleChildScrollView(

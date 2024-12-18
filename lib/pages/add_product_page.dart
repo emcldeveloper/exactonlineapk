@@ -140,10 +140,10 @@ class _AddProductPageState extends State<AddProductPage> {
         ),
         title: HeadingText("Add Product"),
         centerTitle: true,
-        bottom: PreferredSize(
+          bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
           child: Container(
-            color: primaryColor,
+            color: const Color.fromARGB(255, 242, 242, 242),
             height: 1.0,
           ),
         ),

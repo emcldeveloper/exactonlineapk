@@ -41,10 +41,10 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
         // Use the name from orderData in the title
         title: HeadingText("Order ${widget.orderData['orderNo']}"),
         centerTitle: true,
-        bottom: PreferredSize(
+       bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
           child: Container(
-            color: primaryColor,
+            color: const Color.fromARGB(255, 242, 242, 242),
             height: 1.0,
           ),
         ),

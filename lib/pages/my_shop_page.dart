@@ -7,7 +7,6 @@ import 'package:e_online/pages/reels_page.dart';
 import 'package:e_online/pages/setting_myshop_page.dart';
 import 'package:e_online/widgets/ad_card.dart';
 import 'package:e_online/widgets/custom_button.dart';
-import 'package:e_online/widgets/favorite_card.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/order_card.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
@@ -75,6 +74,13 @@ class _MyShopPageState extends State<MyShopPage> {
             ),
             const SizedBox(width: 16),
           ],
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(1.0),
+            child: Container(
+              color: const Color.fromARGB(255, 242, 242, 242),
+              height: 1.0,
+            ),
+          ),
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -110,6 +116,13 @@ class _MyShopPageState extends State<MyShopPage> {
                       _currentIndex = index;
                     });
                   },
+                  dividerColor: const Color.fromARGB(255, 234, 234, 234),
+                  unselectedLabelStyle: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.normal,
+                  ),
+                  indicatorSize: TabBarIndicatorSize.label,
+                  padding: const EdgeInsets.symmetric(horizontal: 1),
                   isScrollable: true,
                   tabAlignment: TabAlignment.start,
                   labelColor: Colors.black,
@@ -120,7 +133,12 @@ class _MyShopPageState extends State<MyShopPage> {
                   ),
                   indicatorColor: Colors.black,
                   tabs: navCategories.map((category) {
-                    return Tab(text: category);
+                    return Tab(
+                      child: Text(
+                        category,
+                        style: const TextStyle(fontSize: 15),
+                      ),
+                    );
                   }).toList(),
                 ),
               ),
