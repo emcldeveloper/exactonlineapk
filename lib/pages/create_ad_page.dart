@@ -126,7 +126,7 @@ class _CreateAdPageState extends State<CreateAdPage> {
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
           child: Container(
-            color: primaryColor,
+            color: const Color.fromARGB(255, 242, 242, 242),
             height: 1.0,
           ),
         ),
