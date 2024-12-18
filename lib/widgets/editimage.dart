@@ -46,7 +46,7 @@ class ImageEditBottomSheet extends StatelessWidget {
                   HugeIcon(
                     icon: HugeIcons.strokeRoundedUpload01,
                     color: Colors.black,
-                    size: 20.0,
+                    size: 22.0,
                   ),
                   const SizedBox(width: 8),
                   ParagraphText("Change image file"),

@@ -93,7 +93,7 @@ class JoinAsSellerPage extends StatelessWidget {
                         HugeIcon(
                           icon: HugeIcons.strokeRoundedCheckmarkCircle01,
                           color: Colors.green,
-                          size: 20.0,
+                          size: 22.0,
                         ),
                         const SizedBox(width: 8.0),
                         Expanded(

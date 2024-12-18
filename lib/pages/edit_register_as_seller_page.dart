@@ -192,7 +192,7 @@ class _EditRegisterAsSellerPageState extends State<EditRegisterAsSellerPage> {
                               leading: HugeIcon(
                                 icon: HugeIcons.strokeRoundedPdf01,
                                 color: Colors.red,
-                                size: 20.0,
+                                size: 22.0,
                               ),
                               title: Text(entry.value.name),
                               trailing: GestureDetector(

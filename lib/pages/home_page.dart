@@ -78,7 +78,7 @@ class _HomePageState extends State<HomePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             ParagraphText("New Arrival",
-                                fontWeight: FontWeight.bold, fontSize: 15.0),
+                                fontWeight: FontWeight.bold, fontSize: 18.0),
                             ParagraphText("Filtered products for you"),
                           ],
                         ),
@@ -127,7 +127,7 @@ class _HomePageState extends State<HomePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             ParagraphText("For You",
-                                fontWeight: FontWeight.bold, fontSize: 15.0),
+                                fontWeight: FontWeight.bold, fontSize: 18.0),
                             ParagraphText("Filtered products for you"),
                           ],
                         ),
@@ -263,7 +263,7 @@ class _HomePageState extends State<HomePage> {
               child: HugeIcon(
                 icon: HugeIcons.strokeRoundedShoppingBag03,
                 color: Colors.black,
-                size: 20.0,
+                size: 22.0,
               ),
             ),
             const SizedBox(width: 8),
@@ -274,7 +274,7 @@ class _HomePageState extends State<HomePage> {
                 child: HugeIcon(
                   icon: HugeIcons.strokeRoundedSearch01,
                   color: Colors.black,
-                  size: 20.0,
+                  size: 22.0,
                 )),
             const SizedBox(width: 8),
             InkWell(
@@ -284,7 +284,7 @@ class _HomePageState extends State<HomePage> {
                 child: HugeIcon(
                   icon: HugeIcons.strokeRoundedNotification01,
                   color: Colors.black,
-                  size: 20.0,
+                  size: 22.0,
                 )),
             const SizedBox(width: 8),
             InkWell(

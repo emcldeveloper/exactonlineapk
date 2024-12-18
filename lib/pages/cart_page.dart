@@ -40,7 +40,7 @@ class CartPage extends StatelessWidget {
             child: HugeIcon(
               icon: HugeIcons.strokeRoundedSettings01,
               color: Colors.black,
-              size: 20.0,
+              size: 22.0,
             ),
           ),
           const SizedBox(width: 16),

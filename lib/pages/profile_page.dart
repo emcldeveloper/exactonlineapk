@@ -57,7 +57,7 @@ class ProfilePage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: mainColor,
         title: HeadingText("My Profile"),
-        centerTitle: true,
+        centerTitle: false,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
           child: Container(
@@ -131,13 +131,15 @@ class ProfilePage extends StatelessWidget {
                           HugeIcon(
                             icon: item['icon'],
                             color: Colors.black,
-                            size: 20.0,
+                            size: 22.0,
                           ),
                           const SizedBox(width: 10),
-                          Expanded(child: ParagraphText(item['title'])),
-                          const Spacer(),
+                          Expanded(
+                              child:
+                                  ParagraphText(item['title'], fontSize: 15)),
                           const Icon(
                             Icons.arrow_forward_ios,
+                            color: Colors.grey,
                             size: 16,
                           ),
                         ],
@@ -159,11 +161,11 @@ class ProfilePage extends StatelessWidget {
                   children: [
                     Image.asset("assets/images/sellers.png", height: 80.0),
                     spacer1(),
-                    HeadingText("Join ExactOnline as a seller", fontSize: 16.0),
+                    HeadingText("Join ExactOnline as a seller", fontSize: 18.0),
                     spacer(),
                     ParagraphText(
                       "List your products and drive sales to your\nbusiness using ExactOnline",
-                      fontSize: 12.0,
+                      fontSize: 14.0,
                       textAlign: TextAlign.center,
                     ),
                     spacer2(),
@@ -172,7 +174,7 @@ class ProfilePage extends StatelessWidget {
                         Get.to(() => const JoinAsSellerPage());
                       },
                       text: "Learn More",
-                      vertical: 8.0,
+                      vertical: 15.0,
                     ),
                   ],
                 ),

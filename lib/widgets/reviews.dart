@@ -65,7 +65,7 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
                           Icon(
                             Icons.star_rounded,
                             color: Colors.amber,
-                            size: 20.0,
+                            size: 22.0,
                           ),
                           const SizedBox(width: 4),
                           ParagraphText(widget.rating.toStringAsFixed(1)),

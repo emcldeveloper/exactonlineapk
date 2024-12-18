@@ -108,7 +108,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                   child: const Icon(
                     Icons.more_vert_sharp,
                     color: Colors.white,
-                    size: 20.0,
+                    size: 22.0,
                   ),
                 ),
               ),
@@ -133,7 +133,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                         HugeIcon(
                           icon: HugeIcons.strokeRoundedSquareLock02,
                           color: Colors.black,
-                          size: 20.0,
+                          size: 22.0,
                         ),
                         SizedBox(width: 4),
                         Text(
@@ -225,7 +225,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                                 HugeIcon(
                                   icon: HugeIcons.strokeRoundedFavourite,
                                   color: Colors.white,
-                                  size: 20.0,
+                                  size: 22.0,
                                 ),
                                 const SizedBox(width: 4),
                                 ParagraphText(
@@ -241,7 +241,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                                 HugeIcon(
                                   icon: HugeIcons.strokeRoundedComment01,
                                   color: Colors.white,
-                                  size: 20.0,
+                                  size: 22.0,
                                 ),
                                 const SizedBox(width: 4),
                                 ParagraphText(
@@ -254,7 +254,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                             HugeIcon(
                               icon: HugeIcons.strokeRoundedShare01,
                               color: Colors.white,
-                              size: 20.0,
+                              size: 22.0,
                             ),
                           ],
                         ),

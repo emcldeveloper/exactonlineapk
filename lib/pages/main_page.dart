@@ -48,14 +48,14 @@ class _MainPageState extends State<MainPage> {
               padding: const EdgeInsets.only(bottom: 4),
               child: Image.asset(
                 "assets/icons/home-2.png",
-                width: 20.0,
+                width: 22.0,
               ),
             ),
             activeIcon: Padding(
               padding: const EdgeInsets.only(bottom: 4),
               child: Image.asset(
                 "assets/icons/home-1.png",
-                width: 20.0,
+                width: 22.0,
               ),
             ),
             label: "Home",
@@ -65,14 +65,14 @@ class _MainPageState extends State<MainPage> {
               padding: const EdgeInsets.only(bottom: 4),
               child: Image.asset(
                 "assets/icons/trend-up-1.png",
-                width: 20.0,
+                width: 22.0,
               ),
             ),
             activeIcon: Padding(
               padding: const EdgeInsets.only(bottom: 4),
               child: Image.asset(
                 "assets/icons/trend-up-2.png",
-                width: 20.0,
+                width: 22.0,
               ),
             ),
             label: "Reels",
@@ -82,14 +82,14 @@ class _MainPageState extends State<MainPage> {
               padding: const EdgeInsets.only(bottom: 4),
               child: Image.asset(
                 "assets/icons/message-1.png",
-                width: 20.0,
+                width: 22.0,
               ),
             ),
             activeIcon: Padding(
               padding: const EdgeInsets.only(bottom: 4),
               child: Image.asset(
                 "assets/icons/message-2.png",
-                width: 20.0,
+                width: 22.0,
               ),
             ),
             label: "Chats",
@@ -99,14 +99,14 @@ class _MainPageState extends State<MainPage> {
               padding: const EdgeInsets.only(bottom: 4),
               child: Image.asset(
                 "assets/icons/heart.png",
-                width: 20.0,
+                width: 22.0,
               ),
             ),
             activeIcon: Padding(
               padding: const EdgeInsets.only(bottom: 4),
               child: Image.asset(
                 "assets/icons/favorite.png",
-                width: 20.0,
+                width: 22.0,
               ),
             ),
             label: "Favourites",
@@ -116,14 +116,14 @@ class _MainPageState extends State<MainPage> {
               padding: const EdgeInsets.only(bottom: 4),
               child: Image.asset(
                 "assets/icons/person-1.png",
-                width: 20.0,
+                width: 22.0,
               ),
             ),
             activeIcon: Padding(
               padding: const EdgeInsets.only(bottom: 4),
               child: Image.asset(
                 "assets/icons/person-2.png",
-                width: 20.0,
+                width: 22.0,
               ),
             ),
             label: "Profile",

@@ -106,7 +106,7 @@ class ReelCard extends StatelessWidget {
                         HugeIcon(
                           icon: HugeIcons.strokeRoundedFavourite,
                           color: Colors.black,
-                          size: 20.0,
+                          size: 22.0,
                         ),
                         SizedBox(width: 4),
                         Text(
