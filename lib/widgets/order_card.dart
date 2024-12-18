@@ -54,12 +54,11 @@ class OrderCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
             alignment: Alignment.center,
-            child: ParagraphText(
-              data['status'] ?? "processing",
-              color: data['status'] == 'Completed'
-                  ? Colors.green[800]
-                  : Colors.black,
-            ),
+            child: ParagraphText(data['status'] ?? "processing",
+                color: data['status'] == 'Completed'
+                    ? Colors.green[800]
+                    : Colors.black,
+                fontSize: 11.0),
           ),
         ],
       ),

@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class PaymentMethodBottomSheet extends StatelessWidget {
- final String buttonText;
+  final String buttonText;
 
   const PaymentMethodBottomSheet({super.key, required this.buttonText});
 
@@ -35,7 +35,7 @@ class PaymentMethodBottomSheet extends StatelessWidget {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: mutedTextColor,
+                color: const Color.fromARGB(255, 228, 228, 228),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -51,7 +51,8 @@ class PaymentMethodBottomSheet extends StatelessWidget {
                         "Pay with mobile money",
                         fontWeight: FontWeight.bold,
                       ),
-                      ParagraphText("Enter your phone number to pay", color: mutedTextColor),
+                      ParagraphText("Enter your phone number to pay",
+                          color: mutedTextColor),
                     ],
                   ),
                 ),
@@ -112,7 +113,7 @@ class PaymentMethodBottomSheet extends StatelessWidget {
 
                 Get.to(() => PromotedProductViewPage(productData: productData));
               },
-               text: buttonText,
+              text: buttonText,
             ),
             spacer2(),
           ],
