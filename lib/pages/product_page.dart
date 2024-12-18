@@ -221,18 +221,26 @@ class _ProductPageState extends State<ProductPage> {
         title: HeadingText("Product Details"),
         centerTitle: true,
         actions: [
-          HugeIcon(
-            icon: HugeIcons.strokeRoundedShoppingBag01,
-            color: Colors.black,
-            size: 20.0,
+          InkWell(
+            onTap: () {
+              Get.to(CartPage());
+            },
+            child: HugeIcon(
+              icon: HugeIcons.strokeRoundedShoppingBag01,
+              color: Colors.black,
+              size: 20.0,
+            ),
           ),
           SizedBox(
             width: 8.0,
           ),
-          HugeIcon(
-            icon: HugeIcons.strokeRoundedShare01,
-            color: Colors.black,
-            size: 20.0,
+          InkWell(
+            onTap: () {},
+            child: HugeIcon(
+              icon: HugeIcons.strokeRoundedShare08,
+              color: Colors.black,
+              size: 20.0,
+            ),
           ),
           SizedBox(
             width: 8.0,
@@ -350,8 +358,8 @@ class _ProductPageState extends State<ProductPage> {
                     children: [
                       Row(
                         children: [
-                          HugeIcon(
-                            icon: HugeIcons.strokeRoundedStar,
+                          Icon(
+                            Icons.star_rounded,
                             color: Colors.amber,
                             size: 16.0,
                           ),

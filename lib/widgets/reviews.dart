@@ -63,8 +63,8 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
                       HeadingText('Product reviews'),
                       Row(
                         children: [
-                          HugeIcon(
-                            icon: HugeIcons.strokeRoundedStar,
+                          Icon(
+                            Icons.star_rounded,
                             color: Colors.amber,
                             size: 20.0,
                           ),

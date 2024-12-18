@@ -64,11 +64,14 @@ class EditProfilePage extends StatelessWidget {
                           color: Colors.black,
                           borderRadius: BorderRadius.circular(15),
                         ),
-                        child: const Center(
-                          child: HugeIcon(
-                            icon: HugeIcons.strokeRoundedEdit01,
-                            color: Colors.white,
-                            size: 20.0,
+                        child: Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: const Center(
+                            child: HugeIcon(
+                              icon: HugeIcons.strokeRoundedPencilEdit02,
+                              color: Colors.white,
+                              size: 14.0,
+                            ),
                           ),
                         ),
                       ),
