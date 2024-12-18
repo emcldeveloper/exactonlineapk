@@ -105,16 +105,19 @@ class SellerProfilePage extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                HeadingText(name),
-                                ParagraphText("Sinza, Dar es salaam, Tanzania"),
-                              ],
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  HeadingText(name),
+                                  ParagraphText(
+                                      "Sinza, Dar es salaam, Tanzania"),
+                                ],
+                              ),
                             ),
                             Container(
-                              width: 70,
-                              height: 30,
+                              width: 60,
+                              height: 25,
                               decoration: BoxDecoration(
                                 color: Colors.green[100],
                                 borderRadius: BorderRadius.circular(15),

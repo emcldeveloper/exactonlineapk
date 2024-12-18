@@ -16,7 +16,7 @@ Widget buildSearchBar() {
             decoration: InputDecoration(
               contentPadding:
                   const EdgeInsets.only(left: 16, right: 16, bottom: 8),
-              hintText: "Search product here",
+              hintText: "Search here",
               hintStyle: TextStyle(color: mutedTextColor, fontSize: 14),
               border: InputBorder.none,
             ),
