@@ -128,9 +128,6 @@ class _MyShopPageState extends State<MyShopPage> {
                   tabAlignment: TabAlignment.start,
                   labelColor: Colors.black,
                   unselectedLabelColor: Colors.black.withOpacity(0.5),
-                  unselectedLabelStyle: const TextStyle(
-                    fontSize: 16,
-                  ),
                   labelStyle: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
