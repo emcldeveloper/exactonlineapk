@@ -1,8 +1,8 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/pages/search_page.dart';
+import 'package:e_online/widgets/favorite_card.dart';
 import 'package:e_online/widgets/filter_tiles.dart';
 import 'package:e_online/widgets/heading_text.dart';
-import 'package:e_online/widgets/horizontal_product_card.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -16,7 +16,7 @@ class CategoriesProductsPage extends StatelessWidget {
     {
       'title': "J.Crew T-shirt",
       'price': "25,000 TSH",
-      'imageUrl': "assets/images/whiteTop.png",
+      'imageUrl': ["assets/images/whiteTop.png"],
       'description':
           "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
       'rating': 4.5,
@@ -24,7 +24,7 @@ class CategoriesProductsPage extends StatelessWidget {
     {
       'title': "J.Crew T-shirt",
       'price': "25,000 TSH",
-      'imageUrl': "assets/images/blueTop.png",
+      'imageUrl': ["assets/images/blueTop.png"],
       'description':
           "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
       'rating': 4.5,
@@ -32,7 +32,7 @@ class CategoriesProductsPage extends StatelessWidget {
     {
       'title': "J.Crew T-shirt",
       'price': "25,000 TSH",
-      'imageUrl': "assets/images/maroonTop.png",
+      'imageUrl': ["assets/images/maroonTop.png"],
       'description':
           "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
       'rating': 4.5,
@@ -40,7 +40,7 @@ class CategoriesProductsPage extends StatelessWidget {
     {
       'title': "J.Crew T-shirt",
       'price': "25,000 TSH",
-      'imageUrl': "assets/images/peachTop.png",
+      'imageUrl': ["assets/images/peachTop.png"],
       'description':
           "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
       'rating': 4.5,
@@ -101,7 +101,7 @@ class CategoriesProductsPage extends StatelessWidget {
                 itemCount: searchedResults.length,
                 itemBuilder: (context, index) {
                   final item = searchedResults[index];
-                  return HorizontalProductCard(data: item);
+                  return FavoriteCard(data: item);
                 },
               ),
             ),

@@ -266,12 +266,10 @@ class _ProductPageState extends State<ProductPage> {
                     borderRadius: BorderRadius.circular(16),
                     child: Image.asset(
                       selectedImage,
-                      height: 430,
                       width: double.infinity,
-                      fit: BoxFit.contain,
+                      fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
-                          height: 200,
                           width: double.infinity,
                           color: Colors.grey[300],
                           child: const Icon(Icons.error),
@@ -279,24 +277,22 @@ class _ProductPageState extends State<ProductPage> {
                       },
                     ),
                   ),
+                  // Favorite icon container always on top of the image
                   Positioned(
                     top: 15,
-                    right: 8,
+                    right: 15,
                     child: GestureDetector(
                       onTap: _toggleFavorite,
                       child: ClipOval(
-                        child: Opacity(
-                          opacity: 0.6,
-                          child: Container(
-                            color: Colors.white,
-                            padding: const EdgeInsets.all(6.0),
-                            child: Icon(
-                              isFavorite
-                                  ? AntDesign.heart_fill
-                                  : AntDesign.heart_outline,
-                              color: isFavorite ? Colors.red : Colors.black,
-                              size: 18.0,
-                            ),
+                        child: Container(
+                          color: Colors.white.withOpacity(0.8),
+                          padding: const EdgeInsets.all(8.0),
+                          child: Icon(
+                            isFavorite
+                                ? AntDesign.heart_fill
+                                : AntDesign.heart_outline,
+                            color: isFavorite ? Colors.red : Colors.black,
+                            size: 20.0,
                           ),
                         ),
                       ),
@@ -316,18 +312,21 @@ class _ProductPageState extends State<ProductPage> {
                         child: Container(
                           margin: const EdgeInsets.only(right: 8.0),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(12),
                             border: isSelected
-                                ? Border.all(color: Colors.red, width: 2)
+                                ? Border.all(color: mutedTextColor, width: 2)
                                 : null,
                           ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
-                            child: Image.asset(
-                              image,
-                              height: 50,
-                              width: 50,
-                              fit: BoxFit.cover,
+                          child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.asset(
+                                image,
+                                height: 40,
+                                width: 40,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                         ),

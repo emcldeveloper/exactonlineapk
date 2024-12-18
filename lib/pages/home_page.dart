@@ -1,4 +1,3 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/pages/cart_page.dart';
@@ -14,7 +13,6 @@ import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:icons_plus/icons_plus.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

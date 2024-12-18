@@ -1,6 +1,6 @@
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/widgets/favorite_card.dart';
 import 'package:e_online/widgets/filter_tiles.dart';
-import 'package:e_online/widgets/horizontal_product_card.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -16,17 +16,28 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
   // Full list of products
   final List<Map<String, dynamic>> allResults = [
     {
+      'id': 21,
       'title': "J.Crew T-shirt",
       'price': "25,000 TSH",
-      'imageUrl': "assets/images/whiteTop.png",
+      'imageUrl': [
+        "assets/images/whiteTop.png",
+        "assets/products/product1.jpg",
+        "assets/products/product1.jpg",
+        "assets/products/product1.jpg",
+      ],
       'description':
           "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
       'rating': 4.5,
+      'category': "clothes",
+      'size': "2xl",
+      'color': "Black",
+      'shipping': "Free Shipping",
+      'type': "ad",
     },
     {
       'title': "Blue T-shirt",
       'price': "30,000 TSH",
-      'imageUrl': "assets/images/blueTop.png",
+      'imageUrl': ["assets/images/blueTop.png"],
       'description':
           "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
       'rating': 4.5,
@@ -34,7 +45,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
     {
       'title': "Maroon T-shirt",
       'price': "20,000 TSH",
-      'imageUrl': "assets/images/maroonTop.png",
+      'imageUrl': ["assets/images/maroonTop.png"],
       'description':
           "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
       'rating': 4.5,
@@ -42,7 +53,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
     {
       'title': "Peach T-shirt",
       'price': "25,000 TSH",
-      'imageUrl': "assets/images/peachTop.png",
+      'imageUrl': ["assets/images/peachTop.png"],
       'description':
           "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
       'rating': 4.5,
@@ -165,7 +176,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                 itemCount: filteredResults.length,
                 itemBuilder: (context, index) {
                   final item = filteredResults[index];
-                  return HorizontalProductCard(data: item);
+                  return FavoriteCard(data: item);
                 },
               ),
             ],

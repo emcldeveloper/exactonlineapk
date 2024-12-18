@@ -84,10 +84,12 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                     color: Colors.black.withOpacity(0.5),
                     borderRadius: BorderRadius.circular(25),
                   ),
-                  child: const Icon(
-                    Icons.arrow_back_ios,
-                    color: Colors.white,
-                    size: 16.0,
+                  child: Center(
+                    child: const Icon(
+                      Icons.arrow_back_ios,
+                      color: Colors.white,
+                      size: 16.0,
+                    ),
                   ),
                 ),
               ),

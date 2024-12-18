@@ -1,6 +1,4 @@
 import 'package:e_online/constants/colors.dart';
-import 'package:e_online/widgets/heading_text.dart';
-import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -17,6 +15,7 @@ class _ConversationPageState extends State<ConversationPage> {
       Get.arguments as Map<String, dynamic>? ?? {};
   final List<String> messages = [];
   final TextEditingController _messageController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   void _sendMessage() {
     final messageText = _messageController.text.trim();
@@ -25,65 +24,76 @@ class _ConversationPageState extends State<ConversationPage> {
         messages.add(messageText);
       });
       _messageController.clear();
+
+      // Scroll to the bottom when a new message is added
+      Future.delayed(Duration(milliseconds: 100), () {
+        if (_scrollController.hasClients) {
+          _scrollController.animateTo(
+            _scrollController.position.minScrollExtent,
+            duration: Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        }
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: mainColor,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: mainColor,
+        leadingWidth: 20,
         leading: InkWell(
           onTap: () {
             Get.back();
           },
-          child: Icon(
-            Icons.arrow_back_ios,
-            color: mutedTextColor,
-            size: 16.0,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Icon(
+              Icons.arrow_back_ios,
+              color: Colors.grey,
+              size: 16.0,
+            ),
           ),
         ),
         title: Row(
           children: [
             CircleAvatar(
+              radius: 14,
               backgroundImage:
                   AssetImage(chatData['avatar'] ?? 'assets/images/avatar.png'),
             ),
             const SizedBox(width: 8),
-            HeadingText(chatData['name'] ?? 'Unknown'),
+            Text(chatData['name'] ?? 'Unknown'),
           ],
-        ),
-        centerTitle: false,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1.0),
-          child: Container(
-            color: primaryColor,
-            height: 1.0,
-          ),
         ),
       ),
       body: Column(
         children: [
           Expanded(
             child: ListView.builder(
+              controller: _scrollController,
+              reverse: true, // Reverse the list to start from the bottom
               padding: const EdgeInsets.all(16.0),
-              itemCount: messages.length + 1,
+              itemCount: messages.length + 1, // Includes the initial message
               itemBuilder: (context, index) {
-                if (index == 0) {
-                  // Display the initial message
+                if (index == messages.length) {
+                  // Display the initial message (only once at the top when reversed)
                   return Align(
-                    alignment: Alignment.centerLeft,
+                    alignment: Alignment.bottomLeft,
                     child: ChatBubble(
                       text: chatData['message'] ?? 'No message available.',
                       isSentByMe: false,
                     ),
                   );
                 }
+                // Correctly access the reversed index for the messages
                 return Align(
-                  alignment: Alignment.centerRight,
+                  alignment: Alignment.bottomRight,
                   child: ChatBubble(
-                    text: messages[index - 1],
+                    text: messages[messages.length - 1 - index],
                     isSentByMe: true,
                   ),
                 );
@@ -93,66 +103,48 @@ class _ConversationPageState extends State<ConversationPage> {
           Container(
             decoration: BoxDecoration(
               border: Border(
-                top: BorderSide(color: primaryColor, width: 1.0),
+                top: BorderSide(color: Colors.grey, width: 1.0),
               ),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _messageController,
-                      decoration: InputDecoration(
-                        fillColor: primaryColor,
-                        filled: true,
-                        hintText: "Write your message here",
-                        hintStyle: const TextStyle(fontSize: 12.0),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16.0),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: primaryColor,
-                          ),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(30.0)),
-                        ),
-                        enabledBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.transparent,
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(30.0)),
-                        ),
+            padding: const EdgeInsets.all(12.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _messageController,
+                    decoration: InputDecoration(
+                      fillColor: Colors.grey[200],
+                      filled: true,
+                      hintText: "Write your message here",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                        borderSide: BorderSide.none,
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    width: 8,
+                ),
+                const SizedBox(width: 8),
+                InkWell(
+                  onTap: _sendMessage,
+                  child: Container(
+                    padding: const EdgeInsets.all(13.0),
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Transform.rotate(
+                      angle: 6.3,
+                      child: HugeIcon(
+                        icon: HugeIcons.strokeRoundedSent,
+                        color: Colors.white,
+                        size: 20.0,
+                      ),
+                    ),
                   ),
-                  InkWell(
-                      onTap: _sendMessage,
-                      child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.black,
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(13.0),
-                            child: Transform.rotate(
-                              angle: 6.3,
-                              child: HugeIcon(
-                                icon: HugeIcons.strokeRoundedSent,
-                                color: Colors.white,
-                                size: 20.0,
-                              ),
-                            ),
-                          ))),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-          spacer1(),
         ],
       ),
     );

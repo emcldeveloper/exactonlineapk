@@ -1,4 +1,3 @@
-import 'package:e_online/constants/colors.dart';
 import 'package:e_online/pages/customer_order_view_page.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:flutter/material.dart';

@@ -1,5 +1,4 @@
 import 'package:e_online/widgets/custom_button.dart';
-import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';

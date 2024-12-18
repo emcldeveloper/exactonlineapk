@@ -153,22 +153,24 @@ class _ChatPageState extends State<ChatPage> {
       backgroundColor: mainColor,
       elevation: 0,
       title: buildSearchBar(),
-      leading: IconButton(
-        icon: Icon(
-          Icons.arrow_back_ios,
-          color: mutedTextColor,
-          size: 16.0,
+      leadingWidth: 20,
+      leading: Padding(
+        padding: const EdgeInsets.only(left: 8.0),
+        child: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: mutedTextColor,
+            size: 16.0,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
-        onPressed: () {
-          setState(() {
-            _isSearching = false;
-          });
-        },
       ),
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(1.0),
         child: Container(
-          color: Colors.black,
+          color: const Color.fromARGB(255, 242, 242, 242),
           height: 1.0,
         ),
       ),
