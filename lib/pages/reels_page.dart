@@ -140,8 +140,11 @@ class ReelCard extends StatelessWidget {
                     (data['imageUrl'] as List<String>).isNotEmpty
                         ? (data['imageUrl'] as List<String>).first
                         : "assets/images/defaultImage.png",
-                    fit: BoxFit.cover,
+                    fit: BoxFit
+                        .cover, 
                     height: index.isEven ? 280 : 200,
+                    width: double
+                        .infinity, 
                   ),
                 ),
               ),

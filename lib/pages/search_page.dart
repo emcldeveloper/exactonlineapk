@@ -24,15 +24,19 @@ class SearchPage extends StatelessWidget {
         child: AppBar(
           backgroundColor: mainColor,
           elevation: 0,
-          leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios,
-              color: mutedTextColor,
-              size: 16.0,
+          leadingWidth: 20,
+          leading: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios,
+                color: mutedTextColor,
+                size: 16.0,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
             ),
-            onPressed: () {
-              Navigator.pop(context);
-            },
           ),
           title: buildSearchBar(),
         ),

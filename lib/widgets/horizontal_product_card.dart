@@ -138,9 +138,9 @@ class _HorizontalProductCardState extends State<HorizontalProductCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ParagraphText(
-                      widget.data['description'] ?? "No description available",
-                      fontWeight: FontWeight.bold,
-                    ),
+                        widget.data['description'] ??
+                            "No description available",
+                        maxLines: 2),
                     spacer(),
                     Row(
                       children: [
@@ -149,6 +149,8 @@ class _HorizontalProductCardState extends State<HorizontalProductCard> {
                             children: [
                               ParagraphText(
                                 widget.data['price'] ?? "N/A",
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16.0,
                               ),
                               const SizedBox(width: 8),
                               ParagraphText(
@@ -175,13 +177,13 @@ class _HorizontalProductCardState extends State<HorizontalProductCard> {
                   ],
                 ),
               ),
-              const SizedBox(width: 15),
+              const SizedBox(width: 30),
               InkWell(
                 onTap: _showConfirmationPopup,
                 child: Icon(
                   Icons.close,
                   color: mutedTextColor,
-                  size: 20,
+                  size: 16.0,
                 ),
               ),
             ],

@@ -7,8 +7,8 @@ import 'package:e_online/pages/reels_page.dart';
 import 'package:e_online/pages/setting_myshop_page.dart';
 import 'package:e_online/widgets/ad_card.dart';
 import 'package:e_online/widgets/custom_button.dart';
+import 'package:e_online/widgets/favorite_card.dart';
 import 'package:e_online/widgets/heading_text.dart';
-import 'package:e_online/widgets/horizontal_product_card.dart';
 import 'package:e_online/widgets/order_card.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
@@ -127,10 +127,7 @@ class _MyShopPageState extends State<MyShopPage> {
               Expanded(
                 child: TabBarView(
                   children: navCategories.map((category) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: buildPageContent(),
-                    );
+                    return buildPageContent();
                   }).toList(),
                 ),
               ),
@@ -220,7 +217,7 @@ class _MyShopPageState extends State<MyShopPage> {
     return ListView.builder(
       itemCount: productItems.length,
       itemBuilder: (context, index) {
-        return HorizontalProductCard(data: productItems[index]);
+        return FavoriteCard(data: productItems[index]);
       },
     );
   }

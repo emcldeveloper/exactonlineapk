@@ -282,20 +282,15 @@ final List<Map<String, dynamic>> orderItems = [
 ];
 
 final List<Map<String, dynamic>> categories = [
-  {'name': 'Electronics', 'imageUrl': 'assets/images/electronics.png'},
-  {'name': 'Accessories', 'imageUrl': 'assets/images/diamond.png'},
-  {'name': 'Clothes', 'imageUrl': 'assets/images/clothes.png'},
-  {'name': 'Shoes', 'imageUrl': 'assets/images/pinksneakers.png'},
-  {'name': 'Toys & Hobbies', 'imageUrl': 'assets/images/toy.png'},
-  {'name': 'Tools', 'imageUrl': 'assets/images/tools.png'},
-  {'name': 'Automotive', 'imageUrl': 'assets/images/scooter.png'},
-  {'name': 'Beauty', 'imageUrl': 'assets/images/beautifulwoman.png'},
-  {'name': 'Health', 'imageUrl': 'assets/images/hospital.png'},
-  {'name': 'Kids', 'imageUrl': 'assets/images/youngkids.png'},
-  {'name': 'Mothers', 'imageUrl': 'assets/images/motherandbaby.png'},
-  {'name': 'Security', 'imageUrl': 'assets/images/Datasecurity.png'},
-  {'name': 'Protection', 'imageUrl': 'assets/images/protect.png'},
-  {'name': 'Cars', 'imageUrl': 'assets/images/smartcar.png'},
+  {'name': 'Electronics', 'imageUrl': 'assets/images/Vector.png'},
+  {'name': 'Accessories', 'imageUrl': 'assets/images/claritytools.png'},
+  {'name': 'Clothes', 'imageUrl': 'assets/images/iconcardigan.png'},
+  {'name': 'Shoes', 'imageUrl': 'assets/images/balletshoes.png'},
+  {'name': 'Toys & Hobbies', 'imageUrl': 'assets/images/symbolstoys.png'},
+  {'name': 'Tools', 'imageUrl': 'assets/images/Group.png'},
+  {'name': 'Automotive', 'imageUrl': 'assets/images/iconcar.png'},
+  {'name': 'Beauty', 'imageUrl': 'assets/images/iconbeauty.png'},
+  {'name': 'Health', 'imageUrl': 'assets/images/solarhealth.png'},
 ];
 
 final List<Map<String, String>> subscriptions = [
