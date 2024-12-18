@@ -64,7 +64,7 @@ class CustomerSupportPage extends StatelessWidget {
                       right: 0,
                       child: Brand(
                         Brands.whatsapp,
-                        size: 20.0,
+                        size: 22.0,
                       ),
                     ),
                   ],

@@ -209,7 +209,7 @@ class _CreateAdPageState extends State<CreateAdPage> {
                           icon: HugeIcon(
                             icon: HugeIcons.strokeRoundedAdd01,
                             color: Colors.black,
-                            size: 20.0,
+                            size: 22.0,
                           ),
                           label: const Text("Add More"),
                           style: ElevatedButton.styleFrom(

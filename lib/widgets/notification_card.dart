@@ -29,7 +29,7 @@ class NotificationCard extends StatelessWidget {
                   child: HugeIcon(
                     icon: HugeIcons.strokeRoundedNotification01,
                     color: Colors.grey,
-                    size: 20.0,
+                    size: 22.0,
                   ),
                 ),
                 const SizedBox(

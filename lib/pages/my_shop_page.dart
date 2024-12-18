@@ -69,7 +69,7 @@ class _MyShopPageState extends State<MyShopPage> {
               child: HugeIcon(
                 icon: HugeIcons.strokeRoundedSettings01,
                 color: Colors.black,
-                size: 20.0,
+                size: 22.0,
               ),
             ),
             const SizedBox(width: 16),
@@ -96,7 +96,8 @@ class _MyShopPageState extends State<MyShopPage> {
                         item['points'],
                         fontWeight: FontWeight.w700,
                       ),
-                      ParagraphText(item['title']),
+                      ParagraphText(item['title'],
+                          fontSize: 12, color: Colors.grey[600]),
                     ],
                   );
                 }).toList(),
@@ -127,6 +128,9 @@ class _MyShopPageState extends State<MyShopPage> {
                   tabAlignment: TabAlignment.start,
                   labelColor: Colors.black,
                   unselectedLabelColor: Colors.black.withOpacity(0.5),
+                  unselectedLabelStyle: const TextStyle(
+                    fontSize: 16,
+                  ),
                   labelStyle: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,

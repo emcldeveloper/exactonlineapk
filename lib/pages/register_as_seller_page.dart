@@ -169,7 +169,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                         leading: HugeIcon(
                           icon: HugeIcons.strokeRoundedPdf01,
                           color: Colors.red,
-                          size: 20.0,
+                          size: 22.0,
                         ),
                         title: Text(entry.value.name),
                         trailing: GestureDetector(
@@ -323,9 +323,9 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         HugeIcon(
-                          icon: HugeIcons.strokeRoundedUpload01,
+                          icon: AntDesign.cloud_upload_outline,
                           color: Colors.black,
-                          size: 50.0,
+                          size: 40.0,
                         ),
                         spacer(),
                         ParagraphText("Upload files here*"),
@@ -343,7 +343,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                         leading: HugeIcon(
                           icon: HugeIcons.strokeRoundedPdf01,
                           color: Colors.red,
-                          size: 20.0,
+                          size: 22.0,
                         ),
                         title: Text(entry.value.name),
                         trailing: GestureDetector(

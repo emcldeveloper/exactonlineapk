@@ -144,7 +144,7 @@ class _ConversationPageState extends State<ConversationPage> {
                       child: HugeIcon(
                         icon: HugeIcons.strokeRoundedSent,
                         color: Colors.white,
-                        size: 20.0,
+                        size: 22.0,
                       ),
                     ),
                   ),

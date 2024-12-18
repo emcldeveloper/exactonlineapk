@@ -30,6 +30,19 @@ class CartPage extends StatelessWidget {
         ),
         title: HeadingText("Submit Order"),
         centerTitle: true,
+        actions: [
+          InkWell(
+            onTap: () {
+              Get.to(const SettingMyshopPage());
+            },
+            child: HugeIcon(
+              icon: HugeIcons.strokeRoundedSettings01,
+              color: Colors.black,
+              size: 22.0,
+            ),
+          ),
+          const SizedBox(width: 16),
+        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
           child: Container(

@@ -226,7 +226,7 @@ class _AddProductPageState extends State<AddProductPage> {
                           icon: HugeIcon(
                             icon: HugeIcons.strokeRoundedAdd01,
                             color: Colors.white,
-                            size: 20.0,
+                            size: 22.0,
                           ),
                           label: ParagraphText(
                             "Add More",
@@ -390,7 +390,7 @@ class _AddProductPageState extends State<AddProductPage> {
                     child: HugeIcon(
                       icon: HugeIcons.strokeRoundedAdd01,
                       color: Colors.grey,
-                      size: 20.0,
+                      size: 22.0,
                     ),
                   ),
                   const SizedBox(width: 8),

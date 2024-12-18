@@ -77,7 +77,7 @@ class CategoriesProductsPage extends StatelessWidget {
             icon: HugeIcon(
               icon: HugeIcons.strokeRoundedSearch01,
               color: Colors.black,
-              size: 20.0,
+              size: 22.0,
             ),
           ),
         ],

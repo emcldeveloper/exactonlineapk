@@ -238,7 +238,7 @@ class _ProductPageState extends State<ProductPage> {
             child: HugeIcon(
               icon: HugeIcons.strokeRoundedShoppingBag01,
               color: Colors.black,
-              size: 20.0,
+              size: 22.0,
             ),
           ),
           SizedBox(
@@ -249,7 +249,7 @@ class _ProductPageState extends State<ProductPage> {
             child: HugeIcon(
               icon: HugeIcons.strokeRoundedShare08,
               color: Colors.black,
-              size: 20.0,
+              size: 22.0,
             ),
           ),
           SizedBox(
@@ -302,7 +302,7 @@ class _ProductPageState extends State<ProductPage> {
                                 ? AntDesign.heart_fill
                                 : AntDesign.heart_outline,
                             color: isFavorite ? Colors.red : Colors.black,
-                            size: 20.0,
+                            size: 22.0,
                           ),
                         ),
                       ),

@@ -44,7 +44,7 @@ class SellerProfilePage extends StatelessWidget {
               child: HugeIcon(
                 icon: HugeIcons.strokeRoundedLocation01,
                 color: Colors.black,
-                size: 20.0,
+                size: 22.0,
               ),
               onTap: () {},
             ),
@@ -64,7 +64,7 @@ class SellerProfilePage extends StatelessWidget {
               child: HugeIcon(
                 icon: HugeIcons.strokeRoundedMessage01,
                 color: Colors.black,
-                size: 20.0,
+                size: 22.0,
               ),
             ),
             const SizedBox(

@@ -130,7 +130,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
               child: HugeIcon(
                 icon: HugeIcons.strokeRoundedSearch01,
                 color: Colors.white,
-                size: 20.0,
+                size: 22.0,
               ),
             ),
           ),
