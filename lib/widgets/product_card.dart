@@ -104,15 +104,15 @@ class _ProductCardState extends State<ProductCard> {
                     onTap: _toggleFavorite,
                     child: ClipOval(
                       child: Opacity(
-                        opacity: 0.6,
+                        opacity: 1,
                         child: Container(
-                          color: Colors.white,
+                          color: Colors.white60,
                           padding: const EdgeInsets.all(6.0),
                           child: Icon(
                             isFavorite
                                 ? AntDesign.heart_fill
                                 : AntDesign.heart_outline,
-                            color: isFavorite ? Colors.red[800] : Colors.black,
+                            color: isFavorite ? Colors.red : Colors.black,
                             size: 18.0,
                           ),
                         ),

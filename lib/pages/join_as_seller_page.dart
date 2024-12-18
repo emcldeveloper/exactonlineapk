@@ -67,7 +67,7 @@ class JoinAsSellerPage extends StatelessWidget {
                 child: Column(
                   children: [
                     Image.asset(
-                      "assets/images/sellers_bg.png",
+                      "assets/images/sellers.png",
                       height: 80.0,
                       fit: BoxFit.cover,
                     ),

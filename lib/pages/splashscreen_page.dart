@@ -9,8 +9,16 @@ class SplashscreenPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child: HeadingText("ExactOnline",
-            textAlign: TextAlign.center, fontSize: 30.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            HeadingText("Exact",
+                textAlign: TextAlign.center,
+                fontSize: 35.0,
+                color: Color(0xffFF8000)),
+            HeadingText("Online", textAlign: TextAlign.center, fontSize: 35.0)
+          ],
+        ),
       ),
     );
   }
