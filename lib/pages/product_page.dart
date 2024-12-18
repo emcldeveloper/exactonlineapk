@@ -1,6 +1,6 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/pages/cart_page.dart';
-import 'package:e_online/pages/home_page.dart';
+import 'package:e_online/pages/chat_page.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
@@ -14,6 +14,7 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProductPage extends StatefulWidget {
   final Map<String, dynamic> productData;
@@ -154,6 +155,15 @@ class _ProductPageState extends State<ProductPage> {
         child: const ReportSellerBottomSheet(),
       ),
     );
+  }
+
+  void _callSeller() async {
+    final Uri phoneNumber = Uri(scheme: 'tel', path: '+255627707434');
+    if (await canLaunchUrl(phoneNumber)) {
+      await launchUrl(phoneNumber);
+    } else {
+      debugPrint("Could not launch $phoneNumber");
+    }
   }
 
   @override
@@ -455,14 +465,14 @@ class _ProductPageState extends State<ProductPage> {
               ),
               spacer(),
               customButton(
-                onTap: () => Get.to(() => const HomePage()),
+                onTap: _callSeller,
                 text: "Call Seller",
                 buttonColor: primaryColor,
                 textColor: Colors.black,
               ),
               spacer(),
               customButton(
-                onTap: () => Get.to(() => const HomePage()),
+                onTap: () => Get.to(() => ChatPage()),
                 text: "Message Seller",
                 buttonColor: primaryColor,
                 textColor: Colors.black,

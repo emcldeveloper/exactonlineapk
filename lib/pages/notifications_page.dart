@@ -60,6 +60,13 @@ class NotificationsPage extends StatelessWidget {
         title: HeadingText(
           "Notifications",
         ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1.0),
+          child: Container(
+            color: const Color.fromARGB(255, 242, 242, 242),
+            height: 1.0,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -70,7 +77,7 @@ class NotificationsPage extends StatelessWidget {
               return Column(
                 children: [
                   NotificationCard(data: item),
-                  spacer1(),
+                  spacer2(),
                 ],
               );
             }).toList(),

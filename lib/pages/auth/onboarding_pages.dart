@@ -98,7 +98,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                               decoration: BoxDecoration(
                                 color: _currentPage == index
                                     ? Colors.black
-                                    : Colors.grey,
+                                    : const Color(0xffEBEBEB),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                             ),

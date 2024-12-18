@@ -11,6 +11,7 @@ import 'package:e_online/widgets/favorite_card.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/order_card.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
+import 'package:e_online/widgets/shop_product_card.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -217,7 +218,7 @@ class _MyShopPageState extends State<MyShopPage> {
     return ListView.builder(
       itemCount: productItems.length,
       itemBuilder: (context, index) {
-        return FavoriteCard(data: productItems[index]);
+        return ShopProductCard(data: productItems[index]);
       },
     );
   }
