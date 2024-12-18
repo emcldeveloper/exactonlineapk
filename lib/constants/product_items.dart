@@ -3,6 +3,8 @@ final List<Map<String, dynamic>> productItems = [
     'id': 1,
     'title': "J.Crew T-shirt",
     'price': "25,000 TSH",
+    'videoUrl':
+        "https://v1.pinimg.com/videos/mc/720p/e7/bf/f3/e7bff3fc5b426903b4c03e1d61aa8f06.mp4",
     'imageUrl': [
       "assets/products/product1.jpg",
       "assets/products/product1.jpg",
@@ -20,6 +22,8 @@ final List<Map<String, dynamic>> productItems = [
     'id': 2,
     'title': "J.Crew T-shirt",
     'price': "25,000 TSH",
+    'videoUrl':
+        "https://v1.pinimg.com/videos/mc/720p/c4/c7/9f/c4c79f13e8ef3153e1d74f32efb6f2c2.mp4",
     'imageUrl': [
       "assets/products/product2.jpg",
       "assets/products/product2.jpg",
@@ -37,6 +41,8 @@ final List<Map<String, dynamic>> productItems = [
     'id': 3,
     'title': "J.Crew T-shirt",
     'price': "25,000 TSH",
+    'videoUrl':
+        "https://v1.pinimg.com/videos/iht/720p/5f/07/c2/5f07c2410ddabba2f447bdd2dbc42500.mp4",
     'imageUrl': [
       "assets/products/product3.jpg",
       "assets/products/product3.jpg",
@@ -54,6 +60,8 @@ final List<Map<String, dynamic>> productItems = [
     'id': 4,
     'title': "J.Crew T-shirt",
     'price': "25,000 TSH",
+    'videoUrl':
+        "https://v1.pinimg.com/videos/mc/720p/e7/bf/f3/e7bff3fc5b426903b4c03e1d61aa8f06.mp4",
     'imageUrl': [
       "assets/products/product4.jpg",
       "assets/products/product4.jpg",
@@ -71,6 +79,8 @@ final List<Map<String, dynamic>> productItems = [
     'id': 5,
     'title': "J.Crew T-shirt",
     'price': "25,000 TSH",
+    'videoUrl':
+        "https://v1.pinimg.com/videos/mc/720p/e7/bf/f3/e7bff3fc5b426903b4c03e1d61aa8f06.mp4",
     'imageUrl': [
       "assets/products/product5.jpg",
       "assets/products/product5.jpg",
@@ -87,6 +97,8 @@ final List<Map<String, dynamic>> productItems = [
     'id': 5,
     'title': "J.Crew T-shirt",
     'price': "25,000 TSH",
+    'videoUrl':
+        "https://v1.pinimg.com/videos/mc/720p/e7/bf/f3/e7bff3fc5b426903b4c03e1d61aa8f06.mp4",
     'imageUrl': [
       "assets/products/product6.jpg",
       "assets/products/product6.jpg",
@@ -103,6 +115,8 @@ final List<Map<String, dynamic>> productItems = [
     'id': 6,
     'title': "J.Crew T-shirt",
     'price': "25,000 TSH",
+    'videoUrl':
+        "https://v1.pinimg.com/videos/mc/720p/e7/bf/f3/e7bff3fc5b426903b4c03e1d61aa8f06.mp4",
     'imageUrl': [
       "assets/products/product7.jpg",
       "assets/products/product7.jpg",
@@ -120,6 +134,8 @@ final List<Map<String, dynamic>> productItems = [
     'id': 7,
     'title': "J.Crew T-shirt",
     'price': "25,000 TSH",
+    'videoUrl':
+        "https://v1.pinimg.com/videos/mc/720p/e7/bf/f3/e7bff3fc5b426903b4c03e1d61aa8f06.mp4",
     'imageUrl': [
       "assets/images/whitejacket.png",
       "assets/images/coloredTop.png",
@@ -137,6 +153,8 @@ final List<Map<String, dynamic>> productItems = [
     'id': 8,
     'title': "J.Crew T-shirt",
     'price': "25,000 TSH",
+    'videoUrl':
+        "https://v1.pinimg.com/videos/mc/720p/e7/bf/f3/e7bff3fc5b426903b4c03e1d61aa8f06.mp4",
     'imageUrl': [
       "assets/images/shoes.png",
       "assets/images/shoes.png",
@@ -154,6 +172,8 @@ final List<Map<String, dynamic>> productItems = [
     'id': 9,
     'title': "J.Crew T-shirt",
     'price': "25,000 TSH",
+    'videoUrl':
+        "https://v1.pinimg.com/videos/mc/720p/e7/bf/f3/e7bff3fc5b426903b4c03e1d61aa8f06.mp4",
     'imageUrl': ["assets/images/braids.png"],
     'description':
         "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
@@ -167,6 +187,8 @@ final List<Map<String, dynamic>> productItems = [
     'id': 10,
     'title': "Hand Jewelry",
     'price': "25,000 TSH",
+    'videoUrl':
+        "https://v1.pinimg.com/videos/mc/720p/e7/bf/f3/e7bff3fc5b426903b4c03e1d61aa8f06.mp4",
     'imageUrl': ["assets/images/heinken.png"],
     'description':
         "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
@@ -180,6 +202,8 @@ final List<Map<String, dynamic>> productItems = [
     'id': 11,
     'title': "Pink Top",
     'price': "25,000 TSH",
+    'videoUrl':
+        "https://v1.pinimg.com/videos/mc/720p/e7/bf/f3/e7bff3fc5b426903b4c03e1d61aa8f06.mp4",
     'imageUrl': ["assets/images/greenwatch.png"],
     'description':
         "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
@@ -193,6 +217,8 @@ final List<Map<String, dynamic>> productItems = [
     'id': 12,
     'title': "Smart Watch",
     'price': "25,000 TSH",
+    'videoUrl':
+        "https://v1.pinimg.com/videos/mc/720p/e7/bf/f3/e7bff3fc5b426903b4c03e1d61aa8f06.mp4",
     'imageUrl': ["assets/images/jergens.png"],
     'description':
         "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
@@ -206,6 +232,8 @@ final List<Map<String, dynamic>> productItems = [
     'id': 13,
     'title': "Earrings",
     'price': "25,000 TSH",
+    'videoUrl':
+        "https://v1.pinimg.com/videos/mc/720p/e7/bf/f3/e7bff3fc5b426903b4c03e1d61aa8f06.mp4",
     'imageUrl': ["assets/images/rays.png"],
     'description':
         "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
@@ -219,6 +247,8 @@ final List<Map<String, dynamic>> productItems = [
     'id': 14,
     'title': "Braids",
     'price': "25,000 TSH",
+    'videoUrl':
+        "https://v1.pinimg.com/videos/mc/720p/e7/bf/f3/e7bff3fc5b426903b4c03e1d61aa8f06.mp4",
     'imageUrl': ["assets/images/kevita.png"],
     'description':
         "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",

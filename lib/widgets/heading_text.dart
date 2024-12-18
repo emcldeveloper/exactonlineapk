@@ -6,7 +6,7 @@ Widget HeadingText(text, {fontWeight, fontSize, color, textAlign}) {
     textAlign: textAlign ?? TextAlign.start,
     style: TextStyle(
         fontWeight: fontWeight ?? FontWeight.w900,
-        fontSize: fontSize ?? 19,
+        fontSize: fontSize ?? 20,
         color: color ?? Colors.black),
   );
 }

@@ -1,3 +1,4 @@
+import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:e_online/constants/colors.dart';
@@ -28,12 +29,12 @@ class BlockingReel extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            spacer1(),
+            spacer(),
             Container(
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: mutedTextColor,
+                color: const Color.fromARGB(255, 228, 228, 228),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -44,7 +45,7 @@ class BlockingReel extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ParagraphText(
+                      HeadingText(
                         "Why are you blocking this post?",
                         fontWeight: FontWeight.bold,
                       ),

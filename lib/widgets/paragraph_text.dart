@@ -17,7 +17,7 @@ Widget ParagraphText(
     overflow: overflow ?? TextOverflow.visible,
     style: TextStyle(
       fontWeight: fontWeight ?? FontWeight.normal,
-      fontSize: fontSize ?? 14,
+      fontSize: fontSize ?? 15,
       color: color ?? Colors.black,
       decoration: decoration,
     ),
