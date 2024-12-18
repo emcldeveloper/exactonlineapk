@@ -156,15 +156,17 @@ class _ChatPageState extends State<ChatPage> {
       leadingWidth: 20,
       leading: Padding(
         padding: const EdgeInsets.only(left: 8.0),
-        child: IconButton(
-          icon: Icon(
+        child: InkWell(
+          onTap: () {
+            setState(() {
+              _isSearching = false;
+            });
+          },
+          child: Icon(
             Icons.arrow_back_ios,
             color: mutedTextColor,
             size: 16.0,
           ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
         ),
       ),
       bottom: PreferredSize(

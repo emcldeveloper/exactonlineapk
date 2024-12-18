@@ -23,7 +23,7 @@ class NotificationCard extends StatelessWidget {
                   height: 33,
                   decoration: BoxDecoration(
                     color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(10),
+                    shape: BoxShape.circle,
                   ),
                   alignment: Alignment.center,
                   child: HugeIcon(
@@ -36,11 +36,10 @@ class NotificationCard extends StatelessWidget {
                   width: 8,
                 ),
                 Expanded(
-                  child: ParagraphText(
-                    data['message'] ?? "N/A",
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                  child: ParagraphText(data['message'] ?? "N/A",
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      fontSize: 15.0),
                 ),
                 const SizedBox(
                   width: 8,

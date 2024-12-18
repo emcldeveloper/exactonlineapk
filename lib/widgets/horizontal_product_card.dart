@@ -1,5 +1,4 @@
 import 'package:e_online/widgets/popup_alert.dart';
-import 'package:e_online/widgets/seller_product_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:e_online/pages/product_page.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
@@ -21,7 +20,6 @@ class HorizontalProductCard extends StatefulWidget {
 }
 
 class _HorizontalProductCardState extends State<HorizontalProductCard> {
-  final List<String> _images = []; // Mock data for images
   late int currentIndex; // Index of the current product
   void _deleteProduct() {
     // Handle product deletion and trigger callback
@@ -55,40 +53,6 @@ class _HorizontalProductCardState extends State<HorizontalProductCard> {
     );
   }
 
-  void _showEditBottomSheet() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => ProductEditBottomSheet(
-        onView: () {
-          // Handle view logic
-          Navigator.pop(context);
-        },
-        onReplace: () async {
-          // Logic to replace the product image
-          setState(() {
-            if (currentIndex < _images.length) {
-              _images[currentIndex] = 'new_image_path';
-            }
-          });
-          Navigator.pop(context);
-        },
-        onDelete: () {
-          // Logic to delete the product
-          setState(() {
-            if (currentIndex < _images.length) {
-              _images.removeAt(currentIndex);
-            }
-          });
-          Navigator.pop(context);
-        },
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -104,7 +68,14 @@ class _HorizontalProductCardState extends State<HorizontalProductCard> {
         width: double.infinity,
         margin: const EdgeInsets.symmetric(vertical: 8.0),
         child: GestureDetector(
-          onTap: _showEditBottomSheet,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ProductPage(productData: widget.data),
+              ),
+            );
+          },
           child: Row(
             children: [
               // Image Section
