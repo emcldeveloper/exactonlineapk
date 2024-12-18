@@ -41,7 +41,7 @@ class FreeTrialPage extends StatelessWidget {
             children: [
               spacer1(),
               Image.asset(
-                "assets/images/trialillustration.png",
+                "assets/images/trial.png",
                 height: 250,
                 fit: BoxFit.contain,
               ),

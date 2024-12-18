@@ -73,40 +73,43 @@ class ProfilePage extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              SizedBox(
-                height: 80,
-                width: 80,
-                child: Stack(
-                  children: [
-                    ClipOval(
-                      child: Image.asset(
-                        "assets/images/avatar.png",
-                        height: 80,
-                        width: 80,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.circular(15),
+              GestureDetector(
+                onTap: () => {Get.to(() => EditProfilePage())},
+                child: SizedBox(
+                  height: 80,
+                  width: 80,
+                  child: Stack(
+                    children: [
+                      ClipOval(
+                        child: Image.asset(
+                          "assets/images/avatar.png",
+                          height: 80,
+                          width: 80,
+                          fit: BoxFit.cover,
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(6),
-                          child: const Center(
-                            child: HugeIcon(
-                              icon: HugeIcons.strokeRoundedPencilEdit02,
-                              color: Colors.white,
-                              size: 14.0,
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(6),
+                            child: const Center(
+                              child: HugeIcon(
+                                icon: HugeIcons.strokeRoundedPencilEdit02,
+                                color: Colors.white,
+                                size: 14.0,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               spacer1(),
@@ -156,7 +159,7 @@ class ProfilePage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Image.asset("assets/images/sellers_bg.png", height: 80.0),
+                    Image.asset("assets/images/sellers.png", height: 80.0),
                     spacer1(),
                     HeadingText("Join ExactOnline as a seller", fontSize: 16.0),
                     spacer(),

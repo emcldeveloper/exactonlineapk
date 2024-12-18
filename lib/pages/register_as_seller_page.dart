@@ -8,6 +8,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 class RegisterAsSellerPage extends StatefulWidget {
   const RegisterAsSellerPage({super.key});
@@ -123,15 +124,13 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
             // Display the Icon only if there are files
             if (_files.isNotEmpty)
               GestureDetector(
-                onTap: () {
-                  _pickFiles();
-                },
-                child: HugeIcon(
-                  icon: HugeIcons.strokeRoundedAdd01,
-                  color: Colors.grey,
-                  size: 16.0,
-                ),
-              ),
+                  onTap: () {
+                    _pickFiles();
+                  },
+                  child: Icon(
+                    OctIcons.plus,
+                    size: 18,
+                  )),
           ],
         ),
         spacer(),
@@ -149,10 +148,9 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        HugeIcon(
-                          icon: HugeIcons.strokeRoundedUpload01,
-                          color: Colors.black,
-                          size: 50.0,
+                        Icon(
+                          AntDesign.cloud_upload_outline,
+                          size: 40,
                         ),
                         spacer(),
                         ParagraphText("Upload files here*"),
@@ -167,6 +165,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                     .entries
                     .map(
                       (entry) => ListTile(
+                        contentPadding: EdgeInsets.all(0),
                         leading: HugeIcon(
                           icon: HugeIcons.strokeRoundedPdf01,
                           color: Colors.red,
@@ -177,7 +176,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                           onTap: () => _removeFile(entry.key),
                           child: const Icon(
                             Icons.close,
-                            color: Colors.black,
+                            color: Colors.grey,
                             size: 16.0,
                           ),
                         ),

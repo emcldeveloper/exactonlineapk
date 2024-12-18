@@ -45,9 +45,6 @@ class EntryPoint extends StatelessWidget {
     return FutureBuilder<bool>(
       future: _isOnboardingComplete(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
         if (snapshot.data == true) {
           return const WayPage();
         }
