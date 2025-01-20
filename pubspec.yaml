@@ -50,6 +50,7 @@ dependencies:
   flutter_colorpicker: ^1.1.0
   url_launcher: ^6.3.1
   video_player: ^2.9.2
+  dio: ^5.7.0
 
 dev_dependencies:
   flutter_test:
@@ -79,7 +80,6 @@ flutter:
      - assets/images/
      - assets/ads/
      - assets/products/
-     - assets/videos/
      - assets/icons/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

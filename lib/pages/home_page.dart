@@ -221,6 +221,8 @@ class _HomePageState extends State<HomePage> {
         appBar: AppBar(
           backgroundColor: mainColor,
           elevation: 0,
+          leading: Container(),
+          leadingWidth: 1.0,
           title: HeadingText("ExactOnline"),
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(kToolbarHeight),

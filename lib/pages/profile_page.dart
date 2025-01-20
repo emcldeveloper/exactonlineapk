@@ -1,4 +1,5 @@
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/customer_support_page.dart';
 import 'package:e_online/pages/edit_profile_page.dart';
 import 'package:e_online/pages/free_trial_page.dart';
@@ -14,11 +15,22 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
   @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  UserController userController = Get.find();
+
+  @override
   Widget build(BuildContext context) {
+    String username = userController.user["name"];
+    String phone = userController.user["phone"];
+    String avatar = userController.user["image"] ?? 'assets/images/avatar.png';
+
     final List<Map<String, dynamic>> settingItems = [
       {
         'icon': HugeIcons.strokeRoundedStore01,
@@ -33,7 +45,7 @@ class ProfilePage extends StatelessWidget {
       {
         'icon': HugeIcons.strokeRoundedEditUser02,
         'title': 'Edit Profile',
-        'page': const EditProfilePage(),
+        'page': EditProfilePage(),
       },
       {
         'icon': HugeIcons.strokeRoundedCustomerSupport,
@@ -79,11 +91,10 @@ class ProfilePage extends StatelessWidget {
                   child: Stack(
                     children: [
                       ClipOval(
-                        child: Image.asset(
-                          "assets/images/avatar.png",
-                          height: 80,
-                          width: 80,
-                          fit: BoxFit.cover,
+                        child: HugeIcon(
+                          icon: HugeIcons.strokeRoundedUserCircle,
+                          color: Colors.black,
+                          size: 80,
                         ),
                       ),
                       Positioned(
@@ -111,8 +122,8 @@ class ProfilePage extends StatelessWidget {
                 ),
               ),
               spacer1(),
-              HeadingText("Robinson Jesca"),
-              ParagraphText("0627707434"),
+              HeadingText(username),
+              ParagraphText(phone),
               spacer(),
               Row(
                 children: [HeadingText("Settings", textAlign: TextAlign.start)],
