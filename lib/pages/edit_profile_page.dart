@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart' as dio;
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/way_page.dart';
@@ -154,6 +155,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         if (value == null || value.isEmpty) {
                           return "Name cannot be empty";
                         }
+                        if (value.length < 3) {
+                          return "Name must be at least 3 characters long";
+                        }
                         return null;
                       },
                       decoration: InputDecoration(
@@ -272,16 +276,19 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   onTap: () async {
                     if (_formKey.currentState?.validate() == true) {
                       isLoading.value = true;
-                      FormData formData = FormData({
+
+                      var formData = dio.FormData.fromMap({
                         "name": businessnameController.text,
                         "phone": phoneController.text,
                         "email": emailController.text,
                         "file": selectedImage.value != null
-                            ? MultipartFile(selectedImage.value,
+                            ? await dio.MultipartFile.fromFile(
+                                selectedImage.value!.path,
                                 filename:
-                                    selectedImage.value!.path.split("/").last)
+                                    selectedImage.value!.path.split(" ").last)
                             : null,
                       });
+
                       try {
                         await userController.updateUserData(id, formData);
                         isLoading.value = false;

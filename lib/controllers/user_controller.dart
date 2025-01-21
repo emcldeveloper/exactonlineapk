@@ -35,7 +35,8 @@ class UserController extends GetxController {
     // }
     var response = await dio.get("/users/${payload.id}",
         options: Options(headers: {
-          "Authorization": "Bearer ${SharedPreferencesUtil.getAccessToken()}"
+          "Authorization":
+              "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
         }));
     // options: Options(headers: {"Authorization": "Bearer $token"}),
     var data = response.data;
@@ -47,18 +48,22 @@ class UserController extends GetxController {
     try {
       var response = await dio.patch("/users/$id",
           data: payload,
-          options: Options(headers: {
-            "Authorization": "Bearer ${SharedPreferencesUtil.getAccessToken()}",
-          }));
+          options: Options(
+            headers: {
+              "Authorization":
+                  "Bearer ${await SharedPreferencesUtil.getAccessToken()}",
+            },
+          ));
       var data = response.data;
+      print(data);
       return data;
-    } catch (e) {
+    } on DioException catch (e) {
       Get.snackbar("Error", "Error updating user details",
           backgroundColor: Colors.redAccent,
           colorText: Colors.white,
           icon: const HugeIcon(
               icon: HugeIcons.strokeRoundedRssError, color: Colors.white));
-      print("Error fetching user details: $e");
+      print("Error fetching user details: ${e.response}");
     }
   }
 }
