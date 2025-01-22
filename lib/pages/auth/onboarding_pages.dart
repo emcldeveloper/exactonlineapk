@@ -70,11 +70,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
