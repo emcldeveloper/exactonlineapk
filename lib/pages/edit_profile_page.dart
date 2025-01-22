@@ -234,15 +234,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     TextFormField(
                       keyboardType: TextInputType.text,
                       controller: emailController,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "email address cannot be empty";
-                        } else if (!value.contains("@")) {
-                          return "invalid email address";
-                        }
-
-                        return null;
-                      },
                       decoration: InputDecoration(
                         fillColor: primaryColor,
                         filled: true,
@@ -290,7 +281,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       });
 
                       try {
-                        await userController.updateUserData(id, formData);
+                        var user =
+                            await userController.updateUserData(id, formData);
+                        userController.user = user["body"];
                         isLoading.value = false;
                         Get.snackbar("Success", "Profile updated successfully!",
                             backgroundColor: Colors.green,
