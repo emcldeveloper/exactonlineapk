@@ -6,9 +6,9 @@ import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 class ShopController extends GetxController {
-  Future loadShopData() async {
+  Future loadUserShop(id) async {
     try {
-      var response = await dio.get("/shops/",
+      var response = await dio.get("/shops/user/$id",
           options: Options(headers: {
             "Authorization":
                 "Bearer ${await SharedPreferencesUtil.getAccessToken()}"

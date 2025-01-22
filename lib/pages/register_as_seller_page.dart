@@ -1,6 +1,7 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/shop_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
+import 'package:e_online/pages/my_shop_page.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/custom_loader.dart';
 import 'package:e_online/widgets/heading_text.dart';
@@ -624,6 +625,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                               icon: HugeIcon(
                                   icon: HugeIcons.strokeRoundedTick01,
                                   color: Colors.white));
+                          Get.to(() => const MyShopPage());
                         } catch (e) {
                           isLoading.value = false;
                           Get.snackbar("Error", e.toString(),
@@ -677,6 +679,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                               icon: HugeIcon(
                                   icon: HugeIcons.strokeRoundedTick01,
                                   color: Colors.white));
+                          Get.to(() => const MyShopPage());
                         } catch (e) {
                           isLoading.value = false;
                           Get.snackbar("Error", e.toString(),

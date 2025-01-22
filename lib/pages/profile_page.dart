@@ -30,13 +30,16 @@ class _ProfilePageState extends State<ProfilePage> {
     String username = userController.user["name"];
     String phone = userController.user["phone"];
     String avatar = userController.user["image"] ?? 'assets/images/avatar.png';
+    List<dynamic>? shops = userController.user["Shops"];
+    bool hasShop = shops != null && shops.isNotEmpty;
 
     final List<Map<String, dynamic>> settingItems = [
-      {
-        'icon': HugeIcons.strokeRoundedStore01,
-        'title': 'My Shop',
-        'page': const FreeTrialPage(),
-      },
+      if (hasShop)
+        {
+          'icon': HugeIcons.strokeRoundedStore01,
+          'title': 'My Shop',
+          'page': const FreeTrialPage(),
+        },
       {
         'icon': HugeIcons.strokeRoundedShoppingBag02,
         'title': 'My Orders',
@@ -160,36 +163,38 @@ class _ProfilePageState extends State<ProfilePage> {
                 }).toList(),
               ),
               spacer1(),
-              Container(
-                margin: const EdgeInsets.only(bottom: 10.0),
-                padding: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  color: primaryColor,
-                  borderRadius: BorderRadius.circular(20.0),
+              if (!hasShop)
+                Container(
+                  margin: const EdgeInsets.only(bottom: 10.0),
+                  padding: const EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    color: primaryColor,
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Image.asset("assets/images/sellers.png", height: 80.0),
+                      spacer1(),
+                      HeadingText("Join ExactOnline as a seller",
+                          fontSize: 18.0),
+                      spacer(),
+                      ParagraphText(
+                        "List your products and drive sales to your\nbusiness using ExactOnline",
+                        fontSize: 14.0,
+                        textAlign: TextAlign.center,
+                      ),
+                      spacer2(),
+                      customButton(
+                        onTap: () {
+                          Get.to(() => const JoinAsSellerPage());
+                        },
+                        text: "Learn More",
+                        vertical: 15.0,
+                      ),
+                    ],
+                  ),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Image.asset("assets/images/sellers.png", height: 80.0),
-                    spacer1(),
-                    HeadingText("Join ExactOnline as a seller", fontSize: 18.0),
-                    spacer(),
-                    ParagraphText(
-                      "List your products and drive sales to your\nbusiness using ExactOnline",
-                      fontSize: 14.0,
-                      textAlign: TextAlign.center,
-                    ),
-                    spacer2(),
-                    customButton(
-                      onTap: () {
-                        Get.to(() => const JoinAsSellerPage());
-                      },
-                      text: "Learn More",
-                      vertical: 15.0,
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
         ),

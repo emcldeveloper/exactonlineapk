@@ -10,7 +10,9 @@ import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 class EditRegisterAsSellerPage extends StatefulWidget {
-  const EditRegisterAsSellerPage({super.key});
+  final String shopId; // Accept shop ID as a parameter
+
+  const EditRegisterAsSellerPage(this.shopId, {super.key});
 
   @override
   State<EditRegisterAsSellerPage> createState() =>

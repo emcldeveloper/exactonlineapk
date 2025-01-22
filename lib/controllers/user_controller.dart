@@ -17,6 +17,7 @@ class UserController extends GetxController {
         }),
       );
       var data = response.data;
+      print(data);
       return data;
     } catch (e) {
       Get.snackbar("Error", "Error fetching user details",

@@ -1,8 +1,11 @@
+import 'package:e_online/controllers/user_controller.dart';
+import 'package:e_online/utils/shared_preferences.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
+import 'package:get/get.dart';
 
 class ActiveBusinessSelection extends StatefulWidget {
   const ActiveBusinessSelection({super.key});
@@ -13,13 +16,23 @@ class ActiveBusinessSelection extends StatefulWidget {
 }
 
 class _ActiveBusinessSelectionState extends State<ActiveBusinessSelection> {
+  final UserController userController = Get.find();
+
   String? selectedBusiness;
 
-  final List<Map<String, String>> businesses = [
-    {"name": "Business 1", "details": "Business 1 details"},
-    {"name": "Business 2", "details": "Business 2 details"},
-    {"name": "Business 3", "details": "Business 3 details"},
-  ];
+  List<dynamic> shopList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    shopList = userController.user['Shops'] ?? [];
+  }
+
+  // final List<Map<String, String>> businesses = [
+  //   {"name": "Business 1", "details": "Business 1 details"},
+  //   {"name": "Business 2", "details": "Business 2 details"},
+  //   {"name": "Business 3", "details": "Business 3 details"},
+  // ];
 
   @override
   Widget build(BuildContext context) {
@@ -48,13 +61,13 @@ class _ActiveBusinessSelectionState extends State<ActiveBusinessSelection> {
               fontWeight: FontWeight.bold,
             ),
             spacer2(),
-            ...businesses.map((business) {
+            ...shopList.map((business) {
               return Column(
                 children: [
                   Row(
                     children: [
                       Radio<String>(
-                        value: business['name']!,
+                        value: business['id']!,
                         groupValue: selectedBusiness,
                         onChanged: (value) {
                           setState(() {
@@ -72,7 +85,7 @@ class _ActiveBusinessSelectionState extends State<ActiveBusinessSelection> {
                               fontWeight: FontWeight.bold,
                             ),
                             ParagraphText(
-                              business['details']!,
+                              business['description']!,
                               fontSize: 12,
                             ),
                           ],
@@ -86,8 +99,10 @@ class _ActiveBusinessSelectionState extends State<ActiveBusinessSelection> {
             }),
             spacer1(),
             customButton(
-              onTap: () {
+              onTap: () async {
                 if (selectedBusiness != null) {
+                  await SharedPreferencesUtil.saveSelectedBusiness(
+                      selectedBusiness!);
                   Navigator.pop(context, selectedBusiness);
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
