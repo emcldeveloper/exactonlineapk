@@ -45,7 +45,7 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: mutedTextColor,
+              color: const Color.fromARGB(255, 228, 228, 228),
               borderRadius: BorderRadius.circular(2),
             ),
           ),

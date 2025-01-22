@@ -95,12 +95,10 @@ class _PromoteProductPageState extends State<PromoteProductPage> {
                 borderRadius: BorderRadius.circular(16),
                 child: Image.asset(
                   "assets/images/shortsleeves.png",
-                  height: 430,
                   width: double.infinity,
-                  fit: BoxFit.contain,
+                  fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
-                      height: 200,
                       width: double.infinity,
                       color: Colors.grey[300],
                       child: const Icon(Icons.error),
