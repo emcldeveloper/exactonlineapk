@@ -1,5 +1,4 @@
 import 'package:e_online/constants/colors.dart';
-import 'package:e_online/controllers/users_controllers.dart';
 import 'package:e_online/pages/way_page.dart';
 import 'package:e_online/utils/shared_preferences.dart';
 import 'package:e_online/widgets/heading_text.dart';

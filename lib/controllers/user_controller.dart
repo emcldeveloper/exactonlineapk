@@ -24,7 +24,7 @@ class UserController extends GetxController {
           backgroundColor: Colors.redAccent,
           colorText: Colors.white,
           icon: const HugeIcon(
-              icon: HugeIcons.strokeRoundedRssError, color: Colors.white));
+              icon: HugeIcons.strokeRoundedCancel01, color: Colors.white));
       print("Error fetching user details: $e");
     }
   }
@@ -63,7 +63,7 @@ class UserController extends GetxController {
           backgroundColor: Colors.redAccent,
           colorText: Colors.white,
           icon: const HugeIcon(
-              icon: HugeIcons.strokeRoundedRssError, color: Colors.white));
+              icon: HugeIcons.strokeRoundedCancel01, color: Colors.white));
       print("Error fetching user details: ${e.response}");
     }
   }

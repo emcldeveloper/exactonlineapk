@@ -1,3 +1,4 @@
+import 'package:e_online/controllers/shop_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/edit_register_as_seller_page.dart';
 import 'package:e_online/pages/register_as_seller_page.dart';
@@ -23,6 +24,7 @@ class SettingMyshopPage extends StatefulWidget {
 
 class _SettingMyshopPageState extends State<SettingMyshopPage> {
   final UserController userController = Get.find();
+  final ShopController shopController = Get.find();
   final List<String> daysOfWeek = [
     'Monday',
     'Tuesday',
@@ -234,7 +236,15 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                         Row(
                           children: [
                             InkWell(
-                              onTap: () {},
+                              onTap: () async {
+                                if (selectedBusiness != null &&
+                                    selectedBusiness!["id"] != null) {
+                                  await shopController
+                                      .deleteShop(selectedBusiness!["id"]);
+                                } else {
+                                  print("No business selected");
+                                }
+                              },
                               child: HugeIcon(
                                 icon: HugeIcons.strokeRoundedDelete01,
                                 color: Colors.grey,

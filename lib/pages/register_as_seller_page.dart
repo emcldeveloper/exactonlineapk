@@ -584,7 +584,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
 
                         // Create the payload for the initial request
                         final payload = {
-                          "userId": userId.isNotEmpty ? userId : "unknown",
+                          "UserId": userId.isNotEmpty ? userId : "unknown",
                           "registeredBy": "business",
                           "name": businessnameController.text.trim(),
                           "phone": phoneController.text.trim(),
@@ -606,32 +606,26 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                                 filename: file.name,
                               ),
                               "title": file.name,
-                              "shopId": shopId,
-                            });
-                            print({
-                              "file": await MultipartFile(file.path!,
-                                  filename: file.name),
-                              "title": file.name,
-                              "shopId": shopId,
+                              "ShopId": shopId,
                             });
                             await shopController.createShopDocuments(fileData);
                           }
 
                           isLoading.value = false;
                           Get.snackbar(
-                              "Success", "Profile updated successfully!",
+                              "Success", "Business Shop created successfully!",
                               backgroundColor: Colors.green,
                               colorText: Colors.white,
                               icon: HugeIcon(
                                   icon: HugeIcons.strokeRoundedTick01,
                                   color: Colors.white));
-                          Get.to(() => const MyShopPage());
+                          Get.offAll(() => const MyShopPage());
                         } catch (e) {
                           isLoading.value = false;
-                          Get.snackbar("Error", e.toString(),
+                          Get.snackbar("Error", "Error creating shop account",
                               backgroundColor: Colors.redAccent,
                               colorText: Colors.white,
-                              icon: HugeIcon(
+                              icon: const HugeIcon(
                                   icon: HugeIcons.strokeRoundedCancel02,
                                   color: Colors.white));
                         }
@@ -647,7 +641,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
 
                         // Create the payload for the initial request
                         final payload = {
-                          "userId": userId.isNotEmpty ? userId : "unknown",
+                          "UserId": userId.isNotEmpty ? userId : "unknown",
                           "registeredBy": "agent",
                           "name": agentnameController.text.trim(),
                           "address": agentaddressController.text.trim(),
@@ -666,27 +660,28 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                               "file": await MultipartFile(file.path!,
                                   filename: file.name),
                               "title": file.name, // Sending filename as title
-                              "shopId": shopId,
+                              "ShopId": shopId,
                             });
                             await shopController.createShopDocuments(fileData);
                           }
 
                           isLoading.value = false;
                           Get.snackbar(
-                              "Success", "Profile updated successfully!",
+                              "Success", "Agent Shop created successfully!",
                               backgroundColor: Colors.green,
                               colorText: Colors.white,
                               icon: HugeIcon(
                                   icon: HugeIcons.strokeRoundedTick01,
                                   color: Colors.white));
-                          Get.to(() => const MyShopPage());
+                          Get.offAll(() => const MyShopPage());
                         } catch (e) {
                           isLoading.value = false;
-                          Get.snackbar("Error", e.toString(),
+                          print(e.toString());
+                          Get.snackbar("Error", "Error creating shop account",
                               backgroundColor: Colors.redAccent,
                               colorText: Colors.white,
-                              icon: HugeIcon(
-                                  icon: HugeIcons.strokeRoundedCancel01,
+                              icon: const HugeIcon(
+                                  icon: HugeIcons.strokeRoundedCancel02,
                                   color: Colors.white));
                         }
                       }
