@@ -204,7 +204,7 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                             InkWell(
                               onTap: () {},
                               child: HugeIcon(
-                                icon: HugeIcons.strokeRoundedEdit01,
+                                icon: HugeIcons.strokeRoundedPencilEdit02,
                                 color: Colors.grey,
                                 size: 22.0,
                               ),
@@ -270,7 +270,8 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                                         showSetTimeBottomSheet(day);
                                       },
                                       child: HugeIcon(
-                                        icon: HugeIcons.strokeRoundedEdit01,
+                                        icon:
+                                            HugeIcons.strokeRoundedPencilEdit02,
                                         color: Colors.grey,
                                         size: 22.0,
                                       ),

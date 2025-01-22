@@ -83,30 +83,37 @@ class _MyShopPageState extends State<MyShopPage> {
           ),
         ),
         body: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(0),
           child: Column(
             children: [
               // Metrics Tiles
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: tilesItems.map((item) {
-                  return Column(
-                    children: [
-                      ParagraphText(
-                        item['points'],
-                        fontWeight: FontWeight.w700,
-                      ),
-                      ParagraphText(item['title'],
-                          fontSize: 12, color: Colors.grey[600]),
-                    ],
-                  );
-                }).toList(),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: tilesItems.map((item) {
+                    return Column(
+                      children: [
+                        ParagraphText(
+                          item['points'],
+                          fontWeight: FontWeight.w700,
+                        ),
+                        ParagraphText(item['title'],
+                            fontSize: 12, color: Colors.grey[600]),
+                      ],
+                    );
+                  }).toList(),
+                ),
               ),
               spacer1(),
-              customButton(
-                onTap: () => handleButtonAction(),
-                text: getButtonText(),
-                vertical: 8.0,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: customButton(
+                  onTap: () => handleButtonAction(),
+                  text: getButtonText(),
+                  vertical: 8.0,
+                ),
               ),
               spacer1(),
               PreferredSize(
@@ -128,9 +135,6 @@ class _MyShopPageState extends State<MyShopPage> {
                   tabAlignment: TabAlignment.start,
                   labelColor: Colors.black,
                   unselectedLabelColor: Colors.black.withOpacity(0.5),
-                  unselectedLabelStyle: const TextStyle(
-                    fontSize: 16,
-                  ),
                   labelStyle: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -150,7 +154,10 @@ class _MyShopPageState extends State<MyShopPage> {
               Expanded(
                 child: TabBarView(
                   children: navCategories.map((category) {
-                    return buildPageContent();
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: buildPageContent(),
+                    );
                   }).toList(),
                 ),
               ),

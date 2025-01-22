@@ -1,4 +1,5 @@
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/controllers/users_controllers.dart';
 import 'package:e_online/pages/way_page.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
@@ -50,6 +51,17 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: mainColor,
@@ -76,6 +88,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         spacer2(),
                         HeadingText(
                           data["title"]!,
+                          fontSize: 23.0,
                           textAlign: TextAlign.center,
                         ),
                         spacer1(),

@@ -1,4 +1,5 @@
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/controllers/users_controllers.dart';
 import 'package:e_online/pages/auth/confirmation_code_page.dart';
 import 'package:e_online/pages/auth/login_page.dart';
 import 'package:e_online/widgets/custom_button.dart';
@@ -46,7 +47,8 @@ class RegistrationPage extends StatelessWidget {
                 decoration: InputDecoration(
                   fillColor: primaryColor,
                   filled: true,
-                  labelStyle: const TextStyle(color: Colors.black, fontSize: 12),
+                  labelStyle:
+                      const TextStyle(color: Colors.black, fontSize: 12),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
                   ),
@@ -79,7 +81,8 @@ class RegistrationPage extends StatelessWidget {
                 decoration: InputDecoration(
                   fillColor: primaryColor,
                   filled: true,
-                  labelStyle: const TextStyle(color: Colors.black, fontSize: 12),
+                  labelStyle:
+                      const TextStyle(color: Colors.black, fontSize: 12),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
                   ),
@@ -116,6 +119,8 @@ class RegistrationPage extends StatelessWidget {
                   GestureDetector(
                     onTap: () {
                       Get.to(() => const LoginPage());
+                     
+                      
                     },
                     child: ParagraphText(
                       "Login",

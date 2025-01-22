@@ -59,22 +59,27 @@ class _SettingShopDetailsBottomSheetState extends State<SettingShopDetails> {
 
           // Checkboxes
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Row(
                 children: [
-                  Checkbox(
-                    value: is24Hours,
-                    onChanged: (value) {
-                      setState(() {
-                        is24Hours = value ?? false;
-                        if (is24Hours) {
-                          isClosed = false;
-                          openTime = null;
-                          closeTime = null;
-                        }
-                      });
-                    },
+                  Container(
+                    width: 20,
+                    child: Checkbox(
+                      value: is24Hours,
+                      onChanged: (value) {
+                        setState(() {
+                          is24Hours = value ?? false;
+                          if (is24Hours) {
+                            isClosed = false;
+                            openTime = null;
+                            closeTime = null;
+                          }
+                        });
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    width: 10,
                   ),
                   const Text("Open 24 hours")
                 ],

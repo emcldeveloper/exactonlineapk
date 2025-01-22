@@ -273,7 +273,7 @@ class _ProductPageState extends State<ProductPage> {
               Stack(
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(10),
                     child: Image.asset(
                       selectedImage,
                       width: double.infinity,
@@ -322,7 +322,7 @@ class _ProductPageState extends State<ProductPage> {
                         child: Container(
                           margin: const EdgeInsets.only(right: 8.0),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(8),
                             border: isSelected
                                 ? Border.all(color: mutedTextColor, width: 2)
                                 : null,
@@ -333,8 +333,8 @@ class _ProductPageState extends State<ProductPage> {
                               borderRadius: BorderRadius.circular(12),
                               child: Image.asset(
                                 image,
-                                height: 40,
-                                width: 40,
+                                height: 20,
+                                width: 20,
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -354,11 +354,10 @@ class _ProductPageState extends State<ProductPage> {
                         ParagraphText(
                           widget.productData['title'] ?? '',
                           fontWeight: FontWeight.bold,
-                          fontSize: 14.0,
+                          fontSize: 25.0,
                         ),
-                        ParagraphText(
-                          widget.productData['price'] ?? '',
-                        ),
+                        ParagraphText(widget.productData['price'] ?? '',
+                            fontSize: 16.0),
                       ],
                     ),
                   ),
@@ -401,10 +400,10 @@ class _ProductPageState extends State<ProductPage> {
                 fontSize: 14.0,
               ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ParagraphText(
-                    "Size",
-                    fontWeight: FontWeight.bold,
+                    "Size:",
                     color: mutedTextColor,
                   ),
                   const SizedBox(
@@ -417,10 +416,10 @@ class _ProductPageState extends State<ProductPage> {
                 ],
               ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ParagraphText(
-                    "Color",
-                    fontWeight: FontWeight.bold,
+                    "Color:",
                     color: mutedTextColor,
                   ),
                   const SizedBox(

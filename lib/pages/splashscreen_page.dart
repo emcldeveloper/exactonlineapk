@@ -14,7 +14,7 @@ class SplashscreenPage extends StatelessWidget {
           children: [
             HeadingText("Exact",
                 textAlign: TextAlign.center,
-                fontSize: 35.0,
+                fontSize: 38.0,
                 color: Color(0xffFF8000)),
             HeadingText("Online", textAlign: TextAlign.center, fontSize: 35.0)
           ],

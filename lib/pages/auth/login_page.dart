@@ -1,4 +1,5 @@
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/controllers/users_controllers.dart';
 import 'package:e_online/pages/auth/registration_page.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
@@ -7,8 +8,22 @@ import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  UsersControllers usersControllers = UsersControllers();
+  @override
+  void initState() {
+    // TODO: implement initState
+    Get.put(usersControllers);
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +84,8 @@ class LoginPage extends StatelessWidget {
               spacer3(),
               customButton(
                 onTap: () {
+                  usersControllers.registerUser(());
+                  usersControllers.user = "jkasdlfjasldfjas";
                   Get.to(() => const RegistrationPage());
                 },
                 text: "Login",
