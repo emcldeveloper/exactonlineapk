@@ -1,5 +1,4 @@
 import 'package:e_online/constants/colors.dart';
-import 'package:e_online/controllers/users_controllers.dart';
 import 'package:e_online/controllers/auth_controller.dart';
 import 'package:e_online/pages/auth/confirmation_code_page.dart';
 import 'package:e_online/pages/auth/login_page.dart';
@@ -160,7 +159,8 @@ class RegistrationPage extends StatelessWidget {
                         Get.to(() => ConfirmationCodePage(phoneNumber: phone));
                       } catch (e) {
                         isLoading.value = false;
-                        Get.snackbar("Error", e.toString(),
+                        Get.snackbar(
+                            "Failed to Register User", "User Already Exists",
                             backgroundColor: Colors.redAccent,
                             colorText: Colors.white,
                             icon: HugeIcon(

@@ -22,8 +22,9 @@ class ShopController extends GetxController {
           backgroundColor: Colors.redAccent,
           colorText: Colors.white,
           icon: const HugeIcon(
-              icon: HugeIcons.strokeRoundedRssError, color: Colors.white));
+              icon: HugeIcons.strokeRoundedCancel02, color: Colors.white));
       print("Error creating shop account: ${e.response}");
+      throw Exception(e);
     }
   }
 
@@ -38,12 +39,8 @@ class ShopController extends GetxController {
       var data = response.data;
       return data;
     } on DioException catch (e) {
-      Get.snackbar("Error", "Error creating shop account",
-          backgroundColor: Colors.redAccent,
-          colorText: Colors.white,
-          icon: const HugeIcon(
-              icon: HugeIcons.strokeRoundedRssError, color: Colors.white));
       print("Error creating shop account: ${e.response}");
+      throw Exception(e);
     }
   }
 
@@ -58,12 +55,40 @@ class ShopController extends GetxController {
       var data = response.data;
       return data;
     } on DioException catch (e) {
+      print("Error sending documents: ${e.response}");
       Get.snackbar("Error", "Error sending documents",
           backgroundColor: Colors.redAccent,
           colorText: Colors.white,
           icon: const HugeIcon(
-              icon: HugeIcons.strokeRoundedRssError, color: Colors.white));
-      print("Error sending documents: ${e.response}");
+              icon: HugeIcons.strokeRoundedCancel02, color: Colors.white));
+      throw Exception(e);
+    }
+  }
+
+  Future deleteShop(id) async {
+    try {
+      var response = await dio.get("/shops/$id",
+          options: Options(headers: {
+            "Authorization":
+                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
+          }));
+
+      var data = response.data;
+      print("Shop deleted successfully: $data");
+      Get.snackbar("Success", "Shop deleted successfully",
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          icon: const HugeIcon(
+              icon: HugeIcons.strokeRoundedTick01, color: Colors.white));
+      return data;
+    } on DioException catch (e) {
+      Get.snackbar("Error", "Error deleting shop account",
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+          icon: const HugeIcon(
+              icon: HugeIcons.strokeRoundedCancel02, color: Colors.white));
+      print("Error creating shop account: ${e.response}");
+      throw Exception(e);
     }
   }
 }

@@ -137,7 +137,8 @@ class _ConfirmationCodePageState extends State<ConfirmationCodePage> {
                                 }
                               } catch (e) {
                                 iResendLoading.value = false;
-                                Get.snackbar("Error", "$e",
+                                Get.snackbar(
+                                    "Error", "Resend verification Code Failed",
                                     backgroundColor: Colors.redAccent,
                                     colorText: Colors.white,
                                     icon: HugeIcon(
@@ -203,16 +204,17 @@ class _ConfirmationCodePageState extends State<ConfirmationCodePage> {
                             backgroundColor: Colors.redAccent,
                             colorText: Colors.white,
                             icon: HugeIcon(
-                                icon: HugeIcons.strokeRoundedRssError,
+                                icon: HugeIcons.strokeRoundedCancel01,
                                 color: Colors.white));
                       }
                     } catch (e) {
                       isLoading.value = false;
-                      Get.snackbar("Error", e.toString(),
+                      Get.snackbar(
+                          "Failed to Verify Code", "Wrong code Provided",
                           backgroundColor: Colors.redAccent,
                           colorText: Colors.white,
                           icon: HugeIcon(
-                              icon: HugeIcons.strokeRoundedRssError,
+                              icon: HugeIcons.strokeRoundedCancel01,
                               color: Colors.white));
                     }
                   },

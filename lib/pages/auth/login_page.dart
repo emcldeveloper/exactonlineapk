@@ -119,10 +119,11 @@ class _LoginPageState extends State<LoginPage> {
                       try {
                         await authController.sendUserCode(payload);
                         isLoading.value = false;
+
                         Get.to(() => ConfirmationCodePage(phoneNumber: phone));
                       } catch (e) {
                         isLoading.value = false;
-                        Get.snackbar("Error", e.toString(),
+                        Get.snackbar("Failed to Login", "User Not Found",
                             backgroundColor: Colors.redAccent,
                             colorText: Colors.white,
                             icon: HugeIcon(
