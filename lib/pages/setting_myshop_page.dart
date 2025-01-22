@@ -1,3 +1,7 @@
+import 'package:e_online/controllers/user_controller.dart';
+import 'package:e_online/pages/edit_register_as_seller_page.dart';
+import 'package:e_online/pages/register_as_seller_page.dart';
+import 'package:e_online/utils/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/constants/product_items.dart';
@@ -7,6 +11,7 @@ import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/setting_shop_details.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:e_online/widgets/subscription_card.dart';
+import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 class SettingMyshopPage extends StatefulWidget {
@@ -17,6 +22,7 @@ class SettingMyshopPage extends StatefulWidget {
 }
 
 class _SettingMyshopPageState extends State<SettingMyshopPage> {
+  final UserController userController = Get.find();
   final List<String> daysOfWeek = [
     'Monday',
     'Tuesday',
@@ -37,11 +43,46 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
     'Sunday': 'Not Set',
   };
 
-  final List<Map<String, String>> shopList = [
-    {"name": "Vunjabei shop", "createdAt": "Created at 28/10/2024"},
-    {"name": "Bamba shop", "createdAt": "Created at 27/10/2024"},
-    {"name": "Niko shop", "createdAt": "Created at 26/10/2024"},
-  ];
+  String userId = "";
+  List<dynamic> shopList = [];
+  Map<String, dynamic>? selectedBusiness;
+  // String? selectedBusinessName;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSelectedBusiness();
+    userId = userController.user['id'] ?? "";
+    shopList = userController.user['Shops'] ?? [];
+  }
+
+  Future<void> _loadSelectedBusiness() async {
+    final businessId = await SharedPreferencesUtil.getSelectedBusiness();
+    if (businessId != null) {
+      final business = userController.user['Shops']
+          ?.firstWhere((shop) => shop['id'] == businessId, orElse: () => null);
+      setState(() {
+        selectedBusiness = business;
+      });
+    }
+  }
+
+  // void _loadBusinessDetails() {
+  //   // Fetch business details using widget.shopId
+  //   // For example, if you have a list of shops:
+  //   final business = Get.find<UserController>().user['Shops']
+  //       ?.firstWhere((shop) => shop['id'] == widget.shopId, orElse: () => null);
+  //   if (business != null) {
+  //     setState(() {
+  //       selectedBusinessName = business['name'];
+  //     });
+  //   }
+  // }
+  // final List<Map<String, String>> shopList = [
+  //   {"name": "Vunjabei shop", "createdAt": "Created at 28/10/2024"},
+  //   {"name": "Bamba shop", "createdAt": "Created at 27/10/2024"},
+  //   {"name": "Niko shop", "createdAt": "Created at 26/10/2024"},
+  // ];
 
   final activeSubscription = subscriptions.firstWhere(
     (sub) => sub["status"] == "Active",
@@ -202,7 +243,16 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                             ),
                             const SizedBox(width: 8),
                             InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                if (selectedBusiness != null &&
+                                    selectedBusiness!["id"] != null) {
+                                  Get.to(() => EditRegisterAsSellerPage(
+                                      selectedBusiness!["id"]));
+                                } else {
+                                  // Handle the case where no business is selected
+                                  print("No business selected");
+                                }
+                              },
                               child: HugeIcon(
                                 icon: HugeIcons.strokeRoundedPencilEdit02,
                                 color: Colors.grey,
@@ -298,10 +348,15 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  HugeIcon(
-                    icon: HugeIcons.strokeRoundedAdd01,
-                    color: Colors.black,
-                    size: 22.0,
+                  InkWell(
+                    onTap: () {
+                      Get.to(() => const RegisterAsSellerPage());
+                    },
+                    child: HugeIcon(
+                      icon: HugeIcons.strokeRoundedAdd01,
+                      color: Colors.black,
+                      size: 22.0,
+                    ),
                   ),
                   const SizedBox(width: 8),
                 ],
@@ -334,7 +389,9 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                               ),
                               spacer(),
                               ParagraphText(
-                                shop["createdAt"] ?? "No Date",
+                                shop['createdAt'] != null
+                                    ? "Created on: ${shop['createdAt']}"
+                                    : "No Date available",
                                 fontSize: 12,
                               ),
                             ],

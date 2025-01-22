@@ -1,5 +1,4 @@
 import 'package:e_online/constants/colors.dart';
-import 'package:e_online/pages/chat_page.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
@@ -8,12 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class CustomerSupportPage extends StatelessWidget {
   const CustomerSupportPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    const phoneNumber = "+255627707434";
     return Scaffold(
       backgroundColor: mainColor,
       appBar: AppBar(
@@ -74,15 +75,31 @@ class CustomerSupportPage extends StatelessWidget {
               HeadingText("Do you need help ?"),
               spacer(),
               ParagraphText(
-                "Contact us via +255627707434 or press the button below to reach use via our whatsapp number",
+                "Contact us via $phoneNumber or press the button below to reach use via our whatsapp number",
                 textAlign: TextAlign.center,
               ),
               const Spacer(),
               customButton(
-                onTap: () {
-                  Get.to(() => ChatPage());
+                onTap: () async {
+                  // Replace with your WhatsApp number
+                  const message =
+                      "Hello, I need help with..."; // Optional pre-filled message
+                  final whatsappUrl =
+                      "https://wa.me/$phoneNumber?text=${Uri.encodeComponent(message)}";
+
+                  if (await canLaunchUrlString(whatsappUrl)) {
+                    await launchUrlString(whatsappUrl);
+                  } else {
+                    Get.snackbar(
+                      "Error",
+                      "Could not open WhatsApp",
+                      backgroundColor: Colors.redAccent,
+                      colorText: Colors.white,
+                      icon: const Icon(Icons.error, color: Colors.white),
+                    );
+                  }
                 },
-                text: "Chat on whatsappp",
+                text: "Chat on WhatsApp",
               ),
               spacer3()
             ],

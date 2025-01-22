@@ -80,7 +80,6 @@ flutter:
      - assets/images/
      - assets/ads/
      - assets/products/
-     - assets/videos/
      - assets/icons/
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg

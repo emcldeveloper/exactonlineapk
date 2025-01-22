@@ -1,10 +1,10 @@
 import 'package:e_online/pages/auth/onboarding_pages.dart';
 import 'package:e_online/pages/splashscreen_page.dart';
 import 'package:e_online/pages/way_page.dart';
+import 'package:e_online/utils/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MyApp());
@@ -36,8 +36,7 @@ class EntryPoint extends StatelessWidget {
   const EntryPoint({super.key});
 
   Future<bool> _isOnboardingComplete() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('onboardingComplete') ?? false;
+    return SharedPreferencesUtil.isOnboardingSeen();
   }
 
   @override
@@ -45,8 +44,16 @@ class EntryPoint extends StatelessWidget {
     return FutureBuilder<bool>(
       future: _isOnboardingComplete(),
       builder: (context, snapshot) {
-        if (snapshot.data == true) {
-          return const WayPage();
+         if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+      var result = snapshot.requireData;
+        if (result == true) {
+          return WayPage();
         }
         return const OnboardingPage();
       },

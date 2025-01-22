@@ -9,6 +9,7 @@ Widget customButton({
   Color? buttonColor,
   Color? textColor,
   double? rounded,
+  Widget? child,
 }) {
   return GestureDetector(
     onTap: onTap,
@@ -23,14 +24,18 @@ Widget customButton({
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              text ?? "",
-              style: TextStyle(
-                color: textColor ?? primaryColor,
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
+            if (child != null) ...[
+              child, // Display the loader or any custom widget
+            ] else ...[
+              Text(
+                text ?? "",
+                style: TextStyle(
+                  color: textColor ?? primaryColor,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
+            ],
           ],
         ),
       ),

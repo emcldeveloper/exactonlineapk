@@ -1,6 +1,7 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/users_controllers.dart';
 import 'package:e_online/pages/way_page.dart';
+import 'package:e_online/utils/shared_preferences.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
@@ -43,6 +44,24 @@ class _OnboardingPageState extends State<OnboardingPage> {
           "Enjoy a hassle-free checkout process with multiple payment options, advanced security measures, and lightning-fast order confirmation.",
     },
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _checkOnboardingStatus();
+  }
+
+  // Check if onboarding has been seen before
+  _checkOnboardingStatus() async {
+    bool isSeen = await SharedPreferencesUtil.isOnboardingSeen();
+    if (isSeen) {
+      // If onboarding is already seen, navigate to the next screen (e.g., WayPage)
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => WayPage()),
+      );
+    }
+  }
 
   void _onPageChanged(int index) {
     setState(() {
@@ -141,10 +160,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   ElevatedButton(
                     onPressed: () {
                       if (_currentPage == _onboardingData.length - 1) {
+                        SharedPreferencesUtil.saveOnboardingStatus(true);
                         // Navigate to the next page
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (_) => const WayPage()),
+                          MaterialPageRoute(builder: (_) => WayPage()),
                         );
                       } else {
                         _controller.nextPage(

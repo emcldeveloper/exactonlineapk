@@ -1,4 +1,5 @@
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/customer_support_page.dart';
 import 'package:e_online/pages/edit_profile_page.dart';
 import 'package:e_online/pages/free_trial_page.dart';
@@ -14,17 +15,31 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
   @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  UserController userController = Get.find();
+
+  @override
   Widget build(BuildContext context) {
+    String username = userController.user["name"];
+    String phone = userController.user["phone"];
+    String avatar = userController.user["image"] ?? 'assets/images/avatar.png';
+    List<dynamic>? shops = userController.user["Shops"];
+    bool hasShop = shops != null && shops.isNotEmpty;
+
     final List<Map<String, dynamic>> settingItems = [
-      {
-        'icon': HugeIcons.strokeRoundedStore01,
-        'title': 'My Shop',
-        'page': const FreeTrialPage(),
-      },
+      if (hasShop)
+        {
+          'icon': HugeIcons.strokeRoundedStore01,
+          'title': 'My Shop',
+          'page': const FreeTrialPage(),
+        },
       {
         'icon': HugeIcons.strokeRoundedShoppingBag02,
         'title': 'My Orders',
@@ -33,7 +48,7 @@ class ProfilePage extends StatelessWidget {
       {
         'icon': HugeIcons.strokeRoundedEditUser02,
         'title': 'Edit Profile',
-        'page': const EditProfilePage(),
+        'page': EditProfilePage(),
       },
       {
         'icon': HugeIcons.strokeRoundedCustomerSupport,
@@ -79,11 +94,10 @@ class ProfilePage extends StatelessWidget {
                   child: Stack(
                     children: [
                       ClipOval(
-                        child: Image.asset(
-                          "assets/images/avatar.png",
-                          height: 80,
-                          width: 80,
-                          fit: BoxFit.cover,
+                        child: HugeIcon(
+                          icon: HugeIcons.strokeRoundedUserCircle,
+                          color: Colors.black,
+                          size: 80,
                         ),
                       ),
                       Positioned(
@@ -111,8 +125,8 @@ class ProfilePage extends StatelessWidget {
                 ),
               ),
               spacer1(),
-              HeadingText("Robinson Jesca"),
-              ParagraphText("0627707434"),
+              HeadingText(username),
+              ParagraphText(phone),
               spacer(),
               Row(
                 children: [HeadingText("Settings", textAlign: TextAlign.start)],
@@ -149,36 +163,38 @@ class ProfilePage extends StatelessWidget {
                 }).toList(),
               ),
               spacer1(),
-              Container(
-                margin: const EdgeInsets.only(bottom: 10.0),
-                padding: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  color: primaryColor,
-                  borderRadius: BorderRadius.circular(20.0),
+              if (!hasShop)
+                Container(
+                  margin: const EdgeInsets.only(bottom: 10.0),
+                  padding: const EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    color: primaryColor,
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Image.asset("assets/images/sellers.png", height: 80.0),
+                      spacer1(),
+                      HeadingText("Join ExactOnline as a seller",
+                          fontSize: 18.0),
+                      spacer(),
+                      ParagraphText(
+                        "List your products and drive sales to your\nbusiness using ExactOnline",
+                        fontSize: 14.0,
+                        textAlign: TextAlign.center,
+                      ),
+                      spacer2(),
+                      customButton(
+                        onTap: () {
+                          Get.to(() => const JoinAsSellerPage());
+                        },
+                        text: "Learn More",
+                        vertical: 15.0,
+                      ),
+                    ],
+                  ),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Image.asset("assets/images/sellers.png", height: 80.0),
-                    spacer1(),
-                    HeadingText("Join ExactOnline as a seller", fontSize: 18.0),
-                    spacer(),
-                    ParagraphText(
-                      "List your products and drive sales to your\nbusiness using ExactOnline",
-                      fontSize: 14.0,
-                      textAlign: TextAlign.center,
-                    ),
-                    spacer2(),
-                    customButton(
-                      onTap: () {
-                        Get.to(() => const JoinAsSellerPage());
-                      },
-                      text: "Learn More",
-                      vertical: 15.0,
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
         ),
