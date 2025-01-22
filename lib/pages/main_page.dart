@@ -46,7 +46,7 @@ class _MainPageState extends State<MainPage> {
         items: [
           BottomNavigationBarItem(
             icon: Padding(
-              padding: const EdgeInsets.only(bottom: 4),
+              padding: const EdgeInsets.only(bottom: 6, top: 6),
               child: Opacity(
                 opacity: 0.5,
                 child: Image.asset(
@@ -56,7 +56,7 @@ class _MainPageState extends State<MainPage> {
               ),
             ),
             activeIcon: Padding(
-              padding: const EdgeInsets.only(bottom: 4),
+              padding: const EdgeInsets.only(bottom: 6, top: 6),
               child: Image.asset(
                 "assets/icons/home-1.png",
                 width: 22.0,
@@ -66,7 +66,7 @@ class _MainPageState extends State<MainPage> {
           ),
           BottomNavigationBarItem(
             icon: Padding(
-              padding: const EdgeInsets.only(bottom: 4),
+              padding: const EdgeInsets.only(bottom: 6, top: 6),
               child: Opacity(
                 opacity: 0.5,
                 child: Image.asset(
@@ -76,7 +76,7 @@ class _MainPageState extends State<MainPage> {
               ),
             ),
             activeIcon: Padding(
-              padding: const EdgeInsets.only(bottom: 4),
+              padding: const EdgeInsets.only(bottom: 6, top: 6),
               child: Image.asset(
                 "assets/icons/trend-up-2.png",
                 width: 22.0,
@@ -86,7 +86,7 @@ class _MainPageState extends State<MainPage> {
           ),
           BottomNavigationBarItem(
             icon: Padding(
-              padding: const EdgeInsets.only(bottom: 4),
+              padding: const EdgeInsets.only(bottom: 6, top: 6),
               child: Opacity(
                 opacity: 0.5,
                 child: Image.asset(
@@ -96,7 +96,7 @@ class _MainPageState extends State<MainPage> {
               ),
             ),
             activeIcon: Padding(
-              padding: const EdgeInsets.only(bottom: 4),
+              padding: const EdgeInsets.only(bottom: 6, top: 6),
               child: Image.asset(
                 "assets/icons/message-2.png",
                 width: 22.0,
@@ -106,7 +106,7 @@ class _MainPageState extends State<MainPage> {
           ),
           BottomNavigationBarItem(
             icon: Padding(
-              padding: const EdgeInsets.only(bottom: 4),
+              padding: const EdgeInsets.only(bottom: 6, top: 6),
               child: Opacity(
                 opacity: 0.5,
                 child: Image.asset(
@@ -116,7 +116,7 @@ class _MainPageState extends State<MainPage> {
               ),
             ),
             activeIcon: Padding(
-              padding: const EdgeInsets.only(bottom: 4),
+              padding: const EdgeInsets.only(bottom: 6, top: 6),
               child: Image.asset(
                 "assets/icons/favorite.png",
                 width: 22.0,
@@ -126,7 +126,7 @@ class _MainPageState extends State<MainPage> {
           ),
           BottomNavigationBarItem(
             icon: Padding(
-              padding: const EdgeInsets.only(bottom: 4),
+              padding: const EdgeInsets.only(bottom: 6, top: 6),
               child: Opacity(
                 opacity: 0.5,
                 child: Image.asset(
@@ -136,7 +136,7 @@ class _MainPageState extends State<MainPage> {
               ),
             ),
             activeIcon: Padding(
-              padding: const EdgeInsets.only(bottom: 4),
+              padding: const EdgeInsets.only(bottom: 6, top: 6),
               child: Image.asset(
                 "assets/icons/person-2.png",
                 width: 22.0,
