@@ -33,7 +33,7 @@ class RegistrationPage extends StatelessWidget {
             children: [
               spacer2(),
               Align(
-                alignment: Alignment.center,
+              alignment: Alignment.center,
                 child: Image.asset("assets/images/register1.png", height: 250),
               ),
               spacer2(),
