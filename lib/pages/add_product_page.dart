@@ -1,16 +1,28 @@
 import 'dart:io';
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/controllers/categories_controller.dart';
+import 'package:e_online/controllers/product_color_controller.dart';
+import 'package:e_online/controllers/product_controller.dart';
+import 'package:e_online/controllers/product_image_controller.dart';
+import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/home_page.dart';
+import 'package:e_online/utils/snackbars.dart';
 import 'package:e_online/widgets/custom_button.dart';
+import 'package:e_online/widgets/custom_loader.dart';
 import 'package:e_online/widgets/editimage.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
+import 'package:e_online/widgets/select_form.dart';
 import 'package:e_online/widgets/spacer.dart';
+import 'package:e_online/widgets/text_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
+
+import 'package:dio/dio.dart' as dio;
 
 class AddProductPage extends StatefulWidget {
   const AddProductPage({super.key});
@@ -20,12 +32,21 @@ class AddProductPage extends StatefulWidget {
 }
 
 class _AddProductPageState extends State<AddProductPage> {
-  bool _isChecked = true;
-  bool _isSwitched = false;
+  Rx<bool> priceIncludeDelivery = true.obs;
+  Rx<bool> isHidden = false.obs;
   final List<XFile> _images = [];
   final ImagePicker _picker = ImagePicker();
   List<Color> selectedColors = [];
-
+  UserController userController = Get.find();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController categoryController = TextEditingController(text: "All");
+  TextEditingController priceController = TextEditingController();
+  TextEditingController linkController = TextEditingController();
+  TextEditingController deliveryScopeController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  Rx<List> specifications = Rx<List>([]);
+  Rx<List> categories = Rx<List>([]);
+  final _formKey = GlobalKey<FormState>();
   void _openColorPicker() {
     Color pickedColor = Colors.blue; // Default color for the picker
 
@@ -121,6 +142,20 @@ class _AddProductPageState extends State<AddProductPage> {
     );
   }
 
+  bool loading = false;
+  @override
+  void initState() {
+    CategoriesController()
+        .getCategories(keyword: "", page: 1, limit: 100)
+        .then((res) {
+      categories.value = res;
+      categoryController.text = res[0]["id"];
+      specifications.value = res[0]["CategoryProductSpecifications"];
+    });
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -140,7 +175,7 @@ class _AddProductPageState extends State<AddProductPage> {
         ),
         title: HeadingText("Add Product"),
         centerTitle: true,
-          bottom: PreferredSize(
+        bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
           child: Container(
             color: const Color.fromARGB(255, 242, 242, 242),
@@ -154,482 +189,366 @@ class _AddProductPageState extends State<AddProductPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              spacer(),
-              ParagraphText(
-                "Product Images",
-                fontWeight: FontWeight.bold,
-              ),
-              spacer(),
-              if (_images.isEmpty)
-                Center(
-                  child: GestureDetector(
-                    onTap: _pickImages,
-                    child: Container(
-                      height: 200,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+              Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    spacer(),
+                    ParagraphText(
+                      "Product Images",
+                    ),
+                    spacer(),
+                    if (_images.isEmpty)
+                      Center(
+                        child: GestureDetector(
+                          onTap: _pickImages,
+                          child: Container(
+                            height: 200,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                HugeIcon(
+                                  icon: AntDesign.file_image_outline,
+                                  color: Colors.black,
+                                  size: 50.0,
+                                ),
+                                spacer(),
+                                ParagraphText("Select product images"),
+                              ],
+                            ),
+                          ),
+                        ),
+                      )
+                    else
+                      Column(
                         children: [
-                          HugeIcon(
-                            icon: HugeIcons.strokeRoundedCloudUpload,
-                            color: Colors.black,
-                            size: 50.0,
+                          SizedBox(
+                            height: 200,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: _images.length,
+                              itemBuilder: (context, index) {
+                                return GestureDetector(
+                                  onTap: () => _openImageEditBottomSheet(index),
+                                  child: Stack(
+                                    children: [
+                                      Container(
+                                        margin: const EdgeInsets.only(right: 8),
+                                        width: 200,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          image: DecorationImage(
+                                            image: FileImage(
+                                                File(_images[index].path)),
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                           spacer(),
-                          ParagraphText("Select product images"),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton.icon(
+                                onPressed: _pickSingleImage,
+                                icon: HugeIcon(
+                                  icon: HugeIcons.strokeRoundedAdd01,
+                                  color: Colors.white,
+                                  size: 22.0,
+                                ),
+                                label: ParagraphText(
+                                  "Add More",
+                                  color: Colors.white,
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: secondaryColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    spacer1(),
+                    TextForm(
+                        label: "Product Name",
+                        textEditingController: nameController,
+                        hint: "Enter product name"),
+                    Obx(
+                      () => selectForm(
+                          textEditingController: categoryController,
+                          onChanged: () {
+                            print(categories.value
+                                .where((item) =>
+                                    item["id"] == categoryController.text)
+                                .toList()[0]["CategoryProductSpecifications"]);
+                            specifications.value = categories.value
+                                .where((item) =>
+                                    item["id"] == categoryController.text)
+                                .toList()[0]["CategoryProductSpecifications"];
+                          },
+                          label: "Product Category",
+                          items: categories.value
+                              .map((item) => DropdownMenuItem(
+                                    value: item["id"].toString(),
+                                    child: Text(item["name"]),
+                                  ))
+                              .toList()),
+                    ),
+                    TextForm(
+                        label: "Product price",
+                        textEditingController: priceController,
+                        textInputType: TextInputType.number,
+                        hint: "Enter product price"),
+                    // selectForm(),
+
+                    Row(
+                      children: [
+                        Obx(
+                          () => Checkbox(
+                            value: priceIncludeDelivery.value,
+                            onChanged: (bool? newValue) {
+                              priceIncludeDelivery.value = newValue ?? false;
+                            },
+                            activeColor: secondaryColor,
+                          ),
+                        ),
+                        ParagraphText(
+                          "Price include delivery",
+                        ),
+                      ],
+                    ),
+                    Obx(
+                      () => Column(
+                        children: [
+                          priceIncludeDelivery.value
+                              ? TextForm(
+                                  label: "Delivery scope",
+                                  lines: 5,
+                                  textEditingController:
+                                      deliveryScopeController,
+                                  hint: "Write delivery scope here")
+                              : Container(),
                         ],
                       ),
                     ),
-                  ),
-                )
-              else
-                Column(
-                  children: [
-                    SizedBox(
-                      height: 200,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: _images.length,
-                        itemBuilder: (context, index) {
-                          return GestureDetector(
-                            onTap: () => _openImageEditBottomSheet(index),
-                            child: Stack(
-                              children: [
-                                Container(
-                                  margin: const EdgeInsets.only(right: 8),
-                                  width: 200,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    image: DecorationImage(
-                                      image:
-                                          FileImage(File(_images[index].path)),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                    TextForm(
+                        label: "Product Link (optional)",
+                        withValidation: false,
+                        textEditingController: linkController,
+                        hint: "Past link here"),
+
                     spacer(),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        ElevatedButton.icon(
-                          onPressed: _pickSingleImage,
-                          icon: HugeIcon(
-                            icon: HugeIcons.strokeRoundedAdd01,
-                            color: Colors.white,
-                            size: 22.0,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ParagraphText(
+                                "Hide this product",
+                                fontWeight: FontWeight.bold,
+                              ),
+                              ParagraphText(
+                                "When you hide product, customers won't see it ",
+                              ),
+                            ],
                           ),
-                          label: ParagraphText(
-                            "Add More",
-                            color: Colors.white,
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: secondaryColor,
+                        ),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        Obx(
+                          () => Switch(
+                            value: isHidden.value,
+                            activeColor: Colors.white,
+                            inactiveTrackColor: Colors.white,
+                            activeTrackColor:
+                                const Color.fromARGB(255, 169, 145, 145),
+                            focusColor: Colors.black,
+                            inactiveThumbColor: Colors.black,
+                            onChanged: (bool value) {
+                              isHidden.value = value;
+                            },
                           ),
                         ),
                       ],
+                    ),
+                    spacer1(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Expanded(
+                          child: Text(
+                            "Product colors",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: _openColorPicker,
+                          child: HugeIcon(
+                            icon: HugeIcons.strokeRoundedAdd01,
+                            color: Colors.grey,
+                            size: 22.0,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                      ],
+                    ),
+                    spacer1(),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: selectedColors.map((color) {
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedColors.remove(color);
+                            });
+                          },
+                          child: Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                              color: color,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                  color: Colors.transparent, width: 1),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    spacer1(),
+
+                    spacer1(),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 0),
+                      child: Obx(
+                        () => Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (specifications.value.length > 0)
+                              ParagraphText(
+                                "Product Specifications",
+                                fontWeight: FontWeight.bold,
+                              ),
+                            Column(
+                              children: specifications.value
+                                  .map((item) => TextForm(
+                                      label: item["label"],
+                                      onChanged: (value) {
+                                        item["value"] = value;
+                                      },
+                                      hint: "Enter product ${item["label"]}"))
+                                  .toList(),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    TextForm(
+                        label: "Product Description",
+                        textEditingController: descriptionController,
+                        lines: 5,
+                        hint: "Write short product description"),
+                    spacer3(),
+                    customButton(
+                      child: loading
+                          ? const CustomLoader(
+                              color: Colors.white,
+                            )
+                          : null,
+                      onTap: () {
+                        if (_formKey.currentState!.validate()) {
+                          if (_images.isEmpty) {
+                            showErrorSnackbar(
+                                title: "No Product Images",
+                                description: "Please add at least one image");
+                            return;
+                          } else {
+                            if (selectedColors.isEmpty) {
+                              showErrorSnackbar(
+                                  title: "No Product Colors",
+                                  description: "Please add at least one color");
+                              return;
+                            }
+                            Map<String, String> jsonSpecifications = {
+                              for (var item in specifications.value)
+                                item["label"]: item["value"]
+                            };
+
+                            var payload = {
+                              "name": nameController.text,
+                              "sellingPrice": priceController.text,
+                              "productLink": nameController.text,
+                              "description": nameController.text,
+                              "priceIncludeDelivery":
+                                  priceIncludeDelivery.value,
+                              "isHidden": isHidden.value,
+                              "specifications": jsonSpecifications,
+                              "deliveryScope": deliveryScopeController.text,
+                              "CategoryId": categoryController.text,
+                              "ShopId": userController.user["Shops"][0]["id"],
+                            };
+                            setState(() {
+                              loading = true;
+                            });
+                            print(payload);
+                            ProductController()
+                                .addProduct(payload)
+                                .then((res) async {
+                              //upload colors
+                              var promises = selectedColors.map((item) =>
+                                  ProductColorController().addProductColor({
+                                    "ProductId": res["id"],
+                                    "color": item.toHexString()
+                                  }));
+                              // print(promises);
+                              var colorRes = await Future.wait(promises);
+                              print(colorRes);
+                              //upload images
+
+                              var imagePayload = _images.map((item) async {
+                                var formData = dio.FormData.fromMap({
+                                  "ProductId": res["id"],
+                                  "file": await dio.MultipartFile.fromFile(
+                                      item.path,
+                                      filename: item.path.split("/").last)
+                                });
+                                return await ProductImageController()
+                                    .addProductImage(formData);
+                              });
+                              var imageRes = await Future.wait(imagePayload);
+                              print(imageRes);
+                              setState(() {
+                                loading = false;
+                              });
+                              Get.back();
+                              showSuccessSnackbar(
+                                  title: "Added successfully",
+                                  description: "Product is added successfully");
+                            });
+                          }
+                        }
+                        // Get.to(() => const HomePage());
+                      },
+                      text: loading ? "" : "Add Product",
                     ),
                   ],
                 ),
-              spacer1(),
-              ParagraphText(
-                "Product Name",
-                fontWeight: FontWeight.bold,
-              ),
-              spacer(),
-              TextFormField(
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                  fillColor: primaryColor,
-                  filled: true,
-                  labelStyle:
-                      const TextStyle(color: Colors.black, fontSize: 12),
-                  border: const OutlineInputBorder(),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: primaryColor,
-                    ),
-                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-                  ),
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.transparent,
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                  ),
-                  hintText: "Enter product name",
-                  hintStyle: const TextStyle(color: Colors.black, fontSize: 12),
-                ),
-              ),
-              spacer(),
-              ParagraphText(
-                "Product Price",
-                fontWeight: FontWeight.bold,
-              ),
-              spacer(),
-              TextFormField(
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                  fillColor: primaryColor,
-                  filled: true,
-                  labelStyle:
-                      const TextStyle(color: Colors.black, fontSize: 12),
-                  border: const OutlineInputBorder(),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: primaryColor,
-                    ),
-                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-                  ),
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.transparent,
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                  ),
-                  hintText: "Enter product price",
-                  hintStyle: const TextStyle(color: Colors.black, fontSize: 12),
-                ),
-              ),
-              spacer(),
-              Row(
-                children: [
-                  Checkbox(
-                    value: _isChecked,
-                    onChanged: (bool? newValue) {
-                      setState(() {
-                        _isChecked = newValue ?? false;
-                      });
-                    },
-                    activeColor: secondaryColor,
-                  ),
-                  ParagraphText(
-                    "Price include delivery",
-                  ),
-                ],
-              ),
-              spacer(),
-              ParagraphText(
-                "Product link (optional)",
-                fontWeight: FontWeight.bold,
-              ),
-              spacer(),
-              TextFormField(
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                  fillColor: primaryColor,
-                  filled: true,
-                  labelStyle:
-                      const TextStyle(color: Colors.black, fontSize: 12),
-                  border: const OutlineInputBorder(),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: primaryColor,
-                    ),
-                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-                  ),
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.transparent,
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                  ),
-                  hintText: "Paste the link here...",
-                  hintStyle: const TextStyle(color: Colors.black, fontSize: 12),
-                ),
-              ),
-              spacer(),
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ParagraphText(
-                          "Hide this product",
-                          fontWeight: FontWeight.bold,
-                        ),
-                        ParagraphText(
-                          "When you hide product, customers won't see it ",
-                        ),
-                      ],
-                    ),
-                  ),
-                  Switch(
-                    value: _isSwitched,
-                    activeColor: Colors.black,
-                    onChanged: (bool value) {
-                      setState(() {
-                        _isSwitched = value;
-                      });
-                    },
-                  ),
-                ],
-              ),
-              spacer1(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Expanded(
-                    child: Text(
-                      "Product colors",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  InkWell(
-                    onTap: _openColorPicker,
-                    child: HugeIcon(
-                      icon: HugeIcons.strokeRoundedAdd01,
-                      color: Colors.grey,
-                      size: 22.0,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                ],
-              ),
-              spacer1(),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: selectedColors.map((color) {
-                  return Container(
-                    width: 30,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      color: color,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.transparent, width: 1),
-                    ),
-                  );
-                }).toList(),
-              ),
-              spacer1(),
-              ParagraphText(
-                "Product Specifications",
-                fontWeight: FontWeight.bold,
-              ),
-              spacer1(),
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ParagraphText(
-                          "RAM",
-                          fontWeight: FontWeight.bold,
-                        ),
-                        spacer(),
-                        TextFormField(
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            fillColor: Colors.grey[200],
-                            filled: true,
-                            labelStyle: const TextStyle(
-                                color: Colors.black, fontSize: 12),
-                            border: const OutlineInputBorder(),
-                            focusedBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.teal,
-                              ),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
-                            ),
-                            enabledBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.transparent,
-                              ),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
-                            ),
-                            hintText: "Enter value",
-                            hintStyle: const TextStyle(
-                                color: Colors.black, fontSize: 12),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ParagraphText(
-                          "STORAGE",
-                          fontWeight: FontWeight.bold,
-                        ),
-                        spacer(),
-                        TextFormField(
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            fillColor: Colors.grey[200],
-                            filled: true,
-                            labelStyle: const TextStyle(
-                                color: Colors.black, fontSize: 12),
-                            border: const OutlineInputBorder(),
-                            focusedBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.teal,
-                              ),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
-                            ),
-                            enabledBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.transparent,
-                              ),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
-                            ),
-                            hintText: "Enter value",
-                            hintStyle: const TextStyle(
-                                color: Colors.black, fontSize: 12),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              spacer1(),
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ParagraphText(
-                          "MODEL",
-                          fontWeight: FontWeight.bold,
-                        ),
-                        spacer(),
-                        TextFormField(
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            fillColor: Colors.grey[200],
-                            filled: true,
-                            labelStyle: const TextStyle(
-                                color: Colors.black, fontSize: 12),
-                            border: const OutlineInputBorder(),
-                            focusedBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.teal,
-                              ),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
-                            ),
-                            enabledBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.transparent,
-                              ),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
-                            ),
-                            hintText: "Enter value",
-                            hintStyle: const TextStyle(
-                                color: Colors.black, fontSize: 12),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ParagraphText(
-                          "COLOR",
-                          fontWeight: FontWeight.bold,
-                        ),
-                        spacer(),
-                        TextFormField(
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            fillColor: Colors.grey[200],
-                            filled: true,
-                            labelStyle: const TextStyle(
-                                color: Colors.black, fontSize: 12),
-                            border: const OutlineInputBorder(),
-                            focusedBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.teal,
-                              ),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
-                            ),
-                            enabledBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.transparent,
-                              ),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(10.0)),
-                            ),
-                            hintText: "Enter value",
-                            hintStyle: const TextStyle(
-                                color: Colors.black, fontSize: 12),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              spacer1(),
-              ParagraphText(
-                "Product description",
-                fontWeight: FontWeight.bold,
-              ),
-              spacer(),
-              TextFormField(
-                keyboardType: TextInputType.multiline,
-                maxLines: 5,
-                decoration: InputDecoration(
-                  fillColor: primaryColor,
-                  filled: true,
-                  labelStyle:
-                      const TextStyle(color: Colors.black, fontSize: 12),
-                  border: const OutlineInputBorder(),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: primaryColor,
-                    ),
-                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-                  ),
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Colors.transparent,
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                  ),
-                  hintText: "Write short product description",
-                  hintStyle: const TextStyle(color: Colors.black, fontSize: 12),
-                ),
-              ),
-              spacer3(),
-              customButton(
-                onTap: () {
-                  if (_images.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Please add at least one image')),
-                    );
-                    return;
-                  }
-                  Get.to(() => const HomePage());
-                },
-                text: "Add Product",
-              ),
+              )
             ],
           ),
         ),

@@ -5,6 +5,7 @@ import 'package:e_online/pages/add_reel_page.dart';
 import 'package:e_online/pages/create_ad_page.dart';
 import 'package:e_online/pages/reels_page.dart';
 import 'package:e_online/pages/setting_myshop_page.dart';
+import 'package:e_online/pages/shop_tabs/shop_products.dart';
 import 'package:e_online/widgets/ad_card.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
@@ -185,22 +186,27 @@ class _MyShopPageState extends State<MyShopPage> {
     }
   }
 
-  void handleButtonAction() {
+  void handleButtonAction() async {
     switch (_currentIndex) {
       case 0:
-        Get.to(() => const AddProductPage());
+        await Get.to(() => const AddProductPage());
+        setState(() {});
         break;
       case 1:
-        Get.to(() => const AddReelPage());
+        await Get.to(() => const AddReelPage());
+        setState(() {});
         break;
       case 2:
-        Get.to(() => const AddProductPage());
+        await Get.to(() => const AddProductPage());
+        setState(() {});
         break;
       case 3:
-        Get.to(() => const SettingMyshopPage());
+        await Get.to(() => const SettingMyshopPage());
+        setState(() {});
         break;
       case 4:
-        Get.to(() => const CreateAdPage());
+        await Get.to(() => const CreateAdPage());
+        setState(() {});
         break;
     }
   }
@@ -208,7 +214,7 @@ class _MyShopPageState extends State<MyShopPage> {
   Widget buildPageContent() {
     switch (_currentIndex) {
       case 0:
-        return buildProductList(productItems);
+        return ShopProducts();
       case 1:
         return ProductMasonryGrid(productItems: productItems);
       case 2:
