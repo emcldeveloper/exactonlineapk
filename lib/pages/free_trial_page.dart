@@ -40,51 +40,54 @@ class FreeTrialPage extends StatelessWidget {
           ),
         ),
       ),
-      body: Container(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              spacer1(),
-              Image.asset(
-                "assets/images/trial.png",
-                height: 250,
-                fit: BoxFit.contain,
-              ),
-              spacer(),
-              HeadingText(
-                "Start Your 14-Day Free\nTrial Today!",
-                textAlign: TextAlign.center,
-              ),
-              spacer1(),
-              ParagraphText(
-                "Take your business to the next levelwith our 14-day free trial. Explore powerful tools to list products, manage your store, and connect with our customers--all with no commitment. Start growing your sales today, risk free!",
-                color: mutedTextColor,
-                textAlign: TextAlign.center,
-              ),
-              spacer2(),
-              spacer3(),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Column(
-                  children: [
-                    customButton(
-                      onTap: () => Get.to(() => const MyShopPage()),
-                      text: "Start 14 days free trial",
-                    ),
-                    spacer1(),
-                    customButton(
-                      onTap: () => Get.to(() => const SubscriptionPage()),
-                      text: "Explore our packages",
-                      buttonColor: primaryColor,
-                      textColor: Colors.black,
-                    ),
-                  ],
+      body: SingleChildScrollView(
+        child: Container(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                spacer1(),
+                Image.asset(
+                  "assets/images/trial.png",
+                  height: 250,
+                  fit: BoxFit.contain,
                 ),
-              ),
-              spacer1(),
-            ],
+                spacer(),
+                HeadingText(
+                  "Start Your 14-Day Free\nTrial Today!",
+                  textAlign: TextAlign.center,
+                ),
+                spacer1(),
+                ParagraphText(
+                  "Take your business to the next levelwith our 14-day free trial. Explore powerful tools to list products, manage your store, and connect with our customers--all with no commitment. Start growing your sales today, risk free!",
+                  color: mutedTextColor,
+                  textAlign: TextAlign.center,
+                ),
+                spacer2(),
+                spacer3(),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Column(
+                    children: [
+                      customButton(
+                        onTap: () => Get.to(() => const MyShopPage(),
+                            arguments: {'origin': 'FreeTrialPage'}),
+                        text: "Start 14 days free trial",
+                      ),
+                      spacer1(),
+                      customButton(
+                        onTap: () => Get.to(() => const SubscriptionPage()),
+                        text: "Explore our packages",
+                        buttonColor: primaryColor,
+                        textColor: Colors.black,
+                      ),
+                    ],
+                  ),
+                ),
+                spacer1(),
+              ],
+            ),
           ),
         ),
       ),

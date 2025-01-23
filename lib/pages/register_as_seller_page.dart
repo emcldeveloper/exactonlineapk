@@ -619,7 +619,8 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                               icon: HugeIcon(
                                   icon: HugeIcons.strokeRoundedTick01,
                                   color: Colors.white));
-                          Get.offAll(() => const MyShopPage());
+                          Get.offAll(() => const MyShopPage(),
+                              arguments: {'origin': 'RegisterAsSellerPage'});
                         } catch (e) {
                           isLoading.value = false;
                           Get.snackbar("Error", "Error creating shop account",
@@ -673,7 +674,8 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                               icon: HugeIcon(
                                   icon: HugeIcons.strokeRoundedTick01,
                                   color: Colors.white));
-                          Get.offAll(() => const MyShopPage());
+                          Get.offAll(() => const MyShopPage(),
+                              arguments: {'origin': 'RegisterAsSellerPage'});
                         } catch (e) {
                           isLoading.value = false;
                           print(e.toString());

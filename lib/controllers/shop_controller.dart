@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 class ShopController extends GetxController {
-  Future loadUserShop(id) async {
+  Future loadUserShops(id) async {
     try {
       var response = await dio.get("/shops/user/$id",
           options: Options(headers: {
@@ -65,8 +65,59 @@ class ShopController extends GetxController {
     }
   }
 
+  Future getShopDetails(id) async {
+    try {
+      var response = await dio.get("/shops/$id",
+          options: Options(headers: {
+            "Authorization":
+                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
+          }));
+
+      var data = response.data["body"];
+      print(data);
+      return data;
+    } on DioException catch (e) {
+      Get.snackbar("Error", "Error loading shop details",
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+          icon: const HugeIcon(
+              icon: HugeIcons.strokeRoundedCancel02, color: Colors.white));
+      print("Error loading shop details: ${e.response}");
+      throw Exception(e);
+    }
+  }
+
+  Future updateShopData(id, payload) async {
+    try {
+      var response = await dio.patch("/shops/$id",
+          data: payload,
+          options: Options(
+            headers: {
+              "Authorization":
+                  "Bearer ${await SharedPreferencesUtil.getAccessToken()}",
+            },
+          ));
+      var data = response.data;
+      print(data);
+      Get.snackbar("Success", "Shop updated successfully",
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          icon: const HugeIcon(
+              icon: HugeIcons.strokeRoundedTick01, color: Colors.white));
+      return data;
+    } on DioException catch (e) {
+      Get.snackbar("Error", "Error updating shop details",
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+          icon: const HugeIcon(
+              icon: HugeIcons.strokeRoundedCancel01, color: Colors.white));
+      print("Error updating shop details: ${e.response}");
+    }
+  }
+
   Future deleteShop(id) async {
     try {
+      print("starting deleting");
       var response = await dio.get("/shops/$id",
           options: Options(headers: {
             "Authorization":
@@ -88,6 +139,35 @@ class ShopController extends GetxController {
           icon: const HugeIcon(
               icon: HugeIcons.strokeRoundedCancel02, color: Colors.white));
       print("Error creating shop account: ${e.response}");
+      throw Exception(e);
+    }
+  }
+
+  Future createShopCalendar(var payload) async {
+    try {
+      var response = await dio.post(
+        "/shop-calenders/",
+        data: payload,
+        options: Options(headers: {
+          "Authorization":
+              "Bearer ${await SharedPreferencesUtil.getAccessToken()}",
+        }),
+      );
+      var data = response.data;
+      print("Shop-Calendar created successfully: $data");
+      Get.snackbar("Success", "Shop-Calendar created successfully",
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          icon: const HugeIcon(
+              icon: HugeIcons.strokeRoundedTick01, color: Colors.white));
+      return data;
+    } on DioException catch (e) {
+      Get.snackbar("Error", "Error creating Shop-Calendar",
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+          icon: const HugeIcon(
+              icon: HugeIcons.strokeRoundedCancel02, color: Colors.white));
+      print("Error creating Shop-Calendar: ${e.response}");
       throw Exception(e);
     }
   }

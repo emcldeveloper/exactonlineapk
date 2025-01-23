@@ -1,8 +1,12 @@
+import 'package:e_online/controllers/location_controller.dart';
 import 'package:e_online/controllers/shop_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/edit_register_as_seller_page.dart';
+import 'package:e_online/pages/home_page.dart';
+import 'package:e_online/pages/profile_page.dart';
 import 'package:e_online/pages/register_as_seller_page.dart';
 import 'package:e_online/utils/shared_preferences.dart';
+import 'package:e_online/widgets/custom_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/constants/product_items.dart';
@@ -12,19 +16,24 @@ import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/setting_shop_details.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:e_online/widgets/subscription_card.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 class SettingMyshopPage extends StatefulWidget {
-  const SettingMyshopPage({super.key});
+  var from;
+  SettingMyshopPage({super.key, this.from});
 
   @override
   State<SettingMyshopPage> createState() => _SettingMyshopPageState();
 }
 
 class _SettingMyshopPageState extends State<SettingMyshopPage> {
+  var isLoading = false.obs;
   final UserController userController = Get.find();
-  final ShopController shopController = Get.find();
+  final ShopController shopController = Get.put(ShopController());
+  final LocationController locationController = Get.put(LocationController());
+  var _location = null;
   final List<String> daysOfWeek = [
     'Monday',
     'Tuesday',
@@ -35,56 +44,58 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
     'Sunday'
   ];
 
-  Map<String, String> selectedTimes = {
-    'Monday': 'Not Set',
-    'Tuesday': 'Not Set',
-    'Wednesday': 'Not Set',
-    'Thursday': 'Not Set',
-    'Friday': 'Not Set',
-    'Saturday': 'Not Set',
-    'Sunday': 'Not Set',
-  };
+  Map<String, String> selectedTimes = {};
 
   String userId = "";
   List<dynamic> shopList = [];
-  Map<String, dynamic>? selectedBusiness;
-  // String? selectedBusinessName;
+  Rx<Map<String, dynamic>>? selectedBusiness = Rx<Map<String, dynamic>>({});
 
   @override
   void initState() {
     super.initState();
     _loadSelectedBusiness();
+    _loadSelectedShopDetails();
     userId = userController.user['id'] ?? "";
     shopList = userController.user['Shops'] ?? [];
   }
 
-  Future<void> _loadSelectedBusiness() async {
+  Future _loadSelectedShopDetails() async {
+    final businessId = await SharedPreferencesUtil.getSelectedBusiness();
+    userController.user["selectedShop"] =
+        await shopController.getShopDetails(businessId);
+  }
+
+  // load current business
+  Future _loadSelectedBusiness() async {
     final businessId = await SharedPreferencesUtil.getSelectedBusiness();
     if (businessId != null) {
-      final business = userController.user['Shops']
-          ?.firstWhere((shop) => shop['id'] == businessId, orElse: () => null);
-      setState(() {
-        selectedBusiness = business;
-      });
+      List businesses = userController.user['Shops'];
+      selectedBusiness?.value =
+          businesses.where((business) => business["id"] == businessId).first;
+      print(selectedBusiness);
     }
   }
 
-  // void _loadBusinessDetails() {
-  //   // Fetch business details using widget.shopId
-  //   // For example, if you have a list of shops:
-  //   final business = Get.find<UserController>().user['Shops']
-  //       ?.firstWhere((shop) => shop['id'] == widget.shopId, orElse: () => null);
-  //   if (business != null) {
-  //     setState(() {
-  //       selectedBusinessName = business['name'];
-  //     });
-  //   }
-  // }
-  // final List<Map<String, String>> shopList = [
-  //   {"name": "Vunjabei shop", "createdAt": "Created at 28/10/2024"},
-  //   {"name": "Bamba shop", "createdAt": "Created at 27/10/2024"},
-  //   {"name": "Niko shop", "createdAt": "Created at 26/10/2024"},
-  // ];
+  // Update location
+  Future<void> _updateLocation() async {
+    final businessId = await SharedPreferencesUtil.getSelectedBusiness();
+    isLoading.value = true;
+    Position? position = await locationController.getCurrentLocation();
+    isLoading.value = false;
+    if (position != null) {
+      await shopController.updateShopData(businessId, _location);
+      setState(() {
+        _location = {
+          "shopLat": position.latitude,
+          "shopLong": position.longitude
+        };
+      });
+    } else {
+      setState(() {
+        _location = "Failed to get location";
+      });
+    }
+  }
 
   final activeSubscription = subscriptions.firstWhere(
     (sub) => sub["status"] == "Active",
@@ -108,8 +119,9 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
       context: context,
       isScrollControlled: true,
       builder: (context) => SettingShopDetails(
-        onSave: (openTime, closeTime, is24Hours, isClosed) {
+        onSave: (openTime, closeTime, is24Hours, isClosed) async {
           if (!mounted) return;
+
           setState(() {
             if (isClosed) {
               selectedTimes[day] = "Closed";
@@ -123,9 +135,31 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
               selectedTimes[day] = "$openTimeStr - $closeTimeStr";
             }
           });
+
+          // Prepare data payload to send to API
+          var payload = {
+            "ShopId": selectedBusiness?.value!["id"],
+            "day": day,
+            "openTime": is24Hours
+                ? "00:00"
+                : (openTime != null ? _formatTime(openTime) : "Not Set"),
+            "closeTime": is24Hours
+                ? "23:59"
+                : (closeTime != null ? _formatTime(closeTime) : "Not Set"),
+            "isOpen": (!isClosed).toString(),
+          };
+          // Send data to API
+          await shopController.createShopCalendar(payload);
         },
       ),
     );
+  }
+
+// Helper function to format TimeOfDay to HH:mm string
+  String _formatTime(TimeOfDay time) {
+    final hours = time.hour.toString().padLeft(2, '0');
+    final minutes = time.minute.toString().padLeft(2, '0');
+    return "$hours:$minutes";
   }
 
   @override
@@ -143,7 +177,13 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
             size: 16,
           ),
           onPressed: () {
-            Navigator.pop(context);
+            if (widget.from == 'shoppingPage') {
+              Get.offAll(() => const HomePage());
+            } else if (widget.from == 'settingPage') {
+              Get.offAll(() => const ProfilePage());
+            } else {
+              Get.offAll(() => const HomePage());
+            }
           },
         ),
         title: HeadingText("Settings"),
@@ -219,28 +259,30 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ParagraphText(
-                              "Vunjabei shop",
-                              fontWeight: FontWeight.bold,
-                            ),
-                            spacer(),
-                            ParagraphText(
-                              "Created at 20/05/2024",
-                              color: mutedTextColor,
-                            ),
-                          ],
+                        Obx(
+                          () => Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ParagraphText(
+                                selectedBusiness?.value['name'] ?? "Name",
+                                fontWeight: FontWeight.bold,
+                              ),
+                              spacer(),
+                              ParagraphText(
+                                selectedBusiness?.value['createdAt'] ?? "Date",
+                                color: mutedTextColor,
+                              ),
+                            ],
+                          ),
                         ),
                         Row(
                           children: [
                             InkWell(
                               onTap: () async {
                                 if (selectedBusiness != null &&
-                                    selectedBusiness!["id"] != null) {
-                                  await shopController
-                                      .deleteShop(selectedBusiness!["id"]);
+                                    selectedBusiness?.value["id"] != null) {
+                                  await shopController.deleteShop(
+                                      selectedBusiness?.value["id"]);
                                 } else {
                                   print("No business selected");
                                 }
@@ -255,9 +297,9 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                             InkWell(
                               onTap: () {
                                 if (selectedBusiness != null &&
-                                    selectedBusiness!["id"] != null) {
+                                    selectedBusiness?.value["id"] != null) {
                                   Get.to(() => EditRegisterAsSellerPage(
-                                      selectedBusiness!["id"]));
+                                      selectedBusiness?.value["id"]));
                                 } else {
                                   // Handle the case where no business is selected
                                   print("No business selected");
@@ -286,19 +328,28 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                             ),
                             spacer(),
                             ParagraphText(
-                              "Not selected",
+                              _location != null
+                                  ? 'Lat: ${_location?["shopLat"]}, Long: ${_location?["shopLong"]}'
+                                  : 'No selected',
                               color: mutedTextColor,
                             ),
                           ],
                         ),
-                        InkWell(
-                          onTap: () {},
-                          child: HugeIcon(
-                            icon: HugeIcons.strokeRoundedLocation01,
-                            color: Colors.grey,
-                            size: 22.0,
-                          ),
-                        ),
+                        Obx(() {
+                          return isLoading.value
+                              ? const CustomLoader(
+                                  color: Colors.black,
+                                  size: 12.0,
+                                )
+                              : InkWell(
+                                  onTap: _updateLocation,
+                                  child: HugeIcon(
+                                    icon: HugeIcons.strokeRoundedLocation01,
+                                    color: Colors.grey,
+                                    size: 22.0,
+                                  ),
+                                );
+                        }),
                       ],
                     ),
                     spacer(),
@@ -321,7 +372,40 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                                 Row(
                                   children: [
                                     ParagraphText(
-                                      selectedTimes[day]!,
+                                      userController
+                                                      .user["selectedShop"]
+                                                          ["ShopCalenders"]
+                                                      ?.isNotEmpty ==
+                                                  true &&
+                                              userController
+                                                  .user["selectedShop"]
+                                                      ["ShopCalenders"]
+                                                  .any((calendar) =>
+                                                      calendar["day"] == day)
+                                          ? (() {
+                                              // Find the specific calendar entry for the current day
+                                              final calendarEntry =
+                                                  userController
+                                                      .user["selectedShop"]
+                                                          ["ShopCalenders"]
+                                                      .firstWhere(
+                                                (calendar) =>
+                                                    calendar["day"] == day,
+                                                orElse: () => null,
+                                              );
+
+                                              // If entry is null
+                                              if (calendarEntry == null)
+                                                return "Not-set";
+
+                                              // If `isOpen` is false
+                                              if (calendarEntry["isOpen"] ==
+                                                  false) return "Closed";
+
+                                              // If `isOpen` is true, return `openTime - closeTime`
+                                              return "${calendarEntry["openTime"]} - ${calendarEntry["closeTime"]}";
+                                            })()
+                                          : "Not-set", // If no calendar entries exist
                                       color: mutedTextColor,
                                     ),
                                     const SizedBox(width: 8),

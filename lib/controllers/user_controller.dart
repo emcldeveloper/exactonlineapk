@@ -64,7 +64,7 @@ class UserController extends GetxController {
           colorText: Colors.white,
           icon: const HugeIcon(
               icon: HugeIcons.strokeRoundedCancel01, color: Colors.white));
-      print("Error fetching user details: ${e.response}");
+      print("Error updating user details: ${e.response}");
     }
   }
 }

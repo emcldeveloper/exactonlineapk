@@ -1,7 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
-import 'package:flutter/material.dart';
 
 class SettingShopDetails extends StatefulWidget {
   final Function(TimeOfDay? openTime, TimeOfDay? closeTime, bool is24Hours,
@@ -10,8 +10,7 @@ class SettingShopDetails extends StatefulWidget {
   const SettingShopDetails({super.key, required this.onSave});
 
   @override
-  State<SettingShopDetails> createState() =>
-      _SettingShopDetailsBottomSheetState();
+  State<SettingShopDetails> createState() => _SettingShopDetailsBottomSheetState();
 }
 
 class _SettingShopDetailsBottomSheetState extends State<SettingShopDetails> {
@@ -20,9 +19,8 @@ class _SettingShopDetailsBottomSheetState extends State<SettingShopDetails> {
   TimeOfDay? openTime;
   TimeOfDay? closeTime;
 
-  Future<TimeOfDay?> _selectTime(
-      BuildContext context, TimeOfDay initialTime) async {
-    if (!mounted) return null; // Prevent crashes if context is not mounted
+  Future<TimeOfDay?> _selectTime(BuildContext context, TimeOfDay initialTime) async {
+    if (!mounted) return null;
     try {
       return await showTimePicker(
         context: context,
@@ -53,11 +51,8 @@ class _SettingShopDetailsBottomSheetState extends State<SettingShopDetails> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           spacer(),
-          ParagraphText("Set Time",
-              fontWeight: FontWeight.bold, fontSize: 16.0),
+          ParagraphText("Set Time", fontWeight: FontWeight.bold, fontSize: 16.0),
           spacer1(),
-
-          // Checkboxes
           Row(
             children: [
               Row(
@@ -78,9 +73,7 @@ class _SettingShopDetailsBottomSheetState extends State<SettingShopDetails> {
                       },
                     ),
                   ),
-                  SizedBox(
-                    width: 10,
-                  ),
+                  SizedBox(width: 10),
                   const Text("Open 24 hours")
                 ],
               ),
@@ -105,8 +98,6 @@ class _SettingShopDetailsBottomSheetState extends State<SettingShopDetails> {
             ],
           ),
           spacer1(),
-
-          // Time Pickers
           if (!is24Hours && !isClosed) ...[
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -126,8 +117,8 @@ class _SettingShopDetailsBottomSheetState extends State<SettingShopDetails> {
                   label: "Close Time",
                   selectedTime: closeTime,
                   onTap: () async {
-                    final time = await _selectTime(
-                        context, closeTime ?? TimeOfDay.now());
+                    final time =
+                        await _selectTime(context, closeTime ?? TimeOfDay.now());
                     if (time != null) {
                       setState(() => closeTime = time);
                     }
@@ -137,7 +128,6 @@ class _SettingShopDetailsBottomSheetState extends State<SettingShopDetails> {
             ),
           ],
           spacer2(),
-          // Save Button
           customButton(
             onTap: () {
               try {

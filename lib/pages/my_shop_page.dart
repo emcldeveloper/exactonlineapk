@@ -64,7 +64,7 @@ class _MyShopPageState extends State<MyShopPage> {
           actions: [
             InkWell(
               onTap: () {
-                Get.to(() => const SettingMyshopPage());
+                Get.to(() => SettingMyshopPage());
               },
               child: HugeIcon(
                 icon: HugeIcons.strokeRoundedSettings01,
@@ -197,7 +197,7 @@ class _MyShopPageState extends State<MyShopPage> {
         Get.to(() => const AddProductPage());
         break;
       case 3:
-        Get.to(() => const SettingMyshopPage());
+        Get.to(() => SettingMyshopPage());
         break;
       case 4:
         Get.to(() => const CreateAdPage());
