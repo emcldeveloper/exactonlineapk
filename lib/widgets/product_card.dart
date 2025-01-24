@@ -1,7 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/pages/product_page.dart';
+import 'package:e_online/utils/convert_to_money_format.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:money_formatter/money_formatter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
@@ -89,8 +92,8 @@ class _ProductCardState extends State<ProductCard> {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16),
-                    child: Image.asset(
-                      widget.data['imageUrl'][0],
+                    child: CachedNetworkImage(
+                      imageUrl: widget.data["ProductImages"][0]['image'],
                       height: widget.height ?? 135,
                       width: double.infinity,
                       fit: BoxFit.cover,
@@ -143,15 +146,17 @@ class _ProductCardState extends State<ProductCard> {
                       if (widget.data['type'] == "ad") const SizedBox(width: 8),
                       Expanded(
                         child: ParagraphText(
-                          widget.data['title'],
+                          widget.data['name'],
                           fontSize: 12,
                           maxLines: 1,
                         ),
                       ),
                     ],
                   ),
-                  ParagraphText(widget.data['price'],
-                      fontWeight: FontWeight.bold, fontSize: 15.0),
+                  ParagraphText(
+                      "TZS ${toMoneyFormmat(widget.data['sellingPrice'])}",
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15.0),
                   if (widget.data['shipping'] == "Free Shipping")
                     ParagraphText(
                       widget.data['shipping'],

@@ -26,6 +26,20 @@ class ProductController extends GetxController {
     return data;
   }
 
+  Future<List> getProducts({page, limit, keyword}) async {
+    // print(shopId);
+    var response = await dio.get(
+        "/products/?page=${page ?? 1}&limit=${limit ?? 10}&keyword=${keyword ?? ""}",
+        options: Options(headers: {
+          "Authorization":
+              "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
+        }));
+
+    var data = response.data["body"]["rows"];
+    print(data);
+    return data;
+  }
+
   Future addProduct(var payload) async {
     try {
       var response = await dio.post("/products",
