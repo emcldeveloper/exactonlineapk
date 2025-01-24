@@ -54,6 +54,7 @@ dependencies:
   cached_network_image: ^3.4.1
   money_formatter: ^0.0.6
   shimmer: ^3.0.0
+  geolocator: ^13.0.2
 
 dev_dependencies:
   flutter_test:
