@@ -1,5 +1,6 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/constants/product_items.dart';
+import 'package:e_online/controllers/reel_controller.dart';
 import 'package:e_online/pages/preview_reel_page.dart';
 import 'package:e_online/widgets/following.dart';
 import 'package:e_online/widgets/heading_text.dart';
@@ -81,35 +82,73 @@ class ProductMasonryGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: ConstrainedBox(
-        constraints:
-            BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 200),
-        child: MasonryGridView.count(
-          crossAxisCount: 2,
-          mainAxisSpacing: 16,
-          crossAxisSpacing: 16,
-          itemCount: productItems.length,
-          itemBuilder: (context, index) {
-            return ReelCard(
-              data: productItems[index],
-              index: index,
-            );
-          },
-        ),
-      ),
+    return FutureBuilder(
+      future: ReelController().getShopReels(page: 1, limit: 20),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(color: Colors.black),
+          );
+        }
+        if (!snapshot.hasData || snapshot.data == null) {
+          return const Center(child: Text("No reels available."));
+        }
+
+        final List reels = snapshot.data;
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height - 200),
+            child: MasonryGridView.count(
+              crossAxisCount: 2,
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 16,
+              itemCount: reels.length,
+              itemBuilder: (context, index) {
+                final reel = reels[index];
+
+                // Check for 'ReelVideo' safely
+                if (reel['ReelVideo'] != null && reel['ReelVideo'].isNotEmpty) {
+                  return ReelCard(data: reel);
+                } else {
+                  return Container();
+                }
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 }
+//     return Padding(
+//       padding: const EdgeInsets.all(16.0),
+//       child: ConstrainedBox(
+//         constraints:
+//             BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 200),
+//         child: MasonryGridView.count(
+//           crossAxisCount: 2,
+//           mainAxisSpacing: 16,
+//           crossAxisSpacing: 16,
+//           itemCount: productItems.length,
+//           itemBuilder: (context, index) {
+//             return ReelCard(
+//               data: productItems[index],
+//               index: index,
+//             );
+//           },
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class ReelCard extends StatelessWidget {
   final Map<String, dynamic> data;
-  final int index;
 
   const ReelCard({
     required this.data,
-    required this.index,
     super.key,
   });
 
@@ -137,15 +176,37 @@ class ReelCard extends StatelessWidget {
                 },
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    (data['imageUrl'] as List<String>).isNotEmpty
-                        ? (data['imageUrl'] as List<String>).first
-                        : "assets/images/defaultImage.png",
-                    fit: BoxFit.cover,
-                    height: index.isEven ? 280 : 200,
-                    width: double.infinity,
-                  ),
+                  child: data['ReelVideo'].isNotEmpty
+                      ? Image.network(
+                          data[
+                              'thumbnailUrl'], // Ensure `thumbnailUrl` exists in your API response
+                          fit: BoxFit.cover,
+                          height: 200,
+                          width: double.infinity,
+                          errorBuilder: (context, error, stackTrace) => Icon(
+                            Icons.broken_image,
+                            size: 100,
+                            color: Colors.grey,
+                          ),
+                        )
+                      : Icon(
+                          Icons.videocam_off,
+                          size: 100,
+                          color: Colors.grey,
+                        ),
                 ),
+
+                // child: ClipRRect(
+                //   borderRadius: BorderRadius.circular(12),
+                //   child: Image.asset(
+                //     (data['imageUrl'] as List<String>).isNotEmpty
+                //         ? (data['imageUrl'] as List<String>).first
+                //         : "assets/images/defaultImage.png",
+                //     fit: BoxFit.cover,
+                //     height: index.isEven ? 280 : 200,
+                //     width: double.infinity,
+                //   ),
+                // ),
               ),
               // Duration indicator
               Positioned(

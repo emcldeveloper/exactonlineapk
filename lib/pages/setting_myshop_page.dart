@@ -30,6 +30,7 @@ class SettingMyshopPage extends StatefulWidget {
 
 class _SettingMyshopPageState extends State<SettingMyshopPage> {
   var isLoading = false.obs;
+  var isLoadingTime = false.obs;
   final UserController userController = Get.find();
   final ShopController shopController = Get.put(ShopController());
   final LocationController locationController = Get.put(LocationController());
@@ -59,11 +60,24 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
     shopList = userController.user['Shops'] ?? [];
   }
 
+  RxList<dynamic> shopCalendars = <dynamic>[].obs;
+
   Future _loadSelectedShopDetails() async {
+    isLoadingTime.value = true;
     final businessId = await SharedPreferencesUtil.getSelectedBusiness();
-    userController.user["selectedShop"] =
-        await shopController.getShopDetails(businessId);
+    var shopDetails = await shopController.getShopDetails(businessId);
+    userController.user["selectedShop"] = shopDetails;
+    shopCalendars.value = shopDetails["ShopCalenders"] ?? [];
+    isLoadingTime.value = false;
   }
+
+  // Future _loadSelectedShopDetails() async {
+  //   isLoadingTime.value = true;
+  //   final businessId = await SharedPreferencesUtil.getSelectedBusiness();
+  //   userController.user["selectedShop"] =
+  //       await shopController.getShopDetails(businessId);
+  //   isLoadingTime.value = false;
+  // }
 
   // load current business
   Future _loadSelectedBusiness() async {
@@ -119,39 +133,48 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
       context: context,
       isScrollControlled: true,
       builder: (context) => SettingShopDetails(
-        onSave: (openTime, closeTime, is24Hours, isClosed) async {
-          if (!mounted) return;
+          onSave: (openTime, closeTime, is24Hours, isClosed) async {
+        if (!mounted) return;
 
-          setState(() {
-            if (isClosed) {
-              selectedTimes[day] = "Closed";
-            } else if (is24Hours) {
-              selectedTimes[day] = "24 Hours";
-            } else {
-              String openTimeStr =
-                  openTime != null ? openTime.format(context) : "Not Set";
-              String closeTimeStr =
-                  closeTime != null ? closeTime.format(context) : "Not Set";
-              selectedTimes[day] = "$openTimeStr - $closeTimeStr";
-            }
-          });
+        setState(() {
+          if (isClosed) {
+            selectedTimes[day] = "Closed";
+          } else if (is24Hours) {
+            selectedTimes[day] = "24 Hours";
+          } else {
+            String openTimeStr =
+                openTime != null ? openTime.format(context) : "Not Set";
+            String closeTimeStr =
+                closeTime != null ? closeTime.format(context) : "Not Set";
+            selectedTimes[day] = "$openTimeStr - $closeTimeStr";
+          }
+        });
 
-          // Prepare data payload to send to API
-          var payload = {
-            "ShopId": selectedBusiness?.value!["id"],
-            "day": day,
-            "openTime": is24Hours
-                ? "00:00"
-                : (openTime != null ? _formatTime(openTime) : "Not Set"),
-            "closeTime": is24Hours
-                ? "23:59"
-                : (closeTime != null ? _formatTime(closeTime) : "Not Set"),
-            "isOpen": (!isClosed).toString(),
-          };
-          // Send data to API
+        // Prepare data payload to send to API
+        var payload = {
+          "ShopId": selectedBusiness?.value!["id"],
+          "day": day,
+          "openTime": is24Hours
+              ? "00:00"
+              : (openTime != null ? _formatTime(openTime) : null),
+          "closeTime": is24Hours
+              ? "23:59"
+              : (closeTime != null ? _formatTime(closeTime) : null),
+          "isOpen": (!isClosed).toString(),
+        };
+
+        // Send data to API
+        try {
           await shopController.createShopCalendar(payload);
-        },
-      ),
+        } catch (e) {
+          // Handle the error here
+          Get.snackbar("Error", "Failed to save Shop-Calendar",
+              backgroundColor: Colors.redAccent,
+              colorText: Colors.white,
+              icon: const HugeIcon(
+                  icon: HugeIcons.strokeRoundedCancel02, color: Colors.white));
+        }
+      }),
     );
   }
 
@@ -358,77 +381,63 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                       fontWeight: FontWeight.bold,
                     ),
                     spacer(),
-                    Column(
-                      children: daysOfWeek.map((day) {
-                        return Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                ParagraphText(
-                                  day,
-                                  color: mutedTextColor,
-                                ),
-                                Row(
+                    Obx(() {
+                      return isLoadingTime.value
+                          ? const CustomLoader(
+                              color: Colors.black,
+                              size: 12.0,
+                            )
+                          : Column(
+                              children: daysOfWeek.map((day) {
+                                final calendarEntry = shopCalendars.firstWhere(
+                                  (calendar) => calendar["day"] == day,
+                                  orElse: () => null,
+                                );
+
+                                String statusText = "Not-set";
+                                if (calendarEntry != null) {
+                                  if (calendarEntry["isOpen"] == false) {
+                                    statusText = "Closed";
+                                  } else {
+                                    statusText =
+                                        "${calendarEntry["openTime"]} - ${calendarEntry["closeTime"]}";
+                                  }
+                                }
+
+                                return Column(
                                   children: [
-                                    ParagraphText(
-                                      userController
-                                                      .user["selectedShop"]
-                                                          ["ShopCalenders"]
-                                                      ?.isNotEmpty ==
-                                                  true &&
-                                              userController
-                                                  .user["selectedShop"]
-                                                      ["ShopCalenders"]
-                                                  .any((calendar) =>
-                                                      calendar["day"] == day)
-                                          ? (() {
-                                              // Find the specific calendar entry for the current day
-                                              final calendarEntry =
-                                                  userController
-                                                      .user["selectedShop"]
-                                                          ["ShopCalenders"]
-                                                      .firstWhere(
-                                                (calendar) =>
-                                                    calendar["day"] == day,
-                                                orElse: () => null,
-                                              );
-
-                                              // If entry is null
-                                              if (calendarEntry == null)
-                                                return "Not-set";
-
-                                              // If `isOpen` is false
-                                              if (calendarEntry["isOpen"] ==
-                                                  false) return "Closed";
-
-                                              // If `isOpen` is true, return `openTime - closeTime`
-                                              return "${calendarEntry["openTime"]} - ${calendarEntry["closeTime"]}";
-                                            })()
-                                          : "Not-set", // If no calendar entries exist
-                                      color: mutedTextColor,
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        ParagraphText(day,
+                                            color: mutedTextColor),
+                                        Row(
+                                          children: [
+                                            ParagraphText(statusText,
+                                                color: mutedTextColor),
+                                            const SizedBox(width: 8),
+                                            InkWell(
+                                              onTap: () {
+                                                showSetTimeBottomSheet(day);
+                                              },
+                                              child: HugeIcon(
+                                                icon: HugeIcons
+                                                    .strokeRoundedPencilEdit02,
+                                                color: Colors.grey,
+                                                size: 22.0,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
                                     ),
-                                    const SizedBox(width: 8),
-                                    InkWell(
-                                      onTap: () {
-                                        showSetTimeBottomSheet(day);
-                                      },
-                                      child: HugeIcon(
-                                        icon:
-                                            HugeIcons.strokeRoundedPencilEdit02,
-                                        color: Colors.grey,
-                                        size: 22.0,
-                                      ),
-                                    ),
+                                    spacer(),
                                   ],
-                                ),
-                              ],
-                            ),
-                            spacer(),
-                          ],
-                        );
-                      }).toList(),
-                    ),
+                                );
+                              }).toList(),
+                            );
+                    }),
                   ],
                 ),
               ),
