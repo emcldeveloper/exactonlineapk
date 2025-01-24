@@ -1,6 +1,7 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/pages/cart_page.dart';
+import 'package:e_online/pages/home_page_sections/all_products.dart';
 import 'package:e_online/pages/notifications_page.dart';
 import 'package:e_online/pages/profile_page.dart';
 import 'package:e_online/pages/search_page.dart';
@@ -13,6 +14,7 @@ import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -96,22 +98,22 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   spacer1(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: SizedBox(
-                      height: 230,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: filteredProducts.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 16.0),
-                            child: ProductCard(data: filteredProducts[index]),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
+                  // Padding(
+                  //   padding: const EdgeInsets.symmetric(horizontal: 16),
+                  //   child: SizedBox(
+                  //     height: 230,
+                  //     child: ListView.builder(
+                  //       scrollDirection: Axis.horizontal,
+                  //       itemCount: filteredProducts.length,
+                  //       itemBuilder: (context, index) {
+                  //         return Padding(
+                  //           padding: const EdgeInsets.only(right: 16.0),
+                  //           child: ProductCard(data: filteredProducts[index]),
+                  //         );
+                  //       },
+                  //     ),
+                  //   ),
+                  // ),
                   Container(
                     height: 8,
                     width: double.infinity,
@@ -145,26 +147,26 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   spacer1(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: SizedBox(
-                      height: 230,
-                      child: Builder(builder: (context) {
-                        var newProductList = List.of(filteredProducts)
-                          ..shuffle();
-                        return ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: filteredProducts.length,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 16.0),
-                              child: ProductCard(data: newProductList[index]),
-                            );
-                          },
-                        );
-                      }),
-                    ),
-                  ),
+                  // Padding(
+                  //   padding: const EdgeInsets.symmetric(horizontal: 16),
+                  //   child: SizedBox(
+                  //     height: 230,
+                  //     child: Builder(builder: (context) {
+                  //       var newProductList = List.of(filteredProducts)
+                  //         ..shuffle();
+                  //       return ListView.builder(
+                  //         scrollDirection: Axis.horizontal,
+                  //         itemCount: filteredProducts.length,
+                  //         itemBuilder: (context, index) {
+                  //           return Padding(
+                  //             padding: const EdgeInsets.only(right: 16.0),
+                  //             child: ProductCard(data: newProductList[index]),
+                  //           );
+                  //         },
+                  //       );
+                  //     }),
+                  //   ),
+                  // ),
                   Container(
                     height: 8,
                     width: double.infinity,
@@ -186,25 +188,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   spacer1(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 16.0,
-                        mainAxisSpacing: 2.0,
-                        childAspectRatio: 0.65,
-                      ),
-                      itemCount: filteredProducts.length,
-                      itemBuilder: (context, index) {
-                        return ProductCard(
-                            data: filteredProducts[index], height: 170);
-                      },
-                    ),
-                  ),
+                  AllProducts(),
                   spacer(),
                 ],
               ),
@@ -262,10 +246,10 @@ class _HomePageState extends State<HomePage> {
               onTap: () {
                 Get.to(const CartPage());
               },
-              child: HugeIcon(
-                icon: HugeIcons.strokeRoundedShoppingBag03,
+              child: const Icon(
+                Bootstrap.cart,
                 color: Colors.black,
-                size: 22.0,
+                size: 20.0,
               ),
             ),
             const SizedBox(width: 8),
@@ -273,20 +257,20 @@ class _HomePageState extends State<HomePage> {
                 onTap: () {
                   Get.to(SearchPage());
                 },
-                child: HugeIcon(
-                  icon: HugeIcons.strokeRoundedSearch01,
+                child: const Icon(
+                  Bootstrap.search,
                   color: Colors.black,
-                  size: 22.0,
+                  size: 20.0,
                 )),
             const SizedBox(width: 8),
             InkWell(
                 onTap: () {
                   Get.to(const NotificationsPage());
                 },
-                child: HugeIcon(
-                  icon: HugeIcons.strokeRoundedNotification01,
+                child: const Icon(
+                  Bootstrap.bell,
                   color: Colors.black,
-                  size: 22.0,
+                  size: 20.0,
                 )),
             const SizedBox(width: 8),
             InkWell(

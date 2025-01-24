@@ -1,8 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/widgets/seller_product_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:e_online/constants/colors.dart';
+import 'package:money_formatter/money_formatter.dart';
 
 class ShopProductCard extends StatefulWidget {
   final Map<String, dynamic> data;
@@ -62,6 +64,7 @@ class _ShopProductCardState extends State<ShopProductCard> {
 
   @override
   Widget build(BuildContext context) {
+    MoneyFormatter fmf = MoneyFormatter(amount: 12345678.9012345);
     return GestureDetector(
       onTap: () {
         _showEditBottomSheet();
@@ -72,35 +75,18 @@ class _ShopProductCardState extends State<ShopProductCard> {
         child: Row(
           children: [
             // Image Section
-            Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                image: (widget.data['imageUrl'] != null &&
-                        widget.data['imageUrl'] is List &&
-                        widget.data['imageUrl'].isNotEmpty)
-                    ? DecorationImage(
-                        image: AssetImage(widget.data['imageUrl'][0]),
-                        fit: BoxFit.cover,
-                      )
-                    : null,
-                color: primaryColor,
-              ),
-              child: (widget.data['imageUrl'] == null ||
-                      !(widget.data['imageUrl'] is List) ||
-                      widget.data['imageUrl'].isEmpty)
-                  ? Center(
-                      child: Icon(
-                        Icons.image_not_supported,
-                        color: primaryColor,
-                      ),
-                    )
-                  : null,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(5),
+              child: Container(
+                  width: 100,
+                  height: 100,
+                  child: widget.data['ProductImages'].length > 0
+                      ? CachedNetworkImage(
+                          fit: BoxFit.cover,
+                          imageUrl: widget.data['ProductImages'][0]["image"])
+                      : Container()),
             ),
-
             const SizedBox(width: 12),
-
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,7 +101,8 @@ class _ShopProductCardState extends State<ShopProductCard> {
                         child: Row(
                           children: [
                             ParagraphText(
-                              widget.data['price']?.toString() ?? "N/A",
+                              "TZS ${MoneyFormatter(amount: double.parse(widget.data['sellingPrice'])).output.withoutFractionDigits}" ??
+                                  "N/A",
                               fontWeight: FontWeight.bold,
                               fontSize: 16.0,
                             ),
@@ -128,22 +115,18 @@ class _ShopProductCardState extends State<ShopProductCard> {
                         ),
                       ),
                       const SizedBox(width: 4),
-                      Row(
-                        children: [
-                          const Icon(Icons.star, color: Colors.amber, size: 16),
-                          const SizedBox(width: 4),
-                          ParagraphText(
-                            widget.data['rating']?.toString() ?? "0",
-                            color: Colors.black,
-                          ),
-                        ],
+                      const Icon(Icons.star, color: Colors.amber, size: 16),
+                      const SizedBox(width: 4),
+                      ParagraphText(
+                        widget.data['rating']?.toString() ?? "0",
+                        color: Colors.black,
                       ),
                     ],
                   ),
                 ],
               ),
             ),
-            const SizedBox(width: 30),
+            const SizedBox(width: 10),
             Icon(
               Icons.arrow_forward_ios,
               color: mutedTextColor,

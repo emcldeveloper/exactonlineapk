@@ -30,6 +30,7 @@ class WayPage extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
+            backgroundColor: Colors.white,
             body: Center(
               child: CircularProgressIndicator(
                 color: Colors.black,
