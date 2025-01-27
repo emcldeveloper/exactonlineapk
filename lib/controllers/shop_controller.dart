@@ -142,33 +142,37 @@ class ShopController extends GetxController {
       throw Exception(e);
     }
   }
-
-  Future createShopCalendar(var payload) async {
-    try {
-      var response = await dio.post(
-        "/shop-calenders/",
-        data: payload,
-        options: Options(headers: {
-          "Authorization":
-              "Bearer ${await SharedPreferencesUtil.getAccessToken()}",
-        }),
-      );
-      var data = response.data;
-      print("Shop-Calendar created successfully: $data");
-      Get.snackbar("Success", "Shop-Calendar created successfully",
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-          icon: const HugeIcon(
-              icon: HugeIcons.strokeRoundedTick01, color: Colors.white));
-      return data;
-    } on DioException catch (e) {
-      Get.snackbar("Error", "Error creating Shop-Calendar",
-          backgroundColor: Colors.redAccent,
-          colorText: Colors.white,
-          icon: const HugeIcon(
-              icon: HugeIcons.strokeRoundedCancel02, color: Colors.white));
-      print("Error creating Shop-Calendar: ${e.response}");
-      throw Exception(e);
-    }
+  
+Future createShopCalendar(var payload) async {
+  try {
+    print(payload);
+    var response = await dio.post(
+      "/shop-calenders/",
+      data: payload,
+      options: Options(headers: {
+        "Authorization":
+            "Bearer ${await SharedPreferencesUtil.getAccessToken()}",
+      }),
+    );
+    var data = response.data;
+    print("Shop-Calendar created successfully: $data");
+    Get.snackbar("Success", "Shop-Calendar created successfully",
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        icon: const HugeIcon(
+            icon: HugeIcons.strokeRoundedTick01, color: Colors.white));
+    return data;
+  } on DioException catch (e) {
+    // Show a Snackbar with the error
+    Get.snackbar("Error", "Error creating Shop-Calendar",
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+        icon: const HugeIcon(
+            icon: HugeIcons.strokeRoundedCancel02, color: Colors.white));
+    print("Error creating Shop-Calendar: ${e.response}");
+    // Do not re-throw the exception to avoid crashing the app
+    return null;
   }
+}
+
 }

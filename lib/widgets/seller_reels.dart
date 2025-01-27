@@ -1,4 +1,3 @@
-
 import 'package:e_online/pages/reels_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -21,10 +20,7 @@ class ProductMasonryGrid extends StatelessWidget {
           crossAxisSpacing: 16,
           itemCount: productItems.length,
           itemBuilder: (context, index) {
-            return ReelCard(
-              data: productItems[index],
-              index: index,
-            );
+            return ReelCard(data: productItems[index]);
           },
         ),
       ),
