@@ -1,7 +1,11 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/constants/product_items.dart';
+import 'package:e_online/controllers/categories_controller.dart';
 import 'package:e_online/pages/cart_page.dart';
 import 'package:e_online/pages/home_page_sections/all_products.dart';
+import 'package:e_online/pages/home_page_sections/for_you_products.dart';
+import 'package:e_online/pages/home_page_sections/home_categories_products.dart';
+import 'package:e_online/pages/home_page_sections/new_arrival_products.dart';
 import 'package:e_online/pages/notifications_page.dart';
 import 'package:e_online/pages/profile_page.dart';
 import 'package:e_online/pages/search_page.dart';
@@ -31,18 +35,24 @@ class _HomePageState extends State<HomePage> {
     "assets/ads/ad3.jpg",
     "assets/ads/ad4.jpg",
   ];
+  Rx<List> categories = Rx<List>([]);
+
+  @override
+  void initState() {
+    CategoriesController()
+        .getCategories(page: 1, limit: 50, keyword: "")
+        .then((res) {
+      print(res);
+      categories.value = [
+        {"id": "All", "name": "All"}
+      ];
+      categories.value.addAll(res);
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final categories = [
-      "All",
-      "Electronics",
-      "Accessories",
-      "Clothes",
-      "Decorations",
-      "Appliances"
-    ];
-
     List<Map<String, dynamic>> filterProducts(String category) {
       if (category == "All") return productItems;
       return productItems
@@ -59,248 +69,237 @@ class _HomePageState extends State<HomePage> {
         return Center(child: Text("No $category Available"));
       }
 
-      return SingleChildScrollView(
-        child: SizedBox(
-          width: double.infinity,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AdsCarousel(),
-              spacer(),
-              carouselIndicator(),
-              spacer1(),
-              Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      return categories.value.length < 1
+          ? CircularProgressIndicator()
+          : SingleChildScrollView(
+              child: SizedBox(
+                width: double.infinity,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AdsCarousel(),
+                    spacer(),
+                    carouselIndicator(),
+                    spacer1(),
+                    Column(
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ParagraphText("New Arrival",
-                                fontWeight: FontWeight.bold, fontSize: 18.0),
-                            ParagraphText("Filtered products for you"),
-                          ],
-                        ),
-                        InkWell(
-                          onTap: () {
-                            Get.to(const SeeAllPage());
-                          },
-                          child: Icon(
-                            Icons.arrow_forward_ios,
-                            color: mutedTextColor,
-                            size: 16.0,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ParagraphText("New Arrival",
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18.0),
+                                  ParagraphText("Filtered products for you"),
+                                ],
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  Get.to(const SeeAllPage());
+                                },
+                                child: Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: mutedTextColor,
+                                  size: 16.0,
+                                ),
+                              )
+                            ],
                           ),
-                        )
-                      ],
-                    ),
-                  ),
-                  spacer1(),
-                  // Padding(
-                  //   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  //   child: SizedBox(
-                  //     height: 230,
-                  //     child: ListView.builder(
-                  //       scrollDirection: Axis.horizontal,
-                  //       itemCount: filteredProducts.length,
-                  //       itemBuilder: (context, index) {
-                  //         return Padding(
-                  //           padding: const EdgeInsets.only(right: 16.0),
-                  //           child: ProductCard(data: filteredProducts[index]),
-                  //         );
-                  //       },
-                  //     ),
-                  //   ),
-                  // ),
-                  Container(
-                    height: 8,
-                    width: double.infinity,
-                    color: const Color.fromARGB(255, 242, 242, 242),
-                  ),
-                  spacer1(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ParagraphText("For You",
-                                fontWeight: FontWeight.bold, fontSize: 18.0),
-                            ParagraphText("Filtered products for you"),
-                          ],
                         ),
-                        InkWell(
-                          onTap: () {
-                            Get.to(const SeeAllPage());
-                          },
-                          child: Icon(
-                            Icons.arrow_forward_ios,
-                            color: mutedTextColor,
-                            size: 16.0,
+                        spacer1(),
+                        const NewArrivalProducts(),
+                        Container(
+                          height: 8,
+                          width: double.infinity,
+                          color: const Color.fromARGB(255, 242, 242, 242),
+                        ),
+                        spacer1(),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ParagraphText("For You",
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18.0),
+                                  ParagraphText("Filtered products for you"),
+                                ],
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  Get.to(const SeeAllPage());
+                                },
+                                child: Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: mutedTextColor,
+                                  size: 16.0,
+                                ),
+                              )
+                            ],
                           ),
-                        )
-                      ],
-                    ),
-                  ),
-                  spacer1(),
-                  // Padding(
-                  //   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  //   child: SizedBox(
-                  //     height: 230,
-                  //     child: Builder(builder: (context) {
-                  //       var newProductList = List.of(filteredProducts)
-                  //         ..shuffle();
-                  //       return ListView.builder(
-                  //         scrollDirection: Axis.horizontal,
-                  //         itemCount: filteredProducts.length,
-                  //         itemBuilder: (context, index) {
-                  //           return Padding(
-                  //             padding: const EdgeInsets.only(right: 16.0),
-                  //             child: ProductCard(data: newProductList[index]),
-                  //           );
-                  //         },
-                  //       );
-                  //     }),
-                  //   ),
-                  // ),
-                  Container(
-                    height: 8,
-                    width: double.infinity,
-                    color: const Color.fromARGB(255, 242, 242, 242),
-                  ),
-                  spacer1(),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        HeadingText("All Products"),
-                        ParagraphText(
-                          "See All",
-                          color: mutedTextColor,
-                          decoration: TextDecoration.underline,
                         ),
+                        spacer1(),
+                        ForYouProducts(),
+                        Container(
+                          height: 8,
+                          width: double.infinity,
+                          color: const Color.fromARGB(255, 242, 242, 242),
+                        ),
+                        spacer1(),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              HeadingText("All Products"),
+                              ParagraphText(
+                                "See All",
+                                color: mutedTextColor,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ],
+                          ),
+                        ),
+                        spacer1(),
+                        AllProducts(),
+                        spacer(),
                       ],
                     ),
-                  ),
-                  spacer1(),
-                  AllProducts(),
-                  spacer(),
-                ],
+                  ],
+                ),
               ),
-            ],
-          ),
-        ),
-      );
+            );
     }
 
-    return DefaultTabController(
-      length: categories.length,
-      child: Scaffold(
-        backgroundColor: mainColor,
-        appBar: AppBar(
-          backgroundColor: mainColor,
-          elevation: 0,
-          leading: Container(),
-          leadingWidth: 1.0,
-          title: HeadingText("ExactOnline"),
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(kToolbarHeight),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: TabBar(
-                tabAlignment: TabAlignment.start,
-                dividerColor: const Color.fromARGB(255, 234, 234, 234),
-                isScrollable: true,
-                labelColor: Colors.black,
-                unselectedLabelColor: Colors.black.withOpacity(0.5),
-                labelStyle: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-                unselectedLabelStyle: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.normal,
-                ),
-                indicatorSize: TabBarIndicatorSize.label,
-                indicatorColor: Colors.black,
-                padding: const EdgeInsets.symmetric(horizontal: 1),
-                labelPadding: const EdgeInsets.symmetric(horizontal: 16),
-                tabs: categories
-                    .map((category) => Tab(
-                          child: Text(
-                            category,
-                            style: const TextStyle(fontSize: 15),
-                          ),
-                        ))
-                    .toList(),
-              ),
-            ),
-          ),
-          actions: [
-            InkWell(
-              onTap: () {
-                Get.to(const CartPage());
-              },
-              child: const Icon(
-                Bootstrap.cart,
-                color: Colors.black,
-                size: 20.0,
-              ),
-            ),
-            const SizedBox(width: 8),
-            InkWell(
-                onTap: () {
-                  Get.to(SearchPage());
-                },
-                child: const Icon(
-                  Bootstrap.search,
-                  color: Colors.black,
-                  size: 20.0,
-                )),
-            const SizedBox(width: 8),
-            InkWell(
-                onTap: () {
-                  Get.to(const NotificationsPage());
-                },
-                child: const Icon(
-                  Bootstrap.bell,
-                  color: Colors.black,
-                  size: 20.0,
-                )),
-            const SizedBox(width: 8),
-            InkWell(
-              onTap: () {
-                Get.to(const ProfilePage());
-              },
-              child: ClipOval(
-                child: Container(
-                  height: 30,
-                  width: 30,
-                  color: secondaryColor,
-                  child: Image.asset(
-                    "assets/images/avatar.png",
-                    height: 30,
-                    width: 30,
-                    fit: BoxFit.cover,
+    return GetX<CategoriesController>(
+        init: CategoriesController(),
+        builder: (find) {
+          return DefaultTabController(
+            length: categories.value.length,
+            child: Scaffold(
+              backgroundColor: mainColor,
+              appBar: AppBar(
+                backgroundColor: mainColor,
+                elevation: 0,
+                leading: Container(),
+                leadingWidth: 1.0,
+                title: HeadingText("ExactOnline"),
+                bottom: PreferredSize(
+                  preferredSize: const Size.fromHeight(kToolbarHeight),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Builder(builder: (context) {
+                      return TabBar(
+                        tabAlignment: TabAlignment.start,
+                        dividerColor: const Color.fromARGB(255, 234, 234, 234),
+                        isScrollable: true,
+                        labelColor: Colors.black,
+                        unselectedLabelColor: Colors.black.withOpacity(0.5),
+                        labelStyle: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        unselectedLabelStyle: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.normal,
+                        ),
+                        indicatorSize: TabBarIndicatorSize.label,
+                        indicatorColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(horizontal: 1),
+                        labelPadding:
+                            const EdgeInsets.symmetric(horizontal: 16),
+                        tabs: categories.value
+                            .map((category) => Tab(
+                                  child: Text(
+                                    category["name"],
+                                    style: const TextStyle(fontSize: 15),
+                                  ),
+                                ))
+                            .toList(),
+                      );
+                    }),
                   ),
                 ),
+                actions: [
+                  InkWell(
+                    onTap: () {
+                      Get.to(const CartPage());
+                    },
+                    child: const Icon(
+                      Bootstrap.cart,
+                      color: Colors.black,
+                      size: 20.0,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  InkWell(
+                      onTap: () {
+                        Get.to(SearchPage());
+                      },
+                      child: const Icon(
+                        Bootstrap.search,
+                        color: Colors.black,
+                        size: 20.0,
+                      )),
+                  const SizedBox(width: 8),
+                  InkWell(
+                      onTap: () {
+                        Get.to(const NotificationsPage());
+                      },
+                      child: const Icon(
+                        Bootstrap.bell,
+                        color: Colors.black,
+                        size: 20.0,
+                      )),
+                  const SizedBox(width: 8),
+                  InkWell(
+                    onTap: () {
+                      Get.to(const ProfilePage());
+                    },
+                    child: ClipOval(
+                      child: Container(
+                        height: 30,
+                        width: 30,
+                        color: secondaryColor,
+                        child: Image.asset(
+                          "assets/images/avatar.png",
+                          height: 30,
+                          width: 30,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                ],
               ),
+              body: categories.value.isEmpty
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                      color: Colors.black,
+                    ))
+                  : TabBarView(
+                      children: categories.value.map((category) {
+                        return category["id"] == "All"
+                            ? buildProductList(category["id"])
+                            : Padding(
+                                padding: const EdgeInsets.only(top: 10),
+                                child: HomeCategoriesProducts(
+                                  category: category["id"],
+                                ),
+                              );
+                      }).toList(),
+                    ),
             ),
-            const SizedBox(width: 16),
-          ],
-        ),
-        body: TabBarView(
-          children: categories.map((category) {
-            return buildProductList(category);
-          }).toList(),
-        ),
-      ),
-    );
+          );
+        });
   }
 
   carouselIndicator() {

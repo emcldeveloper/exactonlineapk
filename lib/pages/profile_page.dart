@@ -14,6 +14,7 @@ import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -36,32 +37,32 @@ class _ProfilePageState extends State<ProfilePage> {
     final List<Map<String, dynamic>> settingItems = [
       if (hasShop)
         {
-          'icon': HugeIcons.strokeRoundedStore01,
+          'icon': Bootstrap.cart,
           'title': 'My Shop',
           'page': const FreeTrialPage(),
         },
       {
-        'icon': HugeIcons.strokeRoundedShoppingBag02,
+        'icon': Bootstrap.bag,
         'title': 'My Orders',
         'page': const MyOrdersPage(),
       },
       {
-        'icon': HugeIcons.strokeRoundedEditUser02,
+        'icon': Bootstrap.house_add_fill,
         'title': 'Edit Profile',
         'page': EditProfilePage(),
       },
       {
-        'icon': HugeIcons.strokeRoundedCustomerSupport,
+        'icon': Icons.support,
         'title': 'Customer Support',
         'page': const CustomerSupportPage(),
       },
       {
-        'icon': HugeIcons.strokeRoundedFileValidation,
+        'icon': Bootstrap.file,
         'title': 'Terms and Conditions',
         'page': const TermsConditionsPage(),
       },
       {
-        'icon': HugeIcons.strokeRoundedLegalDocument01,
+        'icon': Bootstrap.file_bar_graph,
         'title': 'Privacy Policy',
         'page': const PrivacyPolicy(),
       },
@@ -142,10 +143,10 @@ class _ProfilePageState extends State<ProfilePage> {
                       padding: EdgeInsets.symmetric(vertical: 8.0),
                       child: Row(
                         children: [
-                          HugeIcon(
-                            icon: item['icon'],
+                          Icon(
+                            item['icon'],
                             color: Colors.black,
-                            size: 22.0,
+                            size: 20.0,
                           ),
                           const SizedBox(width: 10),
                           Expanded(
