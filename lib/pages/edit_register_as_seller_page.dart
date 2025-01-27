@@ -450,11 +450,6 @@ class _EditRegisterAsSellerPageState extends State<EditRegisterAsSellerPage> {
                     onTap: () async {
                       if (_formKey.currentState?.validate() == true) {
                         isLoading.value = true;
-                        if (_files.isEmpty) {
-                          print("Please select at least one file.");
-                          isLoading.value = false;
-                          return;
-                        }
                         // Create the payload for the initial request
                         var formData = dio.FormData.fromMap({
                           "UserId": userId.isNotEmpty ? userId : "unknown",
@@ -499,7 +494,9 @@ class _EditRegisterAsSellerPageState extends State<EditRegisterAsSellerPage> {
                               icon: HugeIcon(
                                   icon: HugeIcons.strokeRoundedTick01,
                                   color: Colors.white));
-                          Get.offAll(() => SettingMyshopPage(from: "formPage",));
+                          Get.offAll(() => SettingMyshopPage(
+                                from: "formPage",
+                              ));
                         } catch (e) {
                           isLoading.value = false;
                           Get.snackbar("Error", "Error creating shop account",

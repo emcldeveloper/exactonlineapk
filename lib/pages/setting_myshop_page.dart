@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/controllers/location_controller.dart';
 import 'package:e_online/controllers/shop_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
@@ -475,11 +476,12 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Row(
                       children: [
-                        const CircleAvatar(
+                        CircleAvatar(
                           radius: 20,
-                          backgroundImage: AssetImage(
-                            'assets/images/avatar.png',
-                          ),
+                          backgroundImage: shop['shopImage'] != null &&
+                                  shop['shopImage'].isNotEmpty
+                              ? CachedNetworkImageProvider(shop['shopImage'])
+                              : const AssetImage('assets/images/avatar.png'),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
