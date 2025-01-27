@@ -36,21 +36,12 @@ class _ProductPageState extends State<ProductPage> {
   void initState() {
     super.initState();
     _loadFavoriteStatus();
-    productImages = _initializeImages();
-    selectedImage = productImages.isNotEmpty ? productImages.first : '';
-  }
-
-  List<String> _initializeImages() {
-    if (widget.productData['images'] != null) {
-      return List<String>.from(widget.productData['images']);
-    } else if (widget.productData['imageUrl'] != null) {
-      if (widget.productData['imageUrl'] is List) {
-        return List<String>.from(widget.productData['imageUrl']);
-      } else if (widget.productData['imageUrl'] is String) {
-        return [widget.productData['imageUrl'] as String];
-      }
-    }
-    return [];
+    // selectedImage = productImages.isNotEmpty ? productImages.first : '';
+    var image = List.from(widget.productData["ProductImages"])
+        .firstWhere((element) => element["id"] == selectedImage);
+    print(widget.productData);
+    print(image);
+    print(selectedImage);
   }
 
   void _updateSelectedImage(String image) {
@@ -277,13 +268,15 @@ class _ProductPageState extends State<ProductPage> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: CachedNetworkImage(
-                      imageUrl: widget.productData["ProductImages"].firstWhere(
-                          (img) => img["id"] == selectedImage)["image"],
+                      imageUrl: List.from(widget.productData["ProductImages"])
+                          .firstWhere((element) =>
+                              element["id"] == selectedImage)?["image"],
                       width: double.infinity,
                       fit: BoxFit.cover,
                     ),
                   ),
                   // Favorite icon container always on top of the image
+                  Container(),
                   Positioned(
                     top: 15,
                     right: 15,
