@@ -93,6 +93,11 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Extract shop data
+    final shopData = widget.reels[currentIndex]['Shop'] ?? {};
+    final shopName = shopData['name'] ?? "No Name";
+    final shopImage = shopData['image'];
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: PageView.builder(
@@ -109,9 +114,13 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                 child: _videoController.value.isInitialized
                     ? VideoPlayer(_videoController)
                     : Center(
-                        child: CircularProgressIndicator(
-                        color: Colors.white,
-                      )),
+                        child: _videoController.value.hasError
+                            ? Text(
+                                "Failed to load video",
+                                style: TextStyle(color: Colors.white),
+                              )
+                            : CircularProgressIndicator(color: Colors.white),
+                      ),
               ),
               // Back Button
               Positioned(
@@ -214,20 +223,23 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // User info
+                        // Shop info
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Row(
                               children: [
-                                const CircleAvatar(
-                                  radius: 16,
-                                  backgroundImage:
-                                      AssetImage('assets/images/avatar.png'),
+                                CircleAvatar(
+                                  radius: 12,
+                                  backgroundImage: shopImage != null
+                                      ? NetworkImage(shopImage)
+                                      : const AssetImage(
+                                              'assets/images/avatar.png')
+                                          as ImageProvider,
                                 ),
                                 const SizedBox(width: 8),
                                 ParagraphText(
-                                  reel['title'] ?? 'Default User',
+                                  shopName ?? 'Shop',
                                   color: Colors.white,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
@@ -244,8 +256,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                           ],
                         ),
                         ParagraphText(
-                          reel['description'] ??
-                              "Lorem ipsum dolor sit amet consectetur.",
+                          reel['caption'] ?? "No caption.",
                           color: Colors.white,
                         ),
                         spacer1(),
@@ -269,7 +280,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                                       ),
                                       const SizedBox(width: 4),
                                       ParagraphText(
-                                        '12k',
+                                        reel['likes'].toString(),
                                         color: Colors.white,
                                         fontSize: 13,
                                         fontWeight: FontWeight.bold,
@@ -285,7 +296,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                                       ),
                                       const SizedBox(width: 4),
                                       ParagraphText(
-                                        '200',
+                                        reel['views'].toString(),
                                         color: Colors.white,
                                         fontSize: 13,
                                         fontWeight: FontWeight.bold,

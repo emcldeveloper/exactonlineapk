@@ -1,5 +1,4 @@
 import 'package:e_online/constants/colors.dart';
-import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/controllers/reel_controller.dart';
 import 'package:e_online/pages/preview_reel_page.dart';
 import 'package:e_online/widgets/following.dart';
@@ -22,9 +21,7 @@ class ReelsPage extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: mainColor,
           elevation: 0,
-          title: HeadingText(
-            "Reels",
-          ),
+          title: HeadingText("Reels"),
           bottom: const PreferredSize(
             preferredSize: Size.fromHeight(48),
             child: Align(
@@ -33,7 +30,7 @@ class ReelsPage extends StatelessWidget {
                 tabAlignment: TabAlignment.start,
                 isScrollable: true,
                 labelColor: Colors.black,
-                dividerColor: const Color.fromARGB(255, 234, 234, 234),
+                dividerColor: Color.fromARGB(255, 234, 234, 234),
                 unselectedLabelColor: Colors.grey,
                 labelStyle: TextStyle(
                   fontSize: 15,
@@ -50,12 +47,10 @@ class ReelsPage extends StatelessWidget {
                   ),
                   insets: EdgeInsets.symmetric(horizontal: 0),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 1),
-                labelPadding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: EdgeInsets.symmetric(horizontal: 1),
+                labelPadding: EdgeInsets.symmetric(horizontal: 16),
                 tabs: [
-                  Tab(
-                    text: "All",
-                  ),
+                  Tab(text: "All"),
                   Tab(text: "Following"),
                 ],
               ),
@@ -64,9 +59,7 @@ class ReelsPage extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
-            // All Tab
-            ProductMasonryGrid(productItems: productItems),
-            // Following Tab
+            ProductMasonryGrid(),
             ReelsFollowingTab(),
           ],
         ),
@@ -76,9 +69,7 @@ class ReelsPage extends StatelessWidget {
 }
 
 class ProductMasonryGrid extends StatelessWidget {
-  final List<Map<String, dynamic>> productItems;
-
-  const ProductMasonryGrid({required this.productItems, super.key});
+  const ProductMasonryGrid({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +85,11 @@ class ProductMasonryGrid extends StatelessWidget {
           return const Center(child: Text("No reels available."));
         }
 
-        final List reels = snapshot.data;
+        final List<Map<String, dynamic>> reels =
+            (snapshot.data as List<dynamic>)
+                .map((item) => item as Map<String, dynamic>)
+                .toList();
+
         return Padding(
           padding: const EdgeInsets.all(16.0),
           child: ConstrainedBox(
@@ -107,13 +102,7 @@ class ProductMasonryGrid extends StatelessWidget {
               itemCount: reels.length,
               itemBuilder: (context, index) {
                 final reel = reels[index];
-
-                // Check for 'ReelVideo' safely
-                if (reel['ReelVideo'] != null && reel['ReelVideo'].isNotEmpty) {
-                  return ReelCard(data: reel);
-                } else {
-                  return Container();
-                }
+                return ReelCard(data: reel);
               },
             ),
           ),
@@ -122,38 +111,35 @@ class ProductMasonryGrid extends StatelessWidget {
     );
   }
 }
-//     return Padding(
-//       padding: const EdgeInsets.all(16.0),
-//       child: ConstrainedBox(
-//         constraints:
-//             BoxConstraints(maxHeight: MediaQuery.of(context).size.height - 200),
-//         child: MasonryGridView.count(
-//           crossAxisCount: 2,
-//           mainAxisSpacing: 16,
-//           crossAxisSpacing: 16,
-//           itemCount: productItems.length,
-//           itemBuilder: (context, index) {
-//             return ReelCard(
-//               data: productItems[index],
-//               index: index,
-//             );
-//           },
-//         ),
-//       ),
-//     );
-//   }
-// }
 
 class ReelCard extends StatelessWidget {
   final Map<String, dynamic> data;
 
-  const ReelCard({
-    required this.data,
-    super.key,
-  });
+  ReelCard({required this.data, super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Extract shop data
+    final shopData = data['Shop'] ?? {};
+    print(shopData);
+    final shopName = shopData['name'] ?? "No Name";
+    final shopImage = shopData['image'];
+
+    String formatDuration(String duration) {
+      try {
+        // Split the duration string into hours, minutes, and seconds
+        final parts = duration.split(':');
+        if (parts.length == 3) {
+          final minutes = parts[1]; // Extract minutes
+          final seconds = parts[2]; // Extract seconds
+          return '$minutes:$seconds'; // Return formatted as MM:SS
+        }
+        return '00:00';
+      } catch (e) {
+        return '00:00';
+      }
+    }
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
@@ -161,7 +147,6 @@ class ReelCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Video/Image Container with Duration
           Stack(
             children: [
               GestureDetector(
@@ -169,19 +154,16 @@ class ReelCard extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          PreviewReelPage(reels: [data, data]),
+                      builder: (context) => PreviewReelPage(reels: [data]),
                     ),
                   );
                 },
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: data['ReelVideo'].isNotEmpty
+                  child: data['videoUrl'].isNotEmpty
                       ? Image.network(
-                          data[
-                              'thumbnailUrl'], // Ensure `thumbnailUrl` exists in your API response
+                          data['thumbnail'] ?? '',
                           fit: BoxFit.cover,
-                          height: 200,
                           width: double.infinity,
                           errorBuilder: (context, error, stackTrace) => Icon(
                             Icons.broken_image,
@@ -195,18 +177,6 @@ class ReelCard extends StatelessWidget {
                           color: Colors.grey,
                         ),
                 ),
-
-                // child: ClipRRect(
-                //   borderRadius: BorderRadius.circular(12),
-                //   child: Image.asset(
-                //     (data['imageUrl'] as List<String>).isNotEmpty
-                //         ? (data['imageUrl'] as List<String>).first
-                //         : "assets/images/defaultImage.png",
-                //     fit: BoxFit.cover,
-                //     height: index.isEven ? 280 : 200,
-                //     width: double.infinity,
-                //   ),
-                // ),
               ),
               // Duration indicator
               Positioned(
@@ -219,8 +189,8 @@ class ReelCard extends StatelessWidget {
                     color: Colors.black.withOpacity(0.7),
                     borderRadius: BorderRadius.circular(4),
                   ),
-                  child: const Text(
-                    '0:30',
+                  child: Text(
+                    formatDuration(data['duration'] ?? '00:00'),
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 12,
@@ -238,26 +208,29 @@ class ReelCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ParagraphText(
-                  data['description'] ?? 'Lorem ipsum dolor sit amet constur.',
+                  data['caption'] ?? 'No caption.',
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   fontSize: 14,
                 ),
                 spacer(),
-                // User Info and Likes
-                const Row(
+                // Shop Info and Likes
+                Row(
                   children: [
                     // Profile Picture
                     CircleAvatar(
                       radius: 12,
-                      backgroundImage: AssetImage('assets/images/avatar.png'),
+                      backgroundImage: shopImage != null
+                          ? NetworkImage(shopImage)
+                          : const AssetImage('assets/images/avatar.png')
+                              as ImageProvider,
                     ),
-                    SizedBox(width: 8),
-                    // Username
+                    const SizedBox(width: 8),
+                    // Shopname
                     Expanded(
                       child: Text(
-                        'Diana Mwakaponda',
-                        style: TextStyle(
+                        shopName,
+                        style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
@@ -267,15 +240,15 @@ class ReelCard extends StatelessWidget {
                     // Likes
                     Row(
                       children: [
-                        HugeIcon(
+                        const HugeIcon(
                           icon: HugeIcons.strokeRoundedFavourite,
                           color: Colors.black,
                           size: 14.0,
                         ),
-                        SizedBox(width: 4),
+                        const SizedBox(width: 4),
                         Text(
-                          '12k',
-                          style: TextStyle(
+                          data['likes'].toString(),
+                          style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                           ),

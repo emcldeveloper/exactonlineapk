@@ -216,7 +216,7 @@ class _MyShopPageState extends State<MyShopPage> {
       case 0:
         return ShopProducts();
       case 1:
-        return ProductMasonryGrid(productItems: productItems);
+        return ProductMasonryGrid();
       case 2:
         return SingleChildScrollView(
           child: Column(
