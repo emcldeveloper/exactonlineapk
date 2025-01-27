@@ -597,6 +597,8 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                           var response =
                               await shopController.createShop(payload);
                           var shopId = response['body']["id"];
+                          //add shop to shops in user payload
+                          userController.user["Shops"] = [response['body']];
 
                           // Send files one by one
                           for (var file in _files) {

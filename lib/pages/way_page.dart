@@ -46,7 +46,7 @@ class WayPage extends StatelessWidget {
           return const MainPage();
         }
 
-        return LoginPage();
+        return const LoginPage();
       },
     );
   }

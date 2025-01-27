@@ -47,22 +47,22 @@ class _ProfilePageState extends State<ProfilePage> {
         'page': const MyOrdersPage(),
       },
       {
-        'icon': Bootstrap.house_add_fill,
+        'icon': Icons.edit_outlined,
         'title': 'Edit Profile',
         'page': EditProfilePage(),
       },
       {
-        'icon': Icons.support,
+        'icon': Icons.support_agent_outlined,
         'title': 'Customer Support',
-        'page': const CustomerSupportPage(),
+        'page': FontAwesome.circle_question,
       },
       {
-        'icon': Bootstrap.file,
+        'icon': Icons.assignment_outlined,
         'title': 'Terms and Conditions',
         'page': const TermsConditionsPage(),
       },
       {
-        'icon': Bootstrap.file_bar_graph,
+        'icon': Icons.privacy_tip_outlined,
         'title': 'Privacy Policy',
         'page': const PrivacyPolicy(),
       },

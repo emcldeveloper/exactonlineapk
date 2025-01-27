@@ -47,100 +47,55 @@ class _MainPageState extends State<MainPage> {
           BottomNavigationBarItem(
             icon: Padding(
               padding: const EdgeInsets.only(bottom: 6, top: 6),
-              child: Opacity(
-                opacity: 0.5,
-                child: Image.asset(
-                  "assets/icons/home-2.png",
-                  width: 22.0,
-                ),
-              ),
+              child: Icon(Icons.home),
             ),
             activeIcon: Padding(
               padding: const EdgeInsets.only(bottom: 6, top: 6),
-              child: Image.asset(
-                "assets/icons/home-1.png",
-                width: 22.0,
-              ),
+              child: Icon(Icons.home_filled),
             ),
             label: "Home",
           ),
           BottomNavigationBarItem(
             icon: Padding(
               padding: const EdgeInsets.only(bottom: 6, top: 6),
-              child: Opacity(
-                opacity: 0.5,
-                child: Image.asset(
-                  "assets/icons/trend-up-1.png",
-                  width: 22.0,
-                ),
-              ),
+              child: Icon(Icons.movie_outlined),
             ),
             activeIcon: Padding(
               padding: const EdgeInsets.only(bottom: 6, top: 6),
-              child: Image.asset(
-                "assets/icons/trend-up-2.png",
-                width: 22.0,
-              ),
+              child: Icon(Icons.movie),
             ),
             label: "Reels",
           ),
           BottomNavigationBarItem(
             icon: Padding(
               padding: const EdgeInsets.only(bottom: 6, top: 6),
-              child: Opacity(
-                opacity: 0.5,
-                child: Image.asset(
-                  "assets/icons/message-1.png",
-                  width: 22.0,
-                ),
-              ),
+              child: Icon(Icons.chat_bubble_outline),
             ),
             activeIcon: Padding(
               padding: const EdgeInsets.only(bottom: 6, top: 6),
-              child: Image.asset(
-                "assets/icons/message-2.png",
-                width: 22.0,
-              ),
+              child: Icon(Icons.chat_bubble),
             ),
             label: "Chats",
           ),
           BottomNavigationBarItem(
             icon: Padding(
               padding: const EdgeInsets.only(bottom: 6, top: 6),
-              child: Opacity(
-                opacity: 0.5,
-                child: Image.asset(
-                  "assets/icons/heart.png",
-                  width: 22.0,
-                ),
-              ),
+              child: Icon(Icons.favorite_outline),
             ),
             activeIcon: Padding(
               padding: const EdgeInsets.only(bottom: 6, top: 6),
-              child: Image.asset(
-                "assets/icons/favorite.png",
-                width: 22.0,
-              ),
+              child: Icon(Icons.favorite),
             ),
-            label: "Favourites",
+            label: "Favorites",
           ),
           BottomNavigationBarItem(
             icon: Padding(
               padding: const EdgeInsets.only(bottom: 6, top: 6),
-              child: Opacity(
-                opacity: 0.5,
-                child: Image.asset(
-                  "assets/icons/person-1.png",
-                  width: 22.0,
-                ),
-              ),
+              child: Icon(Icons.person_2_outlined),
             ),
             activeIcon: Padding(
               padding: const EdgeInsets.only(bottom: 6, top: 6),
-              child: Image.asset(
-                "assets/icons/person-2.png",
-                width: 22.0,
-              ),
+              child: Icon(Icons.person_2),
             ),
             label: "Profile",
           ),
