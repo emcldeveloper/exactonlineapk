@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/pages/cart_page.dart';
 import 'package:e_online/pages/chat_page.dart';
+import 'package:e_online/utils/convert_to_money_format.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
@@ -27,7 +29,7 @@ class ProductPage extends StatefulWidget {
 
 class _ProductPageState extends State<ProductPage> {
   late bool isFavorite = false;
-  late String selectedImage;
+  late String selectedImage = widget.productData["ProductImages"][0]["id"];
   late List<String> productImages;
 
   @override
@@ -235,10 +237,10 @@ class _ProductPageState extends State<ProductPage> {
             onTap: () {
               Get.to(CartPage());
             },
-            child: HugeIcon(
-              icon: HugeIcons.strokeRoundedShoppingBag01,
+            child: Icon(
+              Bootstrap.bag,
               color: Colors.black,
-              size: 22.0,
+              size: 20.0,
             ),
           ),
           SizedBox(
@@ -246,10 +248,10 @@ class _ProductPageState extends State<ProductPage> {
           ),
           InkWell(
             onTap: () {},
-            child: HugeIcon(
-              icon: HugeIcons.strokeRoundedShare08,
+            child: Icon(
+              Bootstrap.share,
               color: Colors.black,
-              size: 22.0,
+              size: 20.0,
             ),
           ),
           SizedBox(
@@ -274,17 +276,11 @@ class _ProductPageState extends State<ProductPage> {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: Image.asset(
-                      selectedImage,
+                    child: CachedNetworkImage(
+                      imageUrl: widget.productData["ProductImages"].firstWhere(
+                          (img) => img["id"] == selectedImage)["image"],
                       width: double.infinity,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          width: double.infinity,
-                          color: Colors.grey[300],
-                          child: const Icon(Icons.error),
-                        );
-                      },
                     ),
                   ),
                   // Favorite icon container always on top of the image
@@ -311,30 +307,33 @@ class _ProductPageState extends State<ProductPage> {
                 ],
               ),
               spacer(),
-              if (productImages.isNotEmpty)
+              if (widget.productData["ProductImages"].isNotEmpty)
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
-                    children: productImages.map((image) {
-                      final isSelected = image == selectedImage;
+                    children: widget.productData["ProductImages"]
+                        .map<Widget>((image) {
+                      final isSelected = image["id"] == selectedImage;
                       return GestureDetector(
-                        onTap: () => _updateSelectedImage(image),
+                        onTap: () {
+                          _updateSelectedImage(image["id"]);
+                        },
                         child: Container(
                           margin: const EdgeInsets.only(right: 8.0),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             border: isSelected
-                                ? Border.all(color: mutedTextColor, width: 2)
+                                ? Border.all(color: Colors.black, width: 2)
                                 : null,
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.all(5.0),
+                            padding: const EdgeInsets.all(2.0),
                             child: ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: Image.asset(
-                                image,
-                                height: 20,
-                                width: 20,
+                              borderRadius: BorderRadius.circular(5),
+                              child: CachedNetworkImage(
+                                imageUrl: image["image"],
+                                height: 50,
+                                width: 50,
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -352,11 +351,12 @@ class _ProductPageState extends State<ProductPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         ParagraphText(
-                          widget.productData['title'] ?? '',
+                          widget.productData['name'] ?? '',
                           fontWeight: FontWeight.bold,
                           fontSize: 25.0,
                         ),
-                        ParagraphText(widget.productData['price'] ?? '',
+                        ParagraphText(
+                            "TZS ${toMoneyFormmat(widget.productData['sellingPrice'])}",
                             fontSize: 16.0),
                       ],
                     ),
@@ -391,7 +391,7 @@ class _ProductPageState extends State<ProductPage> {
               ),
               spacer(),
               ParagraphText(
-                "Lorem ipsum dolor sit amet consectetur. Congue gravida ullamcorper ac diam eget facilisis tincidunt. Cursus massa etiam tempor magnis.",
+                widget.productData['description'],
               ),
               spacer1(),
               ParagraphText(
@@ -444,19 +444,19 @@ class _ProductPageState extends State<ProductPage> {
                 ],
               ),
               spacer1(),
-              SizedBox(
-                height: 240,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: relatedItems.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 16.0),
-                      child: ProductCard(data: relatedItems[index]),
-                    );
-                  },
-                ),
-              ),
+              // SizedBox(
+              //   height: 240,
+              //   child: ListView.builder(
+              //     scrollDirection: Axis.horizontal,
+              //     itemCount: relatedItems.length,
+              //     itemBuilder: (context, index) {
+              //       return Padding(
+              //         padding: const EdgeInsets.only(right: 16.0),
+              //         child: ProductCard(data: relatedItems[index]),
+              //       );
+              //     },
+              //   ),
+              // ),
               spacer1(),
               customButton(
                 onTap: () => Get.to(() => const CartPage()),

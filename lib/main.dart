@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: "ExactOnline",
-      theme: ThemeData(textTheme: GoogleFonts.robotoTextTheme()),
+      theme: ThemeData(textTheme: GoogleFonts.interTextTheme()),
       home: FutureBuilder(
         future: Future.delayed(const Duration(seconds: 4)),
         builder: (context, snapshot) {
@@ -44,14 +44,14 @@ class EntryPoint extends StatelessWidget {
     return FutureBuilder<bool>(
       future: _isOnboardingComplete(),
       builder: (context, snapshot) {
-         if (snapshot.connectionState == ConnectionState.waiting) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
             body: Center(
               child: CircularProgressIndicator(),
             ),
           );
         }
-      var result = snapshot.requireData;
+        var result = snapshot.requireData;
         if (result == true) {
           return WayPage();
         }

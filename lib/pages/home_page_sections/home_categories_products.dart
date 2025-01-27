@@ -4,19 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 
-class AllProducts extends StatefulWidget {
-  const AllProducts({super.key});
+class HomeCategoriesProducts extends StatefulWidget {
+  String? category;
+  HomeCategoriesProducts({super.key, this.category});
 
   @override
-  State<AllProducts> createState() => _AllProductsState();
+  State<HomeCategoriesProducts> createState() => _HomeCategoriesProductsState();
 }
 
-class _AllProductsState extends State<AllProducts> {
+class _HomeCategoriesProductsState extends State<HomeCategoriesProducts> {
   Rx<List> products = Rx<List>([]);
   @override
   void initState() {
     ProductController()
-        .getProducts(page: 1, limit: 20, keyword: "")
+        .getProducts(page: 1, limit: 20, keyword: "", category: widget.category)
         .then((res) {
       products.value =
           res.where((item) => item["ProductImages"].length > 0).toList();
@@ -27,7 +28,7 @@ class _AllProductsState extends State<AllProducts> {
   @override
   Widget build(BuildContext context) {
     return Obx(
-      () => products.value.isEmpty
+      () => products.value.length < 1
           ? Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: GridView.builder(

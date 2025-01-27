@@ -26,17 +26,42 @@ class ProductController extends GetxController {
     return data;
   }
 
-  Future<List> getProducts({page, limit, keyword}) async {
+  Future<List> getProducts({page, limit, keyword, category}) async {
     // print(shopId);
     var response = await dio.get(
-        "/products/?page=${page ?? 1}&limit=${limit ?? 10}&keyword=${keyword ?? ""}",
+        "/products/?page=${page ?? 1}&limit=${limit ?? 10}&keyword=${keyword ?? ""}&category=${category ?? "All"}",
         options: Options(headers: {
           "Authorization":
               "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
         }));
 
     var data = response.data["body"]["rows"];
-    print(data);
+    return data;
+  }
+
+  Future<List> getNewProducts({page, limit, keyword}) async {
+    // print(shopId);
+    var response = await dio.get(
+        "/products/new/?page=${page ?? 1}&limit=${limit ?? 10}&keyword=${keyword ?? ""}",
+        options: Options(headers: {
+          "Authorization":
+              "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
+        }));
+
+    var data = response.data["body"]["rows"];
+    return data;
+  }
+
+  Future<List> getProductsForYou({page, limit, keyword}) async {
+    // print(shopId);
+    var response = await dio.get(
+        "/products/for-you/?page=${page ?? 1}&limit=${limit ?? 10}&keyword=${keyword ?? ""}",
+        options: Options(headers: {
+          "Authorization":
+              "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
+        }));
+
+    var data = response.data["body"]["rows"];
     return data;
   }
 
