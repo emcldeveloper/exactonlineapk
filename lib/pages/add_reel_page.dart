@@ -178,6 +178,7 @@ class _AddReelPageState extends State<AddReelPage> {
                                       margin: const EdgeInsets.only(right: 8),
                                       width: 200,
                                       decoration: BoxDecoration(
+                                        color: Colors.black,
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Column(

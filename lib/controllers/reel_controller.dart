@@ -31,7 +31,6 @@ class ReelController extends GetxController {
 
   Future getReels({page, limit, keyword}) async {
     try {
-      // print(shopId);
       var response = await dio.get(
           "/reels/?page=${page ?? 1}&limit=${limit ?? 10}&keyword=${keyword ?? ""}",
           options: Options(headers: {
@@ -50,6 +49,25 @@ class ReelController extends GetxController {
     }
   }
 
+ Future getSpecificReels({selectedId, page, limit, keyword}) async {
+    try {
+      var response = await dio.get(
+          "/reels/$selectedId/?page=${page ?? 1}&limit=${limit ?? 10}&keyword=${keyword ?? ""}",
+          options: Options(headers: {
+            "Authorization":
+                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
+          }));
+
+      var data = response.data["body"]["rows"];
+      print("get reel details");
+      print(data);
+      return data;
+    } on DioException catch (e) {
+      print("Error response");
+      print(e.response);
+      return e.response;
+    }
+  }
   Future addReel(var payload) async {
     try {
       var response = await dio.post("/reels",

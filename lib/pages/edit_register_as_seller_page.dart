@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/shop_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/setting_myshop_page.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/custom_loader.dart';
+import 'package:e_online/widgets/editimage.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
@@ -12,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:image_picker/image_picker.dart';
 
 class EditRegisterAsSellerPage extends StatefulWidget {
   final String shopId;
@@ -32,7 +36,13 @@ class _EditRegisterAsSellerPageState extends State<EditRegisterAsSellerPage> {
       TextEditingController();
   final TextEditingController businessdescriptionController =
       TextEditingController();
-  final GlobalKey<FormState> _businessFormKey = GlobalKey<FormState>();
+
+  Rx<bool> priceIncludeDelivery = true.obs;
+  Rx<bool> isHidden = false.obs;
+  Rx<File?> selectedImage = Rx<File?>(null);
+  final ImagePicker _picker = ImagePicker();
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final List<PlatformFile> _files = [];
   var isLoading = false.obs;
@@ -56,6 +66,47 @@ class _EditRegisterAsSellerPageState extends State<EditRegisterAsSellerPage> {
     phoneController.text = selectedBusiness['phone'] ?? '';
     businessaddressController.text = selectedBusiness['address'] ?? '';
     businessdescriptionController.text = selectedBusiness['description'] ?? '';
+  }
+
+  // Function to pick an image
+  Future<void> _pickImage() async {
+    try {
+      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+      if (image != null) {
+        setState(() {
+          selectedImage.value = File(image.path);
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error picking image')),
+      );
+    }
+  }
+
+  void _openImageEditBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => ImageEditBottomSheet(
+        onReplace: () async {
+          final XFile? newImage =
+              await _picker.pickImage(source: ImageSource.gallery);
+          if (newImage != null) {
+            setState(() {
+              selectedImage.value = File(newImage.path);
+            });
+          }
+        },
+        onDelete: () {
+          setState(() {
+            selectedImage.value = null;
+          });
+        },
+      ),
+    );
   }
 
   void _pickFiles() async {
@@ -105,10 +156,75 @@ class _EditRegisterAsSellerPageState extends State<EditRegisterAsSellerPage> {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Form(
-            key: _businessFormKey,
+            key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                spacer(),
+                ParagraphText("Business Images", fontWeight: FontWeight.bold),
+                spacer(),
+                if (selectedImage.value == null)
+                  GestureDetector(
+                    onTap: _pickImage,
+                    child: Container(
+                      height: 200,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Icon(Icons.add_a_photo, size: 50, color: Colors.grey),
+                          SizedBox(height: 10),
+                          Text("Select shop image"),
+                        ],
+                      ),
+                    ),
+                  )
+                else
+                  GestureDetector(
+                    onTap: _openImageEditBottomSheet,
+                    child: Stack(
+                      children: [
+                        Container(
+                          height: 200,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            image: DecorationImage(
+                              image: FileImage(selectedImage.value!),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          right: 8,
+                          top: 8,
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedImage.value = null;
+                              });
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.black54,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              padding: const EdgeInsets.all(4),
+                              child: const Icon(
+                                Icons.close,
+                                color: Colors.white,
+                                size: 18,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 spacer(),
                 ParagraphText("Business Name", fontWeight: FontWeight.bold),
                 spacer(),
@@ -332,16 +448,15 @@ class _EditRegisterAsSellerPageState extends State<EditRegisterAsSellerPage> {
                 Obx(() {
                   return customButton(
                     onTap: () async {
-                      if (_businessFormKey.currentState?.validate() == true) {
+                      if (_formKey.currentState?.validate() == true) {
                         isLoading.value = true;
                         if (_files.isEmpty) {
                           print("Please select at least one file.");
                           isLoading.value = false;
                           return;
                         }
-
                         // Create the payload for the initial request
-                        final payload = {
+                        var formData = dio.FormData.fromMap({
                           "UserId": userId.isNotEmpty ? userId : "unknown",
                           "registeredBy": "business",
                           "name": businessnameController.text.trim(),
@@ -349,11 +464,18 @@ class _EditRegisterAsSellerPageState extends State<EditRegisterAsSellerPage> {
                           "address": businessaddressController.text.trim(),
                           "description":
                               businessdescriptionController.text.trim(),
-                        };
+                          "file": selectedImage.value != null
+                              ? await dio.MultipartFile.fromFile(
+                                  selectedImage.value!.path,
+                                  filename:
+                                      selectedImage.value!.path.split(" ").last)
+                              : null,
+                        });
+
                         try {
                           // Send the initial data to create the shop
                           var response = await shopController.updateShopData(
-                              widget.shopId, payload);
+                              widget.shopId, formData);
                           var shopId = response['body']["id"];
 
                           // Send files one by one

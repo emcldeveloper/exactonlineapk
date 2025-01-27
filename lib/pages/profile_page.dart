@@ -28,8 +28,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    String username = userController.user["name"];
-    String phone = userController.user["phone"];
+    String username = userController.user["name"] ?? "No name";
+    String phone = userController.user["phone"] ?? "0";
     String avatar = userController.user["image"] ?? 'assets/images/avatar.png';
     List<dynamic>? shops = userController.user["Shops"];
     bool hasShop = shops != null && shops.isNotEmpty;

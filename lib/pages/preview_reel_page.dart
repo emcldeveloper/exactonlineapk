@@ -1,4 +1,8 @@
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/controllers/following_controller.dart';
+import 'package:e_online/controllers/reel_controller.dart';
+import 'package:e_online/controllers/user_controller.dart';
+import 'package:e_online/pages/seller_profile_page.dart';
 import 'package:e_online/widgets/blocking_reel.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
@@ -21,12 +25,36 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
   late PageController _pageController;
   late VideoPlayerController _videoController;
   int currentIndex = 0;
+  final UserController userController = Get.find();
+  final ReelController reelController = Get.put(ReelController());
+  final FollowingController followingController =
+      Get.put(FollowingController());
+  String userId = "";
+  Rx<Map<String, dynamic>> reelDetails = Rx<Map<String, dynamic>>({});
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
+    userId = userController.user['id'] ?? "";
+    _initializeReelDetails(widget.reels[currentIndex]['id']);
     _initializeVideoPlayer(widget.reels[currentIndex]['videoUrl']);
+  }
+
+  Future<void> _initializeReelDetails(String reelId) async {
+    try {
+      reelDetails.value = await reelController.getSpecificReels(
+        selectedId: reelId,
+        page: 1,
+        limit: 20,
+      );
+      setState(() {});
+      print("maandazi");
+      print(reelDetails.value);
+      print("sambusa");
+    } catch (e) {
+      print("Error fetching reel details: $e");
+    }
   }
 
   void _initializeVideoPlayer(String videoUrl) {
@@ -42,6 +70,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
     setState(() {
       currentIndex = index;
       _videoController.dispose();
+      _initializeReelDetails(widget.reels[index]['id']);
       _initializeVideoPlayer(widget.reels[index]['videoUrl']);
     });
   }
@@ -50,14 +79,6 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
     setState(() {
       isBlockingReelVisible = !isBlockingReelVisible;
     });
-  }
-
-  void hideBlockingReel() {
-    if (isBlockingReelVisible) {
-      setState(() {
-        isBlockingReelVisible = false;
-      });
-    }
   }
 
   void _showBlockingReasonsBottomSheet() {
@@ -77,11 +98,34 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
   }
 
   void blockReel() {
-    // Add logic to block the reel here
     _showBlockingReasonsBottomSheet();
     setState(() {
       isBlockingReelVisible = false;
     });
+  }
+
+  Future<void> followShop() async {
+    final shop = reelDetails.value['Shop'];
+    // Unfollow example
+    // followingController.deleteFollowing(followingId);
+    if (shop == null) return;
+
+    bool isFollowing = shop["following"] ?? false;
+    if (isFollowing) return;
+
+    try {
+      var payload = {
+        "ShopId": shop['id'],
+        "UserId": userId,
+      };
+
+      await followingController.followShop(payload);
+      setState(() {
+        shop["following"] = true;
+      });
+    } catch (e) {
+      print("Error following shop: $e");
+    }
   }
 
   @override
@@ -93,8 +137,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Extract shop data
-    final shopData = widget.reels[currentIndex]['Shop'] ?? {};
+    final shopData = reelDetails.value['Shop'] ?? {};
     final shopName = shopData['name'] ?? "No Name";
     final shopImage = shopData['image'];
 
@@ -135,14 +178,11 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                       color: Colors.black.withOpacity(0.5),
                       borderRadius: BorderRadius.circular(25),
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 5),
-                      child: Center(
-                        child: const Icon(
-                          Icons.arrow_back_ios,
-                          color: Colors.white,
-                          size: 16.0,
-                        ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.arrow_back_ios,
+                        color: Colors.white,
+                        size: 16.0,
                       ),
                     ),
                   ),
@@ -227,29 +267,43 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              children: [
-                                CircleAvatar(
-                                  radius: 12,
-                                  backgroundImage: shopImage != null
-                                      ? NetworkImage(shopImage)
-                                      : const AssetImage(
-                                              'assets/images/avatar.png')
-                                          as ImageProvider,
-                                ),
-                                const SizedBox(width: 8),
-                                ParagraphText(
-                                  shopName ?? 'Shop',
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ],
+                            InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => SellerProfilePage(
+                                      name: shopName,
+                                      followers: shopData['followers'] ?? 0,
+                                      imageUrl: shopImage,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 12,
+                                    backgroundImage: shopImage != null
+                                        ? NetworkImage(shopImage)
+                                        : const AssetImage(
+                                                'assets/images/avatar.png')
+                                            as ImageProvider,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  ParagraphText(
+                                    shopName,
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ],
+                              ),
                             ),
                             TextButton(
-                              onPressed: () {},
+                              onPressed: followShop,
                               child: ParagraphText(
-                                "Follow",
+                                    reel["following"] ? "Unfollow" : "Follow",
                                 color: Colors.white,
                               ),
                             ),

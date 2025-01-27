@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/reel_controller.dart';
 import 'package:e_online/pages/preview_reel_page.dart';
@@ -74,7 +75,7 @@ class ProductMasonryGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: ReelController().getShopReels(page: 1, limit: 20),
+      future: ReelController().getReels(page: 1, limit: 20),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -161,11 +162,11 @@ class ReelCard extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: data['videoUrl'].isNotEmpty
-                      ? Image.network(
-                          data['thumbnail'] ?? '',
-                          fit: BoxFit.cover,
+                      ? CachedNetworkImage(
+                          imageUrl: data['thumbnail'] ?? '',
                           width: double.infinity,
-                          errorBuilder: (context, error, stackTrace) => Icon(
+                          fit: BoxFit.cover,
+                          errorWidget: (context, url, error) => Icon(
                             Icons.broken_image,
                             size: 100,
                             color: Colors.grey,

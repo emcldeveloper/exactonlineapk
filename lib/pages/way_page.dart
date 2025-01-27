@@ -18,7 +18,10 @@ class WayPage extends StatelessWidget {
         print(userDetails);
         userController.user = userDetails;
         return true;
-      } catch (e) {}
+      } catch (e) {
+        await SharedPreferencesUtil.removeAccessToken();
+        Get.offAll(WayPage());
+      }
     }
     return false;
   }
