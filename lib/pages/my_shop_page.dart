@@ -65,7 +65,7 @@ class _MyShopPageState extends State<MyShopPage> {
           actions: [
             InkWell(
               onTap: () {
-                Get.to(() => SettingMyshopPage());
+                Get.to(() => SettingMyshopPage(from: "shoppingPage",));
               },
               child: HugeIcon(
                 icon: HugeIcons.strokeRoundedSettings01,
@@ -216,7 +216,7 @@ class _MyShopPageState extends State<MyShopPage> {
       case 0:
         return ShopProducts();
       case 1:
-        return ProductMasonryGrid();
+        return ProductMasonryGrid(from: "MyShopPage");
       case 2:
         return SingleChildScrollView(
           child: Column(

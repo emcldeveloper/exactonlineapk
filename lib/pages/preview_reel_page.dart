@@ -38,7 +38,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
     _pageController = PageController();
     userId = userController.user['id'] ?? "";
     _initializeReelDetails(widget.reels[currentIndex]['id']);
-    _initializeVideoPlayer(widget.reels[currentIndex]['videoUrl']);
+    _initializeVideoPlayer(reelDetails.value['videoUrl']);
   }
 
   Future<void> _initializeReelDetails(String reelId) async {
@@ -70,8 +70,8 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
     setState(() {
       currentIndex = index;
       _videoController.dispose();
-      _initializeReelDetails(widget.reels[index]['id']);
-      _initializeVideoPlayer(widget.reels[index]['videoUrl']);
+      _initializeReelDetails(reelDetails.value['id']);
+      _initializeVideoPlayer(reelDetails.value['videoUrl']);
     });
   }
 
@@ -146,10 +146,10 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
       body: PageView.builder(
         controller: _pageController,
         scrollDirection: Axis.vertical,
-        itemCount: widget.reels.length,
+        itemCount: reelDetails.value.length,
         onPageChanged: _onPageChanged,
         itemBuilder: (context, index) {
-          final reel = widget.reels[index];
+          final reel = reelDetails.value[index];
           return Stack(
             children: [
               // Video Player

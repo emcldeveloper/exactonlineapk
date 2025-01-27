@@ -202,7 +202,7 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
           onPressed: () {
             if (widget.from == 'shoppingPage') {
               Get.offAll(() => const HomePage());
-            } else if (widget.from == 'settingPage') {
+            } else if (widget.from == 'formPage') {
               Get.offAll(() => const ProfilePage());
             } else {
               Get.offAll(() => const HomePage());

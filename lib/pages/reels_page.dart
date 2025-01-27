@@ -60,7 +60,9 @@ class ReelsPage extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
-            ProductMasonryGrid(),
+            ProductMasonryGrid(
+              from: "ReelsPage",
+            ),
             ReelsFollowingTab(),
           ],
         ),
@@ -70,12 +72,23 @@ class ReelsPage extends StatelessWidget {
 }
 
 class ProductMasonryGrid extends StatelessWidget {
-  const ProductMasonryGrid({super.key});
+  final String from;
+  const ProductMasonryGrid({super.key, required this.from});
 
   @override
   Widget build(BuildContext context) {
+    Future fetchReels() {
+      if (from == 'ReelsPage') {
+        return ReelController().getReels(page: 1, limit: 20);
+      } else if (from == 'MyShopPage' || from == 'SellerProfilePage') {
+        return ReelController().getShopReels(page: 1, limit: 20);
+      } else {
+        return ReelController().getReels(page: 1, limit: 20);
+      }
+    }
+
     return FutureBuilder(
-      future: ReelController().getReels(page: 1, limit: 20),
+      future: fetchReels(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(

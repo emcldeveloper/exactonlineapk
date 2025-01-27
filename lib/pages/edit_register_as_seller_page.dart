@@ -499,8 +499,7 @@ class _EditRegisterAsSellerPageState extends State<EditRegisterAsSellerPage> {
                               icon: HugeIcon(
                                   icon: HugeIcons.strokeRoundedTick01,
                                   color: Colors.white));
-                          Get.offAll(() => SettingMyshopPage(),
-                              arguments: {'origin': 'RegisterAsSellerPage'});
+                          Get.offAll(() => SettingMyshopPage(from: "formPage",));
                         } catch (e) {
                           isLoading.value = false;
                           Get.snackbar("Error", "Error creating shop account",

@@ -174,7 +174,7 @@ class SellerProfilePage extends StatelessWidget {
                     // Shop Products Tab
                     sellerShopProducts(),
                     // Reels Tab
-                    ProductMasonryGrid(),
+                    ProductMasonryGrid(from: "SellerProfilePage"),
                   ],
                 ),
               ),

@@ -38,7 +38,9 @@ class CartPage extends StatelessWidget {
         actions: [
           InkWell(
             onTap: () {
-              Get.to(SettingMyshopPage());
+              Get.to(SettingMyshopPage(
+                from: "shoppingPage",
+              ));
             },
             child: HugeIcon(
               icon: HugeIcons.strokeRoundedSettings01,
