@@ -52,7 +52,7 @@ class ReelController extends GetxController {
   Future getSpecificReels({selectedId, page, limit, keyword}) async {
     try {
       var response = await dio.get(
-          "/reels/$selectedId/?page=${page ?? 1}&limit=${limit ?? 10}&keyword=${keyword ?? ""}",
+          "/reels/$selectedId",
           options: Options(headers: {
             "Authorization":
                 "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
