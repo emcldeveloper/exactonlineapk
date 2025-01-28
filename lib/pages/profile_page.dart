@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/edit_profile_page.dart';
@@ -94,11 +95,18 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Stack(
                     children: [
                       ClipOval(
-                        child: HugeIcon(
-                          icon: HugeIcons.strokeRoundedUserCircle,
-                          color: Colors.black,
-                          size: 80,
-                        ),
+                        child: avatar != null
+                            ? CachedNetworkImage(
+                                imageUrl: avatar,
+                                height: 80,
+                                width: 80,
+                                fit: BoxFit.cover,
+                              )
+                            : HugeIcon(
+                                icon: HugeIcons.strokeRoundedUserCircle,
+                                color: Colors.black,
+                                size: 80,
+                              ),
                       ),
                       Positioned(
                         bottom: 0,

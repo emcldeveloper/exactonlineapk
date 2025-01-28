@@ -30,16 +30,11 @@ class UserController extends GetxController {
   }
 
   Future getOneUserData(var payload) async {
-    // String? token = await SharedPreferencesUtil.getAccessToken();
-    // if (token == null) {
-    //   throw Exception("Access token is null");
-    // }
     var response = await dio.get("/users/${payload.id}",
         options: Options(headers: {
           "Authorization":
               "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
         }));
-    // options: Options(headers: {"Authorization": "Bearer $token"}),
     var data = response.data;
     print(data);
     return data;

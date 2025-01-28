@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/user_controller.dart';
@@ -59,6 +60,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     String id = userController.user["id"];
+    String avatar = userController.user["image"];
+
     return Scaffold(
       backgroundColor: mainColor,
       appBar: AppBar(
@@ -106,11 +109,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                   width: 80,
                                   fit: BoxFit.cover,
                                 )
-                              : HugeIcon(
-                                  icon: HugeIcons.strokeRoundedUserCircle,
-                                  color: Colors.black,
-                                  size: 80,
-                                ),
+                              : avatar.isNotEmpty // Check if the avatar URL is not empty
+                                  ? CachedNetworkImage(
+                                      imageUrl: avatar,
+                                      height: 80,
+                                      width: 80,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : HugeIcon(
+                                      icon: HugeIcons.strokeRoundedUserCircle,
+                                      color: Colors.black,
+                                      size: 80,
+                                    ),
                         ),
                         Positioned(
                           bottom: 0,

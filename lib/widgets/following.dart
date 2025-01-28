@@ -108,6 +108,8 @@ class _ReelsFollowingTabState extends State<ReelsFollowingTab> {
                   spacer(),
                   ParagraphText(
                     profile['name'],
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
                     fontSize: 14.0,
                   ),

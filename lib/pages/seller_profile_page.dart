@@ -99,7 +99,9 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
 
           if (data.isEmpty) {
             return const Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                color: Colors.black,
+              ),
             );
           }
 
@@ -119,8 +121,9 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
                           width: 80,
                           fit: BoxFit.cover,
                           placeholder: (context, url) => const Center(
-                            child:
-                                CircularProgressIndicator(), // Show a spinner while loading
+                            child: CircularProgressIndicator(
+                              color: Colors.black,
+                            ), // Show a spinner while loading
                           ),
                           errorWidget: (context, url, error) => const Icon(
                             Icons.store, // Fallback icon if loading fails
