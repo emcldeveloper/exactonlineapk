@@ -392,38 +392,30 @@ class _ProductPageState extends State<ProductPage> {
                 fontWeight: FontWeight.bold,
                 fontSize: 14.0,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ParagraphText(
-                    "Size:",
-                    color: mutedTextColor,
-                  ),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  ParagraphText(
-                    widget.productData['size'] ?? '',
-                    fontWeight: FontWeight.bold,
-                  ),
-                ],
+
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: widget.productData['specifications'].entries
+                    .map<Widget>((entry) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ParagraphText(
+                        "${entry.key}:", // Display the key
+                        color: mutedTextColor,
+                      ),
+                      const SizedBox(
+                        width: 8,
+                      ),
+                      ParagraphText(
+                        "${entry.value}", // Display the corresponding value
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ],
+                  );
+                }).toList(),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ParagraphText(
-                    "Color:",
-                    color: mutedTextColor,
-                  ),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  ParagraphText(
-                    widget.productData['color'] ?? '',
-                    fontWeight: FontWeight.bold,
-                  ),
-                ],
-              ),
+
               spacer1(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -53,7 +53,6 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
         page: 1,
         limit: 20,
       );
-      setState(() {});
       print(reelDetails.value);
     } catch (e) {
       print("Error fetching reel details: $e");
