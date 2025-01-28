@@ -274,7 +274,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => SellerProfilePage(
-                                         shopId: shopData['id'],
+                                        shopId: shopData['id'],
                                       ),
                                     ),
                                   );
