@@ -1,10 +1,9 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/user_controller.dart';
-import 'package:e_online/pages/customer_support_page.dart';
 import 'package:e_online/pages/edit_profile_page.dart';
-import 'package:e_online/pages/free_trial_page.dart';
 import 'package:e_online/pages/join_as_seller_page.dart';
 import 'package:e_online/pages/my_orders_page.dart';
+import 'package:e_online/pages/my_shop_page.dart';
 import 'package:e_online/pages/privacy_policy.dart';
 import 'package:e_online/pages/terms_conditions_page.dart';
 import 'package:e_online/widgets/custom_button.dart';
@@ -39,7 +38,7 @@ class _ProfilePageState extends State<ProfilePage> {
         {
           'icon': Bootstrap.cart,
           'title': 'My Shop',
-          'page': const FreeTrialPage(),
+          'page': const MyShopPage(),
         },
       {
         'icon': Bootstrap.bag,

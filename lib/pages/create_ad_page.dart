@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:e_online/constants/colors.dart';
-import 'package:e_online/pages/home_page.dart';
+import 'package:e_online/pages/main_page.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/editimage.dart';
 import 'package:e_online/widgets/heading_text.dart';
@@ -305,7 +305,7 @@ class _CreateAdPageState extends State<CreateAdPage> {
                     );
                     return;
                   }
-                  Get.to(() => const HomePage());
+                  Get.to(() => const MainPage());
                 },
                 text: "Create an Ad",
               ),

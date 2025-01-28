@@ -1,9 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/controllers/location_controller.dart';
 import 'package:e_online/controllers/shop_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/edit_register_as_seller_page.dart';
-import 'package:e_online/pages/home_page.dart';
+import 'package:e_online/pages/main_page.dart';
 import 'package:e_online/pages/profile_page.dart';
 import 'package:e_online/pages/register_as_seller_page.dart';
 import 'package:e_online/utils/shared_preferences.dart';
@@ -71,14 +70,6 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
     shopCalendars.value = shopDetails["ShopCalenders"] ?? [];
     isLoadingTime.value = false;
   }
-
-  // Future _loadSelectedShopDetails() async {
-  //   isLoadingTime.value = true;
-  //   final businessId = await SharedPreferencesUtil.getSelectedBusiness();
-  //   userController.user["selectedShop"] =
-  //       await shopController.getShopDetails(businessId);
-  //   isLoadingTime.value = false;
-  // }
 
   // load current business
   Future _loadSelectedBusiness() async {
@@ -202,11 +193,11 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
           ),
           onPressed: () {
             if (widget.from == 'shoppingPage') {
-              Get.offAll(() => const HomePage());
+              Get.offAll(() => const MainPage());
             } else if (widget.from == 'formPage') {
               Get.offAll(() => const ProfilePage());
             } else {
-              Get.offAll(() => const HomePage());
+              Get.offAll(() => const MainPage());
             }
           },
         ),
@@ -478,10 +469,10 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                       children: [
                         CircleAvatar(
                           radius: 20,
-                          backgroundImage: shop['shopImage'] != null &&
-                                  shop['shopImage'].isNotEmpty
-                              ? CachedNetworkImageProvider(shop['shopImage'])
-                              : const AssetImage('assets/images/avatar.png'),
+                          backgroundImage: shop['shopImage'] != null
+                              ? NetworkImage(shop['shopImage'])
+                              : const AssetImage('assets/images/avatar.png')
+                                  as ImageProvider,
                         ),
                         const SizedBox(width: 12),
                         Expanded(

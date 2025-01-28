@@ -9,9 +9,10 @@ import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 
-class ReelsPage extends StatelessWidget {
-  const ReelsPage({super.key});
+class ShopReels extends StatelessWidget {
+  const ShopReels({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +61,7 @@ class ReelsPage extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
-            ProductMasonryGrid(),
+            ShopMasonryGrid(),
             ReelsFollowingTab(),
           ],
         ),
@@ -69,13 +70,13 @@ class ReelsPage extends StatelessWidget {
   }
 }
 
-class ProductMasonryGrid extends StatelessWidget {
-  const ProductMasonryGrid({super.key});
+class ShopMasonryGrid extends StatelessWidget {
+  const ShopMasonryGrid({super.key});
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: ReelController().getReels(page: 1, limit: 20),
+      future: ReelController().getShopReels(page: 1, limit: 20),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -92,7 +93,7 @@ class ProductMasonryGrid extends StatelessWidget {
                 .toList();
 
         return Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(2.0),
           child: GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
@@ -127,6 +128,7 @@ class ReelCard extends StatelessWidget {
   Widget build(BuildContext context) {
     // Extract shop data
     final shopData = data['Shop'] ?? {};
+    print(shopData);
     final shopName = shopData['name'] ?? "No Name";
     final shopImage = shopData['shopImage'];
 

@@ -23,7 +23,8 @@ class PreviewReelPage extends StatefulWidget {
 class _PreviewReelPageState extends State<PreviewReelPage> {
   bool isBlockingReelVisible = false;
   late PageController _pageController;
-  late VideoPlayerController _videoController;
+  late VideoPlayerController _videoController =
+      VideoPlayerController.networkUrl(Uri(path: ""));
   int currentIndex = 0;
   final UserController userController = Get.find();
   final ReelController reelController = Get.put(ReelController());
@@ -31,6 +32,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
       Get.put(FollowingController());
   String userId = "";
   Rx<Map<String, dynamic>> reelDetails = Rx<Map<String, dynamic>>({});
+  bool? isFollowing;
 
   @override
   void initState() {
@@ -38,8 +40,6 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
     _pageController = PageController();
     userId = userController.user['id'] ?? "";
     _initializeReelDetails(widget.reels[currentIndex]['id']);
-    _initializeVideoPlayer(widget.reels[currentIndex]['videoUrl']);
-
     // Add listener for reelDetails changes
     ever(reelDetails, (value) {
       print('Reel details updated: $value');
@@ -54,7 +54,8 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
         limit: 20,
       );
       reelDetails.value = details;
-      setState(() {});
+      _initializeVideoPlayer(reelDetails.value['videoUrl']);
+      isFollowing = reelDetails.value['Shop']['following'] ?? false;
     } catch (e) {
       print("Error fetching reel details: $e");
     }
@@ -74,7 +75,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
       currentIndex = index;
       _videoController.dispose();
       _initializeReelDetails(widget.reels[index]['id']);
-      _initializeVideoPlayer(widget.reels[currentIndex]['videoUrl']);
+      _initializeVideoPlayer(reelDetails.value['videoUrl']);
     });
   }
 
@@ -109,25 +110,18 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
 
   Future<void> followShop() async {
     final shop = reelDetails.value['Shop'];
-    if (shop == null) return;
-
-    bool isFollowing = shop["following"] ?? false;
-    if (isFollowing) return;
+    var payload = {
+      "ShopId": shop['id'],
+      "UserId": userId,
+    };
 
     try {
-      var payload = {
-        "ShopId": shop['id'],
-        "UserId": userId,
-      };
-
-      await followingController.followShop(payload);
-
-      // Update the reactive state
-      final updatedShop = {...shop, "following": true};
-      reelDetails.value = {
-        ...reelDetails.value,
-        'Shop': updatedShop,
-      };
+      var result = await followingController.followShop(payload);
+      if (result != null) {
+        setState(() {
+          isFollowing = true; // Update state to reflect the follow action
+        });
+      }
     } catch (e) {
       print("Error following shop: $e");
     }
@@ -153,7 +147,8 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
           return Obx(() {
             final shopData = reelDetails.value['Shop'] ?? {};
             final shopName = shopData['name'] ?? "No Name";
-            final shopImage = shopData['image'];
+            final shopImage = shopData['shopImage'];
+
             final reel = reelDetails.value;
 
             return Stack(
@@ -279,9 +274,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => SellerProfilePage(
-                                        name: shopName,
-                                        followers: shopData['followers'] ?? 0,
-                                        imageUrl: shopImage,
+                                         shopId: shopData['id'],
                                       ),
                                     ),
                                   );
@@ -306,13 +299,16 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                                   ],
                                 ),
                               ),
-                              TextButton(
-                                onPressed: followShop,
-                                child: ParagraphText(
-                                  "Follow",
-                                  color: Colors.white,
-                                ),
-                              ),
+                              isFollowing == true
+                                  ? SizedBox
+                                      .shrink() // Button disappears if already following
+                                  : TextButton(
+                                      onPressed: followShop,
+                                      child: ParagraphText(
+                                        "Follow",
+                                        color: Colors.white,
+                                      ),
+                                    ),
                             ],
                           ),
                           ParagraphText(

@@ -542,7 +542,6 @@ class _AddProductPageState extends State<AddProductPage> {
                             });
                           }
                         }
-                        // Get.to(() => const HomePage());
                       },
                       text: loading ? "" : "Add Product",
                     ),

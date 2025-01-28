@@ -1,7 +1,7 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/controllers/users_controllers.dart';
-import 'package:e_online/pages/home_page.dart';
+import 'package:e_online/pages/main_page.dart';
 import 'package:e_online/pages/my_orders_page.dart';
 import 'package:e_online/pages/setting_myshop_page.dart';
 import 'package:e_online/widgets/custom_button.dart';
@@ -94,7 +94,7 @@ class CartPage extends StatelessWidget {
                     button1Text: "Shop",
                     button1Action: () {
                       Navigator.of(context).pop(); // Close the second popup
-                      Get.to(const HomePage());
+                      Get.to(const MainPage());
                     },
                     button2Text: "View orders",
                     button2Action: () {
