@@ -3,9 +3,9 @@ import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/pages/add_product_page.dart';
 import 'package:e_online/pages/add_reel_page.dart';
 import 'package:e_online/pages/create_ad_page.dart';
-import 'package:e_online/pages/reels_page.dart';
 import 'package:e_online/pages/setting_myshop_page.dart';
 import 'package:e_online/pages/shop_tabs/shop_products.dart';
+import 'package:e_online/pages/shop_tabs/shop_reels.dart';
 import 'package:e_online/widgets/ad_card.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
@@ -65,7 +65,9 @@ class _MyShopPageState extends State<MyShopPage> {
           actions: [
             InkWell(
               onTap: () {
-                Get.to(() => SettingMyshopPage(from: "shoppingPage",));
+                Get.to(() => SettingMyshopPage(
+                      from: "shoppingPage",
+                    ));
               },
               child: HugeIcon(
                 icon: HugeIcons.strokeRoundedSettings01,
@@ -216,7 +218,7 @@ class _MyShopPageState extends State<MyShopPage> {
       case 0:
         return ShopProducts();
       case 1:
-        return ProductMasonryGrid(from: "MyShopPage");
+        return ShopMasonryGrid();
       case 2:
         return SingleChildScrollView(
           child: Column(

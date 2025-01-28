@@ -23,7 +23,8 @@ class PreviewReelPage extends StatefulWidget {
 class _PreviewReelPageState extends State<PreviewReelPage> {
   bool isBlockingReelVisible = false;
   late PageController _pageController;
-  late VideoPlayerController _videoController;
+  late VideoPlayerController _videoController =
+      VideoPlayerController.networkUrl(Uri(path: ""));
   int currentIndex = 0;
   final UserController userController = Get.find();
   final ReelController reelController = Get.put(ReelController());
@@ -31,29 +32,30 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
       Get.put(FollowingController());
   String userId = "";
   Rx<Map<String, dynamic>> reelDetails = Rx<Map<String, dynamic>>({});
+  bool? isFollowing;
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
     userId = userController.user['id'] ?? "";
-    print("reel  inside");
-    print(widget.reels[currentIndex]['id']);
     _initializeReelDetails(widget.reels[currentIndex]['id']);
-    _initializeVideoPlayer(widget.reels[currentIndex]['videoUrl']);
-    print("lets see");
-    print(reelDetails);
-    print("tumeona");
+    // Add listener for reelDetails changes
+    ever(reelDetails, (value) {
+      print('Reel details updated: $value');
+    });
   }
 
   Future<void> _initializeReelDetails(String reelId) async {
     try {
-      reelDetails.value = await reelController.getSpecificReels(
+      final details = await reelController.getSpecificReels(
         selectedId: reelId,
         page: 1,
         limit: 20,
       );
-      print(reelDetails.value);
+      reelDetails.value = details;
+      _initializeVideoPlayer(reelDetails.value['videoUrl']);
+      isFollowing = reelDetails.value['Shop']['following'] ?? false;
     } catch (e) {
       print("Error fetching reel details: $e");
     }
@@ -73,7 +75,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
       currentIndex = index;
       _videoController.dispose();
       _initializeReelDetails(widget.reels[index]['id']);
-      _initializeVideoPlayer(widget.reels[currentIndex]['videoUrl']);
+      _initializeVideoPlayer(reelDetails.value['videoUrl']);
     });
   }
 
@@ -108,23 +110,18 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
 
   Future<void> followShop() async {
     final shop = reelDetails.value['Shop'];
-    // Unfollow example
-    // followingController.deleteFollowing(followingId);
-    if (shop == null) return;
-
-    bool isFollowing = shop["following"] ?? false;
-    if (isFollowing) return;
+    var payload = {
+      "ShopId": shop['id'],
+      "UserId": userId,
+    };
 
     try {
-      var payload = {
-        "ShopId": shop['id'],
-        "UserId": userId,
-      };
-
-      await followingController.followShop(payload);
-      setState(() {
-        shop["following"] = true;
-      });
+      var result = await followingController.followShop(payload);
+      if (result != null) {
+        setState(() {
+          isFollowing = true; // Update state to reflect the follow action
+        });
+      }
     } catch (e) {
       print("Error following shop: $e");
     }
@@ -139,246 +136,252 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
 
   @override
   Widget build(BuildContext context) {
-    final shopData = reelDetails.value['Shop'] ?? {};
-    final shopName = shopData['name'] ?? "No Name";
-    final shopImage = shopData['image'];
-
     return Scaffold(
       backgroundColor: Colors.black,
-      // body: PageView.builder(
-      //   controller: _pageController,
-      //   scrollDirection: Axis.vertical,
-      //   itemCount: reelDetails.value.length,
-      //   onPageChanged: _onPageChanged,
-      //   itemBuilder: (context, index) {
-      //     final reel = reelDetails.value[index];
-      //     return Stack(
-      //       children: [
-      //         // Video Player
-      //         Positioned.fill(
-      //           child: _videoController.value.isInitialized
-      //               ? VideoPlayer(_videoController)
-      //               : Center(
-      //                   child: _videoController.value.hasError
-      //                       ? Text(
-      //                           "Failed to load video",
-      //                           style: TextStyle(color: Colors.white),
-      //                         )
-      //                       : CircularProgressIndicator(color: Colors.white),
-      //                 ),
-      //         ),
-      //         // Back Button
-      //         Positioned(
-      //           top: 40,
-      //           left: 16,
-      //           child: GestureDetector(
-      //             onTap: () => Get.back(),
-      //             child: Container(
-      //               height: 40,
-      //               width: 40,
-      //               decoration: BoxDecoration(
-      //                 color: Colors.black.withOpacity(0.5),
-      //                 borderRadius: BorderRadius.circular(25),
-      //               ),
-      //               child: const Center(
-      //                 child: Icon(
-      //                   Icons.arrow_back_ios,
-      //                   color: Colors.white,
-      //                   size: 16.0,
-      //                 ),
-      //               ),
-      //             ),
-      //           ),
-      //         ),
-      //         // Blocking Options
-      //         Positioned(
-      //           top: 40,
-      //           right: 16,
-      //           child: GestureDetector(
-      //             onTap: toggleBlockingReel,
-      //             child: Container(
-      //               padding: const EdgeInsets.all(8),
-      //               decoration: BoxDecoration(
-      //                 color: Colors.black.withOpacity(0.5),
-      //                 borderRadius: BorderRadius.circular(25),
-      //               ),
-      //               child: const Icon(
-      //                 Icons.more_vert_sharp,
-      //                 color: Colors.white,
-      //                 size: 22.0,
-      //               ),
-      //             ),
-      //           ),
-      //         ),
-      //         if (isBlockingReelVisible)
-      //           Positioned(
-      //             top: 83,
-      //             right: 16,
-      //             child: GestureDetector(
-      //               onTap: blockReel,
-      //               child: Container(
-      //                 width: 150.0,
-      //                 padding: const EdgeInsets.all(8),
-      //                 decoration: BoxDecoration(
-      //                   color: primaryColor.withOpacity(0.7),
-      //                   borderRadius: BorderRadius.circular(10),
-      //                 ),
-      //                 child: const Row(
-      //                   mainAxisAlignment: MainAxisAlignment.center,
-      //                   children: [
-      //                     HugeIcon(
-      //                       icon: HugeIcons.strokeRoundedSquareLock02,
-      //                       color: Colors.black,
-      //                       size: 22.0,
-      //                     ),
-      //                     SizedBox(width: 4),
-      //                     Text(
-      //                       'Block this reel',
-      //                       style: TextStyle(
-      //                         color: Colors.black,
-      //                         fontWeight: FontWeight.bold,
-      //                       ),
-      //                     ),
-      //                   ],
-      //                 ),
-      //               ),
-      //             ),
-      //           ),
-      //         // Reel Details
-      //         Align(
-      //           alignment: Alignment.bottomCenter,
-      //           child: Container(
-      //             decoration: BoxDecoration(
-      //               gradient: LinearGradient(
-      //                 begin: Alignment.bottomCenter,
-      //                 end: Alignment.topCenter,
-      //                 colors: [
-      //                   Colors.black,
-      //                   Colors.black.withOpacity(0.5),
-      //                   Colors.transparent,
-      //                 ],
-      //               ),
-      //             ),
-      //             child: Padding(
-      //               padding: const EdgeInsets.all(16.0),
-      //               child: Column(
-      //                 mainAxisSize: MainAxisSize.min,
-      //                 crossAxisAlignment: CrossAxisAlignment.start,
-      //                 children: [
-      //                   // Shop info
-      //                   Row(
-      //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //                     children: [
-      //                       InkWell(
-      //                         onTap: () {
-      //                           Navigator.push(
-      //                             context,
-      //                             MaterialPageRoute(
-      //                               builder: (context) => SellerProfilePage(
-      //                                 name: shopName,
-      //                                 followers: shopData['followers'] ?? 0,
-      //                                 imageUrl: shopImage,
-      //                               ),
-      //                             ),
-      //                           );
-      //                         },
-      //                         child: Row(
-      //                           children: [
-      //                             CircleAvatar(
-      //                               radius: 12,
-      //                               backgroundImage: shopImage != null
-      //                                   ? NetworkImage(shopImage)
-      //                                   : const AssetImage(
-      //                                           'assets/images/avatar.png')
-      //                                       as ImageProvider,
-      //                             ),
-      //                             const SizedBox(width: 8),
-      //                             ParagraphText(
-      //                               shopName,
-      //                               color: Colors.white,
-      //                               fontSize: 14,
-      //                               fontWeight: FontWeight.w500,
-      //                             ),
-      //                           ],
-      //                         ),
-      //                       ),
-      //                       TextButton(
-      //                         onPressed: followShop,
-      //                         child: ParagraphText(
-      //                           "Follow",
-      //                           color: Colors.white,
-      //                         ),
-      //                       ),
-      //                     ],
-      //                   ),
-      //                   ParagraphText(
-      //                     reel['caption'] ?? "No caption.",
-      //                     color: Colors.white,
-      //                   ),
-      //                   spacer1(),
-      //                   ClipRRect(
-      //                     borderRadius: BorderRadius.circular(100),
-      //                     child: Container(
-      //                       color: Colors.black45,
-      //                       child: Padding(
-      //                         padding: const EdgeInsets.symmetric(
-      //                             horizontal: 70, vertical: 8),
-      //                         child: Row(
-      //                           mainAxisAlignment:
-      //                               MainAxisAlignment.spaceBetween,
-      //                           children: [
-      //                             Row(
-      //                               children: [
-      //                                 HugeIcon(
-      //                                   icon: HugeIcons.strokeRoundedFavourite,
-      //                                   color: Colors.white,
-      //                                   size: 22.0,
-      //                                 ),
-      //                                 const SizedBox(width: 4),
-      //                                 ParagraphText(
-      //                                   reel['likes'].toString(),
-      //                                   color: Colors.white,
-      //                                   fontSize: 13,
-      //                                   fontWeight: FontWeight.bold,
-      //                                 ),
-      //                               ],
-      //                             ),
-      //                             Row(
-      //                               children: [
-      //                                 const HugeIcon(
-      //                                   icon: HugeIcons.strokeRoundedComment01,
-      //                                   color: Colors.white,
-      //                                   size: 22.0,
-      //                                 ),
-      //                                 const SizedBox(width: 4),
-      //                                 ParagraphText(
-      //                                   reel['views'].toString(),
-      //                                   color: Colors.white,
-      //                                   fontSize: 13,
-      //                                   fontWeight: FontWeight.bold,
-      //                                 ),
-      //                               ],
-      //                             ),
-      //                             HugeIcon(
-      //                               icon: HugeIcons.strokeRoundedShare01,
-      //                               color: Colors.white,
-      //                               size: 22.0,
-      //                             ),
-      //                           ],
-      //                         ),
-      //                       ),
-      //                     ),
-      //                   ),
-      //                   spacer2(),
-      //                 ],
-      //               ),
-      //             ),
-      //           ),
-      //         ),
-      //       ],
-      //     );
-      //   },
-      // ),
+      body: PageView.builder(
+        controller: _pageController,
+        scrollDirection: Axis.vertical,
+        itemCount: widget.reels.length,
+        onPageChanged: _onPageChanged,
+        itemBuilder: (context, index) {
+          return Obx(() {
+            final shopData = reelDetails.value['Shop'] ?? {};
+            final shopName = shopData['name'] ?? "No Name";
+            final shopImage = shopData['shopImage'];
+
+            final reel = reelDetails.value;
+
+            return Stack(
+              children: [
+                // Video Player
+                Positioned.fill(
+                  child: _videoController.value.isInitialized
+                      ? VideoPlayer(_videoController)
+                      : Center(
+                          child: _videoController.value.hasError
+                              ? Text(
+                                  "Failed to load video",
+                                  style: TextStyle(color: Colors.white),
+                                )
+                              : CircularProgressIndicator(color: Colors.white),
+                        ),
+                ),
+                // Back Button
+                Positioned(
+                  top: 40,
+                  left: 16,
+                  child: GestureDetector(
+                    onTap: () => Get.back(),
+                    child: Container(
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.5),
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      child: const Center(
+                        child: Icon(
+                          Icons.arrow_back_ios,
+                          color: Colors.white,
+                          size: 16.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                // Blocking Options
+                Positioned(
+                  top: 40,
+                  right: 16,
+                  child: GestureDetector(
+                    onTap: toggleBlockingReel,
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.5),
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      child: const Icon(
+                        Icons.more_vert_sharp,
+                        color: Colors.white,
+                        size: 22.0,
+                      ),
+                    ),
+                  ),
+                ),
+                if (isBlockingReelVisible)
+                  Positioned(
+                    top: 83,
+                    right: 16,
+                    child: GestureDetector(
+                      onTap: blockReel,
+                      child: Container(
+                        width: 150.0,
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: primaryColor.withOpacity(0.7),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            HugeIcon(
+                              icon: HugeIcons.strokeRoundedSquareLock02,
+                              color: Colors.black,
+                              size: 22.0,
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              'Block this reel',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                // Reel Details
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [
+                          Colors.black,
+                          Colors.black.withOpacity(0.5),
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Shop info
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => SellerProfilePage(
+                                        shopId: shopData['id'],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Row(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 12,
+                                      backgroundImage: shopImage != null
+                                          ? NetworkImage(shopImage)
+                                          : const AssetImage(
+                                                  'assets/images/avatar.png')
+                                              as ImageProvider,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    ParagraphText(
+                                      shopName,
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              isFollowing == true
+                                  ? SizedBox
+                                      .shrink() // Button disappears if already following
+                                  : TextButton(
+                                      onPressed: followShop,
+                                      child: ParagraphText(
+                                        "Follow",
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                            ],
+                          ),
+                          ParagraphText(
+                            reel['caption'] ?? "No caption.",
+                            color: Colors.white,
+                          ),
+                          spacer1(),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(100),
+                            child: Container(
+                              color: Colors.black45,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 70, vertical: 8),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        HugeIcon(
+                                          icon:
+                                              HugeIcons.strokeRoundedFavourite,
+                                          color: Colors.white,
+                                          size: 22.0,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        ParagraphText(
+                                          reel['likes']?.toString() ?? '0',
+                                          color: Colors.white,
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        const HugeIcon(
+                                          icon:
+                                              HugeIcons.strokeRoundedComment01,
+                                          color: Colors.white,
+                                          size: 22.0,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        ParagraphText(
+                                          reel['views']?.toString() ?? '0',
+                                          color: Colors.white,
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ],
+                                    ),
+                                    HugeIcon(
+                                      icon: HugeIcons.strokeRoundedShare01,
+                                      color: Colors.white,
+                                      size: 22.0,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          spacer2(),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          });
+        },
+      ),
     );
   }
 }

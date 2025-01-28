@@ -1,24 +1,43 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/constants/colors.dart';
-import 'package:e_online/pages/reels_page.dart';
+import 'package:e_online/controllers/shop_controller.dart';
+import 'package:e_online/pages/shop_tabs/shop_products.dart';
+import 'package:e_online/pages/shop_tabs/shop_reels.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
-import 'package:e_online/widgets/seller_shop_products.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 
-class SellerProfilePage extends StatelessWidget {
-  final String name;
-  final String followers;
-  final String imageUrl;
+class SellerProfilePage extends StatefulWidget {
+  final String shopId;
 
-  const SellerProfilePage({
-    super.key,
-    required this.name,
-    required this.followers,
-    required this.imageUrl,
-  });
+  const SellerProfilePage({required this.shopId, Key? key}) : super(key: key);
+
+  @override
+  _SellerProfilePageState createState() => _SellerProfilePageState();
+}
+
+class _SellerProfilePageState extends State<SellerProfilePage> {
+  final ShopController shopController = Get.put(ShopController());
+  final Rx<Map<String, dynamic>> shopDetails = Rx<Map<String, dynamic>>({});
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeShopDetails();
+  }
+
+  Future<void> _initializeShopDetails() async {
+    try {
+      String id = widget.shopId;
+      final details = await shopController.getShopDetails(id);
+      shopDetails.value = details;
+    } catch (e) {
+      debugPrint("Error fetching shop details: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,17 +66,16 @@ class SellerProfilePage extends StatelessWidget {
               ),
               onTap: () {},
             ),
-            const SizedBox(
-              width: 8,
-            ),
+            const SizedBox(width: 8),
             InkWell(
-              child: const Icon(Icons.local_phone_outlined,
-                  color: Colors.black, size: 24),
+              child: const Icon(
+                Icons.local_phone_outlined,
+                color: Colors.black,
+                size: 24,
+              ),
               onTap: () {},
             ),
-            const SizedBox(
-              width: 8,
-            ),
+            const SizedBox(width: 8),
             InkWell(
               onTap: () {},
               child: HugeIcon(
@@ -66,9 +84,7 @@ class SellerProfilePage extends StatelessWidget {
                 size: 22.0,
               ),
             ),
-            const SizedBox(
-              width: 16,
-            ),
+            const SizedBox(width: 16),
           ],
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1.0),
@@ -78,109 +94,126 @@ class SellerProfilePage extends StatelessWidget {
             ),
           ),
         ),
-        body: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  ClipOval(
-                    child: SizedBox(
-                      height: 80,
-                      width: 80,
-                      child: Image.asset(
-                        imageUrl,
+        body: Obx(() {
+          final data = shopDetails.value;
+
+          if (data.isEmpty) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          return Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    ClipOval(
+                      child: SizedBox(
                         height: 80,
                         width: 80,
-                        fit: BoxFit.cover,
+                        child: CachedNetworkImage(
+                          imageUrl: data['shopImage'] ?? '',
+                          height: 80,
+                          width: 80,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => const Center(
+                            child:
+                                CircularProgressIndicator(), // Show a spinner while loading
+                          ),
+                          errorWidget: (context, url, error) => const Icon(
+                            Icons.store, // Fallback icon if loading fails
+                            size: 80,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  HeadingText(name),
-                                  ParagraphText(
-                                      "Sinza, Dar es salaam, Tanzania"),
-                                ],
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    HeadingText(data['name'] ?? 'Name'),
+                                    ParagraphText(data['address'] ?? 'Address'),
+                                  ],
+                                ),
                               ),
-                            ),
-                            Container(
-                              width: 60,
-                              height: 25,
-                              decoration: BoxDecoration(
-                                color: Colors.green[100],
-                                borderRadius: BorderRadius.circular(15),
+                              Container(
+                                width: 60,
+                                height: 25,
+                                decoration: BoxDecoration(
+                                  color: Colors.green[100],
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                alignment: Alignment.center,
+                                child: ParagraphText(
+                                  "Open",
+                                  color: Colors.green[800],
+                                ),
                               ),
-                              alignment: Alignment.center,
-                              child: ParagraphText(
-                                "Open",
-                                color: Colors.green[800],
-                              ),
-                            ),
-                          ],
-                        ),
-                        spacer(),
-                        ParagraphText("Description",
-                            fontWeight: FontWeight.bold),
-                        ParagraphText(
-                            "Lorem feugiat amet semper varius  ipsum. Parturient aenrutrum tortor sempe...."),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ),
-            spacer1(),
-            TabBar(
-              isScrollable: true,
-              labelColor: Colors.black,
-              dividerColor: const Color.fromARGB(255, 234, 234, 234),
-              unselectedLabelColor: mutedTextColor,
-              tabAlignment: TabAlignment.start,
-              labelStyle: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-              unselectedLabelStyle: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.normal,
-              ),
-              indicator: const UnderlineTabIndicator(
-                borderSide: BorderSide(
-                  width: 2,
-                  color: Colors.black,
-                ),
-              ),
-              tabs: const [
-                Tab(text: "Shop Products"),
-                Tab(text: "Reels"),
-              ],
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: TabBarView(
-                  children: [
-                    // Shop Products Tab
-                    sellerShopProducts(),
-                    // Reels Tab
-                    ProductMasonryGrid(from: "SellerProfilePage"),
+                            ],
+                          ),
+                          spacer(),
+                          ParagraphText(
+                            "Description",
+                            fontWeight: FontWeight.bold,
+                          ),
+                          ParagraphText(data['description'] ??
+                              "No description available."),
+                        ],
+                      ),
+                    )
                   ],
                 ),
               ),
-            ),
-          ],
-        ),
+              spacer1(),
+              Expanded(
+                child: Column(
+                  children: [
+                    TabBar(
+                      labelColor: Colors.black,
+                      unselectedLabelColor: mutedTextColor,
+                      labelStyle: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      unselectedLabelStyle: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.normal,
+                      ),
+                      indicator: const UnderlineTabIndicator(
+                        borderSide: BorderSide(
+                          width: 2,
+                          color: Colors.black,
+                        ),
+                      ),
+                      tabs: const [
+                        Tab(text: "Shop Products"),
+                        Tab(text: "Reels"),
+                      ],
+                    ),
+                    Expanded(
+                      child: TabBarView(
+                        children: [
+                          ShopProducts(),
+                          ShopMasonryGrid(),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        }),
       ),
     );
   }

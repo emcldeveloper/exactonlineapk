@@ -13,11 +13,9 @@ import 'package:e_online/pages/see_all_page.dart';
 import 'package:e_online/widgets/ads_carousel.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
-import 'package:e_online/widgets/product_card.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 class HomePage extends StatefulWidget {

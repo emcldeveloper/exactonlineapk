@@ -8,7 +8,7 @@ import 'package:hugeicons/hugeicons.dart';
 
 class FollowingController extends GetxController {
   UserController userController = Get.find();
-  
+
   Future followShop(var payload) async {
     try {
       var response = await dio.post("/shop-followers/",
@@ -18,6 +18,46 @@ class FollowingController extends GetxController {
                 "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
           }));
       var data = response.data["body"];
+      print(data);
+      return data;
+    } on DioException catch (e) {
+      print("Error response");
+      print(e.response);
+      return e.response;
+    }
+  }
+
+  Future getShopsFollowing({page, limit, keyword}) async {
+    try {
+      var userId = userController.user['id'] ?? "";
+      var response = await dio.get(
+          "/shops/following/user/$userId/?page=${page ?? 1}&limit=${limit ?? 10}&keyword=${keyword ?? ""}",
+          options: Options(headers: {
+            "Authorization":
+                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
+          }));
+
+      var data = response.data["body"]["rows"];
+      print(data);
+      return data;
+    } on DioException catch (e) {
+      print("Error response");
+      print(e.response);
+      return e.response;
+    }
+  }
+
+  Future getFollowers({page, limit, keyword}) async {
+    try {
+      var response = await dio.get(
+          "/shop-followers/?page=${page ?? 1}&limit=${limit ?? 10}&keyword=${keyword ?? ""}",
+          options: Options(headers: {
+            "Authorization":
+                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
+          }));
+
+      var data = response.data["body"]["rows"];
+      print("get all shop-followers");
       print(data);
       return data;
     } on DioException catch (e) {

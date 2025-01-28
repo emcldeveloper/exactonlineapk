@@ -20,7 +20,6 @@ class ReelController extends GetxController {
                 "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
           }));
       var data = response.data["body"]["rows"];
-      print(data);
       return data;
     } on DioException catch (e) {
       print("Error response");
@@ -39,8 +38,6 @@ class ReelController extends GetxController {
           }));
 
       var data = response.data["body"]["rows"];
-      print("get all reels");
-      print(data);
       return data;
     } on DioException catch (e) {
       print("Error response");
@@ -51,8 +48,7 @@ class ReelController extends GetxController {
 
   Future getSpecificReels({selectedId, page, limit, keyword}) async {
     try {
-      var response = await dio.get(
-          "/reels/$selectedId/?page=${page ?? 1}&limit=${limit ?? 10}&keyword=${keyword ?? ""}",
+      var response = await dio.get("/reels/$selectedId",
           options: Options(headers: {
             "Authorization":
                 "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
