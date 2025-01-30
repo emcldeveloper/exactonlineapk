@@ -55,8 +55,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    String avatar =
-        userController.user.value["image"] ?? 'assets/images/avatar.png';
+    var avatar = userController.user.value["image"];
     List<Map<String, dynamic>> filterProducts(String category) {
       if (category == "All") return productItems;
       return productItems
@@ -276,10 +275,10 @@ class _HomePageState extends State<HomePage> {
                               fit: BoxFit.cover,
                             )
                           : HugeIcon(
-                                icon: HugeIcons.strokeRoundedUserCircle,
-                                color: Colors.black,
-                                size: 30,
-                              ),
+                              icon: HugeIcons.strokeRoundedUserCircle,
+                              color: Colors.black,
+                              size: 30,
+                            ),
                     ),
                   ),
                   const SizedBox(width: 16),

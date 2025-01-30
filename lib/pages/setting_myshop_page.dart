@@ -55,7 +55,6 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
   @override
   void initState() {
     super.initState();
-    _loadSelectedBusiness();
     _loadSelectedShopDetails();
     userId = userController.user.value['id'] ?? "";
     shopList = userController.user.value['Shops'] ?? [];
@@ -66,21 +65,21 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
   Future _loadSelectedShopDetails() async {
     isLoadingTime.value = true;
     final businessId = await SharedPreferencesUtil.getSelectedBusiness();
+    print("Duka");
+    print(businessId);
+    // if (businessId != null) {
+    //   List businesses = userController.user.value['Shops'];
+    //   print(businessId);
+    //   var businessList =
+    //       businesses.where((business) => business["id"] == businessId);
+    //   selectedBusiness?.value =
+    //       businesses.where((business) => business["id"] == businessId).first;
+    //   print(selectedBusiness);
+    // }
     var shopDetails = await shopController.getShopDetails(businessId);
     userController.user.value["selectedShop"] = shopDetails;
     shopCalendars.value = shopDetails["ShopCalenders"] ?? [];
     isLoadingTime.value = false;
-  }
-
-  // load current business
-  Future _loadSelectedBusiness() async {
-    final businessId = await SharedPreferencesUtil.getSelectedBusiness();
-    if (businessId != null) {
-      List businesses = userController.user.value['Shops'];
-      selectedBusiness?.value =
-          businesses.where((business) => business["id"] == businessId).first;
-      print(selectedBusiness);
-    }
   }
 
   // Update location
@@ -194,7 +193,7 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
           ),
           onPressed: () {
             if (widget.from == 'shoppingPage') {
-              Get.offAll(() => const MyShopPage());
+              Get.back();
             } else if (widget.from == 'formPage') {
               Get.offAll(() => const ProfilePage());
             } else {

@@ -60,7 +60,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     String id = userController.user.value["id"];
-    String avatar = userController.user.value["image"];
+    var avatar = userController.user.value["image"];
 
     return Scaffold(
       backgroundColor: mainColor,
@@ -109,7 +109,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                   width: 80,
                                   fit: BoxFit.cover,
                                 )
-                              : avatar.isNotEmpty 
+                              : avatar != null
                                   ? CachedNetworkImage(
                                       imageUrl: avatar,
                                       height: 80,

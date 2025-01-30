@@ -51,8 +51,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 String username =
                     userController.user.value["name"] ?? "No name";
                 String phone = userController.user.value["phone"] ?? "0";
-                String avatar = userController.user.value["image"] ??
-                    'assets/images/avatar.png';
+                var avatar = userController.user.value["image"];
 
                 return Column(
                   children: [
