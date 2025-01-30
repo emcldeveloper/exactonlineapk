@@ -494,7 +494,7 @@ class _EditRegisterAsSellerPageState extends State<EditRegisterAsSellerPage> {
                               icon: HugeIcon(
                                   icon: HugeIcons.strokeRoundedTick01,
                                   color: Colors.white));
-                          Get.offAll(() => SettingMyshopPage(
+                          Get.to(() => SettingMyshopPage(
                                 from: "formPage",
                               ));
                         } catch (e) {

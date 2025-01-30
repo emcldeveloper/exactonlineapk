@@ -623,7 +623,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                               icon: HugeIcon(
                                   icon: HugeIcons.strokeRoundedTick01,
                                   color: Colors.white));
-                          Get.offAll(() => const MyShopPage(),
+                          Get.to(() => const MyShopPage(),
                               arguments: {'origin': 'RegisterAsSellerPage'});
                         } catch (e) {
                           isLoading.value = false;

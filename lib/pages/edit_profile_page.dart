@@ -337,6 +337,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     button2Action: () async {
                       Navigator.of(context).pop();
                       await SharedPreferencesUtil.removeAccessToken();
+                      await SharedPreferencesUtil.clearSelectedBusiness();
                       Get.offAll(() => WayPage());
                     },
                   );
