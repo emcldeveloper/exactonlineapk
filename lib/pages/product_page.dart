@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/controllers/favorite_controller.dart';
 import 'package:e_online/controllers/product_controller.dart';
+import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/cart_page.dart';
 import 'package:e_online/pages/chat_page.dart';
 import 'package:e_online/utils/convert_to_money_format.dart';
@@ -27,16 +29,17 @@ class ProductPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<ProductPage> {
-  late bool isFavorite = false;
   var loading = true.obs;
   late String selectedImage = widget.productData["ProductImages"][0]["id"];
   late List<String> productImages;
   Rx<Map> product = Rx<Map>({});
+  final UserController userController = Get.find();
+  final FavoriteController favoriteController = Get.put(FavoriteController());
 
   @override
   void initState() {
     super.initState();
-    _loadFavoriteStatus();
+    favoriteController.fetchFavorites();
     getData();
   }
 
@@ -53,37 +56,27 @@ class _ProductPageState extends State<ProductPage> {
     });
   }
 
-  void _loadFavoriteStatus() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> favoriteItems = prefs.getStringList('favorites') ?? [];
-    String productJson = jsonEncode(widget.productData);
-
-    setState(() {
-      isFavorite = favoriteItems.contains(productJson);
-    });
+  bool get isFavorite {
+    return favoriteController.favorites
+        .any((item) => item['id'] == widget.productData['id']);
   }
 
   void _toggleFavorite() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> favoriteItems = prefs.getStringList('favorites') ?? [];
-    String productJson = jsonEncode(widget.productData);
-
-    setState(() {
-      if (favoriteItems.contains(productJson)) {
-        favoriteItems.remove(productJson);
-        isFavorite = false;
-      } else {
-        favoriteItems.add(productJson);
-        isFavorite = true;
-      }
-    });
-
-    await prefs.setStringList('favorites', favoriteItems);
+    var userId = userController.user.value['id'] ?? "";
+    if (isFavorite) {
+      await favoriteController.deleteFavorite(widget.productData['id']);
+    } else {
+      var payload = {
+        "ProductId": widget.productData['id'],
+        "UserId": userId,
+      };
+      await favoriteController.addFavorite(payload);
+    }
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content:
-            Text(isFavorite ? "Added to Favorites" : "Removed from Favorites"),
+            Text(isFavorite ? "Removed from Favorites" : "Added to Favorites"),
       ),
     );
   }

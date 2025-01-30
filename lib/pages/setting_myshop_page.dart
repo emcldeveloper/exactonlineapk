@@ -3,7 +3,6 @@ import 'package:e_online/controllers/shop_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/edit_register_as_seller_page.dart';
 import 'package:e_online/pages/main_page.dart';
-import 'package:e_online/pages/my_shop_page.dart';
 import 'package:e_online/pages/profile_page.dart';
 import 'package:e_online/pages/register_as_seller_page.dart';
 import 'package:e_online/utils/shared_preferences.dart';
