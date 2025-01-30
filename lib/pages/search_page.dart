@@ -1,19 +1,42 @@
+// ignore_for_file: avoid_print
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/constants/product_items.dart';
+import 'package:e_online/controllers/categories_controller.dart';
 import 'package:e_online/pages/categories_products_page.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:e_online/widgets/search_function.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class SearchPage extends StatelessWidget {
+class SearchPage extends StatefulWidget {
   SearchPage({super.key});
 
+  @override
+  State<SearchPage> createState() => _SearchPageState();
+}
+
+class _SearchPageState extends State<SearchPage> {
   final List<Map<String, dynamic>> searchKeywords = [
     {'name': 'Samsung Television', 'date': '10/11/2024'},
     {'name': 'router tplink', 'date': '10/11/2024'},
     {'name': 'sneakers', 'date': '10/11/2024'},
   ];
+
+  Rx<List> categories = Rx<List>([]);
+  @override
+  void initState() {
+    // TODO: implement initState
+    CategoriesController()
+        .getCategories(page: 1, limit: 10, keyword: "")
+        .then((res) {
+      print(res);
+      categories.value = res;
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,82 +80,78 @@ class SearchPage extends StatelessWidget {
               spacer(),
               ParagraphText("Search history", fontWeight: FontWeight.bold),
               spacer(),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: searchKeywords.map((filter) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: primaryColor,
-                    ),
-                    padding: const EdgeInsets.all(8.0),
-                    child: ParagraphText(filter['name']),
-                  );
-                }).toList(),
-              ),
-              spacer1(),
               ParagraphText("Categories", fontWeight: FontWeight.bold),
               spacer(),
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4,
-                  childAspectRatio: 0.8,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                ),
-                itemCount: categories.length,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CategoriesProductsPage(
-                            categoryName: categories[index]['name'],
-                          ),
-                        ),
-                      );
-                    },
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 80,
-                          height: 80,
-                          padding: const EdgeInsets.all(12.0),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16),
-                            color: primaryColor,
-                          ),
-                          child: categories[index]['imageUrl'] != null
-                              ? ClipRRect(
-                                  borderRadius: BorderRadius.circular(11),
-                                  child: Image.asset(
-                                    categories[index]['imageUrl'],
-                                    fit: BoxFit.contain,
-                                  ),
-                                )
-                              : const Center(
-                                  child: Icon(
-                                    Icons.image_not_supported,
-                                    color: Colors.grey,
-                                  ),
+              GetX<CategoriesController>(
+                  init: CategoriesController(),
+                  builder: (context) {
+                    return categories.value.isEmpty
+                        ? const Center(
+                            child: Padding(
+                            padding: EdgeInsets.all(20),
+                            child: CircularProgressIndicator(),
+                          ))
+                        : GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 4,
+                              childAspectRatio: 0.8,
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 10,
+                            ),
+                            itemCount: categories.value.length,
+                            itemBuilder: (context, index) {
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          CategoriesProductsPage(
+                                        category: categories.value[index],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: 80,
+                                      height: 80,
+                                      padding: const EdgeInsets.all(15.0),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: primaryColor,
+                                      ),
+                                      child: categories.value[index]['image'] !=
+                                              null
+                                          ? CachedNetworkImage(
+                                              imageUrl: categories.value[index]
+                                                  ['image'],
+                                              fit: BoxFit.contain,
+                                            )
+                                          : const Center(
+                                              child: Icon(
+                                                Icons.image_not_supported,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                    ),
+                                    spacer(),
+                                    ParagraphText(
+                                      categories.value[index]['name'],
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12.0,
+                                    ),
+                                  ],
                                 ),
-                        ),
-                        spacer(),
-                        ParagraphText(
-                          categories[index]['name'],
-                          fontWeight: FontWeight.bold,
-                          fontSize: 10.0,
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
+                              );
+                            },
+                          );
+                  }),
             ],
           ),
         ),

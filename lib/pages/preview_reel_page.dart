@@ -159,11 +159,11 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                       ? VideoPlayer(_videoController)
                       : Center(
                           child: _videoController.value.hasError
-                              ? Text(
+                              ? const Text(
                                   "Failed to load video",
                                   style: TextStyle(color: Colors.white),
                                 )
-                              : CircularProgressIndicator(color: Colors.white),
+                              : const CircularProgressIndicator(color: Colors.white),
                         ),
                 ),
                 // Back Button
@@ -300,7 +300,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                                 ),
                               ),
                               isFollowing == true
-                                  ? SizedBox
+                                  ? const SizedBox
                                       .shrink() // Button disappears if already following
                                   : TextButton(
                                       onPressed: followShop,
@@ -329,7 +329,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                                   children: [
                                     Row(
                                       children: [
-                                        HugeIcon(
+                                        const HugeIcon(
                                           icon:
                                               HugeIcons.strokeRoundedFavourite,
                                           color: Colors.white,
@@ -361,7 +361,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                                         ),
                                       ],
                                     ),
-                                    HugeIcon(
+                                    const HugeIcon(
                                       icon: HugeIcons.strokeRoundedShare01,
                                       color: Colors.white,
                                       size: 22.0,

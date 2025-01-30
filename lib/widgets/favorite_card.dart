@@ -1,8 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:e_online/utils/convert_to_money_format.dart';
 import 'package:flutter/material.dart';
 import 'package:e_online/pages/product_page.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:e_online/constants/colors.dart';
+import 'package:get/get.dart';
 
 class FavoriteCard extends StatefulWidget {
   final Map<String, dynamic> data;
@@ -30,12 +33,7 @@ class _FavoriteCardState extends State<FavoriteCard> {
     return GestureDetector(
       onTap: () {
         if (widget.data.isNotEmpty) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ProductPage(productData: widget.data),
-            ),
-          );
+          Get.to(() => ProductPage(productData: widget.data));
         }
       },
       child: Container(
@@ -45,33 +43,11 @@ class _FavoriteCardState extends State<FavoriteCard> {
           children: [
             // Image Section
             Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                image: (widget.data['imageUrl'] != null &&
-                        widget.data['imageUrl'] is List &&
-                        widget.data['imageUrl'].isNotEmpty)
-                    ? DecorationImage(
-                        image: AssetImage(widget.data['imageUrl'][0]),
-                        fit: BoxFit.cover,
-                      )
-                    : null,
-                color: primaryColor,
-              ),
-              child: (widget.data['imageUrl'] == null ||
-                      !(widget.data['imageUrl'] is List) ||
-                      widget.data['imageUrl'].isEmpty)
-                  ? Center(
-                      child: Icon(
-                        Icons.image_not_supported,
-                        color: primaryColor,
-                      ),
-                    )
-                  : null,
-            ),
-
-            const SizedBox(width: 12),
+                width: 80,
+                height: 80,
+                child: CachedNetworkImage(
+                    imageUrl: widget.data['ProductImages'][0]["image"])),
+            const SizedBox(width: 15),
 
             Expanded(
               child: Column(
@@ -87,7 +63,7 @@ class _FavoriteCardState extends State<FavoriteCard> {
                         child: Row(
                           children: [
                             ParagraphText(
-                              widget.data['price']?.toString() ?? "N/A",
+                              "TZS ${toMoneyFormmat(widget.data['sellingPrice'])}",
                               fontWeight: FontWeight.bold,
                               fontSize: 16.0,
                             ),

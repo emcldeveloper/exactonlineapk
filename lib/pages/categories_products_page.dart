@@ -1,51 +1,39 @@
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/constants/product_items.dart';
+import 'package:e_online/controllers/product_controller.dart';
 import 'package:e_online/pages/search_page.dart';
 import 'package:e_online/widgets/favorite_card.dart';
 import 'package:e_online/widgets/filter_tiles.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:icons_plus/icons_plus.dart';
 
-class CategoriesProductsPage extends StatelessWidget {
-  final String categoryName;
+class CategoriesProductsPage extends StatefulWidget {
+  var category;
 
-  CategoriesProductsPage({super.key, required this.categoryName});
+  CategoriesProductsPage({super.key, required this.category});
 
-  final List<Map<String, dynamic>> searchedResults = [
-    {
-      'title': "J.Crew T-shirt",
-      'price': "25,000 TSH",
-      'imageUrl': ["assets/images/whiteTop.png"],
-      'description':
-          "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
-      'rating': 4.5,
-    },
-    {
-      'title': "J.Crew T-shirt",
-      'price': "25,000 TSH",
-      'imageUrl': ["assets/images/blueTop.png"],
-      'description':
-          "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
-      'rating': 4.5,
-    },
-    {
-      'title': "J.Crew T-shirt",
-      'price': "25,000 TSH",
-      'imageUrl': ["assets/images/maroonTop.png"],
-      'description':
-          "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
-      'rating': 4.5,
-    },
-    {
-      'title': "J.Crew T-shirt",
-      'price': "25,000 TSH",
-      'imageUrl': ["assets/images/peachTop.png"],
-      'description':
-          "us elementum. Et ligula ornare tempor fermentum fringil vulputate mi dui. Massa ....",
-      'rating': 4.5,
-    },
-  ];
+  @override
+  State<CategoriesProductsPage> createState() => _CategoriesProductsPageState();
+}
+
+class _CategoriesProductsPageState extends State<CategoriesProductsPage> {
+  var loading = true.obs;
+  Rx<List> products = Rx<List>([]);
+  @override
+  void initState() {
+    ProductController()
+        .getProducts(
+            page: 1, limit: 10, keyword: "", category: widget.category["id"])
+        .then((res) {
+      products.value = res;
+      loading.value = false;
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +52,7 @@ class CategoriesProductsPage extends StatelessWidget {
             Navigator.pop(context);
           },
         ),
-        title: HeadingText(categoryName),
+        title: HeadingText(widget.category["name"]),
         centerTitle: true,
         actions: [
           IconButton(
@@ -74,11 +62,7 @@ class CategoriesProductsPage extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => SearchPage()),
               );
             },
-            icon: HugeIcon(
-              icon: HugeIcons.strokeRoundedSearch01,
-              color: Colors.black,
-              size: 22.0,
-            ),
+            icon: Icon(AntDesign.search_outline),
           ),
         ],
         bottom: PreferredSize(
@@ -89,25 +73,62 @@ class CategoriesProductsPage extends StatelessWidget {
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            spacer(),
-            const FilterTilesWidget(),
-            spacer(),
-            Expanded(
-              child: ListView.builder(
-                itemCount: searchedResults.length,
-                itemBuilder: (context, index) {
-                  final item = searchedResults[index];
-                  return FavoriteCard(data: item);
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
+      body: GetX(
+          init: ProductController(),
+          builder: (context) {
+            return loading.value
+                ? const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: CircularProgressIndicator(
+                        color: Colors.black,
+                      ),
+                    ),
+                  )
+                : products.value.isEmpty
+                    ? Center(
+                        child: Container(
+                          width: double.infinity,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Icon(
+                                FontAwesome.box_open_solid,
+                                color: Colors.grey[500],
+                                size: 50,
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                "No Products Found",
+                                style: TextStyle(color: Colors.grey[600]),
+                              )
+                            ],
+                          ),
+                        ),
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            spacer(),
+                            const FilterTilesWidget(),
+                            spacer(),
+                            Expanded(
+                              child: ListView.builder(
+                                itemCount: products.value.length,
+                                itemBuilder: (context, index) {
+                                  final item = products.value[index];
+                                  return FavoriteCard(data: item);
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+          }),
     );
   }
 }

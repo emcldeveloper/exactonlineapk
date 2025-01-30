@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 
 class HomeCategoriesProducts extends StatefulWidget {
-  String? category;
+  var category;
   HomeCategoriesProducts({super.key, this.category});
 
   @override
@@ -16,12 +16,12 @@ class _HomeCategoriesProductsState extends State<HomeCategoriesProducts> {
   Rx<List> products = Rx<List>([]);
   @override
   void initState() {
-    ProductController()
-        .getProducts(page: 1, limit: 20, keyword: "", category: widget.category)
-        .then((res) {
-      products.value =
-          res.where((item) => item["ProductImages"].length > 0).toList();
-    });
+    // ProductController()
+    //     .getProducts(page: 1, limit: 20, keyword: "", category: widget.category)
+    //     .then((res) {
+    //   products.value =
+    //       res.where((item) => item["ProductImages"].length > 0).toList();
+    // });
     super.initState();
   }
 

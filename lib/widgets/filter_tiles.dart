@@ -56,7 +56,7 @@ class _FilterTilesWidgetState extends State<FilterTilesWidget> {
               onTap: () {
                 callFilterSearch(context);
               },
-              child: const Icon(AntDesign.menu_fold_outline),
+              child: const Icon(AntDesign.filter_outline),
             ),
           ],
         ),
