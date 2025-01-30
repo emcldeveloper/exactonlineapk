@@ -69,7 +69,7 @@ class _AddReelPageState extends State<AddReelPage> {
             filename: _videos.first.path.split("/").last,
           ),
           "caption": captionController.text,
-          "ShopId": userController.user["Shops"][0]["id"],
+          "ShopId": userController.user.value["Shops"][0]["id"],
         });
 
         // Upload reel with the video file

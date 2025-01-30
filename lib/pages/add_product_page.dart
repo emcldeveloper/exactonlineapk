@@ -500,7 +500,8 @@ class _AddProductPageState extends State<AddProductPage> {
                               "specifications": jsonSpecifications,
                               "deliveryScope": deliveryScopeController.text,
                               "CategoryId": categoryController.text,
-                              "ShopId": userController.user["Shops"][0]["id"],
+                              "ShopId": userController.user.value["Shops"][0]
+                                  ["id"],
                             };
                             setState(() {
                               loading = true;

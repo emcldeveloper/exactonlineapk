@@ -53,8 +53,8 @@ class _EditRegisterAsSellerPageState extends State<EditRegisterAsSellerPage> {
   void initState() {
     super.initState();
 
-    userId = userController.user["id"] ?? "";
-    List businesses = userController.user['Shops'];
+    userId = userController.user.value["id"] ?? "";
+    List businesses = userController.user.value['Shops'];
 
     selectedBusiness = businesses.firstWhere(
       (business) => business["id"] == widget.shopId,

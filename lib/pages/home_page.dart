@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/controllers/categories_controller.dart';
+import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/cart_page.dart';
 import 'package:e_online/pages/home_page_sections/all_products.dart';
 import 'package:e_online/pages/home_page_sections/for_you_products.dart';
@@ -16,6 +18,7 @@ import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 class HomePage extends StatefulWidget {
@@ -26,6 +29,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  UserController userController = Get.find();
   int _currentPage = 0;
   final List<String> carouselImages = [
     "assets/ads/ad1.jpg",
@@ -51,6 +55,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    String avatar =
+        userController.user.value["image"] ?? 'assets/images/avatar.png';
     List<Map<String, dynamic>> filterProducts(String category) {
       if (category == "All") return productItems;
       return productItems
@@ -262,17 +268,18 @@ class _HomePageState extends State<HomePage> {
                       Get.to(const ProfilePage());
                     },
                     child: ClipOval(
-                      child: Container(
-                        height: 30,
-                        width: 30,
-                        color: secondaryColor,
-                        child: Image.asset(
-                          "assets/images/avatar.png",
-                          height: 30,
-                          width: 30,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                      child: avatar != null
+                          ? CachedNetworkImage(
+                              imageUrl: avatar,
+                              height: 30,
+                              width: 30,
+                              fit: BoxFit.cover,
+                            )
+                          : HugeIcon(
+                                icon: HugeIcons.strokeRoundedUserCircle,
+                                color: Colors.black,
+                                size: 30,
+                              ),
                     ),
                   ),
                   const SizedBox(width: 16),

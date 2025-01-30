@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart' as dio;
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/user_controller.dart';
@@ -50,15 +51,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void initState() {
     // TODO: implement initState
-    businessnameController.text = userController.user["name"] ?? "";
-    phoneController.text = userController.user["phone"] ?? "";
-    emailController.text = userController.user["email"] ?? "";
+    businessnameController.text = userController.user.value["name"] ?? "";
+    phoneController.text = userController.user.value["phone"] ?? "";
+    emailController.text = userController.user.value["email"] ?? "";
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    String id = userController.user["id"];
+    String id = userController.user.value["id"];
+    String avatar = userController.user.value["image"];
+
     return Scaffold(
       backgroundColor: mainColor,
       appBar: AppBar(
@@ -106,11 +109,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                   width: 80,
                                   fit: BoxFit.cover,
                                 )
-                              : HugeIcon(
-                                  icon: HugeIcons.strokeRoundedUserCircle,
-                                  color: Colors.black,
-                                  size: 80,
-                                ),
+                              : avatar.isNotEmpty 
+                                  ? CachedNetworkImage(
+                                      imageUrl: avatar,
+                                      height: 80,
+                                      width: 80,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : HugeIcon(
+                                      icon: HugeIcons.strokeRoundedUserCircle,
+                                      color: Colors.black,
+                                      size: 80,
+                                    ),
                         ),
                         Positioned(
                           bottom: 0,
@@ -283,7 +293,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       try {
                         var user =
                             await userController.updateUserData(id, formData);
-                        userController.user = user["body"];
+                        userController.user.value = user["body"];
                         isLoading.value = false;
                         Get.snackbar("Success", "Profile updated successfully!",
                             backgroundColor: Colors.green,
@@ -327,7 +337,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     button2Action: () async {
                       Navigator.of(context).pop();
                       await SharedPreferencesUtil.removeAccessToken();
-                      Get.offAll(WayPage());
+                      Get.offAll(() => WayPage());
                     },
                   );
                 },

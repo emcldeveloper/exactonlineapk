@@ -45,7 +45,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
   String userId = "";
   @override
   void initState() {
-    userId = userController.user["id"] ?? "";
+    userId = userController.user.value["id"] ?? "";
     super.initState();
   }
 
@@ -598,7 +598,9 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                               await shopController.createShop(payload);
                           var shopId = response['body']["id"];
                           //add shop to shops in user payload
-                          userController.user["Shops"] = [response['body']];
+                          userController.user.value["Shops"] = [
+                            response['body']
+                          ];
 
                           // Send files one by one
                           for (var file in _files) {

@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 
 class WayPage extends StatelessWidget {
   WayPage({super.key});
+
   final UserController userController = Get.put(UserController());
 
   Future<bool> _checkTokenAndFetchUserDetails() async {
@@ -16,11 +17,12 @@ class WayPage extends StatelessWidget {
         var response = await userController.getUserDetails();
         var userDetails = response["body"];
         print(userDetails);
-        userController.user = userDetails;
+        
+        userController.user.value = userDetails;
         return true;
       } catch (e) {
         await SharedPreferencesUtil.removeAccessToken();
-        Get.offAll(WayPage());
+        Get.offAll(() => WayPage());
       }
     }
     return false;

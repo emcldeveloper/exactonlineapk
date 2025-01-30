@@ -6,7 +6,8 @@ import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 class UserController extends GetxController {
-  var user;
+  Rx<Map<String, dynamic>> user = Rx<Map<String, dynamic>>({});
+
   Future getUserDetails() async {
     try {
       var response = await dio.get(
@@ -30,16 +31,11 @@ class UserController extends GetxController {
   }
 
   Future getOneUserData(var payload) async {
-    // String? token = await SharedPreferencesUtil.getAccessToken();
-    // if (token == null) {
-    //   throw Exception("Access token is null");
-    // }
     var response = await dio.get("/users/${payload.id}",
         options: Options(headers: {
           "Authorization":
               "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
         }));
-    // options: Options(headers: {"Authorization": "Bearer $token"}),
     var data = response.data;
     print(data);
     return data;
@@ -66,5 +62,11 @@ class UserController extends GetxController {
               icon: HugeIcons.strokeRoundedCancel01, color: Colors.white));
       print("Error updating user details: ${e.response}");
     }
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    getUserDetails();
   }
 }
