@@ -25,7 +25,7 @@ class _ActiveBusinessSelectionState extends State<ActiveBusinessSelection> {
   @override
   void initState() {
     super.initState();
-    shopList = userController.user['Shops'] ?? [];
+    shopList = userController.user.value['Shops'] ?? [];
   }
 
   // final List<Map<String, String>> businesses = [

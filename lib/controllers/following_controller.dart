@@ -29,7 +29,8 @@ class FollowingController extends GetxController {
 
   Future getShopsFollowing({page, limit, keyword}) async {
     try {
-      var userId = userController.user['id'] ?? "";
+      
+      var userId = userController.user.value['id'] ?? "";
       var response = await dio.get(
           "/shops/following/user/$userId/?page=${page ?? 1}&limit=${limit ?? 10}&keyword=${keyword ?? ""}",
           options: Options(headers: {

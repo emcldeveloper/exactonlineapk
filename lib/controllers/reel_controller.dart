@@ -10,7 +10,7 @@ class ReelController extends GetxController {
     try {
       var shopId = await SharedPreferencesUtil.getSelectedBusiness();
       if (shopId == null) {
-        shopId = userController.user["Shops"][0]["id"];
+        shopId = userController.user.value["Shops"][0]["id"];
         await SharedPreferencesUtil.saveSelectedBusiness(shopId!);
       }
       var response = await dio.get(

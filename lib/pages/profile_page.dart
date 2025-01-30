@@ -28,46 +28,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    String username = userController.user["name"] ?? "No name";
-    String phone = userController.user["phone"] ?? "0";
-    String avatar = userController.user["image"] ?? 'assets/images/avatar.png';
-    List<dynamic>? shops = userController.user["Shops"];
-    bool hasShop = shops != null && shops.isNotEmpty;
-
-    final List<Map<String, dynamic>> settingItems = [
-      if (hasShop)
-        {
-          'icon': Bootstrap.cart,
-          'title': 'My Shop',
-          'page': const MyShopPage(),
-        },
-      {
-        'icon': Bootstrap.bag,
-        'title': 'My Orders',
-        'page': const MyOrdersPage(),
-      },
-      {
-        'icon': Icons.edit_outlined,
-        'title': 'Edit Profile',
-        'page': EditProfilePage(),
-      },
-      {
-        'icon': Icons.support_agent_outlined,
-        'title': 'Customer Support',
-        'page': FontAwesome.circle_question,
-      },
-      {
-        'icon': Icons.assignment_outlined,
-        'title': 'Terms and Conditions',
-        'page': const TermsConditionsPage(),
-      },
-      {
-        'icon': Icons.privacy_tip_outlined,
-        'title': 'Privacy Policy',
-        'page': const PrivacyPolicy(),
-      },
-    ];
-
     return Scaffold(
       backgroundColor: mainColor,
       appBar: AppBar(
@@ -87,122 +47,178 @@ class _ProfilePageState extends State<ProfilePage> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              GestureDetector(
-                onTap: () => {Get.to(() => EditProfilePage())},
-                child: SizedBox(
-                  height: 80,
-                  width: 80,
-                  child: Stack(
-                    children: [
-                      ClipOval(
-                        child: avatar != null
-                            ? CachedNetworkImage(
-                                imageUrl: avatar,
-                                height: 80,
-                                width: 80,
-                                fit: BoxFit.cover,
-                              )
-                            : HugeIcon(
-                                icon: HugeIcons.strokeRoundedUserCircle,
-                                color: Colors.black,
-                                size: 80,
-                              ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.black,
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(6),
-                            child: const Center(
-                              child: HugeIcon(
-                                icon: HugeIcons.strokeRoundedPencilEdit02,
-                                color: Colors.white,
-                                size: 14.0,
+              Obx(() {
+                String username =
+                    userController.user.value["name"] ?? "No name";
+                String phone = userController.user.value["phone"] ?? "0";
+                String avatar = userController.user.value["image"] ??
+                    'assets/images/avatar.png';
+
+                return Column(
+                  children: [
+                    GestureDetector(
+                      onTap: () => {Get.to(() => EditProfilePage())},
+                      child: SizedBox(
+                        height: 80,
+                        width: 80,
+                        child: Stack(
+                          children: [
+                            ClipOval(
+                              child: avatar != null
+                                  ? CachedNetworkImage(
+                                      imageUrl: avatar,
+                                      height: 80,
+                                      width: 80,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : HugeIcon(
+                                      icon: HugeIcons.strokeRoundedUserCircle,
+                                      color: Colors.black,
+                                      size: 80,
+                                    ),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(6),
+                                  child: const Center(
+                                    child: HugeIcon(
+                                      icon: HugeIcons.strokeRoundedPencilEdit02,
+                                      color: Colors.white,
+                                      size: 14.0,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              spacer1(),
-              HeadingText(username),
-              ParagraphText(phone),
+                    ),
+                    spacer1(),
+                    HeadingText(username),
+                    ParagraphText(phone),
+                  ],
+                );
+              }),
               spacer(),
               Row(
                 children: [HeadingText("Settings", textAlign: TextAlign.start)],
               ),
               spacer(),
-              Column(
-                children: settingItems.map((item) {
-                  return InkWell(
-                    onTap: () {
-                      Get.to(() => item['page'] as Widget);
+              Obx(() {
+                List<dynamic>? shops = userController.user.value["Shops"];
+                bool hasShop = shops != null && shops.isNotEmpty;
+
+                final List<Map<String, dynamic>> settingItems = [
+                  if (hasShop)
+                    {
+                      'icon': Bootstrap.cart,
+                      'title': 'My Shop',
+                      'page': const MyShopPage(),
                     },
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8.0),
-                      child: Row(
-                        children: [
-                          Icon(
-                            item['icon'],
-                            color: Colors.black,
-                            size: 20.0,
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                              child:
-                                  ParagraphText(item['title'], fontSize: 15)),
-                          const Icon(
-                            Icons.arrow_forward_ios,
-                            color: Colors.grey,
-                            size: 16,
-                          ),
-                        ],
+                  {
+                    'icon': Bootstrap.bag,
+                    'title': 'My Orders',
+                    'page': const MyOrdersPage(),
+                  },
+                  {
+                    'icon': Icons.edit_outlined,
+                    'title': 'Edit Profile',
+                    'page': EditProfilePage(),
+                  },
+                  {
+                    'icon': Icons.support_agent_outlined,
+                    'title': 'Customer Support',
+                    'page': FontAwesome.circle_question,
+                  },
+                  {
+                    'icon': Icons.assignment_outlined,
+                    'title': 'Terms and Conditions',
+                    'page': const TermsConditionsPage(),
+                  },
+                  {
+                    'icon': Icons.privacy_tip_outlined,
+                    'title': 'Privacy Policy',
+                    'page': const PrivacyPolicy(),
+                  },
+                ];
+                return Column(
+                  children: settingItems.map((item) {
+                    return InkWell(
+                      onTap: () {
+                        Get.to(() => item['page'] as Widget);
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.0),
+                        child: Row(
+                          children: [
+                            Icon(
+                              item['icon'],
+                              color: Colors.black,
+                              size: 20.0,
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                                child:
+                                    ParagraphText(item['title'], fontSize: 15)),
+                            const Icon(
+                              Icons.arrow_forward_ios,
+                              color: Colors.grey,
+                              size: 16,
+                            ),
+                          ],
+                        ),
                       ),
+                    );
+                  }).toList(),
+                );
+              }),
+              spacer1(),
+              Obx(() {
+                List<dynamic>? shops = userController.user.value["Shops"];
+                bool hasShop = shops != null && shops.isNotEmpty;
+                if (!hasShop) {
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 10.0),
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: primaryColor,
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Image.asset("assets/images/sellers.png", height: 80.0),
+                        spacer1(),
+                        HeadingText("Join ExactOnline as a seller",
+                            fontSize: 18.0),
+                        spacer(),
+                        ParagraphText(
+                          "List your products and drive sales to your\nbusiness using ExactOnline",
+                          fontSize: 14.0,
+                          textAlign: TextAlign.center,
+                        ),
+                        spacer2(),
+                        customButton(
+                          onTap: () {
+                            Get.to(() => const JoinAsSellerPage());
+                          },
+                          text: "Learn More",
+                          vertical: 15.0,
+                        ),
+                      ],
                     ),
                   );
-                }).toList(),
-              ),
-              spacer1(),
-              if (!hasShop)
-                Container(
-                  margin: const EdgeInsets.only(bottom: 10.0),
-                  padding: const EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    color: primaryColor,
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Image.asset("assets/images/sellers.png", height: 80.0),
-                      spacer1(),
-                      HeadingText("Join ExactOnline as a seller",
-                          fontSize: 18.0),
-                      spacer(),
-                      ParagraphText(
-                        "List your products and drive sales to your\nbusiness using ExactOnline",
-                        fontSize: 14.0,
-                        textAlign: TextAlign.center,
-                      ),
-                      spacer2(),
-                      customButton(
-                        onTap: () {
-                          Get.to(() => const JoinAsSellerPage());
-                        },
-                        text: "Learn More",
-                        vertical: 15.0,
-                      ),
-                    ],
-                  ),
-                ),
+                }
+                return Container();
+              }),
             ],
           ),
         ),

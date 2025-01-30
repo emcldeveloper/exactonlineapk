@@ -38,7 +38,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
   void initState() {
     super.initState();
     _pageController = PageController();
-    userId = userController.user['id'] ?? "";
+    userId = userController.user.value['id'] ?? "";
     _initializeReelDetails(widget.reels[currentIndex]['id']);
     // Add listener for reelDetails changes
     ever(reelDetails, (value) {

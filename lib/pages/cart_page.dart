@@ -39,7 +39,7 @@ class CartPage extends StatelessWidget {
           InkWell(
             onTap: () {
               Get.to(SettingMyshopPage(
-                from: "shoppingPage",
+                from: "cartPage",
               ));
             },
             child: HugeIcon(

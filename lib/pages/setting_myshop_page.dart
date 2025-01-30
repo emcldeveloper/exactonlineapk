@@ -3,6 +3,7 @@ import 'package:e_online/controllers/shop_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/edit_register_as_seller_page.dart';
 import 'package:e_online/pages/main_page.dart';
+import 'package:e_online/pages/my_shop_page.dart';
 import 'package:e_online/pages/profile_page.dart';
 import 'package:e_online/pages/register_as_seller_page.dart';
 import 'package:e_online/utils/shared_preferences.dart';
@@ -56,8 +57,8 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
     super.initState();
     _loadSelectedBusiness();
     _loadSelectedShopDetails();
-    userId = userController.user['id'] ?? "";
-    shopList = userController.user['Shops'] ?? [];
+    userId = userController.user.value['id'] ?? "";
+    shopList = userController.user.value['Shops'] ?? [];
   }
 
   RxList<dynamic> shopCalendars = <dynamic>[].obs;
@@ -66,7 +67,7 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
     isLoadingTime.value = true;
     final businessId = await SharedPreferencesUtil.getSelectedBusiness();
     var shopDetails = await shopController.getShopDetails(businessId);
-    userController.user["selectedShop"] = shopDetails;
+    userController.user.value["selectedShop"] = shopDetails;
     shopCalendars.value = shopDetails["ShopCalenders"] ?? [];
     isLoadingTime.value = false;
   }
@@ -75,7 +76,7 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
   Future _loadSelectedBusiness() async {
     final businessId = await SharedPreferencesUtil.getSelectedBusiness();
     if (businessId != null) {
-      List businesses = userController.user['Shops'];
+      List businesses = userController.user.value['Shops'];
       selectedBusiness?.value =
           businesses.where((business) => business["id"] == businessId).first;
       print(selectedBusiness);
@@ -193,7 +194,7 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
           ),
           onPressed: () {
             if (widget.from == 'shoppingPage') {
-              Get.offAll(() => const MainPage());
+              Get.offAll(() => const MyShopPage());
             } else if (widget.from == 'formPage') {
               Get.offAll(() => const ProfilePage());
             } else {

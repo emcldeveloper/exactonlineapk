@@ -18,6 +18,7 @@ import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 class HomePage extends StatefulWidget {
@@ -54,7 +55,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    String avatar = userController.user["image"] ?? 'assets/images/avatar.png';
+    String avatar =
+        userController.user.value["image"] ?? 'assets/images/avatar.png';
     List<Map<String, dynamic>> filterProducts(String category) {
       if (category == "All") return productItems;
       return productItems
@@ -273,17 +275,11 @@ class _HomePageState extends State<HomePage> {
                               width: 30,
                               fit: BoxFit.cover,
                             )
-                          : Container(
-                              height: 30,
-                              width: 30,
-                              color: secondaryColor,
-                              child: Image.asset(
-                                "assets/images/avatar.png",
-                                height: 30,
-                                width: 30,
-                                fit: BoxFit.cover,
+                          : HugeIcon(
+                                icon: HugeIcons.strokeRoundedUserCircle,
+                                color: Colors.black,
+                                size: 30,
                               ),
-                            ),
                     ),
                   ),
                   const SizedBox(width: 16),

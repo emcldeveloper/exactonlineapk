@@ -51,16 +51,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void initState() {
     // TODO: implement initState
-    businessnameController.text = userController.user["name"] ?? "";
-    phoneController.text = userController.user["phone"] ?? "";
-    emailController.text = userController.user["email"] ?? "";
+    businessnameController.text = userController.user.value["name"] ?? "";
+    phoneController.text = userController.user.value["phone"] ?? "";
+    emailController.text = userController.user.value["email"] ?? "";
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    String id = userController.user["id"];
-    String avatar = userController.user["image"];
+    String id = userController.user.value["id"];
+    String avatar = userController.user.value["image"];
 
     return Scaffold(
       backgroundColor: mainColor,
@@ -109,7 +109,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                   width: 80,
                                   fit: BoxFit.cover,
                                 )
-                              : avatar.isNotEmpty // Check if the avatar URL is not empty
+                              : avatar.isNotEmpty 
                                   ? CachedNetworkImage(
                                       imageUrl: avatar,
                                       height: 80,
@@ -293,7 +293,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       try {
                         var user =
                             await userController.updateUserData(id, formData);
-                        userController.user = user["body"];
+                        userController.user.value = user["body"];
                         isLoading.value = false;
                         Get.snackbar("Success", "Profile updated successfully!",
                             backgroundColor: Colors.green,
@@ -337,7 +337,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     button2Action: () async {
                       Navigator.of(context).pop();
                       await SharedPreferencesUtil.removeAccessToken();
-                      Get.offAll(WayPage());
+                      Get.offAll(() => WayPage());
                     },
                   );
                 },
