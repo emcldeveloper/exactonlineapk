@@ -53,11 +53,11 @@ class _ProductPageState extends State<ProductPage> {
 
   RxBool isFavorite = false.obs;
 
-  void _toggleFavorite() async {
+  void _toggleFavorite(Map<String, dynamic> product) async {
     var userId = userController.user.value['id'] ?? "";
 
     if (isFavorite.value) {
-      var favoriteId = widget.productData['Favorites']?[0]['id'];
+      var favoriteId = product['Favorites']?[0]['id'];
       if (favoriteId != null) {
         print("Deleting favorite with ID: $favoriteId");
         await favoriteController.deleteFavorite(favoriteId);
@@ -65,13 +65,14 @@ class _ProductPageState extends State<ProductPage> {
       }
     } else {
       var payload = {
-        "ProductId": widget.productData['id'],
+        "ProductId": product['id'],
         "UserId": userId,
       };
       print("Adding to favorites: $payload");
       await favoriteController.addFavorite(payload);
       isFavorite.value = true;
     }
+    favoriteController.fetchFavorites();
   }
 
   void _showReviewsBottomSheet() {
@@ -200,6 +201,11 @@ class _ProductPageState extends State<ProductPage> {
                 ));
               }
               var product = snapshot.requireData;
+              // Set isFavorite based on fetched product
+              isFavorite.value = product.containsKey('Favorites') &&
+                  product['Favorites'] != null &&
+                  product['Favorites'].isNotEmpty;
+
               print(product);
               return SingleChildScrollView(
                 child: Padding(
@@ -225,7 +231,7 @@ class _ProductPageState extends State<ProductPage> {
                             top: 15,
                             right: 15,
                             child: GestureDetector(
-                              onTap: _toggleFavorite,
+                              onTap: () => _toggleFavorite(product),
                               child: ClipOval(
                                 child: Obx(() => Container(
                                       color: Colors.white60,

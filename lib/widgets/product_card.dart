@@ -50,6 +50,7 @@ class _ProductCardState extends State<ProductCard> {
       await favoriteController.addFavorite(payload);
       isFavorite.value = true;
     }
+    favoriteController.fetchFavorites();
   }
 
   @override

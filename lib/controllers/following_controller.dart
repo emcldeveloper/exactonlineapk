@@ -61,7 +61,6 @@ class FollowingController extends GetxController {
           }));
 
       var data = response.data["body"]["rows"];
-      print("get all shop-followers");
       print(data);
       return data;
     } on DioException catch (e) {
