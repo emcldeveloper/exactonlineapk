@@ -1,5 +1,6 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/widgets/heading_text.dart';
+import 'package:e_online/widgets/no_data.dart';
 import 'package:e_online/widgets/notification_card.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
@@ -68,22 +69,24 @@ class NotificationsPage extends StatelessWidget {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: _notifications.map((item) {
-              return Column(
-                children: [
-                  NotificationCard(data: item),
-                  spacer2(),
-                ],
-              );
-            }).toList(),
-          ),
-        ),
-      ),
+      body: [].isEmpty
+          ? noData()
+          : SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: _notifications.map((item) {
+                    return Column(
+                      children: [
+                        NotificationCard(data: item),
+                        spacer2(),
+                      ],
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
     );
   }
 }

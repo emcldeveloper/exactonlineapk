@@ -9,6 +9,7 @@ import 'package:e_online/pages/shop_tabs/shop_reels.dart';
 import 'package:e_online/widgets/ad_card.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
+import 'package:e_online/widgets/no_data.dart';
 import 'package:e_online/widgets/order_card.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/shop_product_card.dart';
@@ -26,12 +27,12 @@ class MyShopPage extends StatefulWidget {
 
 class _MyShopPageState extends State<MyShopPage> {
   final List<Map<String, dynamic>> tilesItems = [
-    {'points': "248", 'title': "Impressions"},
-    {'points': "88", 'title': "Clicks"},
-    {'points': "49", 'title': "Shares"},
-    {'points': "23", 'title': "Calls"},
-    {'points': "982", 'title': "Likes"},
-    {'points': "20", 'title': "Profile Views"},
+    {'points': "0", 'title': "Impressions"},
+    {'points': "0", 'title': "Clicks"},
+    {'points': "0", 'title': "Shares"},
+    {'points': "0", 'title': "Calls"},
+    {'points': "0", 'title': "Likes"},
+    {'points': "0", 'title': "Profile Views"},
   ];
 
   final navCategories = [
@@ -155,14 +156,13 @@ class _MyShopPageState extends State<MyShopPage> {
               ),
               spacer1(),
               Expanded(
-                child: TabBarView(
-                  children: navCategories.map((category) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: buildPageContent(),
-                    );
-                  }).toList(),
-                ),
+                child: TabBarView(children: [
+                  ShopProducts(),
+                  ShopMasonryGrid(),
+                  noData(),
+                  noData(),
+                  noData()
+                ]),
               ),
             ],
           ),
@@ -211,52 +211,5 @@ class _MyShopPageState extends State<MyShopPage> {
         setState(() {});
         break;
     }
-  }
-
-  Widget buildPageContent() {
-    switch (_currentIndex) {
-      case 0:
-        return ShopProducts();
-      case 1:
-        return ShopMasonryGrid();
-      case 2:
-        return SingleChildScrollView(
-          child: Column(
-            children: orderItems.map((item) {
-              return Column(
-                children: [
-                  OrderCard(data: item),
-                  spacer1(),
-                ],
-              );
-            }).toList(),
-          ),
-        );
-      case 3:
-        return Center(child: ParagraphText("Promoted content here"));
-      case 4:
-        return ListView.builder(
-          itemCount: productItems.length,
-          itemBuilder: (context, index) {
-            return Column(
-              children: [
-                AdCard(data: productItems[index]),
-                spacer1(),
-              ],
-            );
-          },
-        );
-      default:
-        return Container();
-    }
-  }
-
-  Widget buildProductList(List<Map<String, dynamic>> productItems) {
-    return ListView.builder(
-      itemCount: productItems.length,
-      itemBuilder: (context, index) {
-        return ShopProductCard(data: productItems[index]);
-      },
-    );
   }
 }

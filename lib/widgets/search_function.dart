@@ -1,7 +1,7 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:flutter/material.dart';
 
-Widget buildSearchBar() {
+Widget buildSearchBar({Function(String)? onChanged}) {
   return Container(
     height: 40,
     decoration: BoxDecoration(
@@ -13,6 +13,7 @@ Widget buildSearchBar() {
       children: [
         Expanded(
           child: TextField(
+            onChanged: onChanged ?? (value) {},
             decoration: InputDecoration(
               contentPadding:
                   const EdgeInsets.only(left: 16, right: 16, bottom: 8),

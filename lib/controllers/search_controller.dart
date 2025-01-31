@@ -26,21 +26,6 @@ class ProductController extends GetxController {
     return data;
   }
 
-  Future getSearchProducts({keyword}) async {
-    try {
-      var response = await dio.get("/products/search/$keyword",
-          options: Options(headers: {
-            "Authorization":
-                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
-          }));
-      var data = response.data["body"];
-      return data;
-    } on DioException catch (e) {
-      print(e.response);
-      return e.response;
-    }
-  }
-
   Future<List> getProducts({page, limit, keyword, category}) async {
     // print(shopId);
     var response = await dio.get(
@@ -56,21 +41,14 @@ class ProductController extends GetxController {
 
   Future getProduct({id}) async {
     // print(shopId);
-    try {
-      var response = await dio.get("/products/$id",
-          options: Options(headers: {
-            "Authorization":
-                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
-          }));
+    var response = await dio.get("/products/$id",
+        options: Options(headers: {
+          "Authorization":
+              "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
+        }));
 
-      var data = response.data["body"];
-      print("Got product data");
-      print(data);
-      return data;
-    } on DioException catch (e) {
-      print(e.response);
-      return e.response;
-    }
+    var data = response.data["body"];
+    return data;
   }
 
   Future<List> getNewProducts({page, limit, keyword}) async {
