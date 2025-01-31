@@ -190,7 +190,8 @@ class _ProductPageState extends State<ProductPage> {
           ),
         ),
         body: FutureBuilder(
-            future:ProductController().getProduct(id: widget.productData["id"]),
+            future:
+                ProductController().getProduct(id: widget.productData["id"]),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(
@@ -226,18 +227,19 @@ class _ProductPageState extends State<ProductPage> {
                             child: GestureDetector(
                               onTap: _toggleFavorite,
                               child: ClipOval(
-                                child: Container(
-                                  color: Colors.white.withOpacity(0.8),
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Icon(
-                                    isFavorite
-                                        ? AntDesign.heart_fill
-                                        : AntDesign.heart_outline,
-                                    color:
-                                        isFavorite ? Colors.red : Colors.black,
-                                    size: 22.0,
-                                  ),
-                                ),
+                                child: Obx(() => Container(
+                                      color: Colors.white60,
+                                      padding: const EdgeInsets.all(6.0),
+                                      child: Icon(
+                                        isFavorite.value
+                                            ? AntDesign.heart_fill
+                                            : AntDesign.heart_outline,
+                                        color: isFavorite.value
+                                            ? Colors.red
+                                            : Colors.black,
+                                        size: 18.0,
+                                      ),
+                                    )),
                               ),
                             ),
                           ),
