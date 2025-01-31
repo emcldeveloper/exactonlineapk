@@ -96,7 +96,9 @@ class _SearchPageState extends State<SearchPage> {
                         ? const Center(
                             child: Padding(
                             padding: EdgeInsets.all(20),
-                            child: CircularProgressIndicator(),
+                            child: CircularProgressIndicator(
+                              color: Colors.black,
+                            ),
                           ))
                         : products.value.isNotEmpty
                             ? Column(

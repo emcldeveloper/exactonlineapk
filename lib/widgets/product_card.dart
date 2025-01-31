@@ -31,7 +31,8 @@ class _ProductCardState extends State<ProductCard> {
   }
 
   bool get isFavorite {
-    return favoriteController.favorites.any((item) => item['id'] == widget.data['id']);
+    return favoriteController.favorites
+        .any((item) => item['id'] == widget.data['id']);
   }
 
   void _toggleFavorite() async {
@@ -48,7 +49,8 @@ class _ProductCardState extends State<ProductCard> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(isFavorite ? "Removed from Favorites" : "Added to Favorites"),
+        content:
+            Text(isFavorite ? "Removed from Favorites" : "Added to Favorites"),
       ),
     );
   }
@@ -73,7 +75,7 @@ class _ProductCardState extends State<ProductCard> {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(0),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.1),
@@ -83,12 +85,12 @@ class _ProductCardState extends State<ProductCard> {
                     ],
                   ),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(0),
                     child: CachedNetworkImage(
                       imageUrl: widget.data["ProductImages"][0]['image'],
                       height: widget.height ?? 135,
                       width: double.infinity,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.fill,
                     ),
                   ),
                 ),

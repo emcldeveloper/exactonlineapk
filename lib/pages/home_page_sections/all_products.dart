@@ -35,8 +35,8 @@ class _AllProductsState extends State<AllProducts> {
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  crossAxisSpacing: 16.0,
-                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 10.0,
+                  mainAxisSpacing: 10,
                   childAspectRatio: 4.5 / 5,
                 ),
                 itemCount: 5,
@@ -64,9 +64,9 @@ class _AllProductsState extends State<AllProducts> {
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  crossAxisSpacing: 16.0,
+                  crossAxisSpacing: 10.0,
                   mainAxisSpacing: 2.0,
-                  childAspectRatio: 0.65,
+                  childAspectRatio: 0.75,
                 ),
                 itemCount: products.value.length,
                 itemBuilder: (context, index) {

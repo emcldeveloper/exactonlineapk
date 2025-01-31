@@ -35,7 +35,7 @@ class _NewArrivalProductsState extends State<NewArrivalProducts> {
             itemCount: products.value.length,
             itemBuilder: (context, index) {
               return Padding(
-                padding: const EdgeInsets.only(right: 16.0),
+                padding: const EdgeInsets.only(right: 10.0),
                 child: ProductCard(data: products.value[index]),
               );
             },

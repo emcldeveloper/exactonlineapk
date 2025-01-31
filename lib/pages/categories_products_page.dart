@@ -5,6 +5,7 @@ import 'package:e_online/pages/search_page.dart';
 import 'package:e_online/widgets/favorite_card.dart';
 import 'package:e_online/widgets/filter_tiles.dart';
 import 'package:e_online/widgets/heading_text.dart';
+import 'package:e_online/widgets/no_data.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -74,49 +75,7 @@ class _CategoriesProductsPageState extends State<CategoriesProductsPage> {
                       ),
                     ),
                   )
-                : products.value.isEmpty
-                    ? Center(
-                        child: Container(
-                          width: double.infinity,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Icon(
-                                FontAwesome.box_open_solid,
-                                color: Colors.grey[500],
-                                size: 50,
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                "No Products Found",
-                                style: TextStyle(color: Colors.grey[600]),
-                              )
-                            ],
-                          ),
-                        ),
-                      )
-                    : Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          children: [
-                            spacer(),
-                            const FilterTilesWidget(),
-                            spacer(),
-                            Expanded(
-                              child: ListView.builder(
-                                itemCount: products.value.length,
-                                itemBuilder: (context, index) {
-                                  final item = products.value[index];
-                                  return FavoriteCard(data: item);
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
+                : noData();
           }),
     );
   }
