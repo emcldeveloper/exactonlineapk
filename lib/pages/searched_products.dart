@@ -11,23 +11,25 @@ import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:icons_plus/icons_plus.dart';
 
-class CategoriesProductsPage extends StatefulWidget {
-  var category;
-
-  CategoriesProductsPage({super.key, required this.category});
+class SearchedProductsPage extends StatefulWidget {
+  String keyword;
+  SearchedProductsPage({super.key, required this.keyword});
 
   @override
-  State<CategoriesProductsPage> createState() => _CategoriesProductsPageState();
+  State<SearchedProductsPage> createState() => _SearchedProductsPageState();
 }
 
-class _CategoriesProductsPageState extends State<CategoriesProductsPage> {
+class _SearchedProductsPageState extends State<SearchedProductsPage> {
   var loading = true.obs;
   Rx<List> products = Rx<List>([]);
   @override
   void initState() {
     ProductController()
         .getProducts(
-            page: 1, limit: 10, keyword: "", category: widget.category["id"])
+      page: 1,
+      limit: 10,
+      keyword: widget.keyword,
+    )
         .then((res) {
       products.value = res;
       loading.value = false;
@@ -52,8 +54,9 @@ class _CategoriesProductsPageState extends State<CategoriesProductsPage> {
             Navigator.pop(context);
           },
         ),
-        title: HeadingText(widget.category["name"]),
+        title: HeadingText(widget.keyword),
         centerTitle: true,
+        actions: [],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
           child: Container(

@@ -26,21 +26,6 @@ class ProductController extends GetxController {
     return data;
   }
 
-  Future getSearchProducts({keyword}) async {
-    try {
-      var response = await dio.get("/products/search/$keyword",
-          options: Options(headers: {
-            "Authorization":
-                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
-          }));
-      var data = response.data["body"];
-      return data;
-    } on DioException catch (e) {
-      print(e.response);
-      return e.response;
-    }
-  }
-
   Future<List> getProducts({page, limit, keyword, category}) async {
     // print(shopId);
     var response = await dio.get(

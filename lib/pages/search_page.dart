@@ -4,7 +4,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/controllers/categories_controller.dart';
+import 'package:e_online/controllers/product_controller.dart';
 import 'package:e_online/pages/categories_products_page.dart';
+import 'package:e_online/pages/searched_products.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:e_online/widgets/search_function.dart';
@@ -26,6 +28,8 @@ class _SearchPageState extends State<SearchPage> {
   ];
 
   Rx<List> categories = Rx<List>([]);
+  Rx<List> products = Rx<List>([]);
+
   @override
   void initState() {
     // TODO: implement initState
@@ -61,7 +65,15 @@ class _SearchPageState extends State<SearchPage> {
               },
             ),
           ),
-          title: buildSearchBar(),
+          title: buildSearchBar(onChanged: (value) {
+            // print(value ?? "none");
+
+            ProductController()
+                .getSearchProducts(keyword: value.isEmpty ? "none" : value)
+                .then((res) {
+              products.value = res ?? "";
+            });
+          }),
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1.0),
             child: Container(
@@ -77,11 +89,6 @@ class _SearchPageState extends State<SearchPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              spacer(),
-              ParagraphText("Search history", fontWeight: FontWeight.bold),
-              spacer(),
-              ParagraphText("Categories", fontWeight: FontWeight.bold),
-              spacer(),
               GetX<CategoriesController>(
                   init: CategoriesController(),
                   builder: (context) {
@@ -91,66 +98,120 @@ class _SearchPageState extends State<SearchPage> {
                             padding: EdgeInsets.all(20),
                             child: CircularProgressIndicator(),
                           ))
-                        : GridView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 4,
-                              childAspectRatio: 0.8,
-                              crossAxisSpacing: 10,
-                              mainAxisSpacing: 10,
-                            ),
-                            itemCount: categories.value.length,
-                            itemBuilder: (context, index) {
-                              return GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          CategoriesProductsPage(
-                                        category: categories.value[index],
-                                      ),
+                        : products.value.isNotEmpty
+                            ? Column(
+                                children: [
+                                  ListView.builder(
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      itemCount: products.value.length,
+                                      itemBuilder: (context, index) {
+                                        return Padding(
+                                          padding:
+                                              const EdgeInsets.only(bottom: 10),
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              Get.to(() => SearchedProductsPage(
+                                                  keyword: products.value[index]
+                                                      ["name"]));
+                                            },
+                                            child: Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.search,
+                                                  size: 18,
+                                                ),
+                                                SizedBox(
+                                                  width: 10,
+                                                ),
+                                                ParagraphText(
+                                                    fontWeight: FontWeight.bold,
+                                                    products.value[index]
+                                                        ["name"]),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      })
+                                ],
+                              )
+                            : Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ParagraphText("Categories",
+                                      fontWeight: FontWeight.bold),
+                                  spacer(),
+                                  GridView.builder(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    gridDelegate:
+                                        const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 4,
+                                      childAspectRatio: 0.8,
+                                      crossAxisSpacing: 10,
+                                      mainAxisSpacing: 10,
                                     ),
-                                  );
-                                },
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      width: 80,
-                                      height: 80,
-                                      padding: const EdgeInsets.all(15.0),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        color: primaryColor,
-                                      ),
-                                      child: categories.value[index]['image'] !=
-                                              null
-                                          ? CachedNetworkImage(
-                                              imageUrl: categories.value[index]
-                                                  ['image'],
-                                              fit: BoxFit.contain,
-                                            )
-                                          : const Center(
-                                              child: Icon(
-                                                Icons.image_not_supported,
-                                                color: Colors.grey,
+                                    itemCount: categories.value.length,
+                                    itemBuilder: (context, index) {
+                                      return GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  CategoriesProductsPage(
+                                                category:
+                                                    categories.value[index],
                                               ),
                                             ),
-                                    ),
-                                    spacer(),
-                                    ParagraphText(
-                                      categories.value[index]['name'],
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 12.0,
-                                    ),
-                                  ],
-                                ),
+                                          );
+                                        },
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              width: 80,
+                                              height: 80,
+                                              padding:
+                                                  const EdgeInsets.all(15.0),
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                color: primaryColor,
+                                              ),
+                                              child: categories.value[index]
+                                                          ['image'] !=
+                                                      null
+                                                  ? CachedNetworkImage(
+                                                      imageUrl: categories
+                                                              .value[index]
+                                                          ['image'],
+                                                      fit: BoxFit.contain,
+                                                    )
+                                                  : const Center(
+                                                      child: Icon(
+                                                        Icons
+                                                            .image_not_supported,
+                                                        color: Colors.grey,
+                                                      ),
+                                                    ),
+                                            ),
+                                            spacer(),
+                                            ParagraphText(
+                                              categories.value[index]['name'],
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 12.0,
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
                               );
-                            },
-                          );
                   }),
             ],
           ),
