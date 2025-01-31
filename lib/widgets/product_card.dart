@@ -1,8 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:e_online/controllers/favorite_controller.dart';
+import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/product_page.dart';
 import 'package:e_online/utils/convert_to_money_format.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:money_formatter/money_formatter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,45 +21,34 @@ class ProductCard extends StatefulWidget {
 }
 
 class _ProductCardState extends State<ProductCard> {
-  late bool isFavorite = false;
+  final UserController userController = Get.find();
+  final FavoriteController favoriteController = Get.put(FavoriteController());
 
   @override
   void initState() {
     super.initState();
-    _loadFavoriteStatus();
+    favoriteController.fetchFavorites();
   }
 
-  void _loadFavoriteStatus() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> favoriteItems = prefs.getStringList('favorites') ?? [];
-    String productJson = jsonEncode(widget.data);
-
-    setState(() {
-      isFavorite = favoriteItems.contains(productJson);
-    });
+  bool get isFavorite {
+    return favoriteController.favorites.any((item) => item['id'] == widget.data['id']);
   }
 
   void _toggleFavorite() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> favoriteItems = prefs.getStringList('favorites') ?? [];
-    String productJson = jsonEncode(widget.data);
-
-    setState(() {
-      if (favoriteItems.contains(productJson)) {
-        favoriteItems.remove(productJson);
-        isFavorite = false;
-      } else {
-        favoriteItems.add(productJson);
-        isFavorite = true;
-      }
-    });
-
-    await prefs.setStringList('favorites', favoriteItems);
+    var userId = userController.user.value['id'] ?? "";
+    if (isFavorite) {
+      await favoriteController.deleteFavorite(widget.data['id']);
+    } else {
+      var payload = {
+        "ProductId": widget.data['id'],
+        "UserId": userId,
+      };
+      await favoriteController.addFavorite(payload);
+    }
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content:
-            Text(isFavorite ? "Added to Favorites" : "Removed from Favorites"),
+        content: Text(isFavorite ? "Removed from Favorites" : "Added to Favorites"),
       ),
     );
   }

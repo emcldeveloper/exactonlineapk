@@ -22,7 +22,7 @@ class _MainPageState extends State<MainPage> {
       const HomePage(),
       const ReelsPage(),
       ChatPage(),
-      const FavouritesPage(),
+      FavouritesPage(),
       const ProfilePage(),
     ];
 
