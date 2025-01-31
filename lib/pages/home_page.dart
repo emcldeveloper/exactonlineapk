@@ -73,7 +73,9 @@ class _HomePageState extends State<HomePage> {
       }
 
       return categories.value.length < 1
-          ? CircularProgressIndicator()
+          ? CircularProgressIndicator(
+              color: Colors.black,
+            )
           : SingleChildScrollView(
               child: SizedBox(
                 width: double.infinity,

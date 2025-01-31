@@ -21,11 +21,6 @@ class UserController extends GetxController {
       print(data);
       return data;
     } catch (e) {
-      Get.snackbar("Error", "Error fetching user details",
-          backgroundColor: Colors.redAccent,
-          colorText: Colors.white,
-          icon: const HugeIcon(
-              icon: HugeIcons.strokeRoundedCancel01, color: Colors.white));
       print("Error fetching user details: $e");
     }
   }

@@ -7,9 +7,6 @@ import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:money_formatter/money_formatter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 
 class ProductCard extends StatefulWidget {
   final Map<String, dynamic> data;
@@ -24,33 +21,35 @@ class _ProductCardState extends State<ProductCard> {
   final UserController userController = Get.find();
   final FavoriteController favoriteController = Get.put(FavoriteController());
 
+  RxBool isFavorite = false.obs;
+
   @override
   void initState() {
     super.initState();
-    favoriteController.fetchFavorites();
-  }
-
-  bool get isFavorite {
-    return favoriteController.favorites.any((item) => item['id'] == widget.data['id']);
+    isFavorite.value = widget.data.containsKey('Favorites') &&
+        widget.data['Favorites'] != null &&
+        widget.data['Favorites'].isNotEmpty;
   }
 
   void _toggleFavorite() async {
     var userId = userController.user.value['id'] ?? "";
-    if (isFavorite) {
-      await favoriteController.deleteFavorite(widget.data['id']);
+
+    if (isFavorite.value) {
+      var favoriteId = widget.data['Favorites']?[0]['id'];
+      if (favoriteId != null) {
+        print("Deleting favorite with ID: $favoriteId");
+        await favoriteController.deleteFavorite(favoriteId);
+        isFavorite.value = false;
+      }
     } else {
       var payload = {
         "ProductId": widget.data['id'],
         "UserId": userId,
       };
+      print("Adding to favorites: $payload");
       await favoriteController.addFavorite(payload);
+      isFavorite.value = true;
     }
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(isFavorite ? "Removed from Favorites" : "Added to Favorites"),
-      ),
-    );
   }
 
   @override
@@ -92,26 +91,25 @@ class _ProductCardState extends State<ProductCard> {
                     ),
                   ),
                 ),
+                // Favorite Icon (Reactive)
                 Positioned(
                   top: 8,
                   right: 8,
                   child: GestureDetector(
                     onTap: _toggleFavorite,
                     child: ClipOval(
-                      child: Opacity(
-                        opacity: 1,
-                        child: Container(
-                          color: Colors.white60,
-                          padding: const EdgeInsets.all(6.0),
-                          child: Icon(
-                            isFavorite
-                                ? AntDesign.heart_fill
-                                : AntDesign.heart_outline,
-                            color: isFavorite ? Colors.red : Colors.black,
-                            size: 18.0,
-                          ),
-                        ),
-                      ),
+                      child: Obx(() => Container(
+                            color: Colors.white60,
+                            padding: const EdgeInsets.all(6.0),
+                            child: Icon(
+                              isFavorite.value
+                                  ? AntDesign.heart_fill
+                                  : AntDesign.heart_outline,
+                              color:
+                                  isFavorite.value ? Colors.red : Colors.black,
+                              size: 18.0,
+                            ),
+                          )),
                     ),
                   ),
                 ),
@@ -146,9 +144,10 @@ class _ProductCardState extends State<ProductCard> {
                     ],
                   ),
                   ParagraphText(
-                      "TZS ${toMoneyFormmat(widget.data['sellingPrice'])}",
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15.0),
+                    "TZS ${toMoneyFormmat(widget.data['sellingPrice'])}",
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15.0,
+                  ),
                   if (widget.data['shipping'] == "Free Shipping")
                     ParagraphText(
                       widget.data['shipping'],

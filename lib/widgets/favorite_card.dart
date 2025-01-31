@@ -33,7 +33,8 @@ class _FavoriteCardState extends State<FavoriteCard> {
     return GestureDetector(
       onTap: () {
         if (widget.data.isNotEmpty) {
-          Get.to(() => ProductPage(productData: widget.data));
+          print(widget.data["Product"]);
+          Get.to(() => ProductPage(productData: widget.data['Product']));
         }
       },
       child: Container(
@@ -43,10 +44,16 @@ class _FavoriteCardState extends State<FavoriteCard> {
           children: [
             // Image Section
             Container(
-                width: 80,
-                height: 80,
-                child: CachedNetworkImage(
-                    imageUrl: widget.data['ProductImages'][0]["image"])),
+              width: 80,
+              height: 80,
+              child: CachedNetworkImage(
+                imageUrl: widget.data['Product']?['ProductImages']?[0]
+                        ?["image"] ??
+                    "",
+                errorWidget: (context, url, error) => Icon(Icons.broken_image),
+              ),
+            ),
+
             const SizedBox(width: 15),
 
             Expanded(
@@ -54,7 +61,8 @@ class _FavoriteCardState extends State<FavoriteCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ParagraphText(
-                      widget.data['description'] ?? "No description available",
+                      widget.data['Product']["description"] ??
+                          "No description available",
                       maxLines: 2),
                   spacer(),
                   Row(
@@ -63,13 +71,13 @@ class _FavoriteCardState extends State<FavoriteCard> {
                         child: Row(
                           children: [
                             ParagraphText(
-                              "TZS ${toMoneyFormmat(widget.data['sellingPrice'])}",
+                              "TZS ${toMoneyFormmat(widget.data["Product"]['sellingPrice'])}",
                               fontWeight: FontWeight.bold,
                               fontSize: 16.0,
                             ),
                             const SizedBox(width: 8),
                             ParagraphText(
-                              "${widget.data['views'] ?? 0} views",
+                              "${widget.data['Product']['views'] ?? 0} views",
                               color: mutedTextColor,
                             ),
                           ],
@@ -81,7 +89,7 @@ class _FavoriteCardState extends State<FavoriteCard> {
                           const Icon(Icons.star, color: Colors.amber, size: 16),
                           const SizedBox(width: 4),
                           ParagraphText(
-                            widget.data['rating']?.toString() ?? "0",
+                            widget.data['Product']['rating']?.toString() ?? "0",
                             color: Colors.black,
                           ),
                         ],

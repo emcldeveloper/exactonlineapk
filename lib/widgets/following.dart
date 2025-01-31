@@ -51,7 +51,9 @@ class _ReelsFollowingTabState extends State<ReelsFollowingTab> {
       // Show a loading indicator if profiles are empty
       if (profiles.isEmpty) {
         return const Center(
-          child: CircularProgressIndicator(),
+          child: CircularProgressIndicator(
+            color: Colors.black,
+          ),
         );
       }
 

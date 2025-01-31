@@ -31,7 +31,6 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     // TODO: implement initState
     Get.put(usersControllers);
-
     super.initState();
   }
 

@@ -19,17 +19,20 @@ class FollowingController extends GetxController {
           }));
       var data = response.data["body"];
       print(data);
+      Get.snackbar("Success", "Successfully Followed Shop",
+          backgroundColor: Colors.green, colorText: Colors.white);
       return data;
     } on DioException catch (e) {
       print("Error response");
       print(e.response);
+      Get.snackbar("Error", "Failed to follow shop",
+          backgroundColor: Colors.red, colorText: Colors.white);
       return e.response;
     }
   }
 
   Future getShopsFollowing({page, limit, keyword}) async {
     try {
-      
       var userId = userController.user.value['id'] ?? "";
       var response = await dio.get(
           "/shops/following/user/$userId/?page=${page ?? 1}&limit=${limit ?? 10}&keyword=${keyword ?? ""}",

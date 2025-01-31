@@ -39,7 +39,9 @@ class _ProductPageState extends State<ProductPage> {
   @override
   void initState() {
     super.initState();
-    favoriteController.fetchFavorites();
+    isFavorite.value = widget.productData.containsKey('Favorites') &&
+        widget.productData['Favorites'] != null &&
+        widget.productData['Favorites'].isNotEmpty;
     getData();
   }
 
@@ -56,29 +58,27 @@ class _ProductPageState extends State<ProductPage> {
     });
   }
 
-  bool get isFavorite {
-    return favoriteController.favorites
-        .any((item) => item['id'] == widget.productData['id']);
-  }
+  RxBool isFavorite = false.obs;
 
   void _toggleFavorite() async {
     var userId = userController.user.value['id'] ?? "";
-    if (isFavorite) {
-      await favoriteController.deleteFavorite(widget.productData['id']);
+
+    if (isFavorite.value) {
+      var favoriteId = widget.productData['Favorites']?[0]['id'];
+      if (favoriteId != null) {
+        print("Deleting favorite with ID: $favoriteId");
+        await favoriteController.deleteFavorite(favoriteId);
+        isFavorite.value = false;
+      }
     } else {
       var payload = {
         "ProductId": widget.productData['id'],
         "UserId": userId,
       };
+      print("Adding to favorites: $payload");
       await favoriteController.addFavorite(payload);
+      isFavorite.value = true;
     }
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content:
-            Text(isFavorite ? "Removed from Favorites" : "Added to Favorites"),
-      ),
-    );
   }
 
   void _showReviewsBottomSheet() {
@@ -210,7 +210,10 @@ class _ProductPageState extends State<ProductPage> {
           init: ProductController(),
           builder: (context) {
             return loading.value
-                ? const Center(child: CircularProgressIndicator())
+                ? const Center(
+                    child: CircularProgressIndicator(
+                    color: Colors.black,
+                  ))
                 : SingleChildScrollView(
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -233,25 +236,26 @@ class _ProductPageState extends State<ProductPage> {
                               ),
                               // Favorite icon container always on top of the image
                               Container(),
+                              // Favorite Icon
                               Positioned(
-                                top: 15,
-                                right: 15,
+                                top: 8,
+                                right: 8,
                                 child: GestureDetector(
                                   onTap: _toggleFavorite,
                                   child: ClipOval(
-                                    child: Container(
-                                      color: Colors.white.withOpacity(0.8),
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Icon(
-                                        isFavorite
-                                            ? AntDesign.heart_fill
-                                            : AntDesign.heart_outline,
-                                        color: isFavorite
-                                            ? Colors.red
-                                            : Colors.black,
-                                        size: 22.0,
-                                      ),
-                                    ),
+                                    child: Obx(() => Container(
+                                          color: Colors.white60,
+                                          padding: const EdgeInsets.all(6.0),
+                                          child: Icon(
+                                            isFavorite.value
+                                                ? AntDesign.heart_fill
+                                                : AntDesign.heart_outline,
+                                            color: isFavorite.value
+                                                ? Colors.red
+                                                : Colors.black,
+                                            size: 18.0,
+                                          ),
+                                        )),
                                   ),
                                 ),
                               ),

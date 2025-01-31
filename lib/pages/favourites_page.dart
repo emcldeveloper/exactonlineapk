@@ -5,9 +5,28 @@ import 'package:e_online/widgets/heading_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class FavouritesPage extends StatelessWidget {
-  FavouritesPage({super.key});
+class FavouritesPage extends StatefulWidget {
+  const FavouritesPage({super.key});
+
+  @override
+  _FavouritesPageState createState() => _FavouritesPageState();
+}
+
+class _FavouritesPageState extends State<FavouritesPage> {
   final FavoriteController favoriteController = Get.put(FavoriteController());
+  var isLoading = false.obs;
+
+  @override
+  void initState() {
+    super.initState();
+    _getFavoritesData();
+  }
+
+  Future<void> _getFavoritesData() async {
+    isLoading.value = true;
+    await favoriteController.fetchFavorites();
+    isLoading.value = false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +47,11 @@ class FavouritesPage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Obx(() {
-          if (favoriteController.isLoading.value) {
-            return const Center(child: CircularProgressIndicator());
+          if (isLoading.value) {
+            return const Center(
+                child: CircularProgressIndicator(
+              color: Colors.black,
+            ));
           }
 
           if (favoriteController.favorites.isEmpty) {
