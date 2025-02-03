@@ -63,21 +63,25 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
 
   Future _loadSelectedShopDetails() async {
     isLoadingTime.value = true;
+    print("onload page am being called");
     final businessId = await SharedPreferencesUtil.getSelectedBusiness();
-    print("Duka");
-    print(businessId);
-    // if (businessId != null) {
-    //   List businesses = userController.user.value['Shops'];
-    //   print(businessId);
-    //   var businessList =
-    //       businesses.where((business) => business["id"] == businessId);
-    //   selectedBusiness?.value =
-    //       businesses.where((business) => business["id"] == businessId).first;
-    //   print(selectedBusiness);
-    // }
     var shopDetails = await shopController.getShopDetails(businessId);
-    userController.user.value["selectedShop"] = shopDetails;
-    shopCalendars.value = shopDetails["ShopCalenders"] ?? [];
+
+    setState(() {
+      selectedBusiness?.value = shopDetails ?? {};
+      userController.user.value["selectedShop"] = shopDetails;
+      shopCalendars.value = shopDetails["ShopCalenders"] ?? [];
+
+      // Extract location if available
+      if (shopDetails.isNotEmpty &&
+          shopDetails.containsKey("shopLat") &&
+          shopDetails.containsKey("shopLong")) {
+        _location = {
+          "shopLat": shopDetails["shopLat"],
+          "shopLong": shopDetails["shopLong"]
+        };
+      }
+    });
     isLoadingTime.value = false;
   }
 
@@ -141,9 +145,11 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
           }
         });
 
+        final businessId = await SharedPreferencesUtil.getSelectedBusiness();
+
         // Prepare data payload to send to API
         var payload = {
-          "ShopId": selectedBusiness?.value!["id"],
+          "ShopId": businessId,
           "day": day,
           "openTime": is24Hours
               ? "00:00"
@@ -157,6 +163,7 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
         // Send data to API
         try {
           await shopController.createShopCalendar(payload);
+          await _loadSelectedShopDetails();
         } catch (e) {
           // Handle the error here
           Get.snackbar("Error", "Failed to save Shop-Calendar",
@@ -273,21 +280,20 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Obx(
-                          () => Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ParagraphText(
-                                selectedBusiness?.value['name'] ?? "Name",
-                                fontWeight: FontWeight.bold,
-                              ),
-                              spacer(),
-                              ParagraphText(
-                                selectedBusiness?.value['createdAt'] ?? "Date",
-                                color: mutedTextColor,
-                              ),
-                            ],
-                          ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Obx(() => ParagraphText(
+                                  selectedBusiness?.value['name'] ?? "Name",
+                                  fontWeight: FontWeight.bold,
+                                )),
+                            spacer(),
+                            Obx(() => ParagraphText(
+                                  selectedBusiness?.value['createdAt'] ??
+                                      "Date",
+                                  color: mutedTextColor,
+                                )),
+                          ],
                         ),
                         Row(
                           children: [
@@ -342,7 +348,9 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                             ),
                             spacer(),
                             ParagraphText(
-                              _location != null
+                              ((_location != null) &&
+                                      _location?["shopLat"] != null &&
+                                      _location?["shopLong"] != null)
                                   ? 'Lat: ${_location?["shopLat"]}, Long: ${_location?["shopLong"]}'
                                   : 'No selected',
                               color: mutedTextColor,
@@ -372,63 +380,70 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                       fontWeight: FontWeight.bold,
                     ),
                     spacer(),
-                    Obx(() {
-                      return isLoadingTime.value
-                          ? const CustomLoader(
-                              color: Colors.black,
-                              size: 12.0,
-                            )
-                          : Column(
-                              children: daysOfWeek.map((day) {
-                                final calendarEntry = shopCalendars.firstWhere(
-                                  (calendar) => calendar["day"] == day,
-                                  orElse: () => null,
-                                );
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        return Obx(() {
+                          return isLoadingTime.value
+                              ? const CustomLoader(
+                                  color: Colors.black, size: 12.0)
+                              : Column(
+                                  children: daysOfWeek.map((day) {
+                                    final calendarEntry =
+                                        shopCalendars.firstWhere(
+                                      (calendar) => calendar["day"] == day,
+                                      orElse: () => null,
+                                    );
 
-                                String statusText = "Not-set";
-                                if (calendarEntry != null) {
-                                  if (calendarEntry["isOpen"] == false) {
-                                    statusText = "Closed";
-                                  } else {
-                                    statusText =
-                                        "${calendarEntry["openTime"]} - ${calendarEntry["closeTime"]}";
-                                  }
-                                }
+                                    String statusText = "Not-set";
+                                    if (calendarEntry != null) {
+                                      statusText = calendarEntry["isOpen"] ==
+                                              false
+                                          ? "Closed"
+                                          : "${calendarEntry["openTime"]} - ${calendarEntry["closeTime"]}";
+                                    }
 
-                                return Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        ParagraphText(day,
-                                            color: mutedTextColor),
-                                        Row(
-                                          children: [
-                                            ParagraphText(statusText,
-                                                color: mutedTextColor),
-                                            const SizedBox(width: 8),
-                                            InkWell(
-                                              onTap: () {
-                                                showSetTimeBottomSheet(day);
-                                              },
-                                              child: HugeIcon(
-                                                icon: HugeIcons
-                                                    .strokeRoundedPencilEdit02,
-                                                color: Colors.grey,
-                                                size: 22.0,
-                                              ),
-                                            ),
-                                          ],
+                                    return Container(
+                                      width: constraints
+                                          .maxWidth, // Responsive width
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 8),
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          bottom: BorderSide(
+                                              color: Colors.grey.shade300),
                                         ),
-                                      ],
-                                    ),
-                                    spacer(),
-                                  ],
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          ParagraphText(day,
+                                              color: mutedTextColor),
+                                          Row(
+                                            children: [
+                                              ParagraphText(statusText,
+                                                  color: mutedTextColor),
+                                              const SizedBox(width: 8),
+                                              InkWell(
+                                                onTap: () =>
+                                                    showSetTimeBottomSheet(day),
+                                                child: HugeIcon(
+                                                  icon: HugeIcons
+                                                      .strokeRoundedPencilEdit02,
+                                                  color: Colors.grey,
+                                                  size: 22.0,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }).toList(),
                                 );
-                              }).toList(),
-                            );
-                    }),
+                        });
+                      },
+                    ),
                   ],
                 ),
               ),

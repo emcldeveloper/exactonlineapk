@@ -75,6 +75,7 @@ class _ProductPageState extends State<ProductPage> {
     favoriteController.fetchFavorites();
   }
 
+
   void _showReviewsBottomSheet() {
     final List<Map<String, dynamic>> sampleReviews = [
       {
