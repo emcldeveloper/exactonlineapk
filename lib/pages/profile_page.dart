@@ -81,7 +81,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               right: 0,
                               child: Container(
                                 decoration: BoxDecoration(
-                                  color: Colors.black,
+                                  color: primary,
                                   borderRadius: BorderRadius.circular(15),
                                 ),
                                 child: Padding(

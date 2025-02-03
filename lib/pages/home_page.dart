@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/controllers/categories_controller.dart';
+import 'package:e_online/controllers/ordered_products_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/cart_page.dart';
 import 'package:e_online/pages/home_page_sections/all_products.dart';
@@ -13,11 +14,13 @@ import 'package:e_online/pages/profile_page.dart';
 import 'package:e_online/pages/search_page.dart';
 import 'package:e_online/pages/see_all_page.dart';
 import 'package:e_online/widgets/ads_carousel.dart';
+import 'package:e_online/widgets/cartIcon.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:icons_plus/icons_plus.dart';
 
@@ -38,9 +41,11 @@ class _HomePageState extends State<HomePage> {
     "assets/ads/ad4.jpg",
   ];
   Rx<List> categories = Rx<List>([]);
-
+  OrderedProductController orderedProductController =
+      OrderedProductController();
   @override
   void initState() {
+    Get.put(orderedProductController);
     CategoriesController()
         .getCategories(page: 1, limit: 50, keyword: "")
         .then((res) {
@@ -92,6 +97,7 @@ class _HomePageState extends State<HomePage> {
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -99,17 +105,16 @@ class _HomePageState extends State<HomePage> {
                                   ParagraphText("New Arrival",
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18.0),
-                                  ParagraphText("Filtered products for you"),
                                 ],
                               ),
                               InkWell(
                                 onTap: () {
                                   Get.to(const SeeAllPage());
                                 },
-                                child: Icon(
-                                  Icons.arrow_forward_ios,
+                                child: ParagraphText(
+                                  "See All",
                                   color: mutedTextColor,
-                                  size: 16.0,
+                                  decoration: TextDecoration.underline,
                                 ),
                               )
                             ],
@@ -127,6 +132,7 @@ class _HomePageState extends State<HomePage> {
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -134,17 +140,16 @@ class _HomePageState extends State<HomePage> {
                                   ParagraphText("For You",
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18.0),
-                                  ParagraphText("Filtered products for you"),
                                 ],
                               ),
                               InkWell(
                                 onTap: () {
                                   Get.to(const SeeAllPage());
                                 },
-                                child: Icon(
-                                  Icons.arrow_forward_ios,
+                                child: ParagraphText(
+                                  "See All",
                                   color: mutedTextColor,
-                                  size: 16.0,
+                                  decoration: TextDecoration.underline,
                                 ),
                               )
                             ],
@@ -162,6 +167,7 @@ class _HomePageState extends State<HomePage> {
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               HeadingText("All Products"),
                               ParagraphText(
@@ -224,7 +230,7 @@ class _HomePageState extends State<HomePage> {
                             .map((category) => Tab(
                                   child: Text(
                                     category["name"],
-                                    style: const TextStyle(fontSize: 15),
+                                    style: GoogleFonts.outfit(fontSize: 15),
                                   ),
                                 ))
                             .toList(),
@@ -233,16 +239,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 actions: [
-                  InkWell(
-                    onTap: () {
-                      Get.to(const CartPage());
-                    },
-                    child: const Icon(
-                      Bootstrap.cart,
-                      color: Colors.black,
-                      size: 20.0,
-                    ),
-                  ),
+                  cartIcon(),
                   const SizedBox(width: 8),
                   InkWell(
                       onTap: () {
@@ -253,7 +250,7 @@ class _HomePageState extends State<HomePage> {
                         color: Colors.black,
                         size: 20.0,
                       )),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 12),
                   InkWell(
                       onTap: () {
                         Get.to(const NotificationsPage());
@@ -263,7 +260,7 @@ class _HomePageState extends State<HomePage> {
                         color: Colors.black,
                         size: 20.0,
                       )),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 12),
                   InkWell(
                     onTap: () {
                       Get.to(const ProfilePage());

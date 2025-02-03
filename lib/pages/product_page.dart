@@ -1,11 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/favorite_controller.dart';
+import 'package:e_online/controllers/order_controller.dart';
+import 'package:e_online/controllers/ordered_products_controller.dart';
 import 'package:e_online/controllers/product_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/cart_page.dart';
 import 'package:e_online/pages/chat_page.dart';
 import 'package:e_online/utils/convert_to_money_format.dart';
+import 'package:e_online/utils/snackbars.dart';
+import 'package:e_online/widgets/cartIcon.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
@@ -140,6 +144,9 @@ class _ProductPageState extends State<ProductPage> {
     );
   }
 
+  var addingToCart = false.obs;
+  OrderedProductController orderedProductController = Get.find();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -157,16 +164,7 @@ class _ProductPageState extends State<ProductPage> {
           title: HeadingText("Product Details"),
           centerTitle: true,
           actions: [
-            InkWell(
-              onTap: () {
-                Get.to(CartPage());
-              },
-              child: const Icon(
-                Bootstrap.bag,
-                color: Colors.black,
-                size: 20.0,
-              ),
-            ),
+            cartIcon(),
             SizedBox(
               width: 8.0,
             ),
@@ -179,7 +177,7 @@ class _ProductPageState extends State<ProductPage> {
               ),
             ),
             SizedBox(
-              width: 8.0,
+              width: 12.0,
             ),
           ],
           bottom: PreferredSize(
@@ -209,20 +207,27 @@ class _ProductPageState extends State<ProductPage> {
               print(product);
               return SingleChildScrollView(
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(0.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      SizedBox(
+                        height: 10,
+                      ),
                       Stack(
                         children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(5),
-                            child: CachedNetworkImage(
-                              imageUrl: List.from(product["ProductImages"])
-                                  .firstWhere((element) =>
-                                      element["id"] == selectedImage)?["image"],
-                              width: double.infinity,
-                              fit: BoxFit.cover,
+                          Container(
+                            height: 300,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(0),
+                              child: CachedNetworkImage(
+                                imageUrl: List.from(product["ProductImages"])
+                                    .firstWhere((element) =>
+                                        element["id"] ==
+                                        selectedImage)?["image"],
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
                           // Favorite icon container always on top of the image
@@ -251,181 +256,229 @@ class _ProductPageState extends State<ProductPage> {
                           ),
                         ],
                       ),
-                      spacer(),
-                      if (widget.productData["ProductImages"].isNotEmpty)
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: widget.productData["ProductImages"]
-                                .map<Widget>((image) {
-                              final isSelected = image["id"] == selectedImage;
-                              return GestureDetector(
-                                onTap: () {
-                                  _updateSelectedImage(image["id"]);
-                                },
-                                child: Container(
-                                  margin: const EdgeInsets.only(right: 8.0),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(2),
-                                    border: isSelected
-                                        ? Border.all(
-                                            color: Colors.black, width: 2)
-                                        : null,
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            spacer(),
+                            if (widget.productData["ProductImages"].isNotEmpty)
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: widget.productData["ProductImages"]
+                                      .map<Widget>((image) {
+                                    final isSelected =
+                                        image["id"] == selectedImage;
+                                    return GestureDetector(
+                                      onTap: () {
+                                        _updateSelectedImage(image["id"]);
+                                      },
+                                      child: Container(
+                                        margin:
+                                            const EdgeInsets.only(right: 8.0),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(2),
+                                          border: isSelected
+                                              ? Border.all(
+                                                  color: Colors.black, width: 2)
+                                              : null,
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(2.0),
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            child: CachedNetworkImage(
+                                              imageUrl: image["image"],
+                                              height: 50,
+                                              width: 50,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            spacer(),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      ParagraphText(
+                                        product['name'] ?? '',
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 25.0,
+                                      ),
+                                      ParagraphText(
+                                          "TZS ${toMoneyFormmat(product['sellingPrice'])}",
+                                          fontSize: 16.0),
+                                    ],
                                   ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(2.0),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(5),
-                                      child: CachedNetworkImage(
-                                        imageUrl: image["image"],
-                                        height: 50,
-                                        width: 50,
+                                ),
+                                const SizedBox(width: 4),
+                                Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.star_rounded,
+                                          color: Colors.amber,
+                                          size: 16.0,
+                                        ),
+                                        const SizedBox(width: 2),
+                                        ParagraphText(
+                                          (product['rating'] ?? 0).toString(),
+                                        ),
+                                      ],
+                                    ),
+                                    GestureDetector(
+                                      onTap: _showReviewsBottomSheet,
+                                      child: ParagraphText(
+                                        "View reviews",
+                                        color: mutedTextColor,
+                                        decoration: TextDecoration.underline,
                                       ),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                      spacer(),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ParagraphText(
-                                  product['name'] ?? '',
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 25.0,
-                                ),
-                                ParagraphText(
-                                    "TZS ${toMoneyFormmat(product['sellingPrice'])}",
-                                    fontSize: 16.0),
                               ],
                             ),
-                          ),
-                          const SizedBox(width: 4),
-                          Column(
-                            children: [
-                              Row(
-                                children: [
-                                  const Icon(
-                                    Icons.star_rounded,
-                                    color: Colors.amber,
-                                    size: 16.0,
-                                  ),
-                                  const SizedBox(width: 2),
-                                  ParagraphText(
-                                    (product['rating'] ?? 0).toString(),
-                                  ),
-                                ],
-                              ),
-                              GestureDetector(
-                                onTap: _showReviewsBottomSheet,
-                                child: ParagraphText(
-                                  "View reviews",
-                                  color: mutedTextColor,
-                                  decoration: TextDecoration.underline,
+                            spacer(),
+                            ParagraphText(
+                              product['description'],
+                            ),
+                            spacer1(),
+                            ParagraphText(
+                              "Specifications",
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14.0,
+                            ),
+
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: widget
+                                  .productData['specifications'].entries
+                                  .map<Widget>((entry) {
+                                return Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    ParagraphText(
+                                      "${entry.key}:", // Display the key
+                                      color: mutedTextColor,
+                                    ),
+                                    const SizedBox(
+                                      width: 8,
+                                    ),
+                                    ParagraphText(
+                                      "${entry.value}", // Display the corresponding value
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ],
+                                );
+                              }).toList(),
+                            ),
+
+                            spacer1(),
+                            // Row(
+                            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            //   children: [
+                            //     HeadingText("Recomended"),
+                            //     ParagraphText(
+                            //       "See All",
+                            //       color: mutedTextColor,
+                            //       decoration: TextDecoration.underline,
+                            //     ),
+                            //   ],
+                            // ),
+                            // spacer1(),
+                            // SizedBox(
+                            //   height: 240,
+                            //   child: ListView.builder(
+                            //     scrollDirection: Axis.horizontal,
+                            //     itemCount: relatedItems.length,
+                            //     itemBuilder: (context, index) {
+                            //       return Padding(
+                            //         padding: const EdgeInsets.only(right: 16.0),
+                            //         child: ProductCard(data: relatedItems[index]),
+                            //       );
+                            //     },
+                            //   ),
+                            // ),
+                            spacer1(),
+                            if (product["OrderedProducts"].length < 1)
+                              Obx(
+                                () => customButton(
+                                  loading: addingToCart.value,
+                                  onTap: () {
+                                    addingToCart.value = true;
+                                    OrdersController().addOrder({}).then((res) {
+                                      orderedProductController
+                                          .addOrderedProduct({
+                                        "OrderId": res["id"],
+                                        "ProductId": product["id"]
+                                      }).then((res) {
+                                        showSuccessSnackbar(
+                                            title: "Added successfully",
+                                            description:
+                                                "Product is added to cart successfully");
+                                        addingToCart.value = false;
+
+                                        setState(() {});
+                                        orderedProductController
+                                            .getOnCartproducts();
+                                      });
+                                    });
+                                  },
+                                  text: "Add to Cart",
                                 ),
                               ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      spacer(),
-                      ParagraphText(
-                        product['description'],
-                      ),
-                      spacer1(),
-                      ParagraphText(
-                        "Specifications",
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14.0,
-                      ),
+                            if (product["OrderedProducts"].length > 0)
+                              customButton(
+                                loading: addingToCart.value,
+                                onTap: () {
+                                  Get.to(() => CartPage());
+                                },
+                                text: "View in Cart",
+                              ),
 
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: widget.productData['specifications'].entries
-                            .map<Widget>((entry) {
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              ParagraphText(
-                                "${entry.key}:", // Display the key
-                                color: mutedTextColor,
-                              ),
-                              const SizedBox(
-                                width: 8,
-                              ),
-                              ParagraphText(
-                                "${entry.value}", // Display the corresponding value
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ],
-                          );
-                        }).toList(),
-                      ),
-
-                      spacer1(),
-                      // Row(
-                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //   children: [
-                      //     HeadingText("Recomended"),
-                      //     ParagraphText(
-                      //       "See All",
-                      //       color: mutedTextColor,
-                      //       decoration: TextDecoration.underline,
-                      //     ),
-                      //   ],
-                      // ),
-                      // spacer1(),
-                      // SizedBox(
-                      //   height: 240,
-                      //   child: ListView.builder(
-                      //     scrollDirection: Axis.horizontal,
-                      //     itemCount: relatedItems.length,
-                      //     itemBuilder: (context, index) {
-                      //       return Padding(
-                      //         padding: const EdgeInsets.only(right: 16.0),
-                      //         child: ProductCard(data: relatedItems[index]),
-                      //       );
-                      //     },
-                      //   ),
-                      // ),
-                      spacer1(),
-                      customButton(
-                        onTap: () => Get.to(() => const CartPage()),
-                        text: "Add to Cart",
-                      ),
-                      spacer(),
-                      customButton(
-                        onTap: () async {
-                          await launchUrl(Uri(
-                              scheme: "tel", path: product["Shop"]["phone"]));
-                        },
-                        text: "Call Seller",
-                        buttonColor: primaryColor,
-                        textColor: Colors.black,
-                      ),
-                      spacer(),
-                      customButton(
-                        onTap: () => Get.to(() => ChatPage()),
-                        text: "Message Seller",
-                        buttonColor: primaryColor,
-                        textColor: Colors.black,
-                      ),
-                      spacer(),
-                      customButton(
-                        onTap: () {
-                          _showReportSellerBottomSheet();
-                        },
-                        text: "Report seller",
-                        buttonColor: Colors.transparent,
-                        textColor: Colors.red,
-                      ),
-                      spacer2(),
+                            spacer(),
+                            customButton(
+                              onTap: () async {
+                                await launchUrl(Uri(
+                                    scheme: "tel",
+                                    path: product["Shop"]["phone"]));
+                              },
+                              text: "Call Seller",
+                              buttonColor: primaryColor,
+                              textColor: Colors.black,
+                            ),
+                            spacer(),
+                            customButton(
+                              onTap: () => Get.to(() => ChatPage()),
+                              text: "Message Seller",
+                              buttonColor: primaryColor,
+                              textColor: Colors.black,
+                            ),
+                            spacer(),
+                            customButton(
+                              onTap: () {
+                                _showReportSellerBottomSheet();
+                              },
+                              text: "Report seller",
+                              buttonColor: Colors.transparent,
+                              textColor: Colors.red,
+                            ),
+                            spacer2(),
+                          ],
+                        ),
+                      )
                     ],
                   ),
                 ),

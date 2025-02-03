@@ -66,11 +66,11 @@ class _AllProductsState extends State<AllProducts> {
                   crossAxisCount: 2,
                   crossAxisSpacing: 10.0,
                   mainAxisSpacing: 2.0,
-                  childAspectRatio: 0.75,
+                  childAspectRatio: 0.68,
                 ),
                 itemCount: products.value.length,
                 itemBuilder: (context, index) {
-                  return ProductCard(data: products.value[index], height: 170);
+                  return ProductCard(data: products.value[index], height: 190);
                 },
               ),
             ),

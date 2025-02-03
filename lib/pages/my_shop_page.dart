@@ -4,6 +4,7 @@ import 'package:e_online/pages/add_product_page.dart';
 import 'package:e_online/pages/add_reel_page.dart';
 import 'package:e_online/pages/create_ad_page.dart';
 import 'package:e_online/pages/setting_myshop_page.dart';
+import 'package:e_online/pages/shop_tabs/shop_orders.dart';
 import 'package:e_online/pages/shop_tabs/shop_products.dart';
 import 'package:e_online/pages/shop_tabs/shop_reels.dart';
 import 'package:e_online/widgets/ad_card.dart';
@@ -159,7 +160,7 @@ class _MyShopPageState extends State<MyShopPage> {
                 child: TabBarView(children: [
                   ShopProducts(),
                   ShopMasonryGrid(),
-                  noData(),
+                  ShopOrders(),
                   noData(),
                   noData()
                 ]),

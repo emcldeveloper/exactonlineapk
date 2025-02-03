@@ -79,10 +79,11 @@ class _ShopProductCardState extends State<ShopProductCard> {
               borderRadius: BorderRadius.circular(5),
               child: Container(
                   width: 100,
+                  color: Colors.grey[200],
                   height: 100,
                   child: widget.data['ProductImages'].length > 0
                       ? CachedNetworkImage(
-                          fit: BoxFit.cover,
+                          fit: BoxFit.contain,
                           imageUrl: widget.data['ProductImages'][0]["image"])
                       : Container()),
             ),

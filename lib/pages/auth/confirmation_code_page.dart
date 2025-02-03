@@ -160,15 +160,15 @@ class _ConfirmationCodePageState extends State<ConfirmationCodePage> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
                   child: PinCodeTextField(
-                    length: 6,
+                    length: 5,
                     controller: passcodeController,
                     appContext: context,
                     obscureText: false,
                     pinTheme: PinTheme(
                       shape: PinCodeFieldShape.box,
-                      inactiveColor: Colors.grey,
-                      activeColor: secondaryColor,
-                      selectedColor: secondaryColor,
+                      inactiveColor: Colors.grey[400],
+                      activeColor: primary,
+                      selectedColor: primary,
                       borderRadius: BorderRadius.circular(10),
                       fieldHeight: 50,
                       fieldWidth: 50,

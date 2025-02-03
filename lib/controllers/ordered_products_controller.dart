@@ -1,54 +1,15 @@
-import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/utils/shared_preferences.dart';
 import 'package:dio/dio.dart';
 import 'package:e_online/utils/dio.dart';
 import 'package:get/get.dart';
 
-class OrdersController extends GetxController {
-  UserController userController = Get.find();
-  Future getMyOrders(page, limit, keyword) async {
+class OrderedProductController extends GetxController {
+  Rx<List> productsOnCart = Rx<List>([]);
+
+  Future addOrderedProduct(var payload) async {
     try {
-      var response = await dio.get(
-          "/orders/user/${userController.user.value["id"]}/?page=$page&limit=$limit&keyword=$keyword",
-          options: Options(headers: {
-            "Authorization":
-                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
-          }));
-
-      var data = response.data["body"]["rows"];
-      print(data);
-      return data;
-    } on DioException catch (e) {
-      print(e.response);
-    }
-  }
-
-  Future getShopOrders(page, limit, keyword) async {
-    try {
-      var shopId = await SharedPreferencesUtil.getSelectedBusiness();
-      if (shopId == null) {
-        shopId = userController.user.value["Shops"][0]["id"];
-        await SharedPreferencesUtil.saveSelectedBusiness(shopId!);
-      }
-      var response = await dio.get(
-          "/orders/shop/$shopId/?page=$page&limit=$limit&keyword=$keyword",
-          options: Options(headers: {
-            "Authorization":
-                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
-          }));
-
-      var data = response.data["body"]["rows"];
-      print(data);
-      return data;
-    } on DioException catch (e) {
-      print(e.response);
-    }
-  }
-
-  Future addOrder(var payload) async {
-    try {
-      var response = await dio.post("/orders",
-          data: payload ?? {},
+      var response = await dio.post("/ordered-products",
+          data: payload,
           options: Options(headers: {
             "Authorization":
                 "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
@@ -60,10 +21,38 @@ class OrdersController extends GetxController {
     }
   }
 
-  Future editOrder(id, payload) async {
+  Future getOnCartproducts() async {
     try {
-      var response = await dio.patch("/orders/$id",
-          data: payload ?? {},
+      var response = await dio.get("/ordered-products/on-cart",
+          options: Options(headers: {
+            "Authorization":
+                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
+          }));
+      var data = response.data["body"]["rows"];
+      productsOnCart.value = data;
+      return data;
+    } on DioException catch (e) {
+      print(e.response);
+    }
+  }
+
+  Future getOrderproducts(id) async {
+    try {
+      var response = await dio.get("/ordered-products/order/$id",
+          options: Options(headers: {
+            "Authorization":
+                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
+          }));
+      var data = response.data["body"]["rows"];
+      return data;
+    } on DioException catch (e) {
+      print(e.response);
+    }
+  }
+
+  Future deleteOrderedProduct(id) async {
+    try {
+      var response = await dio.delete("/ordered-products/$id",
           options: Options(headers: {
             "Authorization":
                 "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
@@ -73,5 +62,11 @@ class OrdersController extends GetxController {
     } on DioException catch (e) {
       print(e.response);
     }
+  }
+
+  @override
+  void onInit() {
+    getOnCartproducts();
+    super.onInit();
   }
 }

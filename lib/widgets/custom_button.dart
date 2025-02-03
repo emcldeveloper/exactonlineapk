@@ -8,6 +8,7 @@ Widget customButton({
   double? vertical,
   Color? buttonColor,
   Color? textColor,
+  bool loading = false,
   double? rounded,
   Widget? child,
 }) {
@@ -17,27 +18,36 @@ Widget customButton({
       width: width ?? double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(rounded ?? 30.0),
-        color: buttonColor ?? secondaryColor,
+        color: buttonColor ?? Colors.black,
       ),
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: vertical ?? 18.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (child != null) ...[
-              child, // Display the loader or any custom widget
-            ] else ...[
-              Text(
-                text ?? "",
-                style: TextStyle(
-                  color: textColor ?? primaryColor,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
+        child: loading
+            ? Center(
+                child: Container(
+                height: 18,
+                width: 18,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
                 ),
+              ))
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (child != null) ...[
+                    child, // Display the loader or any custom widget
+                  ] else ...[
+                    Text(
+                      text ?? "",
+                      style: TextStyle(
+                        color: textColor ?? primaryColor,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ],
               ),
-            ],
-          ],
-        ),
       ),
     ),
   );

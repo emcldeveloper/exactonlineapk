@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:e_online/pages/auth/onboarding_pages.dart';
+import 'package:e_online/pages/error_page.dart';
 import 'package:e_online/pages/splashscreen_page.dart';
 import 'package:e_online/pages/way_page.dart';
 import 'package:e_online/utils/shared_preferences.dart';
@@ -7,7 +10,15 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() {
+  // FlutterError.onError = (error) {
+  //   FlutterError.presentError(error);
+  //   runApp(const ErrorPage());
+  // };
+  // runZonedGuarded(() {
   runApp(const MyApp());
+  // }, (error, stack) {
+  //   runApp(const ErrorPage());
+  // });
 }
 
 class MyApp extends StatelessWidget {
@@ -19,7 +30,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "ExactOnline",
       theme: ThemeData(
-          primaryColor: Colors.black, textTheme: GoogleFonts.interTextTheme()),
+          primaryColor: Colors.black, textTheme: GoogleFonts.outfitTextTheme()),
       home: FutureBuilder(
         future: Future.delayed(const Duration(seconds: 4)),
         builder: (context, snapshot) {

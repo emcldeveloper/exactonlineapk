@@ -1,6 +1,8 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/constants/product_items.dart';
+import 'package:e_online/controllers/order_controller.dart';
 import 'package:e_online/widgets/heading_text.dart';
+import 'package:e_online/widgets/no_data.dart';
 import 'package:e_online/widgets/order_card.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
@@ -34,19 +36,35 @@ class MyOrdersPage extends StatelessWidget {
         ),
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: orderItems.map((item) {
-              return Column(
-                children: [
-                  OrderCard(data: item),
-                  spacer1(),
-                ],
-              );
-            }).toList(),
-          ),
-        ),
+        child: FutureBuilder(
+            future: OrdersController().getMyOrders(1, 20, ""),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                    child: Padding(
+                  padding: EdgeInsets.all(30),
+                  child: CircularProgressIndicator(
+                    color: Colors.black,
+                  ),
+                ));
+              }
+              List orders = snapshot.requireData;
+              return orders.isEmpty
+                  ? noData()
+                  : Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: orders.map((item) {
+                          return Column(
+                            children: [
+                              OrderCard(data: item),
+                              spacer2(),
+                            ],
+                          );
+                        }).toList(),
+                      ),
+                    );
+            }),
       ),
     );
   }

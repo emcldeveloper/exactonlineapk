@@ -1,8 +1,10 @@
+import 'package:e_online/constants/colors.dart';
 import 'package:e_online/pages/customer_order_view_page.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 class OrderCard extends StatelessWidget {
   final Map<String, dynamic> data;
@@ -13,7 +15,7 @@ class OrderCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Get.to(CustomerOrderViewPage(orderData: data));
+        Get.to(CustomerOrderViewPage(order: data));
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -21,28 +23,37 @@ class OrderCard extends StatelessWidget {
           Expanded(
             child: Row(
               children: [
-                HugeIcon(
-                  icon: HugeIcons.strokeRoundedShoppingBasket01,
-                  color: Colors.grey,
-                  size: 28.0,
+                Badge(
+                  child: Icon(Bootstrap.cart),
+                  backgroundColor: primary,
+                  label: Icon(
+                    Icons.check,
+                    color: Colors.white,
+                    size: 7,
+                  ),
                 ),
                 const SizedBox(
-                  width: 10,
+                  width: 20,
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ParagraphText("Order ${data['orderNo']}",
-                        fontWeight: FontWeight.bold, fontSize: 14.0),
-                    ParagraphText(data['customer'] ?? "N/A"),
-                    ParagraphText(data['time'] ?? "N/A"),
-                  ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ParagraphText("Order ${data['id']}",
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14.0),
+                      ParagraphText(data['User']["name"] ?? "N/A"),
+                      ParagraphText(data['updatedAt'] ?? "N/A"),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
           const SizedBox(
-            width: 8,
+            width: 15,
           ),
           Container(
             width: 90,

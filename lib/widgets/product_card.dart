@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/favorite_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/product_page.dart';
@@ -72,23 +73,14 @@ class _ProductCardState extends State<ProductCard> {
             Stack(
               children: [
                 Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(0),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
+                  color: Colors.grey[200],
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(0),
                     child: CachedNetworkImage(
                       imageUrl: widget.data["ProductImages"][0]['image'],
-                      height: widget.height ?? 135,
+                      height: widget.height ?? 145,
                       width: double.infinity,
-                      fit: BoxFit.fill,
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
@@ -138,7 +130,7 @@ class _ProductCardState extends State<ProductCard> {
                       Expanded(
                         child: ParagraphText(
                           widget.data['name'],
-                          fontSize: 12,
+                          fontSize: 13,
                           maxLines: 1,
                         ),
                       ),
@@ -155,6 +147,11 @@ class _ProductCardState extends State<ProductCard> {
                       fontSize: 12,
                       color: Colors.red,
                     ),
+                  ParagraphText(
+                    "Vunja bei shop",
+                    fontSize: 12,
+                    color: primary,
+                  ),
                 ],
               ),
             ),

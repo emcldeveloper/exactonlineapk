@@ -127,7 +127,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           right: 0,
                           child: Container(
                             decoration: BoxDecoration(
-                              color: Colors.black,
+                              color: primary,
                               borderRadius: BorderRadius.circular(15),
                             ),
                             child: Padding(

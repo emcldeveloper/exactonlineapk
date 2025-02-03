@@ -22,14 +22,14 @@ class _MainPageState extends State<MainPage> {
       const HomePage(),
       const ReelsPage(),
       ChatPage(),
-      FavouritesPage(),
+      const FavouritesPage(),
       const ProfilePage(),
     ];
 
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: mainColor,
-        selectedItemColor: secondaryColor,
+        selectedItemColor: Colors.black,
         unselectedItemColor: mutedTextColor,
         showSelectedLabels: true,
         currentIndex: activeTab,

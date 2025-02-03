@@ -1,5 +1,7 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/constants/product_items.dart';
+import 'package:e_online/controllers/ordered_products_controller.dart';
+import 'package:e_online/utils/convert_to_money_format.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/horizontal_product_card.dart';
@@ -9,9 +11,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CustomerOrderViewPage extends StatefulWidget {
-  final Map<String, dynamic> orderData;
+  final Map<String, dynamic> order;
 
-  const CustomerOrderViewPage({super.key, required this.orderData});
+  const CustomerOrderViewPage({super.key, required this.order});
 
   @override
   State<CustomerOrderViewPage> createState() => _CustomerOrderViewPageState();
@@ -39,9 +41,9 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
           ),
         ),
         // Use the name from orderData in the title
-        title: HeadingText("Order ${widget.orderData['orderNo']}"),
+        title: HeadingText("Order ${widget.order['id']}"),
         centerTitle: true,
-       bottom: PreferredSize(
+        bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
           child: Container(
             color: const Color.fromARGB(255, 242, 242, 242),
@@ -49,45 +51,67 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Column(
-                children: List.generate(productItems.length, (index) {
-                  return HorizontalProductCard(
-                    data: productItems[index],
-                    onDelete: () => _removeProduct(index),
-                  );
-                }),
+      body: FutureBuilder(
+          future:
+              OrderedProductController().getOrderproducts(widget.order["id"]),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: const CircularProgressIndicator(
+                  color: Colors.black,
+                ),
+              );
+            }
+            List orderedProducts = snapshot.requireData;
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    Column(
+                      children: orderedProducts.map((item) {
+                        return HorizontalProductCard(
+                          data: item,
+                        );
+                      }).toList(),
+                    ),
+                    spacer(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        ParagraphText("Total Price"),
+                        Builder(builder: (context) {
+                          double totalPrice = orderedProducts
+                              .map((item) =>
+                                  double.parse(item["Product"]["sellingPrice"]))
+                              .toList()
+                              .reduce((prev, item) => prev + item);
+                          return ParagraphText(
+                              "TZS ${toMoneyFormmat(totalPrice.toString())}",
+                              fontWeight: FontWeight.bold,
+                              fontSize: 17);
+                        })
+                      ],
+                    ),
+                    spacer3(),
+                    customButton(
+                      onTap: () {},
+                      text: "Call Customer",
+                    ),
+                    spacer(),
+                    customButton(
+                      onTap: () {},
+                      text: "Chat with Customer",
+                      buttonColor: primaryColor,
+                      textColor: Colors.black,
+                    ),
+                    spacer3(),
+                  ],
+                ),
               ),
-              spacer(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ParagraphText("Total Price"),
-                  ParagraphText("TZS 120,0000",
-                      fontWeight: FontWeight.bold, fontSize: 17)
-                ],
-              ),
-              spacer3(),
-              customButton(
-                onTap: () {},
-                text: "Call Customer",
-              ),
-              spacer(),
-              customButton(
-                onTap: () {},
-                text: "Chat with Customer",
-                buttonColor: primaryColor,
-                textColor: Colors.black,
-              ),
-              spacer3(),
-            ],
-          ),
-        ),
-      ),
+            );
+          }),
     );
   }
 }
