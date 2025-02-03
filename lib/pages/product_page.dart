@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/controllers/chat_controller.dart';
 import 'package:e_online/controllers/favorite_controller.dart';
 import 'package:e_online/controllers/order_controller.dart';
 import 'package:e_online/controllers/ordered_products_controller.dart';
@@ -7,6 +8,7 @@ import 'package:e_online/controllers/product_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/cart_page.dart';
 import 'package:e_online/pages/chat_page.dart';
+import 'package:e_online/pages/conversation_page.dart';
 import 'package:e_online/utils/convert_to_money_format.dart';
 import 'package:e_online/utils/snackbars.dart';
 import 'package:e_online/widgets/cartIcon.dart';
@@ -22,6 +24,7 @@ import 'package:icons_plus/icons_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:url_launcher/url_launcher.dart';
+
 
 class ProductPage extends StatefulWidget {
   final Map<String, dynamic> productData;
@@ -462,20 +465,32 @@ class _ProductPageState extends State<ProductPage> {
                             ),
                             spacer(),
                             customButton(
-                              onTap: () => Get.to(() => ChatPage()),
+                              onTap: () {
+                                // showSuccessSnackbar(
+                                //     title: "Opening chat page",
+                                //     description:
+                                //         "The app is loading the chat page");
+                                ChatController().addChat({
+                                  "ShopId": product["Shop"]["id"],
+                                  "UserId": userController.user.value["id"]
+                                }).then((res) {
+                                  print(res);
+                                  Get.to(() => ConversationPage(res));
+                                });
+                              },
                               text: "Message Seller",
                               buttonColor: primaryColor,
                               textColor: Colors.black,
                             ),
                             spacer(),
-                            customButton(
-                              onTap: () {
-                                _showReportSellerBottomSheet();
-                              },
-                              text: "Report seller",
-                              buttonColor: Colors.transparent,
-                              textColor: Colors.red,
-                            ),
+                            // customButton(
+                            //   onTap: () {
+                            //     _showReportSellerBottomSheet();
+                            //   },
+                            //   text: "Report seller",
+                            //   buttonColor: Colors.transparent,
+                            //   textColor: Colors.red,
+                            // ),
                             spacer2(),
                           ],
                         ),
