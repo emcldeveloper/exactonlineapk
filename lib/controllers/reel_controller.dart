@@ -2,7 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/utils/dio.dart';
 import 'package:e_online/utils/shared_preferences.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class ReelController extends GetxController {
   UserController userController = Get.find();
@@ -73,6 +75,42 @@ class ReelController extends GetxController {
           }));
       var data = response.data["body"];
       print(data);
+      return data;
+    } on DioException catch (e) {
+      print("Error response");
+      print(e.response);
+      return e.response;
+    }
+  }
+
+    Future addReelStats(var payload) async {
+    try {
+      var response = await dio.post("/reel-stats",
+          data: payload,
+          options: Options(headers: {
+            "Authorization":
+                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
+          }));
+      var data = response.data["body"];
+
+      return data;
+    } on DioException catch (e) {
+      print("Error response");
+      print(e.response);
+      return e.response;
+    }
+  }
+
+  Future deleteReelStats(id, var payload) async {
+    try {
+      var response = await dio.delete("/reel-stats/$id",
+          data: payload,
+          options: Options(headers: {
+            "Authorization":
+                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
+          }));
+      var data = response.data["body"];
+
       return data;
     } on DioException catch (e) {
       print("Error response");

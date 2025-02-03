@@ -25,7 +25,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:url_launcher/url_launcher.dart';
 
-
 class ProductPage extends StatefulWidget {
   final Map<String, dynamic> productData;
 
@@ -39,7 +38,9 @@ class _ProductPageState extends State<ProductPage> {
   late String selectedImage = widget.productData["ProductImages"][0]["id"];
   late List<String> productImages;
   final UserController userController = Get.find();
+  final ProductController productController = Get.find();
   final FavoriteController favoriteController = Get.put(FavoriteController());
+  // String userId = "";
 
   @override
   void initState() {
@@ -48,6 +49,7 @@ class _ProductPageState extends State<ProductPage> {
         widget.productData['Favorites'] != null &&
         widget.productData['Favorites'].isNotEmpty;
     getData();
+    _sendProductStats("view");
   }
 
   void getData() {}
@@ -82,6 +84,20 @@ class _ProductPageState extends State<ProductPage> {
     favoriteController.fetchFavorites();
   }
 
+  Future<void> _sendProductStats(String type) async {
+    var userId = userController.user.value['id'] ?? "";
+    try {
+      var payload = {
+        "ProductId": widget.productData['id'],
+        "UserId": userId,
+        "type": type
+      };
+
+      await productController.addProductStats(payload);
+    } catch (e) {
+      debugPrint("Error sending shop stats: $e");
+    }
+  }
 
   void _showReviewsBottomSheet() {
     final List<Map<String, dynamic>> sampleReviews = [
@@ -173,7 +189,9 @@ class _ProductPageState extends State<ProductPage> {
               width: 8.0,
             ),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                _sendProductStats("share");
+              },
               child: Icon(
                 Bootstrap.share,
                 color: Colors.black,
@@ -455,6 +473,7 @@ class _ProductPageState extends State<ProductPage> {
                             spacer(),
                             customButton(
                               onTap: () async {
+                                _sendProductStats("call");
                                 await launchUrl(Uri(
                                     scheme: "tel",
                                     path: product["Shop"]["phone"]));
@@ -466,10 +485,7 @@ class _ProductPageState extends State<ProductPage> {
                             spacer(),
                             customButton(
                               onTap: () {
-                                // showSuccessSnackbar(
-                                //     title: "Opening chat page",
-                                //     description:
-                                //         "The app is loading the chat page");
+                                _sendProductStats("message");
                                 ChatController().addChat({
                                   "ShopId": product["Shop"]["id"],
                                   "UserId": userController.user.value["id"]

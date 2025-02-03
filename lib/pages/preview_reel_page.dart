@@ -23,15 +23,14 @@ class PreviewReelPage extends StatefulWidget {
 class _PreviewReelPageState extends State<PreviewReelPage> {
   bool isBlockingReelVisible = false;
   late PageController _pageController;
-  late VideoPlayerController _videoController =
-      VideoPlayerController.networkUrl(Uri(path: ""));
+  late VideoPlayerController _videoController;
   int currentIndex = 0;
   final UserController userController = Get.find();
   final ReelController reelController = Get.put(ReelController());
-  final FollowingController followingController =
-      Get.put(FollowingController());
+  final FollowingController followingController = Get.put(FollowingController());
   String userId = "";
   Rx<Map<String, dynamic>> reelDetails = Rx<Map<String, dynamic>>({});
+  RxBool isLiked = false.obs;
   bool? isFollowing;
 
   @override
@@ -40,10 +39,8 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
     _pageController = PageController();
     userId = userController.user.value['id'] ?? "";
     _initializeReelDetails(widget.reels[currentIndex]['id']);
-    // Add listener for reelDetails changes
-    ever(reelDetails, (value) {
-      print('Reel details updated: $value');
-    });
+    ever(reelDetails, (value) => print('Reel details updated: $value'));
+    _sendReelStats("view");
   }
 
   Future<void> _initializeReelDetails(String reelId) async {
@@ -56,6 +53,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
       reelDetails.value = details;
       _initializeVideoPlayer(reelDetails.value['videoUrl']);
       isFollowing = reelDetails.value['Shop']['following'] ?? false;
+      isLiked.value = reelDetails.value['Shop']['liked'] ?? false;
     } catch (e) {
       print("Error fetching reel details: $e");
     }
@@ -69,12 +67,12 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
         _videoController.setLooping(true);
       });
   }
-
-  void _onPageChanged(int index) {
+    void _onPageChanged(int index) {
     setState(() {
       currentIndex = index;
       _videoController.dispose();
-      _initializeReelDetails(widget.reels[index]['id']);
+    });
+    _initializeReelDetails(widget.reels[index]['id']).then((_) {
       _initializeVideoPlayer(reelDetails.value['videoUrl']);
     });
   }
@@ -127,6 +125,33 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
     }
   }
 
+    Future<void> _sendReelStats(String type) async {
+    var reelId = reelDetails.value['id'];
+    var payload = {"ReelId": reelId, "UserId": userId, "type": type};
+
+    try {
+      if (type == "like") {
+        if (isLiked.value) {
+          await reelController.deleteReelStats(reelId, payload);
+          isLiked.value = false;
+          reelDetails.update((reel) {
+            if (reel != null) reel['likes'] = (reel['likes'] ?? 0) - 1;
+          });
+        } else {
+          await reelController.addReelStats(payload);
+          isLiked.value = true;
+          reelDetails.update((reel) {
+            if (reel != null) reel['likes'] = (reel['likes'] ?? 0) + 1;
+          });
+        }
+      } else {
+        await reelController.addReelStats(payload);
+      }
+    } catch (e) {
+      debugPrint("Error updating reel stats: $e");
+    }
+  }
+
   @override
   void dispose() {
     _videoController.dispose();
@@ -163,7 +188,8 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                                   "Failed to load video",
                                   style: TextStyle(color: Colors.white),
                                 )
-                              : const CircularProgressIndicator(color: Colors.white),
+                              : const CircularProgressIndicator(
+                                  color: Colors.white),
                         ),
                 ),
                 // Back Button
@@ -329,19 +355,26 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                                   children: [
                                     Row(
                                       children: [
-                                        const HugeIcon(
-                                          icon:
-                                              HugeIcons.strokeRoundedFavourite,
-                                          color: Colors.white,
-                                          size: 22.0,
+                                        GestureDetector(
+                                          onTap: () {
+                                            _sendReelStats("like");
+                                          },
+                                          child: Obx(() => Icon(
+                                                HugeIcons
+                                                    .strokeRoundedFavourite,
+                                                color: isLiked.value == true
+                                                    ? Colors.red
+                                                    : Colors.white,
+                                                size: 22.0,
+                                              )),
                                         ),
                                         const SizedBox(width: 4),
-                                        ParagraphText(
-                                          reel['likes']?.toString() ?? '0',
-                                          color: Colors.white,
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                        Obx(() => ParagraphText(
+                                              reel['likes']?.toString() ?? '0',
+                                              color: Colors.white,
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.bold,
+                                            )),
                                       ],
                                     ),
                                     Row(
@@ -353,18 +386,23 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                                           size: 22.0,
                                         ),
                                         const SizedBox(width: 4),
-                                        ParagraphText(
-                                          reel['views']?.toString() ?? '0',
-                                          color: Colors.white,
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                        Obx(() => ParagraphText(
+                                              reel['views']?.toString() ?? '0',
+                                              color: Colors.white,
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.bold,
+                                            )),
                                       ],
                                     ),
-                                    const HugeIcon(
-                                      icon: HugeIcons.strokeRoundedShare01,
-                                      color: Colors.white,
-                                      size: 22.0,
+                                    InkWell(
+                                      onTap: () {
+                                        _sendReelStats("share");
+                                      },
+                                      child: const HugeIcon(
+                                        icon: HugeIcons.strokeRoundedShare01,
+                                        color: Colors.white,
+                                        size: 22.0,
+                                      ),
                                     ),
                                   ],
                                 ),
