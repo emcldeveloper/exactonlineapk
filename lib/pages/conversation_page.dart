@@ -1,10 +1,19 @@
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/controllers/user_controller.dart';
+import 'package:e_online/widgets/heading_text.dart';
+import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:icons_plus/icons_plus.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class ConversationPage extends StatefulWidget {
-  const ConversationPage({super.key});
+  Map<String, dynamic> chat;
+  ConversationPage(this.chat, {super.key});
 
   @override
   State<ConversationPage> createState() => _ConversationPageState();
@@ -17,26 +26,18 @@ class _ConversationPageState extends State<ConversationPage> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
-  void _sendMessage() {
-    final messageText = _messageController.text.trim();
-    if (messageText.isNotEmpty) {
-      setState(() {
-        messages.add(messageText);
-      });
-      _messageController.clear();
-
-      // Scroll to the bottom when a new message is added
-      Future.delayed(Duration(milliseconds: 100), () {
-        if (_scrollController.hasClients) {
-          _scrollController.animateTo(
-            _scrollController.position.minScrollExtent,
-            duration: Duration(milliseconds: 300),
-            curve: Curves.easeOut,
-          );
-        }
-      });
+  UserController userController = Get.find();
+//check if is person or user
+  bool isUser() {
+    bool isUser = true;
+    if (widget.chat["UserId"] != userController.user.value["id"]) {
+      isUser = false;
     }
+    return isUser;
   }
+
+  TextEditingController messageController = TextEditingController();
+  // List<String> messages = [];
 
   @override
   Widget build(BuildContext context) {
@@ -60,13 +61,44 @@ class _ConversationPageState extends State<ConversationPage> {
         ),
         title: Row(
           children: [
-            CircleAvatar(
-              radius: 14,
-              backgroundImage:
-                  AssetImage(chatData['avatar'] ?? 'assets/images/avatar.png'),
-            ),
+            ClipOval(
+                child: isUser()
+                    ? widget.chat["Shop"]["shopImage"] != null
+                        ? Container(
+                            height: 30,
+                            width: 30,
+                            child: CachedNetworkImage(
+                              imageUrl: widget.chat["Shop"]["shopImage"],
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : Container(
+                            color: Colors.grey[200],
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Icon(Bootstrap.shop),
+                            ),
+                          )
+                    : widget.chat["User"]["image"] != null
+                        ? Container(
+                            height: 30,
+                            width: 30,
+                            child: CachedNetworkImage(
+                              imageUrl: widget.chat["User"]["image"],
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : Container(
+                            color: Colors.grey[200],
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Icon(Bootstrap.person),
+                            ),
+                          )),
             const SizedBox(width: 8),
-            Text(chatData['name'] ?? 'Unknown'),
+            HeadingText(isUser()
+                ? widget.chat["Shop"]["name"]
+                : widget.chat["User"]["name"])
           ],
         ),
         bottom: PreferredSize(
@@ -132,7 +164,7 @@ class _ConversationPageState extends State<ConversationPage> {
                 ),
                 const SizedBox(width: 8),
                 InkWell(
-                  onTap: _sendMessage,
+                  onTap: () {},
                   child: Container(
                     padding: const EdgeInsets.all(13.0),
                     decoration: BoxDecoration(

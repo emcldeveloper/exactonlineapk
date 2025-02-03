@@ -70,7 +70,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       width: 80,
                                       fit: BoxFit.cover,
                                     )
-                                  : HugeIcon(
+                                  : const HugeIcon(
                                       icon: HugeIcons.strokeRoundedUserCircle,
                                       color: Colors.black,
                                       size: 80,
@@ -84,9 +84,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                   color: primary,
                                   borderRadius: BorderRadius.circular(15),
                                 ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(6),
-                                  child: const Center(
+                                child: const Padding(
+                                  padding: EdgeInsets.all(6),
+                                  child: Center(
                                     child: HugeIcon(
                                       icon: HugeIcons.strokeRoundedPencilEdit02,
                                       color: Colors.white,

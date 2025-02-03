@@ -21,7 +21,7 @@ Widget chatCard(Map<String, dynamic> message) {
         Expanded(
           child: GestureDetector(
             onTap: () {
-              Get.to(const ConversationPage());
+              Get.to(ConversationPage({}));
             },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
