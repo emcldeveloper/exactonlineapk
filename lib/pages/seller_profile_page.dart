@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/shop_controller.dart';
+import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/shop_tabs/shop_products.dart';
 import 'package:e_online/pages/shop_tabs/shop_reels.dart';
 import 'package:e_online/widgets/heading_text.dart';
@@ -21,8 +22,20 @@ class SellerProfilePage extends StatefulWidget {
 
 class _SellerProfilePageState extends State<SellerProfilePage> {
   final ShopController shopController = Get.put(ShopController());
+  final UserController userController = Get.find();
   final Rx<Map<String, dynamic>> shopDetails = Rx<Map<String, dynamic>>({});
+  String userId = "";
+  String today = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday"
+  ][DateTime.now().weekday - 1];
 
+  bool isOpen = false;
   @override
   void initState() {
     super.initState();
@@ -34,8 +47,35 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
       String id = widget.shopId;
       final details = await shopController.getShopDetails(id);
       shopDetails.value = details;
+      if (userController.user.value.containsKey("id")) {
+        userId = userController.user.value["id"];
+      }
+      List<dynamic> shopCalenders = shopDetails.value['ShopCalenders'] ?? [];
+      bool openStatus = shopCalenders
+          .any((entry) => entry['day'] == today && entry['isOpen'] == true);
+
+      setState(() {
+        isOpen = openStatus;
+      });
+      // Send shop view statistics
+      if (userId.isNotEmpty && id.isNotEmpty) {
+        await _sendShopViewStats(id);
+      }
     } catch (e) {
       debugPrint("Error fetching shop details: $e");
+    }
+  }
+
+  Future<void> _sendShopViewStats(String shopId) async {
+    try {
+      var payload = {
+        "ShopId": shopId,
+        "UserId": userId,
+      };
+
+      await shopController.createShopStats(payload);
+    } catch (e) {
+      debugPrint("Error sending shop stats: $e");
     }
   }
 
@@ -153,13 +193,17 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
                                 width: 60,
                                 height: 25,
                                 decoration: BoxDecoration(
-                                  color: Colors.green[100],
+                                  color: isOpen
+                                      ? Colors.green[100]
+                                      : Colors.red[100],
                                   borderRadius: BorderRadius.circular(15),
                                 ),
                                 alignment: Alignment.center,
                                 child: ParagraphText(
-                                  "Open",
-                                  color: Colors.green[800],
+                                  isOpen ? "Open" : "Closed",
+                                  color: isOpen
+                                      ? Colors.green[800]
+                                      : Colors.red[800],
                                 ),
                               ),
                             ],

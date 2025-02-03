@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 
 class AuthController extends GetxController {
   Future registerUser(Map<String, dynamic> payload) async {
+    print("auth authenticcation");
+    print(payload);
     try {
       // Simulate a network call
       await Future.delayed(const Duration(seconds: 2));
@@ -13,7 +15,7 @@ class AuthController extends GetxController {
       );
       var data = response.data["body"]["message"];
       return data;
-  } on DioException catch (e) {
+    } on DioException catch (e) {
       print("Error fetching user details: ${e.response}");
       throw Exception(e);
     }
@@ -28,7 +30,7 @@ class AuthController extends GetxController {
       );
       var data = response.data;
       return data;
-  } on DioException catch (e) {
+    } on DioException catch (e) {
       print("Error fetching user details: ${e.response}");
       throw Exception(e);
     }

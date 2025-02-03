@@ -91,6 +91,9 @@ class ShopController extends GetxController {
 
   Future updateShopData(id, payload) async {
     try {
+      print("payload");
+      print(id);
+      print(payload);
       var response = await dio.patch("/shops/$id",
           data: payload,
           options: Options(
@@ -100,6 +103,7 @@ class ShopController extends GetxController {
             },
           ));
       var data = response.data;
+      print("Updating shop details");
       print(data);
       Get.snackbar("Success", "Shop updated successfully",
           backgroundColor: Colors.green,
@@ -147,6 +151,7 @@ class ShopController extends GetxController {
 
   Future createShopCalendar(var payload) async {
     try {
+      print("payload");
       print(payload);
       var response = await dio.post(
         "/shop-calenders/",
@@ -174,6 +179,26 @@ class ShopController extends GetxController {
       print("Error creating Shop-Calendar: ${e.response}");
       // Do not re-throw the exception to avoid crashing the app
       return null;
+    }
+  }
+
+  Future createShopStats(var payload) async {
+    try {
+      print("payload on stats");
+      print(payload);
+      var response = await dio.post("/shop-views/",
+          data: payload,
+          options: Options(headers: {
+            "Authorization":
+                "Bearer ${await SharedPreferencesUtil.getAccessToken()}",
+          }));
+      var data = response.data;
+      print("shop-stats being sent");
+      print(data);
+      return data;
+    } on DioException catch (e) {
+      print("Error sending shop-stats account: ${e.response}");
+      throw Exception(e);
     }
   }
 }
