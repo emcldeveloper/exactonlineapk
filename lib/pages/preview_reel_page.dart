@@ -9,6 +9,7 @@ import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:video_player/video_player.dart';
 
 class PreviewReelPage extends StatefulWidget {
@@ -23,11 +24,13 @@ class PreviewReelPage extends StatefulWidget {
 class _PreviewReelPageState extends State<PreviewReelPage> {
   bool isBlockingReelVisible = false;
   late PageController _pageController;
-  late VideoPlayerController _videoController;
+  late VideoPlayerController _videoController =
+      VideoPlayerController.networkUrl(Uri(path: ""));
   int currentIndex = 0;
   final UserController userController = Get.find();
   final ReelController reelController = Get.put(ReelController());
-  final FollowingController followingController = Get.put(FollowingController());
+  final FollowingController followingController =
+      Get.put(FollowingController());
   String userId = "";
   Rx<Map<String, dynamic>> reelDetails = Rx<Map<String, dynamic>>({});
   RxBool isLiked = false.obs;
@@ -39,7 +42,9 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
     _pageController = PageController();
     userId = userController.user.value['id'] ?? "";
     _initializeReelDetails(widget.reels[currentIndex]['id']);
-    ever(reelDetails, (value) => print('Reel details updated: $value'));
+    ever(reelDetails, (value) {
+      print('Reel details updated: $value');
+    });
     _sendReelStats("view");
   }
 
@@ -67,7 +72,8 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
         _videoController.setLooping(true);
       });
   }
-    void _onPageChanged(int index) {
+
+  void _onPageChanged(int index) {
     setState(() {
       currentIndex = index;
       _videoController.dispose();
@@ -117,7 +123,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
       var result = await followingController.followShop(payload);
       if (result != null) {
         setState(() {
-          isFollowing = true; // Update state to reflect the follow action
+          isFollowing = true;
         });
       }
     } catch (e) {
@@ -125,18 +131,32 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
     }
   }
 
-    Future<void> _sendReelStats(String type) async {
-    var reelId = reelDetails.value['id'];
+  Future<void> _sendReelStats(String type) async {
+    var reelId = widget.reels[currentIndex]['id'];
     var payload = {"ReelId": reelId, "UserId": userId, "type": type};
-
     try {
       if (type == "like") {
+        var reelStatsList = reelDetails.value['ReelStats'] ?? [];
         if (isLiked.value) {
-          await reelController.deleteReelStats(reelId, payload);
-          isLiked.value = false;
-          reelDetails.update((reel) {
-            if (reel != null) reel['likes'] = (reel['likes'] ?? 0) - 1;
-          });
+          Map<String, dynamic>? matchingStats = reelStatsList.firstWhere(
+            (stats) =>
+                stats['ReelId'] == reelId &&
+                stats['UserId'] == userId &&
+                stats['type'] == "like",
+            orElse: () => null,
+          );
+
+          if (matchingStats != null) {
+            var reelStatsId = matchingStats['id'];
+            await reelController.deleteReelStats(reelStatsId);
+            isLiked.value = false;
+            reelDetails.update((reel) {
+              if (reel != null) reel['likes'] = (reel['likes'] ?? 0) - 1;
+            });
+            debugPrint("Unlike Success!");
+          } else {
+            debugPrint("Error: No 'like' entry found to delete.");
+          }
         } else {
           await reelController.addReelStats(payload);
           isLiked.value = true;
@@ -326,8 +346,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                                 ),
                               ),
                               isFollowing == true
-                                  ? const SizedBox
-                                      .shrink() // Button disappears if already following
+                                  ? const SizedBox.shrink()
                                   : TextButton(
                                       onPressed: followShop,
                                       child: ParagraphText(
@@ -362,7 +381,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                                           child: Obx(() => Icon(
                                                 HugeIcons
                                                     .strokeRoundedFavourite,
-                                                color: isLiked.value == true
+                                                color: isLiked.value
                                                     ? Colors.red
                                                     : Colors.white,
                                                 size: 22.0,
@@ -370,7 +389,8 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                                         ),
                                         const SizedBox(width: 4),
                                         Obx(() => ParagraphText(
-                                              reel['likes']?.toString() ?? '0',
+                                              (reelDetails.value['likes'] ?? 0)
+                                                  .toString(),
                                               color: Colors.white,
                                               fontSize: 13,
                                               fontWeight: FontWeight.bold,
@@ -387,7 +407,8 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                                         ),
                                         const SizedBox(width: 4),
                                         Obx(() => ParagraphText(
-                                              reel['views']?.toString() ?? '0',
+                                              (reelDetails.value['views'] ?? 0)
+                                                  .toString(),
                                               color: Colors.white,
                                               fontSize: 13,
                                               fontWeight: FontWeight.bold,
@@ -395,8 +416,23 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                                       ],
                                     ),
                                     InkWell(
-                                      onTap: () {
-                                        _sendReelStats("share");
+                                      onTap: () async {
+                                        // Make onTap async
+                                        try {
+                                          await _sendReelStats("share");
+                                          String videoUrl =
+                                              reelDetails.value['videoUrl'] ??
+                                                  '';
+                                          if (videoUrl.isNotEmpty) {
+                                            await Share.share(
+                                                "Check out this awesome reel: $videoUrl");
+                                          } else {
+                                            await Share.share(
+                                                "Check out this reel!");
+                                          }
+                                        } catch (e) {
+                                          debugPrint("Error sharing reel: $e");
+                                        }
                                       },
                                       child: const HugeIcon(
                                         icon: HugeIcons.strokeRoundedShare01,

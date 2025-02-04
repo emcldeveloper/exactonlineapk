@@ -7,7 +7,6 @@ import 'package:e_online/controllers/ordered_products_controller.dart';
 import 'package:e_online/controllers/product_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/cart_page.dart';
-import 'package:e_online/pages/chat_page.dart';
 import 'package:e_online/pages/conversation_page.dart';
 import 'package:e_online/utils/convert_to_money_format.dart';
 import 'package:e_online/utils/snackbars.dart';
@@ -38,7 +37,7 @@ class _ProductPageState extends State<ProductPage> {
   late String selectedImage = widget.productData["ProductImages"][0]["id"];
   late List<String> productImages;
   final UserController userController = Get.find();
-  final ProductController productController = Get.find();
+  final ProductController productController = Get.put(ProductController());
   final FavoriteController favoriteController = Get.put(FavoriteController());
   // String userId = "";
 

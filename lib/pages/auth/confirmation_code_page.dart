@@ -28,7 +28,7 @@ class _ConfirmationCodePageState extends State<ConfirmationCodePage> {
   final AuthController authController = Get.put(AuthController());
   final TextEditingController passcodeController = TextEditingController();
 
-  int _minutes = 0;
+  int _minutes = 2;
   int _seconds = 30;
   Timer? _timer;
   bool _showResend = false;
@@ -120,7 +120,7 @@ class _ConfirmationCodePageState extends State<ConfirmationCodePage> {
                                           icon: HugeIcons.strokeRoundedTick01,
                                           color: Colors.white));
                                   setState(() {
-                                    _minutes = 0;
+                                    _minutes = 2;
                                     _seconds = 30;
                                     _showResend = false;
                                   });
