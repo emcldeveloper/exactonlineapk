@@ -323,7 +323,7 @@ final List<Map<String, dynamic>> categories = [
   {'name': 'Health', 'imageUrl': 'assets/images/solarhealth.png'},
 ];
 
-final List<Map<String, String>> subscriptions = [
+final List<Map<String, dynamic>> subscriptions = [
   {
     "type": "Yearly",
     "price": "TZS 300000",

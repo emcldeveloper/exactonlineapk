@@ -1,12 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/controllers/shop_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
+import 'package:e_online/pages/customer_support_page.dart';
 import 'package:e_online/pages/edit_profile_page.dart';
 import 'package:e_online/pages/join_as_seller_page.dart';
 import 'package:e_online/pages/my_orders_page.dart';
 import 'package:e_online/pages/my_shop_page.dart';
 import 'package:e_online/pages/privacy_policy.dart';
+import 'package:e_online/pages/subscription_page.dart';
 import 'package:e_online/pages/terms_conditions_page.dart';
+import 'package:e_online/utils/shared_preferences.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
@@ -25,6 +29,41 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   UserController userController = Get.find();
+  final ShopController shopController = Get.put(ShopController());
+
+  Future<void> checkSubscriptionAndNavigate(BuildContext context) async {
+    final businessId = await SharedPreferencesUtil.getSelectedBusiness();
+
+    if (businessId == null) {
+      print("No business selected");
+      return;
+    }
+
+    print("Fetching shop details...");
+    final response = await shopController.getShopDetails(businessId);
+    print("Response received: $response");
+
+    if (response != null) {
+      final shopData = response;
+      // print("shop data to determine is Subscribed");
+      // print(shopData);
+      // final List<dynamic>? subscriptions = shopData["ShopSubscriptions"];
+
+      // bool hasActiveSubscription =
+      //     subscriptions != null && subscriptions.isNotEmpty;
+
+      bool isSubscribed = shopData["isSubscribed"];
+      Future.microtask(() {
+        if (isSubscribed) {
+          Get.to(() => const MyShopPage());
+        } else {
+          Get.to(() => const SubscriptionPage());
+        }
+      });
+    } else {
+      Get.snackbar("Error", "Failed to fetch shop details");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +159,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     {
                       'icon': Bootstrap.cart,
                       'title': 'My Shop',
-                      'page': const MyShopPage(),
+                      'onTap': () async =>
+                          await checkSubscriptionAndNavigate(context),
                     },
                   {
                     'icon': Bootstrap.bag,
@@ -135,7 +175,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   {
                     'icon': Icons.support_agent_outlined,
                     'title': 'Customer Support',
-                    'page': FontAwesome.circle_question,
+                    'page': const CustomerSupportPage(),
                   },
                   {
                     'icon': Icons.assignment_outlined,
@@ -152,7 +192,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: settingItems.map((item) {
                     return InkWell(
                       onTap: () {
-                        Get.to(() => item['page'] as Widget);
+                        if (item["onTap"] == null) {
+                          Get.to(() => item['page'] as Widget);
+                        } else {
+                          item["onTap"]();
+                        }
                       },
                       child: Padding(
                         padding: EdgeInsets.symmetric(vertical: 8.0),

@@ -1,5 +1,8 @@
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/controllers/subscription_controller.dart';
+import 'package:e_online/pages/my_shop_page.dart';
 import 'package:e_online/pages/promoted_product_view_page.dart';
+import 'package:e_online/utils/shared_preferences.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
@@ -8,8 +11,9 @@ import 'package:get/get.dart';
 
 class PaymentMethodBottomSheet extends StatelessWidget {
   final String buttonText;
+  final String id;
 
-  const PaymentMethodBottomSheet({super.key, required this.buttonText});
+  const PaymentMethodBottomSheet({super.key, required this.id, required this.buttonText});
 
   @override
   Widget build(BuildContext context) {
@@ -104,14 +108,18 @@ class PaymentMethodBottomSheet extends StatelessWidget {
             ),
             spacer1(),
             customButton(
-              onTap: () {
-                Map<String, dynamic> productData = {
-                  "title": "Sample Product",
-                  "price": "TZS 250,000",
-                  "description": "This is a sample product.",
-                };
-
-                Get.to(() => PromotedProductViewPage(productData: productData));
+              onTap: () async {
+                final businessId =
+                    await SharedPreferencesUtil.getSelectedBusiness();
+                var payload = {"SubscriptionId": id, "ShopId": businessId};
+                await SubscriptionController().Subscribing(payload);
+                // Map<String, dynamic> productData = {
+                //   "title": "Sample Product",
+                //   "price": "TZS 250,000",
+                //   "description": "This is a sample product.",
+                // };
+                Get.to(() => MyShopPage());
+                // Get.to(() => PromotedProductViewPage(productData: productData));
               },
               text: buttonText,
             ),

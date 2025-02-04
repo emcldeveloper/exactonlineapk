@@ -1,5 +1,6 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/constants/product_items.dart';
+import 'package:e_online/controllers/shop_controller.dart';
 import 'package:e_online/pages/add_product_page.dart';
 import 'package:e_online/pages/add_reel_page.dart';
 import 'package:e_online/pages/create_ad_page.dart';
@@ -7,9 +8,11 @@ import 'package:e_online/pages/setting_myshop_page.dart';
 import 'package:e_online/pages/shop_tabs/shop_orders.dart';
 import 'package:e_online/pages/shop_tabs/shop_products.dart';
 import 'package:e_online/pages/shop_tabs/shop_reels.dart';
+import 'package:e_online/utils/shared_preferences.dart';
 import 'package:e_online/widgets/ad_card.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
+import 'package:e_online/widgets/newShopDetails.dart';
 import 'package:e_online/widgets/no_data.dart';
 import 'package:e_online/widgets/order_card.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
@@ -27,6 +30,10 @@ class MyShopPage extends StatefulWidget {
 }
 
 class _MyShopPageState extends State<MyShopPage> {
+  int _currentIndex = 0;
+  final ShopController shopController = Get.put(ShopController());
+  Rx<Map<String, dynamic>> shopDetails = Rx<Map<String, dynamic>>({});
+
   final List<Map<String, dynamic>> tilesItems = [
     {'points': "0", 'title': "Impressions"},
     {'points': "0", 'title': "Clicks"},
@@ -44,7 +51,42 @@ class _MyShopPageState extends State<MyShopPage> {
     "Ads",
   ];
 
-  int _currentIndex = 0;
+  @override
+  void initState() {
+    super.initState();
+    _initializeShopDetails();
+  }
+
+  Future<void> _initializeShopDetails() async {
+    try {
+      final businessId = await SharedPreferencesUtil.getSelectedBusiness();
+      final response = await shopController.getShopDetails(businessId);
+      if (response) {
+        shopDetails.value = response;
+      }
+    } catch (e) {
+      print("Error fetching shop details: $e");
+    }
+  }
+
+  void _handleAddAction({required BuildContext context, required Widget page}) {
+    if (shopDetails.value.isNotEmpty &&
+        shopDetails.value['isApproved'] == false) {
+      _showApprovalBottomSheet(context);
+    } else {
+      Get.to(() => page);
+    }
+  }
+
+  void _showApprovalBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => NewShopDetailsBottomSheet(),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +157,7 @@ class _MyShopPageState extends State<MyShopPage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: customButton(
-                  onTap: () => handleButtonAction(),
+                  onTap: () => handleButtonAction(context),
                   text: getButtonText(),
                   vertical: 8.0,
                 ),
@@ -189,28 +231,29 @@ class _MyShopPageState extends State<MyShopPage> {
     }
   }
 
-  void handleButtonAction() async {
+  void handleButtonAction(BuildContext context) async {
+    Widget? page;
+
     switch (_currentIndex) {
       case 0:
-        await Get.to(() => const AddProductPage());
-        setState(() {});
+        page = const AddProductPage();
         break;
       case 1:
-        await Get.to(() => const AddReelPage());
-        setState(() {});
+        page = const AddReelPage();
         break;
       case 2:
-        await Get.to(() => const AddProductPage());
-        setState(() {});
+        page = const AddProductPage();
         break;
       case 3:
-        await Get.to(() => SettingMyshopPage());
-        setState(() {});
+        page = SettingMyshopPage();
         break;
       case 4:
-        await Get.to(() => const CreateAdPage());
-        setState(() {});
+        page = const CreateAdPage();
         break;
+    }
+
+    if (page != null) {
+      _handleAddAction(context: context, page: page);
     }
   }
 }

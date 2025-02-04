@@ -45,7 +45,8 @@ class _PromoteProductPageState extends State<PromoteProductPage> {
     }
   }
 
-  void _showPaymentBottomSheet(BuildContext context, String buttonText) {
+  void _showPaymentBottomSheet(
+      BuildContext context, String ProductId, String buttonText) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -56,7 +57,7 @@ class _PromoteProductPageState extends State<PromoteProductPage> {
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
-        child: PaymentMethodBottomSheet(buttonText: buttonText),
+        child: PaymentMethodBottomSheet(id: ProductId, buttonText: buttonText),
       ),
     );
   }
@@ -228,7 +229,8 @@ class _PromoteProductPageState extends State<PromoteProductPage> {
               spacer1(),
               customButton(
                 onTap: () {
-                  _showPaymentBottomSheet(context, "Pay");
+                  _showPaymentBottomSheet(
+                      context, widget.productData['id'], "Pay");
                 },
                 text: "Pay to Promote",
               ),

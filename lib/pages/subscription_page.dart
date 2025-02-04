@@ -1,11 +1,12 @@
 import 'package:e_online/constants/colors.dart';
-import 'package:e_online/constants/product_items.dart';
+import 'package:e_online/controllers/subscription_controller.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/payment_method.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:e_online/widgets/subscription_card.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class SubscriptionPage extends StatefulWidget {
   const SubscriptionPage({super.key});
@@ -16,8 +17,32 @@ class SubscriptionPage extends StatefulWidget {
 
 class _SubscriptionPageState extends State<SubscriptionPage> {
   int activeIndex = 0;
+  final SubscriptionController subscriptionController =
+      Get.put(SubscriptionController());
+  Rx<List<Map<String, dynamic>>> subscriptions =
+      Rx<List<Map<String, dynamic>>>([]);
 
-  void _showPaymentBottomSheet(BuildContext context, String buttonText) {
+  @override
+  void initState() {
+    subscriptionController.getSubscriptions(page: 1, limit: 10, keyword: "");
+    super.initState();
+    _initializeSubscriptionDetails();
+  }
+
+  Future<void> _initializeSubscriptionDetails() async {
+    try {
+      final details = await subscriptionController.getSubscriptions(
+        page: 1,
+        limit: 20,
+      );
+      subscriptions.value = details;
+    } catch (e) {
+      print("Error fetching subscription details: $e");
+    }
+  }
+
+  void _showPaymentBottomSheet(
+      BuildContext context, String subscriptionId, String buttonText) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -28,7 +53,8 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
-        child: PaymentMethodBottomSheet(buttonText: buttonText),
+        child: PaymentMethodBottomSheet(
+            id: subscriptionId, buttonText: buttonText),
       ),
     );
   }
@@ -41,15 +67,13 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
         backgroundColor: mainColor,
         elevation: 0,
         centerTitle: true,
-        leading: IconButton(
-          icon: Icon(
+        leading: InkWell(
+          onTap: () => Get.back(),
+          child: Icon(
             Icons.arrow_back_ios,
             color: mutedTextColor,
             size: 16.0,
           ),
-          onPressed: () {
-            Navigator.pop(context);
-          },
         ),
         title: HeadingText(
           "Select Subscription",
@@ -68,30 +92,50 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Column(
-                children: subscriptions.asMap().entries.map((entry) {
-                  int index = entry.key;
-                  Map<String, String> subscription = entry.value;
-                  return SubscriptionCard(
-                    data: subscription,
-                    isActive: index == activeIndex,
-                    onTap: () {
-                      setState(() {
-                        activeIndex = index;
-                      });
-                    },
+              Obx(() {
+                if (subscriptions.value.isEmpty) {
+                  return const Center(
+                    child: CircularProgressIndicator(color: Colors.black),
                   );
-                }).toList(),
-              ),
+                }
+
+                return Column(
+                  children: subscriptions.value
+                      .where((subscription) => subscription['days'] > 14)
+                      .toList()
+                      .asMap()
+                      .entries
+                      .map((entry) {
+                    int index = entry.key;
+                    Map<String, dynamic> subscription = entry.value;
+                    return SubscriptionCard(
+                      data: subscription,
+                      isActive: index == activeIndex,
+                      onTap: () {
+                        activeIndex = index;
+                      },
+                    );
+                  }).toList(),
+                );
+              }),
               spacer3(),
               spacer3(),
               spacer3(),
-              customButton(
-                onTap: () {
-                  _showPaymentBottomSheet(context, "Subscribe");
-                },
-                text: "Subscribe",
-              ),
+              Obx(() {
+                if (subscriptions.value.isEmpty) {
+                  return const SizedBox();
+                }
+
+                return customButton(
+                  onTap: () {
+                    String selectedSubscriptionId =
+                        subscriptions.value[activeIndex]['id'].toString();
+                    _showPaymentBottomSheet(
+                        context, selectedSubscriptionId, "Subscribe");
+                  },
+                  text: "Subscribe",
+                );
+              }),
             ],
           ),
         ),

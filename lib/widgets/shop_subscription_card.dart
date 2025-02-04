@@ -1,29 +1,23 @@
-import 'package:e_online/constants/colors.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 
-class SubscriptionCard extends StatelessWidget {
+class ShopSubscriptionCard extends StatelessWidget {
   final Map<String, dynamic> data;
-  final bool isActive;
-  final VoidCallback onTap;
 
-  const SubscriptionCard({
+  const ShopSubscriptionCard({
     super.key,
     required this.data,
-    required this.isActive, 
-    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isActive ? Colors.black : primaryColor,
+          color: Colors.black,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
@@ -38,7 +32,7 @@ class SubscriptionCard extends StatelessWidget {
                       ParagraphText(
                         data["title"]!,
                         fontWeight: FontWeight.bold,
-                        color: isActive ? Colors.white : Colors.black,
+                        color: Colors.white,
                       ),
                       const SizedBox(width: 8),
                       if (data["hint"] != null &&
@@ -47,7 +41,7 @@ class SubscriptionCard extends StatelessWidget {
                           width: 110,
                           height: 20,
                           decoration: BoxDecoration(
-                            gradient: const LinearGradient(
+                            gradient: LinearGradient(
                               colors: [Colors.orange, Colors.amber],
                               begin: Alignment.centerLeft,
                               end: Alignment.centerRight,
@@ -64,27 +58,26 @@ class SubscriptionCard extends StatelessWidget {
                     ],
                   ),
                   spacer(),
-                  ParagraphText(
-                    '.save ${data["percentSaved"]!}%',
-                    color: isActive ? Colors.white : Colors.black,
-                  ),
                   RichText(
                     text: TextSpan(
                       children: [
-                        const TextSpan(
-                          text: 'Get ',
+                        TextSpan(
+                          text: '. ',
+                          style: TextStyle(color: Colors.white),
                         ),
                         TextSpan(
-                          text: '${data["freeDays"]!} ',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          text: data["freeDays"]!,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
-                        const TextSpan(
-                          text: 'days free',
+                        TextSpan(
+                          text: ' Days remained ',
+                          style: TextStyle(color: Colors.white),
                         ),
                       ],
-                      style: TextStyle(
-                        color: isActive ? Colors.white : Colors.black,
-                      ),
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
                 ],
@@ -93,23 +86,40 @@ class SubscriptionCard extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                ParagraphText(
-                  "TZS ${data["originalPrice"]}",
-                  color: isActive ? Colors.white : Colors.black,
-                  decoration: TextDecoration.lineThrough,
-                  textAlign: TextAlign.center,
-                ),
+                ParagraphText("Paid",
+                    color: Colors.white,
+                    decoration: TextDecoration.lineThrough,
+                    textAlign: TextAlign.center),
                 ParagraphText(
                   "TZS ${data["price"]}",
                   fontWeight: FontWeight.bold,
                   fontSize: 16.0,
-                  color: isActive ? Colors.white : Colors.black,
+                  color: Colors.white,
                   textAlign: TextAlign.center,
                 ),
-                ParagraphText(
-                  data["duration"]!,
-                  color: isActive ? Colors.white : Colors.black,
-                  textAlign: TextAlign.center,
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'at',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      TextSpan(
+                        text: data["freeDays"]!,
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                      TextSpan(
+                        text: ' at 12, Sept 2024 ',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
+                    style: const TextStyle(
+                      color: Colors.white,
+                    ),
+                    // textAlign: TextAlign.center
+                  ),
                 ),
               ],
             ),

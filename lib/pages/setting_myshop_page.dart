@@ -7,6 +7,7 @@ import 'package:e_online/pages/profile_page.dart';
 import 'package:e_online/pages/register_as_seller_page.dart';
 import 'package:e_online/utils/shared_preferences.dart';
 import 'package:e_online/widgets/custom_loader.dart';
+import 'package:e_online/widgets/shop_subscription_card.dart';
 import 'package:flutter/material.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/constants/product_items.dart';
@@ -15,7 +16,6 @@ import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/setting_shop_details.dart';
 import 'package:e_online/widgets/spacer.dart';
-import 'package:e_online/widgets/subscription_card.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -105,11 +105,6 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
       });
     }
   }
-
-  final activeSubscription = subscriptions.firstWhere(
-    (sub) => sub["status"] == "Active",
-    orElse: () => {},
-  );
 
   void showSelectBusinessBottomSheet() {
     showModalBottomSheet(
@@ -227,16 +222,11 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                 fontWeight: FontWeight.bold,
               ),
               spacer1(),
-              activeSubscription.isNotEmpty
-                  ? SubscriptionCard(
-                      data: activeSubscription,
-                      isActive: activeSubscription["status"] == "Active",
-                      onTap: () {},
-                    )
-                  : ParagraphText(
-                      "No Active Subscription",
-                      color: mutedTextColor,
-                    ),
+              Obx(() => selectedBusiness?.value['isSubscribed'] == true
+                  ? ShopSubscriptionCard(
+                      data: selectedBusiness?.value['ShopSubscriptions'])
+                  : ParagraphText("No Active Subscription",
+                      color: mutedTextColor)),
               spacer1(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
