@@ -1,24 +1,22 @@
 import 'dart:async';
 
+import 'package:e_online/firebase_options.dart';
 import 'package:e_online/pages/auth/onboarding_pages.dart';
 import 'package:e_online/pages/error_page.dart';
 import 'package:e_online/pages/splashscreen_page.dart';
 import 'package:e_online/pages/way_page.dart';
 import 'package:e_online/utils/shared_preferences.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-void main() {
-  // FlutterError.onError = (error) {
-  //   FlutterError.presentError(error);
-  //   runApp(const ErrorPage());
-  // };
-  // runZonedGuarded(() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
-  // }, (error, stack) {
-  //   runApp(const ErrorPage());
-  // });
 }
 
 class MyApp extends StatelessWidget {
