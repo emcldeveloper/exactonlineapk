@@ -2,14 +2,18 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/controllers/message_controllers.dart';
 import 'package:e_online/controllers/user_controller.dart';
+import 'package:e_online/models/message.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:intl/intl.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:timeago/timeago.dart' as timeago;
 
 class ConversationPage extends StatefulWidget {
   Map<String, dynamic> chat;
@@ -23,7 +27,6 @@ class _ConversationPageState extends State<ConversationPage> {
   final Map<String, dynamic> chatData =
       Get.arguments as Map<String, dynamic>? ?? {};
   final List<String> messages = [];
-  final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
   UserController userController = Get.find();
@@ -109,83 +112,110 @@ class _ConversationPageState extends State<ConversationPage> {
           ),
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              reverse: true, // Reverse the list to start from the bottom
-              padding: const EdgeInsets.all(16.0),
-              itemCount: messages.length + 1, // Includes the initial message
-              itemBuilder: (context, index) {
-                if (index == messages.length) {
-                  // Display the initial message (only once at the top when reversed)
-                  return Align(
-                    alignment: Alignment.bottomLeft,
-                    child: ChatBubble(
-                      text: chatData['message'] ?? 'No message available.',
-                      isSentByMe: false,
-                    ),
+      body: GetX<MessageController>(
+          init: MessageController(),
+          builder: (find) {
+            return StreamBuilder<List<Message>>(
+                initialData: find.messages,
+                stream: find.getMessages(chatId: widget.chat["id"]),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  List<Message> messages = snapshot.requireData;
+                  print(messages.map((item) => item.message));
+                  return Column(
+                    children: [
+                      Expanded(
+                        child: ListView.builder(
+                          controller: _scrollController,
+                          reverse:
+                              true, // Reverse the list to start from the bottom
+                          padding: const EdgeInsets.all(16.0),
+                          itemCount:
+                              messages.length, // Includes the initial message
+                          itemBuilder: (context, index) {
+                            // Correctly access the reversed index for the messages
+                            return Align(
+                              alignment: (isUser() &&
+                                          messages[index].from == "user") ||
+                                      (!isUser() &&
+                                          messages[index].from == "shop")
+                                  ? Alignment.bottomRight
+                                  : Alignment.bottomLeft,
+                              child: ChatBubble(
+                                text: messages[index].message,
+                                isSentByMe: (isUser() &&
+                                            messages[index].from == "user") ||
+                                        (!isUser() &&
+                                            messages[index].from == "shop")
+                                    ? true
+                                    : false,
+                                time: timeago
+                                    .format(messages[index].createdAt.toDate()),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border(
+                            top: BorderSide(
+                                color: Colors.grey.shade200, width: 1.0),
+                          ),
+                        ),
+                        padding: const EdgeInsets.all(12.0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: messageController,
+                                decoration: InputDecoration(
+                                  fillColor: Colors.grey[100],
+                                  filled: true,
+                                  hintText: "Write your message here",
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(30.0),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            InkWell(
+                              onTap: () {
+                                find.addMessage(
+                                    chatId: widget.chat["id"],
+                                    message: messageController.text,
+                                    from: isUser() ? "user" : "shop");
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(13.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.black,
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                child: Transform.rotate(
+                                  angle: 6.3,
+                                  child: const HugeIcon(
+                                    icon: HugeIcons.strokeRoundedSent,
+                                    color: Colors.white,
+                                    size: 22.0,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      )
+                    ],
                   );
-                }
-                // Correctly access the reversed index for the messages
-                return Align(
-                  alignment: Alignment.bottomRight,
-                  child: ChatBubble(
-                    text: messages[messages.length - 1 - index],
-                    isSentByMe: true,
-                  ),
-                );
-              },
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              border: Border(
-                top: BorderSide(color: Colors.grey, width: 1.0),
-              ),
-            ),
-            padding: const EdgeInsets.all(12.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _messageController,
-                    decoration: InputDecoration(
-                      fillColor: Colors.grey[200],
-                      filled: true,
-                      hintText: "Write your message here",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30.0),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                InkWell(
-                  onTap: () {},
-                  child: Container(
-                    padding: const EdgeInsets.all(13.0),
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: Transform.rotate(
-                      angle: 6.3,
-                      child: HugeIcon(
-                        icon: HugeIcons.strokeRoundedSent,
-                        color: Colors.white,
-                        size: 22.0,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+                });
+          }),
     );
   }
 }
@@ -193,27 +223,44 @@ class _ConversationPageState extends State<ConversationPage> {
 class ChatBubble extends StatelessWidget {
   final String text;
   final bool isSentByMe;
+  final String time;
 
-  const ChatBubble({required this.text, required this.isSentByMe, super.key});
+  ChatBubble(
+      {required this.text,
+      required this.isSentByMe,
+      required this.time,
+      super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: BoxDecoration(
-        color: isSentByMe ? Colors.blue[100] : Colors.grey[300],
-        borderRadius: BorderRadius.only(
-          topLeft: const Radius.circular(12),
-          topRight: const Radius.circular(12),
-          bottomLeft: Radius.circular(isSentByMe ? 12 : 0),
-          bottomRight: Radius.circular(isSentByMe ? 0 : 12),
+    return Column(
+      crossAxisAlignment:
+          isSentByMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      children: [
+        Container(
+          margin: const EdgeInsets.symmetric(vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            color: isSentByMe ? primary.withOpacity(0.4) : Colors.grey[100],
+            borderRadius: BorderRadius.only(
+              topLeft: const Radius.circular(12),
+              topRight: const Radius.circular(12),
+              bottomLeft: Radius.circular(isSentByMe ? 12 : 0),
+              bottomRight: Radius.circular(isSentByMe ? 0 : 12),
+            ),
+          ),
+          child: Text(
+            text,
+            style: const TextStyle(
+              fontSize: 14,
+            ),
+          ),
         ),
-      ),
-      child: Text(
-        text,
-        style: const TextStyle(fontSize: 14),
-      ),
+        Text(
+          time,
+          style: TextStyle(color: Colors.grey),
+        )
+      ],
     );
   }
 }

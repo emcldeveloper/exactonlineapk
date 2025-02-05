@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "94342479258",
+    "project_id": "exactonline-a6e7d",
+    "storage_bucket": "exactonline-a6e7d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:94342479258:android:1fd95d688a3504072a8e23",
+        "android_client_info": {
+          "package_name": "com.exactmanpower.e_online"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAFPwe_q5j0YisuBtRO4p0zSIght9LSxwI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
