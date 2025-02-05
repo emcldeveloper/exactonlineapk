@@ -13,7 +13,8 @@ class PaymentMethodBottomSheet extends StatelessWidget {
   final String buttonText;
   final String id;
 
-  const PaymentMethodBottomSheet({super.key, required this.id, required this.buttonText});
+  const PaymentMethodBottomSheet(
+      {super.key, required this.id, required this.buttonText});
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +113,9 @@ class PaymentMethodBottomSheet extends StatelessWidget {
                 final businessId =
                     await SharedPreferencesUtil.getSelectedBusiness();
                 var payload = {"SubscriptionId": id, "ShopId": businessId};
-                await SubscriptionController().Subscribing(payload);
+                List<Map<String, dynamic>> subscribing =
+                    await SubscriptionController().Subscribing(payload);
+                print(subscribing);
                 // Map<String, dynamic> productData = {
                 //   "title": "Sample Product",
                 //   "price": "TZS 250,000",

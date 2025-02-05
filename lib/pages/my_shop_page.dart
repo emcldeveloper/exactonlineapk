@@ -35,12 +35,12 @@ class _MyShopPageState extends State<MyShopPage> {
   Rx<Map<String, dynamic>> shopDetails = Rx<Map<String, dynamic>>({});
 
   final List<Map<String, dynamic>> tilesItems = [
-    {'points': "0", 'title': "Impressions"},
-    {'points': "0", 'title': "Clicks"},
-    {'points': "0", 'title': "Shares"},
-    {'points': "0", 'title': "Calls"},
-    {'points': "0", 'title': "Likes"},
-    {'points': "0", 'title': "Profile Views"},
+    {'title': "Followers"},
+    {'title': "Impressions"},
+    {'title': "Shares"},
+    {'title': "Calls"},
+    {'title': "Reel Likes"},
+    {'title': "Profile Views"},
   ];
 
   final navCategories = [
@@ -63,6 +63,22 @@ class _MyShopPageState extends State<MyShopPage> {
       final response = await shopController.getShopDetails(businessId);
       if (response) {
         shopDetails.value = response;
+        print("shop Details");
+        print(shopDetails.value);
+        setState(() {
+          tilesItems[0]['points'] =
+              shopDetails.value['followers']?.toString() ?? "0";
+          tilesItems[1]['points'] =
+              shopDetails.value['impressions']?.toString() ?? "0";
+          tilesItems[2]['points'] =
+              shopDetails.value['shares']?.toString() ?? "0";
+          tilesItems[3]['points'] =
+              shopDetails.value['calls']?.toString() ?? "0";
+          tilesItems[4]['points'] =
+              shopDetails.value['reelLikes']?.toString() ?? "0";
+          tilesItems[5]['points'] =
+              shopDetails.value['profileViews']?.toString() ?? "0";
+        });
       }
     } catch (e) {
       print("Error fetching shop details: $e");
