@@ -139,17 +139,20 @@ class _ProductCardState extends State<ProductCard> {
                   ParagraphText(
                     "TZS ${toMoneyFormmat(widget.data['sellingPrice'])}",
                     fontWeight: FontWeight.bold,
+                    maxLines: 1,
                     fontSize: 15.0,
                   ),
                   if (widget.data['shipping'] == "Free Shipping")
                     ParagraphText(
                       widget.data['shipping'],
                       fontSize: 12,
+                      maxLines: 1,
                       color: Colors.red,
                     ),
                   ParagraphText(
                     "Vunja bei shop",
                     fontSize: 12,
+                    maxLines: 1,
                     color: primary,
                   ),
                 ],

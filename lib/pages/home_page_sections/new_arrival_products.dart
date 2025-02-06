@@ -29,7 +29,7 @@ class _NewArrivalProductsState extends State<NewArrivalProducts> {
       () => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: SizedBox(
-          height: 230,
+          height: 235,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: products.value.length,

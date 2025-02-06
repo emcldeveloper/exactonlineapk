@@ -49,8 +49,10 @@ class ProductController extends GetxController {
           "Authorization":
               "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
         }));
-
+    print("category of product return");
+    print(response);
     var data = response.data["body"]["rows"];
+    print(data);
     return data;
   }
 

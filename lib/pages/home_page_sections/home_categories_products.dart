@@ -49,7 +49,7 @@ class _HomeCategoriesProductsState extends State<HomeCategoriesProducts> {
                       crossAxisCount: 2,
                       crossAxisSpacing: 10.0,
                       mainAxisSpacing: 2.0,
-                      childAspectRatio: 0.68,
+                      childAspectRatio: 0.60,
                     ),
                     itemCount: products.value.length,
                     itemBuilder: (context, index) {

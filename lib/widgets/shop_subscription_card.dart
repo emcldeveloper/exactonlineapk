@@ -1,6 +1,7 @@
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ShopSubscriptionCard extends StatelessWidget {
   final Map<String, dynamic> data;
@@ -10,8 +11,22 @@ class ShopSubscriptionCard extends StatelessWidget {
     required this.data,
   });
 
+  int getDaysRemaining() {
+    DateTime expireDate = DateTime.parse(data["expireDate"]);
+    DateTime now = DateTime.now();
+    return expireDate.difference(now).inDays;
+  }
+
+  String formatDate(String date) {
+    DateTime parsedDate = DateTime.parse(date);
+    return DateFormat('dd-MM-yyyy').format(parsedDate);
+  }
+
   @override
   Widget build(BuildContext context) {
+    int daysRemaining = getDaysRemaining();
+    String createdAtFormatted = formatDate(data["createdAt"]);
+
     return GestureDetector(
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 8),
@@ -30,16 +45,14 @@ class ShopSubscriptionCard extends StatelessWidget {
                   Row(
                     children: [
                       ParagraphText(
-                        data["title"]!,
+                        data['Subscription']["title"]!,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
                       const SizedBox(width: 8),
-                      if (data["hint"] != null &&
-                          data["hint"]!.trim().isNotEmpty)
+                      if (data['Subscription']["hint"] != null &&
+                          data['Subscription']["hint"]!.trim().isNotEmpty)
                         Container(
-                          width: 110,
-                          height: 20,
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [Colors.orange, Colors.amber],
@@ -49,10 +62,14 @@ class ShopSubscriptionCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           alignment: Alignment.center,
-                          child: ParagraphText(
-                            data["hint"]!,
-                            fontSize: 10.0,
-                            fontWeight: FontWeight.bold,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8.0, vertical: 2.0),
+                            child: ParagraphText(
+                              data['Subscription']["hint"]!,
+                              fontSize: 10.0,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                     ],
@@ -66,7 +83,7 @@ class ShopSubscriptionCard extends StatelessWidget {
                           style: TextStyle(color: Colors.white),
                         ),
                         TextSpan(
-                          text: data["freeDays"]!,
+                          text: "$daysRemaining",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
@@ -91,7 +108,7 @@ class ShopSubscriptionCard extends StatelessWidget {
                     decoration: TextDecoration.lineThrough,
                     textAlign: TextAlign.center),
                 ParagraphText(
-                  "TZS ${data["price"]}",
+                  "TZS ${data['Subscription']["price"]}",
                   fontWeight: FontWeight.bold,
                   fontSize: 16.0,
                   color: Colors.white,
@@ -101,18 +118,14 @@ class ShopSubscriptionCard extends StatelessWidget {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: 'at',
+                        text: 'at ',
                         style: TextStyle(color: Colors.white),
                       ),
                       TextSpan(
-                        text: data["freeDays"]!,
+                        text: createdAtFormatted,
                         style: TextStyle(
                           color: Colors.white,
                         ),
-                      ),
-                      TextSpan(
-                        text: ' at 12, Sept 2024 ',
-                        style: TextStyle(color: Colors.white),
                       ),
                     ],
                     style: const TextStyle(

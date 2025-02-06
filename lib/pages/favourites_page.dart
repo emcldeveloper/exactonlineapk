@@ -36,6 +36,8 @@ class _FavouritesPageState extends State<FavouritesPage> {
       appBar: AppBar(
         backgroundColor: mainColor,
         elevation: 0,
+        leading: Container(),
+        leadingWidth: 1.0,
         title: HeadingText('Favorites'),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),

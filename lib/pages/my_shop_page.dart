@@ -8,6 +8,7 @@ import 'package:e_online/pages/setting_myshop_page.dart';
 import 'package:e_online/pages/shop_tabs/shop_orders.dart';
 import 'package:e_online/pages/shop_tabs/shop_products.dart';
 import 'package:e_online/pages/shop_tabs/shop_reels.dart';
+import 'package:e_online/pages/subscription_page.dart';
 import 'package:e_online/utils/shared_preferences.dart';
 import 'package:e_online/widgets/ad_card.dart';
 import 'package:e_online/widgets/custom_button.dart';
@@ -39,7 +40,7 @@ class _MyShopPageState extends State<MyShopPage> {
     {'title': "Impressions"},
     {'title': "Shares"},
     {'title': "Calls"},
-    {'title': "Reel Likes"},
+    {'title': "Likes"},
     {'title': "Profile Views"},
   ];
 
@@ -60,11 +61,18 @@ class _MyShopPageState extends State<MyShopPage> {
   Future<void> _initializeShopDetails() async {
     try {
       final businessId = await SharedPreferencesUtil.getSelectedBusiness();
+      if (businessId == null) {
+        print("No business selected");
+        return;
+      }
       final response = await shopController.getShopDetails(businessId);
       if (response != null) {
+        bool isSubscribed = response["isSubscribed"];
+
+        if (!isSubscribed) {
+          Get.to(() => const SubscriptionPage());
+        }
         shopDetails.value = response;
-        print("shop Details");
-        print(shopDetails.value);
         setState(() {
           loading = false;
           tilesItems[0]['points'] =
@@ -171,7 +179,7 @@ class _MyShopPageState extends State<MyShopPage> {
                                   fontWeight: FontWeight.w700,
                                 ),
                               ParagraphText(item['title'],
-                                  fontSize: 12, color: Colors.grey[600]),
+                                  fontSize: 11.0, color: Colors.grey[600]),
                             ],
                           );
                         }).toList(),

@@ -24,13 +24,17 @@ class CategoriesProductsPage extends StatefulWidget {
 class _CategoriesProductsPageState extends State<CategoriesProductsPage> {
   var loading = true.obs;
   Rx<List> products = Rx<List>([]);
+
   @override
   void initState() {
+    print(widget.category["id"]);
     ProductController()
         .getProducts(
             page: 1, limit: 10, keyword: "", category: widget.category["id"])
         .then((res) {
       products.value = res;
+      print("products.value");
+      print(products.value);
       loading.value = false;
     });
     super.initState();
@@ -63,7 +67,7 @@ class _CategoriesProductsPageState extends State<CategoriesProductsPage> {
           ),
         ),
       ),
-      body: GetX(
+      body: GetX<ProductController>(
           init: ProductController(),
           builder: (context) {
             return loading.value
@@ -75,7 +79,16 @@ class _CategoriesProductsPageState extends State<CategoriesProductsPage> {
                       ),
                     ),
                   )
-                : noData();
+                : products.value.isEmpty
+                    ? noData()
+                    : Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: ListView.builder(
+                            itemCount: products.value.length,
+                            itemBuilder: (context, index) {
+                              return FavoriteCard(data: products.value[index]);
+                            }),
+                      );
           }),
     );
   }

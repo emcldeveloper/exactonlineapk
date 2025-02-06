@@ -11,7 +11,7 @@ class SubscriptionCard extends StatelessWidget {
   const SubscriptionCard({
     super.key,
     required this.data,
-    required this.isActive, 
+    required this.isActive,
     required this.onTap,
   });
 
@@ -44,8 +44,6 @@ class SubscriptionCard extends StatelessWidget {
                       if (data["hint"] != null &&
                           data["hint"]!.trim().isNotEmpty)
                         Container(
-                          width: 110,
-                          height: 20,
                           decoration: BoxDecoration(
                             gradient: const LinearGradient(
                               colors: [Colors.orange, Colors.amber],
@@ -55,10 +53,14 @@ class SubscriptionCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           alignment: Alignment.center,
-                          child: ParagraphText(
-                            data["hint"]!,
-                            fontSize: 10.0,
-                            fontWeight: FontWeight.bold,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8.0, vertical: 2.0),
+                            child: ParagraphText(
+                              data["hint"]!,
+                              fontSize: 10.0,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                     ],

@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/controllers/chat_controller.dart';
 import 'package:e_online/controllers/shop_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
+import 'package:e_online/pages/conversation_page.dart';
 import 'package:e_online/pages/shop_tabs/shop_products.dart';
 import 'package:e_online/pages/shop_tabs/shop_reels.dart';
 import 'package:e_online/widgets/heading_text.dart';
@@ -10,6 +12,8 @@ import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:icons_plus/icons_plus.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class SellerProfilePage extends StatefulWidget {
   final String shopId;
@@ -98,14 +102,20 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
           title: HeadingText("Shop Details"),
           centerTitle: true,
           actions: [
-            InkWell(
-              child: HugeIcon(
-                icon: HugeIcons.strokeRoundedLocation01,
-                color: Colors.black,
-                size: 22.0,
+            if (shopDetails.value['shopLat'] != null &&
+                shopDetails.value['shopLong'] != null)
+              InkWell(
+                child: HugeIcon(
+                  icon: HugeIcons.strokeRoundedLocation01,
+                  color: Colors.black,
+                  size: 22.0,
+                ),
+                onTap: () async {
+                  String googleMapsUrl =
+                      "https://www.google.com/maps/search/?api=1&query=${shopDetails.value['shopLat']},${shopDetails.value['shopLong']}";
+                  await launchUrlString(googleMapsUrl);
+                },
               ),
-              onTap: () {},
-            ),
             const SizedBox(width: 8),
             InkWell(
               child: const Icon(
@@ -113,11 +123,27 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
                 color: Colors.black,
                 size: 24,
               ),
-              onTap: () {},
+              onTap: () async {
+                String phoneNumber = shopDetails.value['phone'];
+                String telUrl = "tel:$phoneNumber";
+                if (await canLaunchUrlString(telUrl)) {
+                  await launchUrlString(telUrl);
+                } else {
+                  debugPrint("Could not launch phone call.");
+                }
+              },
             ),
             const SizedBox(width: 8),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                ChatController().addChat({
+                  "ShopId": widget.shopId,
+                  "UserId": userId,
+                }).then((res) {
+                  print(res);
+                  Get.to(() => ConversationPage(res));
+                });
+              },
               child: HugeIcon(
                 icon: HugeIcons.strokeRoundedMessage01,
                 color: Colors.black,
@@ -146,9 +172,10 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
           }
 
           return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Row(
                   children: [
                     ClipOval(
@@ -163,11 +190,15 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
                           placeholder: (context, url) => const Center(
                             child: CircularProgressIndicator(
                               color: Colors.black,
-                            ), // Show a spinner while loading
+                            ),
                           ),
-                          errorWidget: (context, url, error) => const Icon(
-                            Icons.store, // Fallback icon if loading fails
-                            size: 80,
+                          errorWidget: (context, url, error) => Container(
+                            decoration: BoxDecoration(color: Colors.grey[200]),
+                            alignment: Alignment.center,
+                            child: const Icon(
+                              Bootstrap.shop,
+                              size: 30,
+                            ),
                           ),
                         ),
                       ),
@@ -190,8 +221,6 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
                                 ),
                               ),
                               Container(
-                                width: 60,
-                                height: 25,
                                 decoration: BoxDecoration(
                                   color: isOpen
                                       ? Colors.green[100]
@@ -199,25 +228,38 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
                                   borderRadius: BorderRadius.circular(15),
                                 ),
                                 alignment: Alignment.center,
-                                child: ParagraphText(
-                                  isOpen ? "Open" : "Closed",
-                                  color: isOpen
-                                      ? Colors.green[800]
-                                      : Colors.red[800],
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0, vertical: 2.0),
+                                  child: ParagraphText(
+                                    isOpen ? "Open" : "Closed",
+                                    fontSize: 12.0,
+                                    color: isOpen
+                                        ? Colors.green[800]
+                                        : Colors.red[800],
+                                  ),
                                 ),
                               ),
                             ],
                           ),
-                          spacer(),
-                          ParagraphText(
-                            "Description",
-                            fontWeight: FontWeight.bold,
-                          ),
-                          ParagraphText(data['description'] ??
-                              "No description available."),
                         ],
                       ),
                     )
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ParagraphText(
+                      "Description",
+                      fontWeight: FontWeight.bold,
+                    ),
+                    ParagraphText(
+                        data['description'] ?? "No description available.",
+                        fontSize: 13.0),
                   ],
                 ),
               ),
@@ -227,6 +269,12 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
                   children: [
                     TabBar(
                       labelColor: Colors.black,
+                      dividerColor: const Color.fromARGB(255, 234, 234, 234),
+                      indicatorSize: TabBarIndicatorSize.label,
+                      padding: const EdgeInsets.symmetric(horizontal: 1),
+                      isScrollable: true,
+                      tabAlignment: TabAlignment.start,
+                      indicatorColor: Colors.black,
                       unselectedLabelColor: mutedTextColor,
                       labelStyle: const TextStyle(
                         fontSize: 16,

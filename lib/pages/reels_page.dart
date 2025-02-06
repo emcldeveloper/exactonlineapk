@@ -22,6 +22,8 @@ class ReelsPage extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: mainColor,
           elevation: 0,
+          leading: Container(),
+          leadingWidth: 1.0,
           title: HeadingText("Reels"),
           bottom: const PreferredSize(
             preferredSize: Size.fromHeight(48),

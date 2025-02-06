@@ -196,7 +196,7 @@ class _ConfirmationCodePageState extends State<ConfirmationCodePage> {
                         SharedPreferences prefs =
                             await SharedPreferences.getInstance();
                         await prefs.setString('ACCESS_TOKEN', accessToken);
-                        Get.to(() => WayPage());
+                        Get.offAll(() => WayPage());
                       } else {
                         isLoading.value = false;
                         String errorMessage = response['body']['message'];

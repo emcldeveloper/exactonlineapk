@@ -195,7 +195,8 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
             final shopImage = shopData['shopImage'];
 
             final reel = reelDetails.value;
-
+            print('likes');
+            print(reel);
             return Stack(
               children: [
                 // Video Player
@@ -378,18 +379,23 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                                           onTap: () {
                                             _sendReelStats("like");
                                           },
-                                          child: Obx(() => Icon(
-                                                HugeIcons
-                                                    .strokeRoundedFavourite,
-                                                color: isLiked.value
-                                                    ? Colors.red
-                                                    : Colors.white,
-                                                size: 22.0,
-                                              )),
+                                          child: Obx(() => isLiked.value
+                                              ? Icon(
+                                                  Icons.favorite,
+                                                  color: Colors.red,
+                                                )
+                                              : Icon(
+                                                  HugeIcons
+                                                      .strokeRoundedFavourite,
+                                                  color: Colors.white,
+                                                  size: 22.0,
+                                                )),
                                         ),
                                         const SizedBox(width: 4),
                                         Obx(() => ParagraphText(
-                                              (reelDetails.value['likes'] ?? 0)
+                                              (reelDetails.value['Shop']
+                                                          ['likes'] ??
+                                                      0)
                                                   .toString(),
                                               color: Colors.white,
                                               fontSize: 13,

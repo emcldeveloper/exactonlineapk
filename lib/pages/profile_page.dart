@@ -29,41 +29,6 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   UserController userController = Get.find();
-  final ShopController shopController = Get.put(ShopController());
-
-  Future<void> checkSubscriptionAndNavigate(BuildContext context) async {
-    final businessId = await SharedPreferencesUtil.getSelectedBusiness();
-
-    if (businessId == null) {
-      print("No business selected");
-      return;
-    }
-
-    print("Fetching shop details...");
-    final response = await shopController.getShopDetails(businessId);
-    print("Response received: $response");
-
-    if (response != null) {
-      final shopData = response;
-      // print("shop data to determine is Subscribed");
-      // print(shopData);
-      // final List<dynamic>? subscriptions = shopData["ShopSubscriptions"];
-
-      // bool hasActiveSubscription =
-      //     subscriptions != null && subscriptions.isNotEmpty;
-
-      bool isSubscribed = shopData["isSubscribed"];
-      Future.microtask(() {
-        if (isSubscribed) {
-          Get.to(() => const MyShopPage());
-        } else {
-          Get.to(() => const SubscriptionPage());
-        }
-      });
-    } else {
-      Get.snackbar("Error", "Failed to fetch shop details");
-    }
-  }
 
   bool loadingShopInfo = false;
   @override
@@ -79,6 +44,8 @@ class _ProfilePageState extends State<ProfilePage> {
               backgroundColor: mainColor,
               title: HeadingText("My Profile"),
               centerTitle: false,
+              leading: Container(),
+              leadingWidth: 1.0,
               bottom: PreferredSize(
                 preferredSize: const Size.fromHeight(1.0),
                 child: Container(
@@ -169,15 +136,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           {
                             'icon': Bootstrap.cart,
                             'title': 'My Shop',
-                            'onTap': () async {
-                            setState(() {
-                                loadingShopInfo = true;
-                              });
-                              await checkSubscriptionAndNavigate(context);
-                              setState(() {
-                                loadingShopInfo = false;
-                              });
-                            }
+                            'page': const MyShopPage(),
                           },
                         {
                           'icon': Bootstrap.bag,
