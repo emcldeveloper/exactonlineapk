@@ -5,6 +5,7 @@ import 'package:e_online/pages/home_page.dart';
 import 'package:e_online/pages/profile_page.dart';
 import 'package:e_online/pages/reels_page.dart';
 import 'package:flutter/material.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -27,6 +28,7 @@ class _MainPageState extends State<MainPage> {
     ];
 
     return Scaffold(
+      backgroundColor: Colors.white,
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: mainColor,
         selectedItemColor: Colors.black,
@@ -58,11 +60,11 @@ class _MainPageState extends State<MainPage> {
           BottomNavigationBarItem(
             icon: Padding(
               padding: const EdgeInsets.only(bottom: 6, top: 6),
-              child: Icon(Icons.movie_outlined),
+              child: Icon(EvaIcons.video_outline),
             ),
             activeIcon: Padding(
               padding: const EdgeInsets.only(bottom: 6, top: 6),
-              child: Icon(Icons.movie),
+              child: Icon(EvaIcons.video),
             ),
             label: "Reels",
           ),

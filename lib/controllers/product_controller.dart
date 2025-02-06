@@ -117,7 +117,7 @@ class ProductController extends GetxController {
     }
   }
 
-    Future addProductStats(var payload) async {
+  Future addProductStats(var payload) async {
     try {
       var response = await dio.post("/product-stats",
           data: payload,

@@ -13,16 +13,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class CustomerOrderViewPage extends StatefulWidget {
+class SellerOrderViewPage extends StatefulWidget {
   final Map<String, dynamic> order;
 
-  const CustomerOrderViewPage({super.key, required this.order});
+  const SellerOrderViewPage({super.key, required this.order});
 
   @override
-  State<CustomerOrderViewPage> createState() => _CustomerOrderViewPageState();
+  State<SellerOrderViewPage> createState() => _SellerOrderViewPageState();
 }
 
-class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
+class _SellerOrderViewPageState extends State<SellerOrderViewPage> {
   void _removeProduct(int index) {
     setState(() {
       productItems.removeAt(index);
@@ -30,8 +30,13 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    print("Ordered 🌕");
+    print("Order 🆎");
     print(widget.order);
     return Scaffold(
       backgroundColor: mainColor,
@@ -58,16 +63,18 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
       ),
       body: FutureBuilder(
           future: OrderedProductController()
-              .getUserOrderproducts(widget.order["id"]),
+              .getShopOrderproducts(widget.order["id"]),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: const CircularProgressIndicator(
+              return const Center(
+                child: CircularProgressIndicator(
                   color: Colors.black,
                 ),
               );
             }
             List orderedProducts = snapshot.requireData;
+            print("🍯");
+            print(orderedProducts);
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -104,24 +111,23 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                       onTap: () {
                         launchUrl(Uri(
                             scheme: "tel",
-                            path: widget.order["OrderedProducts"]?[0]
-                                ?["Product"]["Shop"]["phone"]));
+                            path: widget.order["User"]["phone"]));
                       },
-                      text: "Call Seller",
+                      text: "Call Customer",
                     ),
                     spacer(),
                     customButton(
                       onTap: () {
                         ChatController().addChat({
                           "ShopId": widget.order["OrderedProducts"]?[0]
-                              ?["Product"]["Shop"]["id"],
+                              ?["Product"]["ShopId"],
                           "UserId": widget.order["UserId"]
                         }).then((res) {
                           print(res);
                           Get.to(() => ConversationPage(res));
                         });
                       },
-                      text: "Chat with Seller",
+                      text: "Chat with Customer",
                       buttonColor: primaryColor,
                       textColor: Colors.black,
                     ),

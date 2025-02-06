@@ -1,4 +1,5 @@
 import 'package:e_online/controllers/product_controller.dart';
+import 'package:e_online/widgets/no_data.dart';
 import 'package:flutter/material.dart';
 import 'package:money_formatter/money_formatter.dart';
 
@@ -26,14 +27,16 @@ class ShopProducts extends StatelessWidget {
                 // ignore: avoid_print
                 print("Products");
                 print(products);
-                return ListView.builder(
-                  itemCount: products.length,
-                  itemBuilder: (context, index) {
-                    return products[index]['ProductImages'].length > 0
-                        ? ShopProductCard(data: products[index])
-                        : Container();
-                  },
-                );
+                return products.isEmpty
+                    ? noData()
+                    : ListView.builder(
+                        itemCount: products.length,
+                        itemBuilder: (context, index) {
+                          return products[index]['ProductImages'].length > 0
+                              ? ShopProductCard(data: products[index])
+                              : Container();
+                        },
+                      );
               }),
         ));
   }

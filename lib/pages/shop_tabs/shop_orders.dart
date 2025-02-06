@@ -1,8 +1,10 @@
 import 'package:e_online/controllers/order_controller.dart';
+import 'package:e_online/pages/seller_order_view_page.dart';
 import 'package:e_online/widgets/no_data.dart';
 import 'package:e_online/widgets/order_card.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class ShopOrders extends StatelessWidget {
   const ShopOrders({super.key});
@@ -29,11 +31,16 @@ class ShopOrders extends StatelessWidget {
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       children: orders.map((item) {
-                        return Column(
-                          children: [
-                            OrderCard(data: item),
-                            spacer2(),
-                          ],
+                        return GestureDetector(
+                          onTap: () {
+                            Get.to(SellerOrderViewPage(order: item));
+                          },
+                          child: Column(
+                            children: [
+                              OrderCard(data: item),
+                              spacer2(),
+                            ],
+                          ),
                         );
                       }).toList(),
                     ),

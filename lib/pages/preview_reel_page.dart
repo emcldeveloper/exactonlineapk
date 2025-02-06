@@ -405,14 +405,6 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                                           color: Colors.white,
                                           size: 22.0,
                                         ),
-                                        const SizedBox(width: 4),
-                                        Obx(() => ParagraphText(
-                                              (reelDetails.value['views'] ?? 0)
-                                                  .toString(),
-                                              color: Colors.white,
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.bold,
-                                            )),
                                       ],
                                     ),
                                     InkWell(

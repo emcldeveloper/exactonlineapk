@@ -5,6 +5,7 @@ import 'package:e_online/pages/preview_reel_page.dart';
 import 'package:e_online/pages/seller_profile_page.dart';
 import 'package:e_online/widgets/following.dart';
 import 'package:e_online/widgets/heading_text.dart';
+import 'package:e_online/widgets/no_data.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
@@ -92,28 +93,24 @@ class ShopMasonryGrid extends StatelessWidget {
                 .map((item) => item as Map<String, dynamic>)
                 .toList();
 
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              childAspectRatio: 0.46,
-            ),
-            itemCount: reels.length,
-            itemBuilder: (context, index) {
-              final reel = reels[index];
-              return ConstrainedBox(
-                constraints: const BoxConstraints(
-                  minHeight: 200,
-                  maxHeight: double.infinity,
+        return reels.isEmpty
+            ? noData()
+            : Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    childAspectRatio: 0.44,
+                  ),
+                  itemCount: reels.length,
+                  itemBuilder: (context, index) {
+                    final reel = reels[index];
+                    return ReelCard(data: reel);
+                  },
                 ),
-                child: ReelCard(data: reel),
               );
-            },
-          ),
-        );
       },
     );
   }

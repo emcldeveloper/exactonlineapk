@@ -7,19 +7,19 @@ import 'package:e_online/widgets/spacer.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:get/get.dart';
 
-class FavoriteCard extends StatefulWidget {
+class OrderedProductCard extends StatefulWidget {
   final Map<String, dynamic> data;
 
-  const FavoriteCard({
+  const OrderedProductCard({
     super.key,
     required this.data,
   });
 
   @override
-  State<FavoriteCard> createState() => _FavoriteCardState();
+  State<OrderedProductCard> createState() => _OrderedProductCardState();
 }
 
-class _FavoriteCardState extends State<FavoriteCard> {
+class _OrderedProductCardState extends State<OrderedProductCard> {
   late int currentIndex;
 
   @override
@@ -34,8 +34,8 @@ class _FavoriteCardState extends State<FavoriteCard> {
     return GestureDetector(
       onTap: () {
         if (widget.data.isNotEmpty) {
-          // print(widget.data["Product"]);
-          Get.to(() => ProductPage(productData: widget.data));
+          print(widget.data["Product"]);
+          Get.to(() => ProductPage(productData: widget.data['Product']));
         }
       },
       child: Container(
@@ -48,7 +48,9 @@ class _FavoriteCardState extends State<FavoriteCard> {
               width: 80,
               height: 80,
               child: CachedNetworkImage(
-                imageUrl: widget.data['ProductImages']?[0]?["image"] ?? "",
+                imageUrl: widget.data['Product']?['ProductImages']?[0]
+                        ?["image"] ??
+                    "",
                 errorWidget: (context, url, error) => Icon(Icons.broken_image),
               ),
             ),
@@ -60,7 +62,8 @@ class _FavoriteCardState extends State<FavoriteCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ParagraphText(
-                      widget.data["description"] ?? "No description available",
+                      widget.data['Product']?["description"] ??
+                          "No description available",
                       maxLines: 2),
                   spacer(),
                   Row(
@@ -69,29 +72,30 @@ class _FavoriteCardState extends State<FavoriteCard> {
                         child: Row(
                           children: [
                             ParagraphText(
-                              "TZS ${toMoneyFormmat(widget.data['sellingPrice'])}",
+                              "TZS ${toMoneyFormmat(widget.data["Product"]?['sellingPrice'])}",
                               fontWeight: FontWeight.bold,
                               fontSize: 16.0,
                             ),
                             const SizedBox(width: 8),
                             ParagraphText(
-                              "${widget.data['views'] ?? 0} views",
+                              "${widget.data['Product']?['views'] ?? 0} views",
                               color: mutedTextColor,
                             ),
                           ],
                         ),
                       ),
-                      // const SizedBox(width: 4),
-                      // Row(
-                      //   children: [
-                      //     const Icon(Icons.star, color: Colors.amber, size: 16),
-                      //     const SizedBox(width: 4),
-                      //     ParagraphText(
-                      //       widget.data['rating']?.toString() ?? "0",
-                      //       color: Colors.black,
-                      //     ),
-                      //   ],
-                      // ),
+                      const SizedBox(width: 4),
+                      Row(
+                        children: [
+                          const Icon(Icons.star, color: Colors.amber, size: 16),
+                          const SizedBox(width: 4),
+                          ParagraphText(
+                            widget.data['Product']?['rating']?.toString() ??
+                                "0",
+                            color: Colors.black,
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ],

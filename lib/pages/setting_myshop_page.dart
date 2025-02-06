@@ -217,16 +217,12 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ParagraphText(
-                "My Subscription",
-                fontWeight: FontWeight.bold,
-              ),
-              spacer1(),
-              Obx(() => selectedBusiness?.value['isSubscribed'] == true
-                  ? ShopSubscriptionCard(
-                      data: selectedBusiness?.value['ShopSubscriptions'])
-                  : ParagraphText("No Active Subscription",
-                      color: mutedTextColor)),
+              // \
+              // Obx(() => selectedBusiness?.value['isSubscribed'] == true
+              //     ? ShopSubscriptionCard(
+              //         data: selectedBusiness?.value['ShopSubscriptions'])
+              //     : ParagraphText("No Active Subscription",
+              //         color: mutedTextColor)),
               spacer1(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

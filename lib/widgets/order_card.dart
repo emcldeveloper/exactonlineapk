@@ -14,9 +14,6 @@ class OrderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        Get.to(CustomerOrderViewPage(order: data));
-      },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -24,9 +21,9 @@ class OrderCard extends StatelessWidget {
             child: Row(
               children: [
                 Badge(
-                  child: Icon(Bootstrap.cart),
+                  child: const Icon(Bootstrap.cart),
                   backgroundColor: primary,
-                  label: Icon(
+                  label: const Icon(
                     Icons.check,
                     color: Colors.white,
                     size: 7,

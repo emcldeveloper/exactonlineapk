@@ -33,7 +33,7 @@ class _MyShopPageState extends State<MyShopPage> {
   int _currentIndex = 0;
   final ShopController shopController = Get.put(ShopController());
   Rx<Map<String, dynamic>> shopDetails = Rx<Map<String, dynamic>>({});
-
+  bool loading = true;
   final List<Map<String, dynamic>> tilesItems = [
     {'title': "Followers"},
     {'title': "Impressions"},
@@ -61,11 +61,12 @@ class _MyShopPageState extends State<MyShopPage> {
     try {
       final businessId = await SharedPreferencesUtil.getSelectedBusiness();
       final response = await shopController.getShopDetails(businessId);
-      if (response) {
+      if (response != null) {
         shopDetails.value = response;
         print("shop Details");
         print(shopDetails.value);
         setState(() {
+          loading = false;
           tilesItems[0]['points'] =
               shopDetails.value['followers']?.toString() ?? "0";
           tilesItems[1]['points'] =
@@ -145,87 +146,94 @@ class _MyShopPageState extends State<MyShopPage> {
             ),
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(0),
-          child: Column(
-            children: [
-              // Metrics Tiles
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: tilesItems.map((item) {
-                    return Column(
-                      children: [
-                        ParagraphText(
-                          item['points'],
-                          fontWeight: FontWeight.w700,
-                        ),
-                        ParagraphText(item['title'],
-                            fontSize: 12, color: Colors.grey[600]),
-                      ],
-                    );
-                  }).toList(),
+        body: loading
+            ? Center(
+                child: const CircularProgressIndicator(
+                  color: Colors.black,
                 ),
-              ),
-              spacer1(),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: customButton(
-                  onTap: () => handleButtonAction(context),
-                  text: getButtonText(),
-                  vertical: 8.0,
-                ),
-              ),
-              spacer1(),
-              PreferredSize(
-                preferredSize: const Size.fromHeight(48.0),
-                child: TabBar(
-                  onTap: (index) {
-                    setState(() {
-                      _currentIndex = index;
-                    });
-                  },
-                  dividerColor: const Color.fromARGB(255, 234, 234, 234),
-                  unselectedLabelStyle: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.normal,
-                  ),
-                  indicatorSize: TabBarIndicatorSize.label,
-                  padding: const EdgeInsets.symmetric(horizontal: 1),
-                  isScrollable: true,
-                  tabAlignment: TabAlignment.start,
-                  labelColor: Colors.black,
-                  unselectedLabelColor: Colors.black.withOpacity(0.5),
-                  labelStyle: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  indicatorColor: Colors.black,
-                  tabs: navCategories.map((category) {
-                    return Tab(
-                      child: Text(
-                        category,
-                        style: const TextStyle(fontSize: 15),
+              )
+            : Padding(
+                padding: const EdgeInsets.all(0),
+                child: Column(
+                  children: [
+                    // Metrics Tiles
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: tilesItems.map((item) {
+                          return Column(
+                            children: [
+                              if (item['points'] != null)
+                                ParagraphText(
+                                  item['points'],
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ParagraphText(item['title'],
+                                  fontSize: 12, color: Colors.grey[600]),
+                            ],
+                          );
+                        }).toList(),
                       ),
-                    );
-                  }).toList(),
+                    ),
+                    spacer1(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: customButton(
+                        onTap: () => handleButtonAction(context),
+                        text: getButtonText(),
+                        vertical: 8.0,
+                      ),
+                    ),
+                    spacer1(),
+                    PreferredSize(
+                      preferredSize: const Size.fromHeight(48.0),
+                      child: TabBar(
+                        onTap: (index) {
+                          setState(() {
+                            _currentIndex = index;
+                          });
+                        },
+                        dividerColor: const Color.fromARGB(255, 234, 234, 234),
+                        unselectedLabelStyle: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.normal,
+                        ),
+                        indicatorSize: TabBarIndicatorSize.label,
+                        padding: const EdgeInsets.symmetric(horizontal: 1),
+                        isScrollable: true,
+                        tabAlignment: TabAlignment.start,
+                        labelColor: Colors.black,
+                        unselectedLabelColor: Colors.black.withOpacity(0.5),
+                        labelStyle: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        indicatorColor: Colors.black,
+                        tabs: navCategories.map((category) {
+                          return Tab(
+                            child: Text(
+                              category,
+                              style: const TextStyle(fontSize: 15),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                    spacer1(),
+                    Expanded(
+                      child: TabBarView(children: [
+                        ShopProducts(),
+                        ShopMasonryGrid(),
+                        ShopOrders(),
+                        noData(),
+                        noData()
+                      ]),
+                    ),
+                  ],
                 ),
               ),
-              spacer1(),
-              Expanded(
-                child: TabBarView(children: [
-                  ShopProducts(),
-                  ShopMasonryGrid(),
-                  ShopOrders(),
-                  noData(),
-                  noData()
-                ]),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
