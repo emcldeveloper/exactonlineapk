@@ -1,13 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/chat_controller.dart';
+import 'package:e_online/controllers/search_controller.dart';
 import 'package:e_online/controllers/shop_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/conversation_page.dart';
-import 'package:e_online/pages/shop_tabs/shop_products.dart';
-import 'package:e_online/pages/shop_tabs/shop_reels.dart';
+import 'package:e_online/widgets/Seller_product_card.dart';
 import 'package:e_online/widgets/heading_text.dart';
+import 'package:e_online/widgets/no_data.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
+import 'package:e_online/widgets/seller_reels.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -27,6 +29,8 @@ class SellerProfilePage extends StatefulWidget {
 class _SellerProfilePageState extends State<SellerProfilePage> {
   final ShopController shopController = Get.put(ShopController());
   final UserController userController = Get.find();
+  final ProductController productController = Get.put(ProductController());
+  final RxList<dynamic> shopProducts = <dynamic>[].obs;
   final Rx<Map<String, dynamic>> shopDetails = Rx<Map<String, dynamic>>({});
   String userId = "";
   String today = [
@@ -61,12 +65,26 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
       setState(() {
         isOpen = openStatus;
       });
+      await _fetchShopProducts();
       // Send shop view statistics
       if (userId.isNotEmpty && id.isNotEmpty) {
         await _sendShopViewStats(id);
       }
     } catch (e) {
       debugPrint("Error fetching shop details: $e");
+    }
+  }
+
+  Future<void> _fetchShopProducts() async {
+    try {
+      var shopId = widget.shopId;
+      var res = await productController.getShopProducts(page: 1, limit: 20);
+
+      if (res != null) {
+        shopProducts.assignAll(res);
+      }
+    } catch (e) {
+      debugPrint("Error fetching shop products: $e");
     }
   }
 
@@ -298,8 +316,17 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
                     Expanded(
                       child: TabBarView(
                         children: [
-                          ShopProducts(),
-                          ShopMasonryGrid(),
+                          Obx(() => shopProducts.isEmpty
+                              ? noData()
+                              : ListView.builder(
+                                  padding: EdgeInsets.all(16),
+                                  itemCount: shopProducts.length,
+                                  itemBuilder: (context, index) {
+                                    return SellerProductCard(
+                                        data: shopProducts[index]);
+                                  },
+                                )),
+                          SellerMasonryGrid(widget.shopId),
                         ],
                       ),
                     ),

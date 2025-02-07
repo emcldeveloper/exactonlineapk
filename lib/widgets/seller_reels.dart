@@ -12,8 +12,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 
-class ShopReels extends StatelessWidget {
-  const ShopReels({super.key});
+class SellerReels extends StatelessWidget {
+  final String shopId;
+  const SellerReels({required this.shopId, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +63,7 @@ class ShopReels extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
-            ShopMasonryGrid(),
+            SellerMasonryGrid(shopId),
             ReelsFollowingTab(),
           ],
         ),
@@ -71,13 +72,16 @@ class ShopReels extends StatelessWidget {
   }
 }
 
-class ShopMasonryGrid extends StatelessWidget {
-  const ShopMasonryGrid({super.key});
+class SellerMasonryGrid extends StatelessWidget {
+  final String shopId;
+
+  const SellerMasonryGrid(this.shopId, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: ReelController().getShopReels(page: 1, limit: 20),
+      future: ReelController()
+          .getSpecificReels(selectedId: shopId, page: 1, limit: 20),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -132,7 +136,7 @@ class ReelCard extends StatelessWidget {
       try {
         final parts = duration.split(':');
         if (parts.length == 3) {
-          final minutes = parts[1]; 
+          final minutes = parts[1];
           final seconds = parts[2];
           return '$minutes:$seconds';
         }

@@ -1,9 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/widgets/seller_product_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:e_online/constants/colors.dart';
+import 'package:get/get.dart';
 import 'package:money_formatter/money_formatter.dart';
 
 class ShopProductCard extends StatefulWidget {
@@ -19,6 +21,7 @@ class ShopProductCard extends StatefulWidget {
 }
 
 class _ShopProductCardState extends State<ShopProductCard> {
+  final UserController userController = Get.find();
   late int currentIndex;
   final List<String> _images = [];
 
