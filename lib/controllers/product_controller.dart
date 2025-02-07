@@ -9,8 +9,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ProductController extends GetxController {
   UserController userController = Get.find();
   Future getShopProducts({id, page, limit, keyword}) async {
-    var shopId ;
-    if (!id) {
+    var shopId;
+    if (id == null) {
       shopId = await SharedPreferencesUtil.getSelectedBusiness();
       if (shopId == null) {
         shopId = userController.user.value["Shops"][0]["id"];
@@ -20,7 +20,6 @@ class ProductController extends GetxController {
       shopId = id;
     }
 
-    // print(shopId);
     var response = await dio.get(
         "/products/shop/$shopId/?page=${page ?? 1}&limit=${limit ?? 10}&keyword=${keyword ?? ""}",
         options: Options(headers: {

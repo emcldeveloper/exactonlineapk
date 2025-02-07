@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/chat_controller.dart';
-import 'package:e_online/controllers/search_controller.dart';
+import 'package:e_online/controllers/product_controller.dart';
 import 'package:e_online/controllers/shop_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/conversation_page.dart';
@@ -77,9 +77,9 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
 
   Future<void> _fetchShopProducts() async {
     try {
-      var shopId = widget.shopId;
-      var res = await productController.getShopProducts(page: 1, limit: 20);
-
+      String shopId = widget.shopId;
+      var res = await productController.getShopProducts(
+          id: shopId, page: 1, limit: 20);
       if (res != null) {
         shopProducts.assignAll(res);
       }
@@ -193,7 +193,8 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0),
                 child: Row(
                   children: [
                     ClipOval(

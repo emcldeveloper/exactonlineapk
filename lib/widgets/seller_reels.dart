@@ -223,7 +223,7 @@ class ReelCard extends StatelessWidget {
                 // Shop Info and Likes
                 Row(
                   mainAxisSize: MainAxisSize
-                      .min, // Allow Row to shrink to fit its children
+                      .min,
                   children: [
                     // Profile Picture
                     InkWell(
