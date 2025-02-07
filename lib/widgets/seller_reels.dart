@@ -80,8 +80,7 @@ class SellerMasonryGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: ReelController()
-          .getSpecificReels(selectedId: shopId, page: 1, limit: 20),
+      future: ReelController().getShopReels(id: shopId, page: 1, limit: 20),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -222,8 +221,7 @@ class ReelCard extends StatelessWidget {
                 spacer(),
                 // Shop Info and Likes
                 Row(
-                  mainAxisSize: MainAxisSize
-                      .min,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     // Profile Picture
                     InkWell(
