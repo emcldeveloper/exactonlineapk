@@ -30,34 +30,40 @@ class _HomeCategoriesProductsState extends State<HomeCategoriesProducts> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => loading.value
-          ? const Center(
-              child: CircularProgressIndicator(
-                color: Colors.black,
-              ),
-            )
-          : products.value.isEmpty
-              ? noData()
-              : Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 10.0,
-                      mainAxisSpacing: 2.0,
-                      childAspectRatio: 0.60,
-                    ),
-                    itemCount: products.value.length,
-                    itemBuilder: (context, index) {
-                      return ProductCard(
-                          data: products.value[index], height: 190);
-                    },
-                  ),
+    return Obx(() => loading.value
+        ? const Center(
+            child: CircularProgressIndicator(
+              color: Colors.black,
+            ),
+          )
+        : products.value.isEmpty
+            ? noData()
+            : Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return Expanded(
+                      // Ensure it takes available space
+                      child: GridView.builder(
+                        physics:
+                            const BouncingScrollPhysics(), // Allow scrolling
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: constraints.maxWidth < 500 ? 2 : 3,
+                          crossAxisSpacing: 10.0,
+                          mainAxisSpacing: 10.0,
+                          childAspectRatio: 0.65,
+                        ),
+                        itemCount: products.value.length,
+                        itemBuilder: (context, index) {
+                          return ProductCard(
+                            data: products.value[index],
+                            height: 190,
+                          );
+                        },
+                      ),
+                    );
+                  },
                 ),
-    );
+              ));
   }
 }

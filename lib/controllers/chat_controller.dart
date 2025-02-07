@@ -45,6 +45,25 @@ class ChatController extends GetxController {
     }
   }
 
+  Future getUserChats(page, limit, keyword) async {
+    try {
+      var userId = userController.user.value["id"];
+
+      var response = await dio.get(
+          "/chats/user/$userId/?page=$page&limit=$limit&keyword=$keyword",
+          options: Options(headers: {
+            "Authorization":
+                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
+          }));
+
+      var data = response.data["body"]["rows"];
+      print(data);
+      return data;
+    } on DioException catch (e) {
+      print(e.response);
+    }
+  }
+
   Future addChat(var payload) async {
     try {
       var response = await dio.post("/chats",

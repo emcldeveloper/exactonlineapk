@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_online/controllers/chat_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/models/message.dart';
 import 'package:e_online/utils/shared_preferences.dart';
@@ -22,6 +23,7 @@ class MessageController extends GetxController {
         "productId": productid,
         "createdAt": Timestamp.now()
       });
+      await ChatController().editChat(chatId, {"lastMessage": message});
     } catch (e) {
       print(e);
     }

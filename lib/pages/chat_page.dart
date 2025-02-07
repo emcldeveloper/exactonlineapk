@@ -1,4 +1,6 @@
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/controllers/chat_controller.dart';
+import 'package:e_online/pages/conversation_page.dart';
 import 'package:e_online/widgets/chat_card.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/no_data.dart';
@@ -24,23 +26,36 @@ class _ChatPageState extends State<ChatPage> {
     return Scaffold(
       backgroundColor: mainColor,
       appBar: _isSearching ? _buildSearchAppBar() : _buildDefaultAppBar(),
-      body: chatItems.isEmpty
-          ? noData()
-          : SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: chatItems.map((chat) {
-                    return GestureDetector(
-                      onTap: () {
-                        Get.toNamed('/conversation', arguments: chat);
-                      },
-                      child: chatCard(chat),
-                    );
-                  }).toList(),
+      body: FutureBuilder(
+          future: ChatController().getUserChats(1, 100, ""),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(
+                  color: Colors.black,
                 ),
-              ),
-            ),
+              );
+            }
+            List chats = snapshot.requireData;
+            return chats.isEmpty
+                ? noData()
+                : SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: chats.map((chat) {
+                          return GestureDetector(
+                            onTap: () async {
+                              await Get.to(() => ConversationPage(chat));
+                              setState(() {});
+                            },
+                            child: chatCard(chat),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  );
+          }),
     );
   }
 

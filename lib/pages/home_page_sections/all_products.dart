@@ -66,7 +66,7 @@ class _AllProductsState extends State<AllProducts> {
                   crossAxisCount: 2,
                   crossAxisSpacing: 10.0,
                   mainAxisSpacing: 2.0,
-                  childAspectRatio: 0.60,
+                  childAspectRatio: 0.65,
                 ),
                 itemCount: products.value.length,
                 itemBuilder: (context, index) {

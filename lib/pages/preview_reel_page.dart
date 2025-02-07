@@ -393,8 +393,8 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                                         ),
                                         const SizedBox(width: 4),
                                         Obx(() => ParagraphText(
-                                              (reelDetails.value['Shop']
-                                                          ['likes'] ??
+                                              (reelDetails.value['Shop'][
+                                                          'likes'] ??
                                                       0)
                                                   .toString(),
                                               color: Colors.white,
