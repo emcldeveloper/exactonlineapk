@@ -123,8 +123,8 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
             if (shopDetails.value['shopLat'] != null &&
                 shopDetails.value['shopLong'] != null)
               InkWell(
-                child: HugeIcon(
-                  icon: HugeIcons.strokeRoundedLocation01,
+                child: Icon(
+                  Icons.pin_drop_outlined,
                   color: Colors.black,
                   size: 22.0,
                 ),
@@ -162,8 +162,8 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
                   Get.to(() => ConversationPage(res));
                 });
               },
-              child: HugeIcon(
-                icon: HugeIcons.strokeRoundedMessage01,
+              child: Icon(
+                Icons.chat_bubble_outline,
                 color: Colors.black,
                 size: 22.0,
               ),
@@ -252,7 +252,7 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
                                       horizontal: 8.0, vertical: 2.0),
                                   child: ParagraphText(
                                     isOpen ? "Open" : "Closed",
-                                    fontSize: 12.0,
+                                    fontSize: 13.0,
                                     color: isOpen
                                         ? Colors.green[800]
                                         : Colors.red[800],
@@ -267,6 +267,7 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
                   ],
                 ),
               ),
+              spacer(),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Column(
@@ -274,11 +275,12 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
                   children: [
                     ParagraphText(
                       "Description",
+                      fontSize: 17,
                       fontWeight: FontWeight.bold,
                     ),
                     ParagraphText(
                         data['description'] ?? "No description available.",
-                        fontSize: 13.0),
+                        fontSize: 14.0),
                   ],
                 ),
               ),
