@@ -32,7 +32,6 @@ class ReelController extends GetxController {
       return e.response;
     }
   }
-
   Future getReels({page, limit, keyword}) async {
     try {
       var response = await dio.get(
@@ -51,6 +50,22 @@ class ReelController extends GetxController {
     }
   }
 
+  Future getSpecificReels({selectedId, page, limit, keyword}) async {
+    try {
+      var response = await dio.get("/reels/$selectedId",
+          options: Options(headers: {
+            "Authorization":
+                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
+          }));
+      var data = response.data["body"];
+      return data;
+    } on DioException catch (e) {
+      print("Error response");
+      print(e.response);
+      return e.response;
+    }
+  }
+
   Future addReel(var payload) async {
     try {
       var response = await dio.post("/reels",
@@ -60,7 +75,6 @@ class ReelController extends GetxController {
                 "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
           }));
       var data = response.data["body"];
-      print(data);
       return data;
     } on DioException catch (e) {
       print("Error response");
@@ -79,11 +93,7 @@ class ReelController extends GetxController {
             "Authorization":
                 "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
           }));
-      print("response");
-      print(response);
       var data = response.data["body"];
-      print("sending reel stats");
-      print(data);
       return data;
     } on DioException catch (e) {
       print("Error response");
@@ -91,24 +101,6 @@ class ReelController extends GetxController {
       return e.response;
     }
   }
-
-  // Future getReelStats() async {
-  //   try {
-  //     var response = await dio.get("/reel-stats",
-  //         options: Options(headers: {
-  //           "Authorization":
-  //               "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
-  //         }));
-  //     var data = response.data["body"];
-  //     print("getting reel stats");
-  //     print(data);
-  //     return data;
-  //   } on DioException catch (e) {
-  //     print("Error response");
-  //     print(e.response);
-  //     return e.response;
-  //   }
-  // }
 
   Future deleteReelStats(id) async {
     try {
@@ -120,8 +112,6 @@ class ReelController extends GetxController {
                 "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
           }));
       var data = response.data["body"];
-      print("deleting reel like");
-      print(data);
       return data;
     } on DioException catch (e) {
       print("Error response");

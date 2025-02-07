@@ -51,8 +51,8 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
 
   Future<void> _initializeReelDetails(String reelId) async {
     try {
-      final details = await reelController.getShopReels(
-        id: reelId,
+      final details = await reelController.getSpecificReels(
+        selectedId: reelId,
         page: 1,
         limit: 20,
       );
