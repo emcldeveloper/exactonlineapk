@@ -89,7 +89,7 @@ class SellerMasonryGrid extends StatelessWidget {
           );
         }
         if (!snapshot.hasData || snapshot.data == null) {
-          return const Center(child: Text("No reels available."));
+          return noData();
         }
 
         final List<Map<String, dynamic>> reels =
@@ -238,8 +238,7 @@ class ReelCard extends StatelessWidget {
                         );
                       },
                       child: Row(
-                        mainAxisSize:
-                            MainAxisSize.min, // Prevents Row from expanding
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           CircleAvatar(
                             radius: 12,
@@ -249,18 +248,15 @@ class ReelCard extends StatelessWidget {
                                     as ImageProvider,
                           ),
                           const SizedBox(width: 8),
-                          // Shopname
                           Flexible(
-                            fit: FlexFit
-                                .loose, // Allow shrinking to avoid overflow
+                            fit: FlexFit.loose,
                             child: Text(
                               shopName,
                               style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
                               ),
-                              overflow: TextOverflow
-                                  .ellipsis, // Ensure text doesn't overflow
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
