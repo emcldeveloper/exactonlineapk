@@ -6,12 +6,17 @@ import 'package:get/get.dart';
 
 class ReelController extends GetxController {
   UserController userController = Get.find();
-  Future getShopReels({page, limit, keyword}) async {
+  Future getShopReels({id, page, limit, keyword}) async {
     try {
-      var shopId = await SharedPreferencesUtil.getSelectedBusiness();
-      if (shopId == null) {
-        shopId = userController.user.value["Shops"][0]["id"];
-        await SharedPreferencesUtil.saveSelectedBusiness(shopId!);
+      var shopId;
+      if (id == null) {
+        shopId = await SharedPreferencesUtil.getSelectedBusiness();
+        if (shopId == null) {
+          shopId = userController.user.value["Shops"][0]["id"];
+          await SharedPreferencesUtil.saveSelectedBusiness(shopId!);
+        }
+      } else {
+        shopId = id;
       }
       var response = await dio.get(
           "/reels/shop/$shopId/?page=${page ?? 1}&limit=${limit ?? 10}&keyword=${keyword ?? ""}",
@@ -38,23 +43,6 @@ class ReelController extends GetxController {
           }));
 
       var data = response.data["body"]["rows"];
-      return data;
-    } on DioException catch (e) {
-      print("Error response");
-      print(e.response);
-      return e.response;
-    }
-  }
-
-  Future getSpecificReels({selectedId, page, limit, keyword}) async {
-    try {
-      var response = await dio.get("/reels/$selectedId",
-          options: Options(headers: {
-            "Authorization":
-                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
-          }));
-      var data = response.data["body"];
-      print(data);
       return data;
     } on DioException catch (e) {
       print("Error response");

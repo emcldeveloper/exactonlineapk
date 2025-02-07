@@ -12,8 +12,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 
-class ShopReels extends StatelessWidget {
-  const ShopReels({super.key});
+class SellerReels extends StatelessWidget {
+  final String shopId;
+  const SellerReels({required this.shopId, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +63,7 @@ class ShopReels extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
-            ShopMasonryGrid(),
+            SellerMasonryGrid(shopId),
             ReelsFollowingTab(),
           ],
         ),
@@ -71,13 +72,15 @@ class ShopReels extends StatelessWidget {
   }
 }
 
-class ShopMasonryGrid extends StatelessWidget {
-  const ShopMasonryGrid({super.key});
+class SellerMasonryGrid extends StatelessWidget {
+  final String shopId;
+
+  const SellerMasonryGrid(this.shopId, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: ReelController().getShopReels(page: 1, limit: 20),
+      future: ReelController().getShopReels(id: shopId, page: 1, limit: 20),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -85,7 +88,7 @@ class ShopMasonryGrid extends StatelessWidget {
           );
         }
         if (!snapshot.hasData || snapshot.data == null) {
-          return const Center(child: Text("No reels available."));
+          return noData();
         }
 
         final List<Map<String, dynamic>> reels =
@@ -132,7 +135,7 @@ class ReelCard extends StatelessWidget {
       try {
         final parts = duration.split(':');
         if (parts.length == 3) {
-          final minutes = parts[1]; 
+          final minutes = parts[1];
           final seconds = parts[2];
           return '$minutes:$seconds';
         }
@@ -218,8 +221,7 @@ class ReelCard extends StatelessWidget {
                 spacer(),
                 // Shop Info and Likes
                 Row(
-                  mainAxisSize: MainAxisSize
-                      .min, // Allow Row to shrink to fit its children
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     // Profile Picture
                     InkWell(
@@ -234,8 +236,7 @@ class ReelCard extends StatelessWidget {
                         );
                       },
                       child: Row(
-                        mainAxisSize:
-                            MainAxisSize.min, // Prevents Row from expanding
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           CircleAvatar(
                             radius: 12,
@@ -245,18 +246,15 @@ class ReelCard extends StatelessWidget {
                                     as ImageProvider,
                           ),
                           const SizedBox(width: 8),
-                          // Shopname
                           Flexible(
-                            fit: FlexFit
-                                .loose, // Allow shrinking to avoid overflow
+                            fit: FlexFit.loose,
                             child: Text(
                               shopName,
                               style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
                               ),
-                              overflow: TextOverflow
-                                  .ellipsis, // Ensure text doesn't overflow
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
