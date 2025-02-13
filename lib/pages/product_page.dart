@@ -5,6 +5,7 @@ import 'package:e_online/controllers/favorite_controller.dart';
 import 'package:e_online/controllers/order_controller.dart';
 import 'package:e_online/controllers/ordered_products_controller.dart';
 import 'package:e_online/controllers/product_controller.dart';
+import 'package:e_online/controllers/review_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/cart_page.dart';
 import 'package:e_online/pages/conversation_page.dart';
@@ -39,6 +40,8 @@ class _ProductPageState extends State<ProductPage> {
   final UserController userController = Get.find();
   final ProductController productController = Get.put(ProductController());
   final FavoriteController favoriteController = Get.put(FavoriteController());
+  final ReviewController reviewController = Get.put(ReviewController());
+  late List<Map<String, dynamic>> Reviews = [];
   // String userId = "";
 
   @override
@@ -48,6 +51,7 @@ class _ProductPageState extends State<ProductPage> {
         widget.productData['Favorites'] != null &&
         widget.productData['Favorites'].isNotEmpty;
     getData();
+    _callProductReviews();
     _sendProductStats("view");
   }
 
@@ -98,37 +102,41 @@ class _ProductPageState extends State<ProductPage> {
     }
   }
 
-  void _showReviewsBottomSheet() {
-    final List<Map<String, dynamic>> sampleReviews = [
-      {
-        'name': 'John Doe',
-        'comment': 'Great product!',
-        'rating': 5,
-      },
-      {
-        'name': 'John Chuma',
-        'comment':
-            'I used bough this product it is very nice , i would recommend you guys to buy this',
-        'rating': 3,
-      },
-      {
-        'name': 'John Doe',
-        'comment': 'Great product!',
-        'rating': 4.5,
-      },
-      {
-        'name': 'John Coe',
-        'comment': 'Great product!',
-        'rating': 2,
-      },
-      {
-        'name': 'John Doe',
-        'comment':
-            'I used bough this product it is very nice , i would recommend you guys to buy this',
-        'rating': 5,
-      },
-    ];
+  Future<void> _callProductReviews() async {
+    try {
+      List<Map<String, dynamic>> fetchedReviews =
+          (widget.productData['ProductReviews'] as List<dynamic>)
+              .map((review) => {
+                    "name": review["User"]["name"] ?? "NA",
+                    "rating": review["rating"] ?? 0,
+                    "description": review["description"] ?? "No description",
+                  })
+              .toList();
 
+      setState(() {
+        Reviews = fetchedReviews;
+      });
+    } catch (e) {
+      debugPrint("Error fetching product reviews: $e");
+    }
+  }
+
+  double calculateAverageRating(List<Map<String, dynamic>> reviews) {
+    if (reviews.isEmpty) return 0.0;
+
+    double totalRating = reviews.fold(
+        0.0, (sum, review) => sum + (review['rating'] as num).toDouble());
+    return totalRating / reviews.length;
+  }
+
+  void _showReviewsBottomSheet() {
+    var productId = widget.productData['id'];
+    print("reviews");
+    print(Reviews);
+
+    double averageRating = calculateAverageRating(Reviews);
+    print("averageRating");
+    print(averageRating);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -140,8 +148,9 @@ class _ProductPageState extends State<ProductPage> {
           bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
         child: ReviewBottomSheet(
-          rating: 4.5,
-          reviews: sampleReviews,
+          rating: averageRating,
+          productId: productId,
+          reviews: Reviews,
         ),
       ),
     );

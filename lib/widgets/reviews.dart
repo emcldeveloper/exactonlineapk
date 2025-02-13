@@ -1,17 +1,23 @@
+import 'package:e_online/controllers/review_controller.dart';
+import 'package:e_online/controllers/user_controller.dart';
+import 'package:e_online/widgets/custom_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
+import 'package:get/get.dart';
 
 class ReviewBottomSheet extends StatefulWidget {
   final double rating;
+  final String productId;
   final List<Map<String, dynamic>> reviews;
 
   const ReviewBottomSheet({
     super.key,
     required this.rating,
+    required this.productId,
     this.reviews = const [],
   });
 
@@ -21,12 +27,80 @@ class ReviewBottomSheet extends StatefulWidget {
 
 class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
   int selectedRating = 0;
-  final TextEditingController reviewController = TextEditingController();
+  var isLoading = false.obs;
+  final UserController userController = Get.find();
+  final ReviewController reviewController = Get.put(ReviewController());
+  final TextEditingController myReviewController = TextEditingController();
+  double averageRating = 0.0;
+  List<Map<String, dynamic>> allReviews = [];
+
+  @override
+  void initState() {
+    super.initState();
+    allReviews = List.from(widget.reviews);
+    _calculateAverageRating();
+  }
 
   @override
   void dispose() {
-    reviewController.dispose();
+    myReviewController.dispose();
     super.dispose();
+  }
+
+  void _calculateAverageRating() {
+    if (allReviews.isNotEmpty) {
+      double sum =
+          allReviews.fold(0, (acc, review) => acc + (review['rating'] ?? 0));
+      setState(() {
+        averageRating = sum / allReviews.length;
+      });
+    } else {
+      setState(() {
+        averageRating = widget.rating;
+      });
+    }
+  }
+
+  Future<void> _sendProductReview() async {
+    isLoading.value = true;
+    if (selectedRating == 0 || myReviewController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please provide a rating and a review.')),
+      );
+      isLoading.value = false;
+      return;
+    }
+
+    var userId = userController.user.value['id'] ?? "";
+    var newReview = {
+      "ProductId": widget.productId,
+      "UserId": userId,
+      "rating": selectedRating,
+      "description": myReviewController.text,
+    };
+    try {
+      await reviewController.addReview(newReview);
+      setState(() {
+        allReviews.add({
+          "name": "You",
+          "comment": myReviewController.text,
+          "rating": selectedRating,
+        });
+        _calculateAverageRating();
+        selectedRating = 0;
+        myReviewController.clear();
+      });
+      isLoading.value = false;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Review submitted successfully!')),
+      );
+    } catch (e) {
+      isLoading.value = false;
+      debugPrint("Error sending product review: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to submit review. Try again.')),
+      );
+    }
   }
 
   @override
@@ -40,7 +114,6 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
         mainAxisSize: MainAxisSize.min,
         children: [
           const SizedBox(height: 16),
-          // Top bar indicator
           Container(
             width: 40,
             height: 4,
@@ -55,47 +128,41 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Product reviews heading
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       HeadingText('Product reviews'),
                       Row(
                         children: [
-                          Icon(
-                            Icons.star_rounded,
-                            color: Colors.amber,
-                            size: 22.0,
-                          ),
+                          const Icon(Icons.star_rounded,
+                              color: Colors.amber, size: 22.0),
                           const SizedBox(width: 4),
-                          ParagraphText(widget.rating.toStringAsFixed(1)),
+                          ParagraphText(averageRating
+                              .toStringAsFixed(1)), // Dynamic average rating
                         ],
                       ),
                     ],
                   ),
                   spacer(),
-                  // Intro text
                   ParagraphText(
                     'See what other people say about this product',
                     color: mutedTextColor,
                   ),
                   spacer1(),
-                  // Reviews list
-                  if (widget.reviews.isNotEmpty)
+                  if (allReviews.isNotEmpty)
                     ConstrainedBox(
                       constraints: BoxConstraints(
                         maxHeight: MediaQuery.of(context).size.height * 0.4,
                       ),
                       child: ListView.separated(
-                        itemCount: widget.reviews.length,
+                        itemCount: allReviews.length,
                         separatorBuilder: (context, index) =>
                             const SizedBox(height: 10),
                         itemBuilder: (context, index) {
-                          final review = widget.reviews[index];
+                          final review = allReviews[index];
                           return Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Avatar with initials
                               CircleAvatar(
                                 backgroundColor: primaryColor,
                                 child: ParagraphText(
@@ -106,7 +173,6 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
                                 ),
                               ),
                               const SizedBox(width: 16),
-                              // Name and comment
                               Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,12 +182,11 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                     spacer(),
-                                    ParagraphText(review['comment'] ?? ''),
+                                    ParagraphText(review['description'] ?? ''),
                                   ],
                                 ),
                               ),
                               const SizedBox(width: 16),
-                              // Star rating
                               Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: List.generate(
@@ -141,12 +206,10 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
                       ),
                     ),
                   spacer1(),
-                  // Leave review
                   Container(
                     decoration: BoxDecoration(
                       border: Border(
-                        top: BorderSide(color: primaryColor, width: 1.0),
-                      ),
+                          top: BorderSide(color: primaryColor, width: 1.0)),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
@@ -199,13 +262,13 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
                     ),
                   ),
                   spacer1(),
-                  // Review input field
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
                         child: TextField(
-                          controller: reviewController,
+                          controller: myReviewController,
+                          keyboardType: TextInputType.text,
                           decoration: InputDecoration(
                             hintText: 'Write your review message here',
                             hintStyle: const TextStyle(fontSize: 12),
@@ -222,23 +285,14 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
                       SizedBox(
                         width: 120,
                         child: customButton(
-                          onTap: () {
-                            if (selectedRating > 0 &&
-                                reviewController.text.isNotEmpty) {
-                              Navigator.pop(context, {
-                                'rating': selectedRating,
-                                'comment': reviewController.text,
-                              });
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content:
-                                      Text('Please add both rating and review'),
-                                ),
-                              );
-                            }
-                          },
-                          text: "Submit",
+                          onTap: _sendProductReview,
+                          text: isLoading.value ? null : "Submit",
+                          child: isLoading.value
+                              ? const CustomLoader(
+                                  color: Colors.white,
+                                  size: 15.0,
+                                )
+                              : null,
                           rounded: 15.0,
                         ),
                       ),
