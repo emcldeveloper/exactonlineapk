@@ -62,15 +62,13 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
   }
 
   Future<void> _sendProductReview() async {
-    isLoading.value = true;
     if (selectedRating == 0 || myReviewController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please provide a rating and a review.')),
       );
-      isLoading.value = false;
       return;
     }
-
+    isLoading.value = true;
     var userId = userController.user.value['id'] ?? "";
     var newReview = {
       "ProductId": widget.productId,
