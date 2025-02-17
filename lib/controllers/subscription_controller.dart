@@ -29,7 +29,7 @@ class SubscriptionController extends GetxController {
     }
   }
 
-  Future<List<Map<String, dynamic>>> Subscribing(var payload) async {
+  Future<Map<String, dynamic>> Subscribing(var payload) async {
     try {
       print("subscriptions started");
       print(payload);
@@ -41,7 +41,7 @@ class SubscriptionController extends GetxController {
           }));
       print("subscribing already called");
       print(response);
-      var data = List<Map<String, dynamic>>.from(response.data["body"]);
+      var data = Map<String, dynamic>.from(response.data["body"]);
       print("subscribing response");
       print(data);
       return data;

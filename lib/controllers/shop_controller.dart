@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:e_online/controllers/auth_controller.dart';
+import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/utils/dio.dart';
 import 'package:e_online/utils/shared_preferences.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 class ShopController extends GetxController {
+  UserController userController = Get.find();
   Future loadUserShops(id) async {
     try {
       var response = await dio.get("/shops/user/$id",
@@ -67,8 +70,18 @@ class ShopController extends GetxController {
 
   Future getShopDetails(id) async {
     try {
-      print(id);
-      var response = await dio.get("/shops/$id",
+      var shopId;
+      if (id == null) {
+        shopId = await SharedPreferencesUtil.getSelectedBusiness();
+        if (shopId == null) {
+          shopId = userController.user.value["Shops"][0]["id"];
+          await SharedPreferencesUtil.saveSelectedBusiness(shopId!);
+        }
+      } else {
+        shopId = id;
+      }
+      print(shopId);
+      var response = await dio.get("/shops/$shopId",
           options: Options(headers: {
             "Authorization":
                 "Bearer ${await SharedPreferencesUtil.getAccessToken()}"

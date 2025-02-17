@@ -61,11 +61,12 @@ class _MyShopPageState extends State<MyShopPage> {
   Future<void> _initializeShopDetails() async {
     try {
       final businessId = await SharedPreferencesUtil.getSelectedBusiness();
+
       if (businessId == null) {
         print("No business selected");
-        return;
       }
       final response = await shopController.getShopDetails(businessId);
+      print("🆑 ${response}");
       if (response != null) {
         bool isSubscribed = response["isSubscribed"];
 

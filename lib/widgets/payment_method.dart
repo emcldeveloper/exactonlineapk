@@ -113,7 +113,7 @@ class PaymentMethodBottomSheet extends StatelessWidget {
                 final businessId =
                     await SharedPreferencesUtil.getSelectedBusiness();
                 var payload = {"SubscriptionId": id, "ShopId": businessId};
-                List<Map<String, dynamic>> subscribing =
+                Map<String, dynamic> subscribing =
                     await SubscriptionController().Subscribing(payload);
                 print(subscribing);
                 // Map<String, dynamic> productData = {
