@@ -1,6 +1,8 @@
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/controllers/subscription_controller.dart';
 import 'package:e_online/pages/my_shop_page.dart';
 import 'package:e_online/pages/subscription_page.dart';
+import 'package:e_online/utils/shared_preferences.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
@@ -8,8 +10,52 @@ import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class FreeTrialPage extends StatelessWidget {
-  const FreeTrialPage({super.key});
+class FreeTrialPage extends StatefulWidget {
+  final String shopId;
+  FreeTrialPage({required this.shopId, super.key});
+
+  @override
+  State<FreeTrialPage> createState() => _FreeTrialPageState();
+}
+
+class _FreeTrialPageState extends State<FreeTrialPage> {
+  final SubscriptionController subscriptionController =
+      Get.put(SubscriptionController());
+
+  Rx<List<Map<String, dynamic>>> subscriptions =
+      Rx<List<Map<String, dynamic>>>([]);
+  String selectedSubscriptionId = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeSubscriptionDetails();
+  }
+
+  Future<void> _initializeSubscriptionDetails() async {
+    try {
+      final details =
+          await subscriptionController.getSubscriptions(page: 1, limit: 20);
+
+      if (details.isNotEmpty) {
+        subscriptions.value = details;
+
+        // Find the first subscription with 14 days
+        final firstTrialSubscription = details.firstWhere(
+          (sub) => sub["days"] == 14,
+          orElse: () => {},
+        );
+
+        if (firstTrialSubscription.isNotEmpty) {
+          setState(() {
+            selectedSubscriptionId = firstTrialSubscription["id"];
+          });
+        }
+      }
+    } catch (e) {
+      print("Error fetching subscription details: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,8 +117,22 @@ class FreeTrialPage extends StatelessWidget {
                   child: Column(
                     children: [
                       customButton(
-                        onTap: () => Get.to(() => const MyShopPage(),
-                            arguments: {'origin': 'FreeTrialPage'}),
+                        onTap: () async {
+                          if (selectedSubscriptionId.isEmpty) {
+                            print("No valid subscription found");
+                            return;
+                          }
+                          var payload = {
+                            "SubscriptionId": selectedSubscriptionId,
+                            "ShopId": widget.shopId,
+                          };
+                          Map<String, dynamic> subscribing =
+                              await SubscriptionController()
+                                  .Subscribing(payload);
+                          print(subscribing);
+                          Get.to(() => const MyShopPage(),
+                              arguments: {'origin': 'FreeTrialPage'});
+                        },
                         text: "Start 14 days free trial",
                       ),
                       spacer1(),

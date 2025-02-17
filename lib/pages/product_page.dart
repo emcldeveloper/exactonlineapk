@@ -51,7 +51,6 @@ class _ProductPageState extends State<ProductPage> {
         widget.productData['Favorites'] != null &&
         widget.productData['Favorites'].isNotEmpty;
     getData();
-    _callProductReviews();
     _sendProductStats("view");
   }
 
@@ -130,7 +129,10 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   void _showReviewsBottomSheet() {
+    _callProductReviews();
     var productId = widget.productData['id'];
+    print("full data before taking the review part");
+    print(widget.productData);
     print("reviews");
     print(Reviews);
 

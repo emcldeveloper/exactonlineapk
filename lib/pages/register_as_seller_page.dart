@@ -623,7 +623,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                               icon: HugeIcon(
                                   icon: HugeIcons.strokeRoundedTick01,
                                   color: Colors.white));
-                          Get.to(() => const FreeTrialPage(),
+                          Get.to(() => FreeTrialPage(shopId: shopId),
                               arguments: {'origin': 'RegisterAsSellerPage'});
                         } catch (e) {
                           isLoading.value = false;
@@ -678,7 +678,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                               icon: HugeIcon(
                                   icon: HugeIcons.strokeRoundedTick01,
                                   color: Colors.white));
-                          Get.offAll(() => const FreeTrialPage(),
+                          Get.to(() => FreeTrialPage(shopId: shopId),
                               arguments: {'origin': 'RegisterAsSellerPage'});
                         } catch (e) {
                           isLoading.value = false;
