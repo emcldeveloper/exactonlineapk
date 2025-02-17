@@ -44,7 +44,6 @@ class _AddProductPageState extends State<AddProductPage> {
   TextEditingController linkController = TextEditingController();
   TextEditingController deliveryScopeController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
-  Rx<List> specifications = Rx<List>([]);
   Rx<List> categories = Rx<List>([]);
   final _formKey = GlobalKey<FormState>();
   void _openColorPicker() {
@@ -150,12 +149,15 @@ class _AddProductPageState extends State<AddProductPage> {
         .then((res) {
       categories.value = res;
       categoryController.text = res[0]["id"];
-      specifications.value = res[0]["CategoryProductSpecifications"];
     });
     // TODO: implement initState
     super.initState();
   }
 
+  TextEditingController unitController = TextEditingController(text: "No Unit");
+  TextEditingController labelController = TextEditingController();
+  TextEditingController valueController = TextEditingController();
+  var specifications = {};
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -288,16 +290,6 @@ class _AddProductPageState extends State<AddProductPage> {
                     Obx(
                       () => selectForm(
                           textEditingController: categoryController,
-                          onChanged: () {
-                            print(categories.value
-                                .where((item) =>
-                                    item["id"] == categoryController.text)
-                                .toList()[0]["CategoryProductSpecifications"]);
-                            specifications.value = categories.value
-                                .where((item) =>
-                                    item["id"] == categoryController.text)
-                                .toList()[0]["CategoryProductSpecifications"];
-                          },
                           label: "Product Category",
                           items: categories.value
                               .map((item) => DropdownMenuItem(
@@ -435,28 +427,150 @@ class _AddProductPageState extends State<AddProductPage> {
                     spacer1(),
                     Padding(
                       padding: const EdgeInsets.only(left: 0),
-                      child: Obx(
-                        () => Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (specifications.value.length > 0)
-                              ParagraphText(
-                                "Product Specifications",
-                                fontWeight: FontWeight.bold,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: ParagraphText(
+                                  "Product Specifications",
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            Column(
-                              children: specifications.value
-                                  .map((item) => TextForm(
-                                      label: item["label"],
-                                      onChanged: (value) {
-                                        item["value"] = value;
+                              InkWell(
+                                onTap: () {
+                                  Get.bottomSheet(SingleChildScrollView(
+                                    child: Container(
+                                      color: Colors.white,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20, vertical: 30),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const SizedBox(height: 20),
+                                            HeadingText("Add specifications"),
+                                            TextForm(
+                                              label: "Specification Label",
+                                              textEditingController:
+                                                  labelController,
+                                              hint:
+                                                  "Enter specification label eg: color, RAM",
+                                            ),
+                                            TextForm(
+                                              label: "Specification Value",
+                                              textEditingController:
+                                                  valueController,
+                                              hint:
+                                                  "Enter specification value eg: red, 8GB",
+                                            ),
+                                            selectForm(
+                                              label: "Specification Unit",
+                                              textEditingController:
+                                                  unitController,
+                                              items: [
+                                                "No Unit",
+                                                "Kg", "g", "mg", // Mass
+                                                "L", "mL", // Volume
+                                                "m", "cm", "mm", // Length
+                                                "GB", "MB",
+                                                "TB", // Digital Storage
+                                                "W", "kW", // Power
+                                                "V", "A", // Voltage & Current
+                                                "J", "N",
+                                                "Pa", // Energy, Force, Pressure
+                                                "Hz", // Frequency
+                                                "°C", "°F", // Temperature
+                                                "s", "min", "h" // Time
+                                              ]
+                                                  .map((item) =>
+                                                      DropdownMenuItem(
+                                                        value: item,
+                                                        child:
+                                                            ParagraphText(item),
+                                                      ))
+                                                  .toList(),
+                                            ),
+                                            SizedBox(
+                                              height: 20,
+                                            ),
+                                            customButton(
+                                              onTap: () {
+                                                if (labelController
+                                                        .text.isNotEmpty &&
+                                                    valueController
+                                                        .text.isNotEmpty) {
+                                                  specifications[labelController
+                                                          .text] =
+                                                      "${valueController.text} ${unitController.text != "No Unit" ? unitController.text : ""}";
+                                                  labelController.clear();
+                                                  valueController.clear();
+                                                  unitController.text =
+                                                      "No Unit";
+                                                  Get.back();
+                                                  setState(() {}); // Update UI
+                                                }
+                                              },
+                                              text: "Add Specification",
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ));
+                                },
+                                child: HugeIcon(
+                                  icon: HugeIcons.strokeRoundedAdd01,
+                                  color: Colors.grey,
+                                  size: 22.0,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                            ],
+                          ),
+
+                          /// ✅ **Loop Through Specifications**
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: specifications.entries.map((entry) {
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 0.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: ParagraphText(
+                                        entry.key, // Specification Label
+                                      ),
+                                    ),
+                                    ParagraphText(
+                                      entry.value, // Specification Value + Unit
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    IconButton(
+                                      onPressed: () {
+                                        specifications
+                                            .remove(entry.key); // Remove item
+                                        setState(() {}); // Update UI
                                       },
-                                      hint: "Enter product ${item["label"]}"))
-                                  .toList(),
-                            ),
-                          ],
-                        ),
+                                      icon: const Icon(Icons.delete,
+                                          color: Colors.red),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                          )
+                        ],
                       ),
+                    ),
+                    SizedBox(
+                      height: 10,
                     ),
                     TextForm(
                         label: "Product Description",
@@ -484,10 +598,10 @@ class _AddProductPageState extends State<AddProductPage> {
                                   description: "Please add at least one color");
                               return;
                             }
-                            Map<String, String> jsonSpecifications = {
-                              for (var item in specifications.value)
-                                item["label"]: item["value"]
-                            };
+                            // Map<String, String> jsonSpecifications = {
+                            //   for (var item in specifications.value)
+                            //     item["label"]: item["value"]
+                            // };
 
                             var payload = {
                               "name": nameController.text,
@@ -497,7 +611,7 @@ class _AddProductPageState extends State<AddProductPage> {
                               "priceIncludeDelivery":
                                   priceIncludeDelivery.value,
                               "isHidden": isHidden.value,
-                              "specifications": jsonSpecifications,
+                              "specifications": specifications,
                               "deliveryScope": deliveryScopeController.text,
                               "CategoryId": categoryController.text,
                               "ShopId": userController.user.value["Shops"][0]

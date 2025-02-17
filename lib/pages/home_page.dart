@@ -5,6 +5,8 @@ import 'package:e_online/controllers/categories_controller.dart';
 import 'package:e_online/controllers/ordered_products_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/cart_page.dart';
+import 'package:e_online/pages/home_page_sections/all_for_you_products.dart';
+import 'package:e_online/pages/home_page_sections/all_new_arrival_products.dart';
 import 'package:e_online/pages/home_page_sections/all_products.dart';
 import 'package:e_online/pages/home_page_sections/for_you_products.dart';
 import 'package:e_online/pages/home_page_sections/home_categories_products.dart';
@@ -109,7 +111,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                               InkWell(
                                 onTap: () {
-                                  Get.to(const SeeAllPage());
+                                  Get.to(const AllNewArrivalProducts());
                                 },
                                 child: ParagraphText(
                                   "See All",
@@ -144,7 +146,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                               InkWell(
                                 onTap: () {
-                                  Get.to(const SeeAllPage());
+                                  Get.to(const AllForYouProducts());
                                 },
                                 child: ParagraphText(
                                   "See All",
@@ -170,11 +172,6 @@ class _HomePageState extends State<HomePage> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               HeadingText("All Products"),
-                              ParagraphText(
-                                "See All",
-                                color: mutedTextColor,
-                                decoration: TextDecoration.underline,
-                              ),
                             ],
                           ),
                         ),

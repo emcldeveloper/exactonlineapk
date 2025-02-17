@@ -99,7 +99,10 @@ class _MyShopPageState extends State<MyShopPage> {
         shopDetails.value['isApproved'] == false) {
       _showApprovalBottomSheet(context);
     } else {
-      Get.to(() => page);
+      print("Going to: $page"); // Debug print
+      Get.to(() => Container(
+            child: page,
+          ));
     }
   }
 
