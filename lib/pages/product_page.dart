@@ -51,6 +51,7 @@ class _ProductPageState extends State<ProductPage> {
         widget.productData['Favorites'] != null &&
         widget.productData['Favorites'].isNotEmpty;
     getData();
+    _callProductReviews();
     _sendProductStats("view");
   }
 
@@ -103,18 +104,25 @@ class _ProductPageState extends State<ProductPage> {
 
   Future<void> _callProductReviews() async {
     try {
-      List<Map<String, dynamic>> fetchedReviews =
-          (widget.productData['ProductReviews'] as List<dynamic>)
-              .map((review) => {
-                    "name": review["User"]["name"] ?? "NA",
-                    "rating": review["rating"] ?? 0,
-                    "description": review["description"] ?? "No description",
-                  })
-              .toList();
+      if (widget.productData.containsKey('ProductReviews') &&
+          widget.productData['ProductReviews'] != null) {
+        List<Map<String, dynamic>> fetchedReviews =
+            (widget.productData['ProductReviews'] as List<dynamic>)
+                .map((review) => {
+                      "name": review["User"]?["name"] ?? "NA",
+                      "rating": review["rating"] ?? 0,
+                      "description": review["description"] ?? "No description",
+                    })
+                .toList();
 
-      setState(() {
-        Reviews = fetchedReviews;
-      });
+        setState(() {
+          Reviews = fetchedReviews;
+        });
+
+        print("Fetched Reviews: $Reviews"); 
+      } else {
+        print("No ProductReviews found in productData.");
+      }
     } catch (e) {
       debugPrint("Error fetching product reviews: $e");
     }
@@ -129,7 +137,6 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   void _showReviewsBottomSheet() {
-    _callProductReviews();
     var productId = widget.productData['id'];
     print("full data before taking the review part");
     print(widget.productData);

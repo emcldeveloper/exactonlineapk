@@ -68,6 +68,7 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
       );
       return;
     }
+
     isLoading.value = true;
     var userId = userController.user.value['id'] ?? "";
     var newReview = {
@@ -76,19 +77,23 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
       "rating": selectedRating,
       "description": myReviewController.text,
     };
+
     try {
       await reviewController.addReview(newReview);
+
       setState(() {
-        allReviews.add({
+        allReviews.insert(0, {
           "name": "You",
-          "comment": myReviewController.text,
+          "description": myReviewController.text,
           "rating": selectedRating,
         });
         _calculateAverageRating();
         selectedRating = 0;
         myReviewController.clear();
       });
+
       isLoading.value = false;
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Review submitted successfully!')),
       );
