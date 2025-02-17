@@ -119,7 +119,7 @@ class _ProductPageState extends State<ProductPage> {
           Reviews = fetchedReviews;
         });
 
-        print("Fetched Reviews: $Reviews"); 
+        print("Fetched Reviews: $Reviews");
       } else {
         print("No ProductReviews found in productData.");
       }
@@ -137,15 +137,16 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   void _showReviewsBottomSheet() {
+    _callProductReviews();
     var productId = widget.productData['id'];
-    print("full data before taking the review part");
-    print(widget.productData);
-    print("reviews");
-    print(Reviews);
+    // print("full data before taking the review part");
+    // print(widget.productData);
+    // print("reviews");
+    // print(Reviews);
 
     double averageRating = calculateAverageRating(Reviews);
-    print("averageRating");
-    print(averageRating);
+    // print("averageRating");
+    // print(averageRating);
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
