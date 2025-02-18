@@ -41,7 +41,7 @@ class _ProductPageState extends State<ProductPage> {
   final ProductController productController = Get.put(ProductController());
   final FavoriteController favoriteController = Get.put(FavoriteController());
   final ReviewController reviewController = Get.put(ReviewController());
-  late List<Map<String, dynamic>> Reviews = [];
+  late List<Map<String, dynamic>> reviews = [];
   // String userId = "";
 
   @override
@@ -116,10 +116,10 @@ class _ProductPageState extends State<ProductPage> {
                 .toList();
 
         setState(() {
-          Reviews = fetchedReviews;
+          reviews = fetchedReviews;
         });
 
-        print("Fetched Reviews: $Reviews");
+        print("Fetched Reviews: $reviews");
       } else {
         print("No ProductReviews found in productData.");
       }
@@ -136,15 +136,15 @@ class _ProductPageState extends State<ProductPage> {
     return totalRating / reviews.length;
   }
 
-  void _showReviewsBottomSheet() {
-    _callProductReviews();
+  void _showReviewsBottomSheet() async {
+    await _callProductReviews();
     var productId = widget.productData['id'];
-    // print("full data before taking the review part");
-    // print(widget.productData);
-    // print("reviews");
-    // print(Reviews);
+    print("full data before taking the review part");
+    print(widget.productData);
+    print("reviews");
+    print(reviews);
 
-    double averageRating = calculateAverageRating(Reviews);
+    double averageRating = calculateAverageRating(reviews);
     // print("averageRating");
     // print(averageRating);
     showModalBottomSheet(
@@ -160,7 +160,7 @@ class _ProductPageState extends State<ProductPage> {
         child: ReviewBottomSheet(
           rating: averageRating,
           productId: productId,
-          reviews: Reviews,
+          reviews: reviews,
         ),
       ),
     );
