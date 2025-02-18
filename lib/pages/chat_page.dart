@@ -1,7 +1,7 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/chat_controller.dart';
 import 'package:e_online/pages/conversation_page.dart';
-import 'package:e_online/widgets/chat_card.dart';
+import 'package:e_online/widgets/user_chat_card.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/no_data.dart';
 import 'package:e_online/widgets/search_function.dart';
@@ -49,7 +49,7 @@ class _ChatPageState extends State<ChatPage> {
                               await Get.to(() => ConversationPage(chat));
                               setState(() {});
                             },
-                            child: chatCard(chat),
+                            child: userChatCard(chat),
                           );
                         }).toList(),
                       ),

@@ -5,11 +5,20 @@ import 'package:money_formatter/money_formatter.dart';
 
 import '../../widgets/shop_product_card.dart';
 
-class ShopProducts extends StatelessWidget {
+class ShopProducts extends StatefulWidget {
   const ShopProducts({super.key});
 
   @override
+  State<ShopProducts> createState() => _ShopProductsState();
+}
+
+class _ShopProductsState extends State<ShopProducts> {
+  @override
   Widget build(BuildContext context) {
+    void onDelete() {
+      setState(() {});
+    }
+
     return Scaffold(
         backgroundColor: Colors.white,
         body: Padding(
@@ -33,7 +42,8 @@ class ShopProducts extends StatelessWidget {
                         itemCount: products.length,
                         itemBuilder: (context, index) {
                           return products[index]['ProductImages'].length > 0
-                              ? ShopProductCard(data: products[index])
+                              ? ShopProductCard(
+                                  data: products[index], onDelete: onDelete)
                               : Container();
                         },
                       );

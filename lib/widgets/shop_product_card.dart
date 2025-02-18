@@ -6,13 +6,16 @@ import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:get/get.dart';
+import 'package:get/get_rx/src/rx_typedefs/rx_typedefs.dart';
 import 'package:money_formatter/money_formatter.dart';
 
 class ShopProductCard extends StatefulWidget {
   final Map<String, dynamic> data;
+  Function onDelete;
 
-  const ShopProductCard({
+  ShopProductCard({
     super.key,
+    required this.onDelete,
     required this.data,
   });
 
@@ -39,6 +42,7 @@ class _ShopProductCardState extends State<ShopProductCard> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) => ProductEditBottomSheet(
+        selectedProduct: widget.data,
         onView: () {
           // Handle view logic
           Navigator.pop(context);
@@ -54,12 +58,7 @@ class _ShopProductCardState extends State<ShopProductCard> {
         },
         onDelete: () {
           // Logic to delete the product
-          setState(() {
-            if (currentIndex < _images.length) {
-              _images.removeAt(currentIndex);
-            }
-          });
-          Navigator.pop(context);
+          widget.onDelete();
         },
       ),
     );
@@ -86,7 +85,7 @@ class _ShopProductCardState extends State<ShopProductCard> {
                   height: 100,
                   child: widget.data['ProductImages'].length > 0
                       ? CachedNetworkImage(
-                          fit: BoxFit.contain,
+                          fit: BoxFit.cover,
                           imageUrl: widget.data['ProductImages'][0]["image"])
                       : Container()),
             ),

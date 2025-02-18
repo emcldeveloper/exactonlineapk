@@ -12,6 +12,7 @@ import 'package:e_online/pages/shop_tabs/shop_reels.dart';
 import 'package:e_online/pages/subscription_page.dart';
 import 'package:e_online/utils/shared_preferences.dart';
 import 'package:e_online/widgets/ad_card.dart';
+import 'package:e_online/widgets/comingSoon.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/newShopDetails.dart';
@@ -272,7 +273,7 @@ class _MyShopPageState extends State<MyShopPage> {
       case 1:
         return "Add Reel";
       case 2:
-        return "Add Order";
+        return "Add New Product";
       case 3:
         return "Promote Product";
       case 4:
@@ -304,7 +305,14 @@ class _MyShopPageState extends State<MyShopPage> {
     }
 
     if (page != null) {
-      _handleAddAction(context: context, page: page);
+      if (_currentIndex >= 3) {
+        Get.bottomSheet(Container(
+          color: Colors.white,
+          child: CommingSoon(),
+        ));
+      } else {
+        _handleAddAction(context: context, page: page);
+      }
     }
   }
 }

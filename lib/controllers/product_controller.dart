@@ -124,6 +124,41 @@ class ProductController extends GetxController {
     }
   }
 
+  Future editProduct(id, var payload) async {
+    try {
+      var response = await dio.patch("/products/$id",
+          data: payload,
+          options: Options(headers: {
+            "Authorization":
+                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
+          }));
+      var data = response.data["body"];
+
+      return data;
+    } on DioException catch (e) {
+      print("Error response");
+      print(e.response);
+      return e.response;
+    }
+  }
+
+  Future deleteProduct(id) async {
+    try {
+      var response = await dio.delete("/products/$id",
+          options: Options(headers: {
+            "Authorization":
+                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
+          }));
+      var data = response.data["body"];
+
+      return data;
+    } on DioException catch (e) {
+      print("Error response");
+      print(e.response);
+      return e.response;
+    }
+  }
+
   Future addProductStats(var payload) async {
     try {
       var response = await dio.post("/product-stats",

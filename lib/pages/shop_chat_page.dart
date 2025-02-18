@@ -1,7 +1,8 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/chat_controller.dart';
 import 'package:e_online/pages/conversation_page.dart';
-import 'package:e_online/widgets/chat_card.dart';
+import 'package:e_online/widgets/shop_chat_card.dart';
+import 'package:e_online/widgets/user_chat_card.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/no_data.dart';
 import 'package:e_online/widgets/search_function.dart';
@@ -24,8 +25,23 @@ class _ShopChatPageState extends State<ShopChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: mainColor,
-      appBar: _isSearching ? _buildSearchAppBar() : _buildDefaultAppBar(),
+      backgroundColor: Colors.white,
+      appBar: _isSearching
+          ? _buildSearchAppBar()
+          : AppBar(
+              title: HeadingText("Chats"),
+              backgroundColor: Colors.white,
+              scrolledUnderElevation: 0,
+              centerTitle: true,
+              leading: InkWell(
+                onTap: () => Get.back(),
+                child: Icon(
+                  Icons.arrow_back_ios,
+                  color: mutedTextColor,
+                  size: 16.0,
+                ),
+              ),
+            ),
       body: FutureBuilder(
           future: ChatController().getShopChats(1, 100, ""),
           builder: (context, snapshot) {
@@ -37,11 +53,13 @@ class _ShopChatPageState extends State<ShopChatPage> {
               );
             }
             List chats = snapshot.requireData;
+            print(chats);
             return chats.isEmpty
                 ? noData()
                 : SingleChildScrollView(
                     child: Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 10),
                       child: Column(
                         children: chats.map((chat) {
                           return GestureDetector(
@@ -49,7 +67,7 @@ class _ShopChatPageState extends State<ShopChatPage> {
                               await Get.to(() => ConversationPage(chat));
                               setState(() {});
                             },
-                            child: chatCard(chat),
+                            child: shopChatCard(chat),
                           );
                         }).toList(),
                       ),

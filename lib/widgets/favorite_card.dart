@@ -48,6 +48,7 @@ class _FavoriteCardState extends State<FavoriteCard> {
               width: 80,
               height: 80,
               child: CachedNetworkImage(
+                fit: BoxFit.cover,
                 imageUrl: widget.data['ProductImages']?[0]?["image"] ?? "",
                 errorWidget: (context, url, error) => Icon(Icons.broken_image),
               ),

@@ -1,5 +1,11 @@
+import 'package:e_online/controllers/product_color_controller.dart';
+import 'package:e_online/controllers/product_controller.dart';
+import 'package:e_online/pages/edit_product_page.dart';
 import 'package:e_online/pages/promote_product_page.dart';
+import 'package:e_online/utils/snackbars.dart';
+import 'package:e_online/widgets/comingSoon.dart';
 import 'package:e_online/widgets/custom_button.dart';
+import 'package:e_online/widgets/popup_alert.dart';
 import 'package:e_online/widgets/promote_product_insights.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
@@ -8,12 +14,14 @@ import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:get/get.dart';
 
 class ProductEditBottomSheet extends StatefulWidget {
+  var selectedProduct;
   final VoidCallback onView;
   final VoidCallback onReplace;
   final VoidCallback onDelete;
 
-  const ProductEditBottomSheet({
+  ProductEditBottomSheet({
     super.key,
+    required this.selectedProduct,
     required this.onView,
     required this.onReplace,
     required this.onDelete,
@@ -64,12 +72,17 @@ class _ProductEditBottomSheetState extends State<ProductEditBottomSheet> {
                   ),
                 ),
                 Switch(
-                  value: isSwitched,
-                  activeColor: Colors.black,
+                  value: widget.selectedProduct["isHidden"],
+                  inactiveThumbColor: Colors.grey[700],
+                  inactiveTrackColor: Colors.white,
+                  activeColor: Colors.green,
                   onChanged: (bool value) {
+                    bool newValue = !widget.selectedProduct["isHidden"];
                     setState(() {
-                      isSwitched = value;
+                      widget.selectedProduct["isHidden"] = newValue;
                     });
+                    ProductController().editProduct(
+                        widget.selectedProduct["id"], {"isHidden": newValue});
                   },
                 ),
               ],
@@ -84,7 +97,10 @@ class _ProductEditBottomSheetState extends State<ProductEditBottomSheet> {
                   "description": "This is a sample product."
                 };
 
-                Get.to(() => PromoteProductPage(productData: productData));
+                Get.bottomSheet(Container(
+                  color: Colors.white,
+                  child: CommingSoon(),
+                ));
               },
               text: "Promote Product",
               vertical: 8.0,
@@ -92,27 +108,30 @@ class _ProductEditBottomSheetState extends State<ProductEditBottomSheet> {
               textColor: Colors.black,
             ),
             spacer1(),
-            GestureDetector(
-              onTap: () {
-                Get.to(const PromoteProductInsightsBottomSheet());
-              },
-              child: Row(
-                children: [
-                  const Icon(Icons.upload_file_outlined),
-                  const SizedBox(width: 8),
-                  ParagraphText("Product insights"),
-                ],
-              ),
-            ),
+            // GestureDetector(
+            //   onTap: () {
+            //     Get.to(const PromoteProductInsightsBottomSheet());
+            //   },
+            //   child: Row(
+            //     children: [
+            //       const Icon(Icons.upload_file_outlined),
+            //       const SizedBox(width: 8),
+            //       ParagraphText("Product insights"),
+            //     ],
+            //   ),
+            // ),
             spacer1(),
             GestureDetector(
-              onTap: () {
-                Navigator.pop(context); 
-                widget.onReplace();
+              onTap: () async {
+                Navigator.pop(context);
+                await Get.to(() => EditProductPage(
+                      product: widget.selectedProduct,
+                    ));
+                widget.onDelete();
               },
               child: Row(
                 children: [
-                  const Icon(Icons.edit_square),
+                  const Icon(Icons.edit_outlined),
                   const SizedBox(width: 8),
                   ParagraphText("Edit Product"),
                 ],
@@ -122,7 +141,28 @@ class _ProductEditBottomSheetState extends State<ProductEditBottomSheet> {
             GestureDetector(
               onTap: () {
                 Navigator.pop(context);
-                widget.onDelete();
+                showPopupAlert(
+                  context,
+                  iconAsset: "assets/images/closeicon.jpg",
+                  heading: "Delete",
+                  text: "Are you sure you want to delete?",
+                  button1Text: "No",
+                  button1Action: () {
+                    Get.back();
+                  },
+                  button2Text: "Yes",
+                  button2Action: () async {
+                    ProductController()
+                        .deleteProduct(widget.selectedProduct["id"])
+                        .then((res) {
+                      Get.back();
+                      showSuccessSnackbar(
+                          title: "Deleted successfully",
+                          description: "Product is deleted succesfully");
+                      widget.onDelete();
+                    });
+                  },
+                );
               },
               child: Row(
                 children: [

@@ -7,7 +7,7 @@ import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-Widget chatCard(Map<String, dynamic> chat) {
+Widget userChatCard(Map<String, dynamic> chat) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 8.0),
     child: Row(

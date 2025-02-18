@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "ExactOnline",
       theme: ThemeData(
-          primaryColor: Colors.black, textTheme: GoogleFonts.outfitTextTheme()),
+          primaryColor: Colors.black, textTheme: GoogleFonts.interTextTheme()),
       home: FutureBuilder(
         future: Future.delayed(const Duration(seconds: 4)),
         builder: (context, snapshot) {
