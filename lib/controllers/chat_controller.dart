@@ -30,6 +30,7 @@ class ChatController extends GetxController {
         shopId = userController.user.value["Shops"][0]["id"];
         await SharedPreferencesUtil.saveSelectedBusiness(shopId!);
       }
+      print("Shop ${shopId}");
       var response = await dio.get(
           "/chats/shop/$shopId/?page=$page&limit=$limit&keyword=$keyword",
           options: Options(headers: {

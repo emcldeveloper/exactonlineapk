@@ -500,7 +500,7 @@ class _ProductPageState extends State<ProductPage> {
                                 }).then((res) {
                                   print(res);
 
-                                  Get.to(() => ConversationPage(res[0]));
+                                  Get.to(() => ConversationPage(res));
                                 });
                               },
                               text: "Message Seller",
