@@ -120,7 +120,10 @@ class _ConversationPageState extends State<ConversationPage> {
                 stream: find.getMessages(chatId: widget.chat["id"]),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const Center(
+                        child: CircularProgressIndicator(
+                      color: Colors.black,
+                    ));
                   }
                   List<Message> messages = snapshot.requireData;
                   print(messages.map((item) => item.message));

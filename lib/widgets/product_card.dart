@@ -150,7 +150,7 @@ class _ProductCardState extends State<ProductCard> {
                       color: Colors.red,
                     ),
                   ParagraphText(
-                    "Vunja bei shop",
+                    widget.data["Shop"]?["name"] ?? "",
                     fontSize: 12,
                     maxLines: 1,
                     color: primary,

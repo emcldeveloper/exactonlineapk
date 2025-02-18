@@ -509,7 +509,8 @@ class _ProductPageState extends State<ProductPage> {
                                   "UserId": userController.user.value["id"]
                                 }).then((res) {
                                   print(res);
-                                  Get.to(() => ConversationPage(res));
+
+                                  Get.to(() => ConversationPage(res[0]));
                                 });
                               },
                               text: "Message Seller",

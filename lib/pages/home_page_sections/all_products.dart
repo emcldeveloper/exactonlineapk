@@ -18,6 +18,7 @@ class _AllProductsState extends State<AllProducts> {
     ProductController()
         .getProducts(page: 1, limit: 20, keyword: "")
         .then((res) {
+      print(res);
       products.value =
           res.where((item) => item["ProductImages"].length > 0).toList();
     });
