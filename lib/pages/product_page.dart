@@ -26,9 +26,9 @@ import 'dart:convert';
 import 'package:url_launcher/url_launcher.dart';
 
 class ProductPage extends StatefulWidget {
-  final Map<String, dynamic> productData;
+  Map<String, dynamic> productData;
 
-  const ProductPage({required this.productData, super.key});
+  ProductPage({required this.productData, super.key});
 
   @override
   State<ProductPage> createState() => _ProductPageState();
@@ -102,30 +102,17 @@ class _ProductPageState extends State<ProductPage> {
     }
   }
 
-  Future<void> _callProductReviews() async {
-    try {
-      if (widget.productData.containsKey('ProductReviews') &&
-          widget.productData['ProductReviews'] != null) {
-        List<Map<String, dynamic>> fetchedReviews =
-            (widget.productData['ProductReviews'] as List<dynamic>)
-                .map((review) => {
-                      "name": review["User"]?["name"] ?? "NA",
-                      "rating": review["rating"] ?? 0,
-                      "description": review["description"] ?? "No description",
-                    })
-                .toList();
+  List<Map<String, dynamic>> _callProductReviews() {
+    List<Map<String, dynamic>> fetchedReviews =
+        (widget.productData['ProductReviews'] as List<dynamic>)
+            .map((review) => {
+                  "name": review["User"]?["name"] ?? "NA",
+                  "rating": review["rating"] ?? 0,
+                  "description": review["description"] ?? "No description",
+                })
+            .toList();
 
-        setState(() {
-          reviews = fetchedReviews;
-        });
-
-        print("Fetched Reviews: $reviews");
-      } else {
-        print("No ProductReviews found in productData.");
-      }
-    } catch (e) {
-      debugPrint("Error fetching product reviews: $e");
-    }
+    return fetchedReviews;
   }
 
   double calculateAverageRating(List<Map<String, dynamic>> reviews) {
@@ -137,7 +124,8 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   void _showReviewsBottomSheet() async {
-    await _callProductReviews();
+    reviews = _callProductReviews();
+    print(reviews);
     var productId = widget.productData['id'];
     print("full data before taking the review part");
     print(widget.productData);
@@ -147,7 +135,7 @@ class _ProductPageState extends State<ProductPage> {
     double averageRating = calculateAverageRating(reviews);
     // print("averageRating");
     // print(averageRating);
-    showModalBottomSheet(
+    await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
@@ -164,6 +152,7 @@ class _ProductPageState extends State<ProductPage> {
         ),
       ),
     );
+    setState(() {});
   }
 
   void _showReportSellerBottomSheet() {
@@ -239,6 +228,7 @@ class _ProductPageState extends State<ProductPage> {
                 ));
               }
               var product = snapshot.requireData;
+              widget.productData = product;
               // Set isFavorite based on fetched product
               isFavorite.value = product.containsKey('Favorites') &&
                   product['Favorites'] != null &&
@@ -518,14 +508,7 @@ class _ProductPageState extends State<ProductPage> {
                               textColor: Colors.black,
                             ),
                             spacer(),
-                            // customButton(
-                            //   onTap: () {
-                            //     _showReportSellerBottomSheet();
-                            //   },
-                            //   text: "Report seller",
-                            //   buttonColor: Colors.transparent,
-                            //   textColor: Colors.red,
-                            // ),
+
                             spacer2(),
                           ],
                         ),

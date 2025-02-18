@@ -5,6 +5,7 @@ import 'package:e_online/pages/add_product_page.dart';
 import 'package:e_online/pages/add_reel_page.dart';
 import 'package:e_online/pages/create_ad_page.dart';
 import 'package:e_online/pages/setting_myshop_page.dart';
+import 'package:e_online/pages/shop_chat_page.dart';
 import 'package:e_online/pages/shop_tabs/shop_orders.dart';
 import 'package:e_online/pages/shop_tabs/shop_products.dart';
 import 'package:e_online/pages/shop_tabs/shop_reels.dart';
@@ -22,6 +23,7 @@ import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:icons_plus/icons_plus.dart';
 
 class MyShopPage extends StatefulWidget {
   const MyShopPage({super.key});
@@ -136,6 +138,19 @@ class _MyShopPageState extends State<MyShopPage> {
           title: HeadingText("My Shop"),
           centerTitle: true,
           actions: [
+            InkWell(
+              onTap: () {
+                Get.to(() => ShopChatPage());
+              },
+              child: Icon(
+                AntDesign.message_outline,
+                color: Colors.black,
+                size: 22.0,
+              ),
+            ),
+            SizedBox(
+              width: 10,
+            ),
             InkWell(
               onTap: () {
                 Get.to(() => SettingMyshopPage(
