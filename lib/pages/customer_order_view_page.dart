@@ -68,6 +68,8 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
               );
             }
             List orderedProducts = snapshot.requireData;
+
+            print("Ordered products ${orderedProducts}");
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
