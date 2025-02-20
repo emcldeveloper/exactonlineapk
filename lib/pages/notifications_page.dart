@@ -6,11 +6,13 @@ import 'package:e_online/widgets/notification_card.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class NotificationsPage extends StatelessWidget {
   NotificationsPage({super.key});
 
-  final NotificationController notificationController = Get.put(NotificationController());
+  final NotificationController notificationController =
+      Get.put(NotificationController());
 
   @override
   Widget build(BuildContext context) {
@@ -40,14 +42,18 @@ class NotificationsPage extends StatelessWidget {
         ),
       ),
       body: FutureBuilder(
-        future: notificationController.getNotifications(1, 10), 
+        future: notificationController.getNotifications(1, 10),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator(color: Colors.black,));
+            return const Center(
+                child: CircularProgressIndicator(
+              color: Colors.black,
+            ));
           } else if (snapshot.hasError) {
-            return Center(child: Text("Error loading notifications")); 
+            print("Error: ${snapshot.error}");
+            return Center(child: Text("Error loading notifications"));
           } else if (!snapshot.hasData || (snapshot.data as List).isEmpty) {
-            return noData(); 
+            return noData();
           } else {
             var notifications = snapshot.data as List;
             return SingleChildScrollView(
@@ -60,7 +66,10 @@ class NotificationsPage extends StatelessWidget {
                       children: [
                         NotificationCard(data: {
                           "message": item["message"] ?? "No message",
-                          "time": item["createdAt"] ?? "Unknown time"
+                          "time": item["createdAt"] != null
+                              ? timeago.format(DateTime.parse(item[
+                                  "createdAt"])) 
+                              : "Unknown time"
                         }),
                         spacer2(),
                       ],

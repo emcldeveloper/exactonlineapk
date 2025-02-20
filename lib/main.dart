@@ -25,7 +25,7 @@ void main() async {
 
   await requestNotificationPermission();
   await getToken();
-  setupFirebaseMessagingHandlers(); // Set up notification listeners
+  setupFirebaseMessagingHandlers();
 
   runApp(const MyApp());
 }
