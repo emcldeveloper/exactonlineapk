@@ -1,45 +1,19 @@
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/controllers/notification_controller.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/no_data.dart';
 import 'package:e_online/widgets/notification_card.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class NotificationsPage extends StatelessWidget {
-  const NotificationsPage({super.key});
+  NotificationsPage({super.key});
 
-  final List<Map<String, String>> _notifications = const [
-    {
-      "message":
-          "Get new products from best sellers, with amazing prices and discounts",
-      "time": "2 mins ago"
-    },
-    {
-      "message":
-          "Get new products from best sellers, with amazing prices and discounts",
-      "time": "2 mins ago"
-    },
-    {
-      "message":
-          "Get new products from best sellers, with amazing prices and discounts",
-      "time": "2 mins ago"
-    },
-    {
-      "message":
-          "Get new products from best sellers, with amazing prices and discounts",
-      "time": "2 mins ago"
-    },
-    {
-      "message":
-          "Get new products from best sellers, with amazing prices and discounts",
-      "time": "2 mins ago"
-    },
-    {
-      "message":
-          "Get new products from best sellers, with amazing prices and discounts",
-      "time": "2 mins ago"
-    },
-  ];
+  final NotificationController notificationController =
+      Get.put(NotificationController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,9 +32,7 @@ class NotificationsPage extends StatelessWidget {
             Navigator.pop(context);
           },
         ),
-        title: HeadingText(
-          "Notifications",
-        ),
+        title: HeadingText("Notifications"),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
           child: Container(
@@ -69,24 +41,46 @@ class NotificationsPage extends StatelessWidget {
           ),
         ),
       ),
-      body: [].isEmpty
-          ? noData()
-          : SingleChildScrollView(
+      body: FutureBuilder(
+        future: notificationController.getNotifications(1, 10),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+                child: CircularProgressIndicator(
+              color: Colors.black,
+            ));
+          } else if (snapshot.hasError) {
+            print("Error: ${snapshot.error}");
+            return Center(child: Text("Error loading notifications"));
+          } else if (!snapshot.hasData || (snapshot.data as List).isEmpty) {
+            return noData();
+          } else {
+            var notifications = snapshot.data as List;
+            return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: _notifications.map((item) {
+                  children: notifications.map((item) {
                     return Column(
                       children: [
-                        NotificationCard(data: item),
+                        NotificationCard(data: {
+                          "message": item["message"] ?? "No message",
+                          "time": item["createdAt"] != null
+                              ? timeago.format(DateTime.parse(item[
+                                  "createdAt"])) 
+                              : "Unknown time"
+                        }),
                         spacer2(),
                       ],
                     );
                   }).toList(),
                 ),
               ),
-            ),
+            );
+          }
+        },
+      ),
     );
   }
 }

@@ -53,7 +53,15 @@
 		<string>tel</string>
 		<string>googlechromes</string>
 	</array>
-
+	<key>FirebaseMessagingAutoInitEnabled</key>
+	<false/>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>We need permission to send you notifications.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
