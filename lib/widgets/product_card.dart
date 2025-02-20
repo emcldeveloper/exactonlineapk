@@ -92,7 +92,7 @@ class _ProductCardState extends State<ProductCard> {
                     onTap: _toggleFavorite,
                     child: ClipOval(
                       child: Obx(() => Container(
-                            color: Colors.white60,
+                            color: Colors.white70,
                             padding: const EdgeInsets.all(6.0),
                             child: Icon(
                               isFavorite.value

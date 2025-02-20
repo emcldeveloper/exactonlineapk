@@ -11,7 +11,7 @@ class MessageController extends GetxController {
   Rx<List<Message>> messagesReceiver = Rx<List<Message>>([]);
   List<Message> get messages => messagesReceiver.value;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-  Future addMessage({message, orderId, from, productid, chatId}) async {
+  Future addMessage({message, orderId, from, productId, chatId}) async {
     try {
       var id = Timestamp.now().toDate().toLocal().toString();
       await firestore.collection("messages").doc(id).set({
@@ -20,7 +20,7 @@ class MessageController extends GetxController {
         "chatId": chatId,
         "orderId": orderId,
         "from": from,
-        "productId": productid,
+        "productId": productId,
         "createdAt": Timestamp.now()
       });
       await ChatController().editChat(chatId, {"lastMessage": message});

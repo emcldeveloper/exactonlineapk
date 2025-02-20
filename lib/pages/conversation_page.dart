@@ -1,12 +1,19 @@
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_options.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/message_controllers.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/models/message.dart';
+import 'package:e_online/pages/customer_order_view_page.dart';
+import 'package:e_online/pages/viewImage.dart';
+import 'package:e_online/utils/convert_to_money_format.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
+import 'package:e_online/widgets/showProductInChat.dart';
+import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -16,8 +23,10 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:timeago/timeago.dart' as timeago;
 
 class ConversationPage extends StatefulWidget {
+  Map<String, dynamic>? product;
+  Map<String, dynamic>? order;
   Map<String, dynamic> chat;
-  ConversationPage(this.chat, {super.key});
+  ConversationPage(this.chat, {this.product, this.order, super.key});
 
   @override
   State<ConversationPage> createState() => _ConversationPageState();
@@ -53,8 +62,8 @@ class _ConversationPageState extends State<ConversationPage> {
           onTap: () {
             Get.back();
           },
-          child: Padding(
-            padding: const EdgeInsets.only(left: 8.0),
+          child: const Padding(
+            padding: EdgeInsets.only(left: 8.0),
             child: Icon(
               Icons.arrow_back_ios,
               color: Colors.grey,
@@ -77,8 +86,8 @@ class _ConversationPageState extends State<ConversationPage> {
                           )
                         : Container(
                             color: Colors.grey[200],
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
+                            child: const Padding(
+                              padding: EdgeInsets.all(8.0),
                               child: Icon(Bootstrap.shop),
                             ),
                           )
@@ -93,8 +102,8 @@ class _ConversationPageState extends State<ConversationPage> {
                           )
                         : Container(
                             color: Colors.grey[200],
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
+                            child: const Padding(
+                              padding: EdgeInsets.all(8.0),
                               child: Icon(Bootstrap.person),
                             ),
                           )),
@@ -147,6 +156,7 @@ class _ConversationPageState extends State<ConversationPage> {
                                   ? Alignment.bottomRight
                                   : Alignment.bottomLeft,
                               child: ChatBubble(
+                                message: messages[index],
                                 text: messages[index].message,
                                 isSentByMe: (isUser() &&
                                             messages[index].from == "user") ||
@@ -190,6 +200,12 @@ class _ConversationPageState extends State<ConversationPage> {
                               onTap: () {
                                 find.addMessage(
                                     chatId: widget.chat["id"],
+                                    productId: widget.product != null
+                                        ? widget.product!["id"]
+                                        : null,
+                                    orderId: widget.order != null
+                                        ? widget.order!["id"]
+                                        : null,
                                     message: messageController.text,
                                     from: isUser() ? "user" : "shop");
                               },
@@ -224,12 +240,14 @@ class _ConversationPageState extends State<ConversationPage> {
 }
 
 class ChatBubble extends StatelessWidget {
+  final Message message;
   final String text;
   final bool isSentByMe;
   final String time;
 
   ChatBubble(
-      {required this.text,
+      {required this.message,
+      required this.text,
       required this.isSentByMe,
       required this.time,
       super.key});
@@ -240,6 +258,19 @@ class ChatBubble extends StatelessWidget {
       crossAxisAlignment:
           isSentByMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
+        if (message.hasOrder() && !isSentByMe)
+          GestureDetector(
+              onTap: () {
+                Get.to(() => CustomerOrderViewPage(order: message.order.value));
+              },
+              child: ParagraphText("View Order", fontWeight: FontWeight.bold)),
+        if (message.hasProduct() && !isSentByMe)
+          GestureDetector(
+              onTap: () {
+                showProductInChat(message);
+              },
+              child:
+                  ParagraphText("View Product", fontWeight: FontWeight.bold)),
         Container(
           margin: const EdgeInsets.symmetric(vertical: 4),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),

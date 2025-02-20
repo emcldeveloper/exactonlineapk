@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/chat_controller.dart';
 import 'package:e_online/controllers/favorite_controller.dart';
@@ -9,6 +10,7 @@ import 'package:e_online/controllers/review_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/cart_page.dart';
 import 'package:e_online/pages/conversation_page.dart';
+import 'package:e_online/pages/viewImage.dart';
 import 'package:e_online/utils/convert_to_money_format.dart';
 import 'package:e_online/utils/snackbars.dart';
 import 'package:e_online/widgets/cartIcon.dart';
@@ -173,7 +175,7 @@ class _ProductPageState extends State<ProductPage> {
 
   var addingToCart = false.obs;
   OrderedProductController orderedProductController = Get.find();
-
+  RxInt index = 0.obs;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -248,20 +250,39 @@ class _ProductPageState extends State<ProductPage> {
                         children: [
                           Container(
                             height: 300,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(0),
-                              child: CachedNetworkImage(
-                                imageUrl: List.from(product["ProductImages"])
-                                    .firstWhere((element) =>
-                                        element["id"] ==
-                                        selectedImage)?["image"],
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                              ),
+                            color: Colors.grey[100],
+                            width: double.infinity,
+                            child: CarouselSlider(
+                              items: List.from(product["ProductImages"])
+                                  .map((item) => GestureDetector(
+                                        onTap: () {
+                                          Get.to(() => ViewImage(
+                                                index: index.value,
+                                                images: List.from(product[
+                                                        "ProductImages"])
+                                                    .map((item) =>
+                                                        item["image"] as String)
+                                                    .toList(),
+                                              ));
+                                        },
+                                        child: Container(
+                                          width: double.infinity,
+                                          child: CachedNetworkImage(
+                                            imageUrl: item["image"],
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                      ))
+                                  .toList(),
+                              options: CarouselOptions(
+                                  onPageChanged: (current, reason) {
+                                    index.value = current;
+                                  },
+                                  autoPlay: true,
+                                  aspectRatio: 1,
+                                  viewportFraction: 1),
                             ),
                           ),
-                          // Favorite icon container always on top of the image
-                          Container(),
                           Positioned(
                             top: 15,
                             right: 15,
@@ -269,7 +290,7 @@ class _ProductPageState extends State<ProductPage> {
                               onTap: () => _toggleFavorite(product),
                               child: ClipOval(
                                 child: Obx(() => Container(
-                                      color: Colors.white60,
+                                      color: Colors.white70,
                                       padding: const EdgeInsets.all(6.0),
                                       child: Icon(
                                         isFavorite.value
@@ -286,52 +307,33 @@ class _ProductPageState extends State<ProductPage> {
                           ),
                         ],
                       ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Obx(
+                        () => Row(
+                          spacing: 10,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(
+                                  List.from(product["ProductImages"]).length,
+                                  (index) => (index - 1) + 1,
+                                  growable: true)
+                              .map((item) => ClipOval(
+                                      child: Container(
+                                    width: 10,
+                                    color: index.value == item
+                                        ? Colors.orange
+                                        : Colors.grey[300],
+                                    height: 10,
+                                  )))
+                              .toList(),
+                        ),
+                      ),
                       Padding(
                         padding: const EdgeInsets.all(16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            spacer(),
-                            if (widget.productData["ProductImages"].isNotEmpty)
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: widget.productData["ProductImages"]
-                                      .map<Widget>((image) {
-                                    final isSelected =
-                                        image["id"] == selectedImage;
-                                    return GestureDetector(
-                                      onTap: () {
-                                        _updateSelectedImage(image["id"]);
-                                      },
-                                      child: Container(
-                                        margin:
-                                            const EdgeInsets.only(right: 8.0),
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(2),
-                                          border: isSelected
-                                              ? Border.all(
-                                                  color: Colors.black, width: 2)
-                                              : null,
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(2.0),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(5),
-                                            child: CachedNetworkImage(
-                                              imageUrl: image["image"],
-                                              height: 50,
-                                              width: 50,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
                             spacer(),
                             Row(
                               children: [
@@ -343,7 +345,7 @@ class _ProductPageState extends State<ProductPage> {
                                       ParagraphText(
                                         product['name'] ?? '',
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 25.0,
+                                        fontSize: 20.0,
                                       ),
                                       ParagraphText(
                                           "TZS ${toMoneyFormmat(product['sellingPrice'])}",
@@ -498,9 +500,8 @@ class _ProductPageState extends State<ProductPage> {
                                   "ShopId": product["Shop"]["id"],
                                   "UserId": userController.user.value["id"]
                                 }).then((res) {
-                                  print(res);
-
-                                  Get.to(() => ConversationPage(res));
+                                  Get.to(() =>
+                                      ConversationPage(res, product: product));
                                 });
                               },
                               text: "Message Seller",
@@ -513,6 +514,7 @@ class _ProductPageState extends State<ProductPage> {
                           ],
                         ),
                       )
+                   
                     ],
                   ),
                 ),
