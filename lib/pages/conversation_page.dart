@@ -16,8 +16,10 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:timeago/timeago.dart' as timeago;
 
 class ConversationPage extends StatefulWidget {
+  Map<String, dynamic>? product;
+  Map<String, dynamic>? order;
   Map<String, dynamic> chat;
-  ConversationPage(this.chat, {super.key});
+  ConversationPage(this.chat, {this.product, this.order, super.key});
 
   @override
   State<ConversationPage> createState() => _ConversationPageState();
@@ -53,8 +55,8 @@ class _ConversationPageState extends State<ConversationPage> {
           onTap: () {
             Get.back();
           },
-          child: Padding(
-            padding: const EdgeInsets.only(left: 8.0),
+          child: const Padding(
+            padding: EdgeInsets.only(left: 8.0),
             child: Icon(
               Icons.arrow_back_ios,
               color: Colors.grey,
@@ -77,8 +79,8 @@ class _ConversationPageState extends State<ConversationPage> {
                           )
                         : Container(
                             color: Colors.grey[200],
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
+                            child: const Padding(
+                              padding: EdgeInsets.all(8.0),
                               child: Icon(Bootstrap.shop),
                             ),
                           )
@@ -93,8 +95,8 @@ class _ConversationPageState extends State<ConversationPage> {
                           )
                         : Container(
                             color: Colors.grey[200],
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
+                            child: const Padding(
+                              padding: EdgeInsets.all(8.0),
                               child: Icon(Bootstrap.person),
                             ),
                           )),
@@ -190,6 +192,12 @@ class _ConversationPageState extends State<ConversationPage> {
                               onTap: () {
                                 find.addMessage(
                                     chatId: widget.chat["id"],
+                                    productId: widget.product != null
+                                        ? widget.product!["id"]
+                                        : null,
+                                    orderId: widget.order != null
+                                        ? widget.order!["id"]
+                                        : null,
                                     message: messageController.text,
                                     from: isUser() ? "user" : "shop");
                               },
