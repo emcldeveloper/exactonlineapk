@@ -250,7 +250,7 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(width: 12),
                   InkWell(
                       onTap: () {
-                        Get.to(const NotificationsPage());
+                        Get.to(NotificationsPage());
                       },
                       child: const Icon(
                         Bootstrap.bell,

@@ -6,10 +6,10 @@ import 'package:get/get.dart';
 
 class NotificationController extends GetxController {
   UserController userController = Get.find();
-  Future getNotifications(page, limit, keyword) async {
+  Future getNotifications(page, limit) async {
     try {
       var response = await dio.get(
-          "/orders/user/${userController.user.value["id"]}/?page=$page&limit=$limit&keyword=$keyword",
+          "/notification/?page=$page&limit=$limit",
           options: Options(headers: {
             "Authorization":
                 "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
@@ -23,55 +23,26 @@ class NotificationController extends GetxController {
     }
   }
 
-  Future getShopOrders(page, limit, keyword) async {
-    try {
-      var shopId = await SharedPreferencesUtil.getSelectedBusiness();
-      if (shopId == null) {
-        shopId = userController.user.value["Shops"][0]["id"];
-        await SharedPreferencesUtil.saveSelectedBusiness(shopId!);
-      }
-      var response = await dio.get(
-          "/orders/shop/$shopId/?page=$page&limit=$limit&keyword=$keyword",
-          options: Options(headers: {
-            "Authorization":
-                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
-          }));
+  // Future getSingleNotification(page, limit, keyword) async {
+  //   try {
+  //     var shopId = await SharedPreferencesUtil.getSelectedBusiness();
+  //     if (shopId == null) {
+  //       shopId = userController.user.value["Shops"][0]["id"];
+  //       await SharedPreferencesUtil.saveSelectedBusiness(shopId!);
+  //     }
+  //     var response = await dio.get(
+  //         "/notifications/$shopId/?page=$page&limit=$limit",
+  //         options: Options(headers: {
+  //           "Authorization":
+  //               "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
+  //         }));
 
-      var data = response.data["body"]["rows"];
-      print(data);
-      return data;
-    } on DioException catch (e) {
-      print(e.response);
-    }
-  }
+  //     var data = response.data["body"]["rows"];
+  //     print(data);
+  //     return data;
+  //   } on DioException catch (e) {
+  //     print(e.response);
+  //   }
+  // }
 
-  Future addOrder(var payload) async {
-    try {
-      var response = await dio.post("/orders",
-          data: payload ?? {},
-          options: Options(headers: {
-            "Authorization":
-                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
-          }));
-      var data = response.data["body"];
-      return data;
-    } on DioException catch (e) {
-      print(e.response);
-    }
-  }
-
-  Future editOrder(id, payload) async {
-    try {
-      var response = await dio.patch("/orders/$id",
-          data: payload ?? {},
-          options: Options(headers: {
-            "Authorization":
-                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
-          }));
-      var data = response.data["body"];
-      return data;
-    } on DioException catch (e) {
-      print(e.response);
-    }
-  }
 }
