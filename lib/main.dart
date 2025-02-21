@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/firebase_options.dart';
 import 'package:e_online/pages/auth/onboarding_pages.dart';
 import 'package:e_online/pages/error_page.dart';
@@ -10,6 +11,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:uni_links5/uni_links.dart';
 
 // Background message handler (must be top-level)
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -79,12 +81,63 @@ void setupFirebaseMessagingHandlers() {
   // When app is opened from a terminated state (tap on notification)
   FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
     if (message != null) {
-      print("📩 [Terminated] App opened via notification: ${message.notification?.title}");
+      print(
+          "📩 [Terminated] App opened via notification: ${message.notification?.title}");
     }
   });
 
   // Background messages
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+}
+
+final UserController userController = Get.put(UserController());
+
+Future<bool> checkIfUserIsLoggedIn() async {
+  String? token = await SharedPreferencesUtil.getAccessToken();
+  if (token != null && token.isNotEmpty) {
+    try {
+      var response = await userController.getUserDetails();
+      var userDetails = response["body"];
+      print(userDetails);
+
+      userController.user.value = userDetails;
+      return true;
+    } catch (e) {
+      await SharedPreferencesUtil.removeAccessToken();
+      Get.offAll(() => WayPage());
+    }
+  }
+  return false;
+}
+void _handleDeepLink(Uri? uri) async {
+  if (uri != null) {
+    String? productId = uri.queryParameters['productId'];
+    String? shopId = uri.queryParameters['shopId'];
+
+    bool isLoggedIn = await checkIfUserIsLoggedIn();
+
+    if (productId != null) {
+      if (isLoggedIn) {
+        Get.toNamed('/product', arguments: {'id': productId});
+      } else {
+        Get.toNamed('/login', arguments: {'redirect': '/product?id=$productId'});
+      }
+    } else if (shopId != null) {
+      if (isLoggedIn) {
+        Get.toNamed('/shop', arguments: {'id': shopId});
+      } else {
+        Get.toNamed('/login', arguments: {'redirect': '/shop?id=$shopId'});
+      }
+    }
+  }
+}
+
+void initDeepLinkListener() {
+  uriLinkStream.listen((Uri? uri) {
+    if (uri != null) {
+      _handleDeepLink(uri);
+    }
+  });
 }
 
 class MyApp extends StatelessWidget {

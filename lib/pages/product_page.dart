@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:e_online/constants/colors.dart';
@@ -21,11 +23,15 @@ import 'package:e_online/widgets/report_seller.dart';
 import 'package:e_online/widgets/reviews.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
 class ProductPage extends StatefulWidget {
   Map<String, dynamic> productData;
@@ -73,7 +79,6 @@ class _ProductPageState extends State<ProductPage> {
     if (isFavorite.value) {
       var favoriteId = product['Favorites']?[0]['id'];
       if (favoriteId != null) {
-        print("Deleting favorite with ID: $favoriteId");
         await favoriteController.deleteFavorite(favoriteId);
         isFavorite.value = false;
       }
@@ -82,7 +87,6 @@ class _ProductPageState extends State<ProductPage> {
         "ProductId": product['id'],
         "UserId": userId,
       };
-      print("Adding to favorites: $payload");
       await favoriteController.addFavorite(payload);
       isFavorite.value = true;
     }
@@ -90,6 +94,7 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   Future<void> _sendProductStats(String type) async {
+    print("being called share statics");
     var userId = userController.user.value['id'] ?? "";
     try {
       var payload = {
@@ -103,6 +108,41 @@ class _ProductPageState extends State<ProductPage> {
       debugPrint("Error sending shop stats: $e");
     }
   }
+
+void _shareProduct() async {
+  await _sendProductStats("share");
+
+  const String appLink = "https://api.exactonline.co.tz/product?productId=";
+  const String playStoreLink = "https://play.google.com/store/apps/details?id=com.exactonline";
+  const String appStoreLink = "https://apps.apple.com/app/idYOUR_APP_ID";
+
+  String productId = widget.productData['id'];
+  String productName = widget.productData['name'] ?? 'Check out this product!';
+  String price = widget.productData['sellingPrice'] != null
+      ? "Price: TZS ${toMoneyFormmat(widget.productData['sellingPrice'])}"
+      : '';
+  String description = widget.productData['description'] ?? '';
+  String specifications = widget.productData['specifications'] ?? '';
+
+  String shareText = "$productName\n$price\n$description\nSpecifications: $specifications\n\nGet it here: $appLink$productId";
+
+  String fullAppLink = "$appLink$productId";
+
+  // Check if the app is installed
+  bool canLaunchApp = await canLaunchUrl(Uri.parse(fullAppLink));
+
+  if (canLaunchApp) {
+    await launchUrl(Uri.parse(fullAppLink));
+  } else {
+    // Redirect to Play Store or App Store
+    String storeUrl = Platform.isAndroid ? playStoreLink : appStoreLink;
+    await launchUrl(Uri.parse(storeUrl), mode: LaunchMode.externalApplication);
+  }
+
+  // Share product details
+  await Share.share(shareText);
+}
+
 
   List<Map<String, dynamic>> _callProductReviews() {
     List<Map<String, dynamic>> fetchedReviews =
@@ -127,16 +167,9 @@ class _ProductPageState extends State<ProductPage> {
 
   void _showReviewsBottomSheet() async {
     reviews = _callProductReviews();
-    print(reviews);
     var productId = widget.productData['id'];
-    print("full data before taking the review part");
-    print(widget.productData);
-    print("reviews");
-    print(reviews);
 
     double averageRating = calculateAverageRating(reviews);
-    // print("averageRating");
-    // print(averageRating);
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -198,10 +231,8 @@ class _ProductPageState extends State<ProductPage> {
               width: 8.0,
             ),
             InkWell(
-              onTap: () {
-                _sendProductStats("share");
-              },
-              child: Icon(
+              onTap: _shareProduct,
+              child: const Icon(
                 Bootstrap.share,
                 color: Colors.black,
                 size: 20.0,
@@ -236,7 +267,6 @@ class _ProductPageState extends State<ProductPage> {
                   product['Favorites'] != null &&
                   product['Favorites'].isNotEmpty;
 
-              print(product);
               return SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.all(0.0),
@@ -514,7 +544,6 @@ class _ProductPageState extends State<ProductPage> {
                           ],
                         ),
                       )
-                   
                     ],
                   ),
                 ),

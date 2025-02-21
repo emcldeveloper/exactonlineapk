@@ -201,8 +201,6 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                     final shopImage = shopData['shopImage'];
 
                     final reel = reelDetails.value;
-                    print('likes');
-                    print(reel);
                     return Stack(
                       children: [
                         // Video Player
