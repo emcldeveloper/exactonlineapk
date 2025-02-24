@@ -6,6 +6,8 @@ import 'package:e_online/pages/error_page.dart';
 import 'package:e_online/pages/splashscreen_page.dart';
 import 'package:e_online/pages/way_page.dart';
 import 'package:e_online/utils/shared_preferences.dart';
+import 'package:e_online/utils/update_checker.dart';
+import 'package:e_online/widgets/network_listener.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -109,6 +111,7 @@ Future<bool> checkIfUserIsLoggedIn() async {
   }
   return false;
 }
+
 void _handleDeepLink(Uri? uri) async {
   if (uri != null) {
     String? productId = uri.queryParameters['productId'];
@@ -120,7 +123,8 @@ void _handleDeepLink(Uri? uri) async {
       if (isLoggedIn) {
         Get.toNamed('/product', arguments: {'id': productId});
       } else {
-        Get.toNamed('/login', arguments: {'redirect': '/product?id=$productId'});
+        Get.toNamed('/login',
+            arguments: {'redirect': '/product?id=$productId'});
       }
     } else if (shopId != null) {
       if (isLoggedIn) {
@@ -145,6 +149,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   checkForUpdate(context);
+    // });
+
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: "ExactOnline",
@@ -152,14 +160,23 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.black,
         textTheme: GoogleFonts.interTextTheme(),
       ),
-      home: FutureBuilder(
-        future: Future.delayed(const Duration(seconds: 4)),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const SplashscreenPage();
-          }
-          return const EntryPoint();
-        },
+      home: Stack(
+        children: [
+          // The main content of your app
+          FutureBuilder(
+            future: Future.delayed(const Duration(seconds: 4)),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const SplashscreenPage();
+              }
+              return const EntryPoint();
+            },
+          ),
+          // The connectivity listener widget, always on top if no internet.
+          Center(
+            child: NetworkListener(),
+          ),
+        ],
       ),
     );
   }
