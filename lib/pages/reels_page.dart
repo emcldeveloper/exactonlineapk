@@ -92,7 +92,6 @@ class ProductMasonryGrid extends StatelessWidget {
             (snapshot.data as List<dynamic>)
                 .map((item) => item as Map<String, dynamic>)
                 .toList();
-
         return Padding(
           padding: const EdgeInsets.all(16.0),
           child: GridView.builder(
@@ -129,6 +128,8 @@ class ReelCard extends StatelessWidget {
   Widget build(BuildContext context) {
     // Extract shop data
     final shopData = data['Shop'] ?? {};
+    print("data za reel general");
+    print(data);
     final shopName = shopData['name'] ?? "No Name";
     final shopImage = shopData['shopImage'];
 

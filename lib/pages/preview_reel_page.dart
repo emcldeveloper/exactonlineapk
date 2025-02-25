@@ -152,9 +152,8 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
             var reelStatsId = matchingStats['id'];
             await reelController.deleteReelStats(reelStatsId);
             isLiked.value = false;
-            reelDetails.update((reel) {
-              if (reel != null) reel['likes'] = (reel['likes'] ?? 0) - 1;
-            });
+            reelDetails.value['likes'] = (reelDetails.value['likes'] ?? 0) - 1;
+            reelDetails.refresh();
             debugPrint("Unlike Success!");
           } else {
             debugPrint("Error: No 'like' entry found to delete.");
@@ -162,10 +161,11 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
         } else {
           await reelController.addReelStats(payload);
           isLiked.value = true;
-          reelDetails.update((reel) {
-            if (reel != null) reel['likes'] = (reel['likes'] ?? 0) + 1;
-          });
+          reelDetails.value['likes'] = (reelDetails.value['likes'] ?? 0) + 1;
+          reelDetails.refresh();
         }
+
+        _initializeReelDetails(widget.reels[currentIndex]['id']);
       } else {
         await reelController.addReelStats(payload);
       }

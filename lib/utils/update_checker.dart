@@ -13,6 +13,10 @@ Future<void> checkForUpdate(BuildContext context) async {
     minimumFetchInterval: Duration.zero, // Always fetch latest
   ));
 
+  await remoteConfig.setDefaults(const {
+    "latest_version": '1.0.1',
+  });
+
   await remoteConfig.fetchAndActivate();
 
   String latestVersion =
