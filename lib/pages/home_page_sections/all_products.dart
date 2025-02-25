@@ -38,7 +38,7 @@ class _AllProductsState extends State<AllProducts> {
                   crossAxisCount: 2,
                   crossAxisSpacing: 10.0,
                   mainAxisSpacing: 10,
-                  childAspectRatio: 4.5 / 5,
+                  childAspectRatio: 4.8 / 5,
                 ),
                 itemCount: 5,
                 itemBuilder: (context, index) {
@@ -64,11 +64,10 @@ class _AllProductsState extends State<AllProducts> {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10.0,
-                  mainAxisSpacing: 2.0,
-                  childAspectRatio: 0.65,
-                ),
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 10.0,
+                    mainAxisSpacing: 2.0,
+                    childAspectRatio: 0.68),
                 itemCount: products.value.length,
                 itemBuilder: (context, index) {
                   return ProductCard(data: products.value[index], height: 190);

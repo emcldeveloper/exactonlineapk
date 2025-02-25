@@ -75,7 +75,7 @@ class _ProductCardState extends State<ProductCard> {
                 Container(
                   color: Colors.grey[200],
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(0),
+                    borderRadius: BorderRadius.circular(10),
                     child: CachedNetworkImage(
                       imageUrl: widget.data["ProductImages"][0]['image'],
                       height: widget.height ?? 145,
@@ -153,7 +153,7 @@ class _ProductCardState extends State<ProductCard> {
                     widget.data["Shop"]?["name"] ?? "",
                     fontSize: 12,
                     maxLines: 1,
-                    color: primary,
+                    color: Colors.red,
                   ),
                 ],
               ),

@@ -170,9 +170,12 @@ class MyApp extends StatelessWidget {
                   future: checkForUpdate(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                        child: CircularProgressIndicator(
-                          color: Colors.black,
+                      return Scaffold(
+                        backgroundColor: Colors.white,
+                        body: Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.black,
+                          ),
                         ),
                       );
                     }

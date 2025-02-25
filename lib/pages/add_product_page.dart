@@ -377,52 +377,6 @@ class _AddProductPageState extends State<AddProductPage> {
                         ),
                       ],
                     ),
-                    spacer1(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Expanded(
-                          child: Text(
-                            "Product colors",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        InkWell(
-                          onTap: _openColorPicker,
-                          child: HugeIcon(
-                            icon: HugeIcons.strokeRoundedAdd01,
-                            color: Colors.grey,
-                            size: 22.0,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                      ],
-                    ),
-                    spacer1(),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: selectedColors.map((color) {
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              selectedColors.remove(color);
-                            });
-                          },
-                          child: Container(
-                            width: 30,
-                            height: 30,
-                            decoration: BoxDecoration(
-                              color: color,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                  color: Colors.transparent, width: 1),
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                    spacer1(),
 
                     spacer1(),
                     Padding(
@@ -592,12 +546,6 @@ class _AddProductPageState extends State<AddProductPage> {
                                 description: "Please add at least one image");
                             return;
                           } else {
-                            if (selectedColors.isEmpty) {
-                              showErrorSnackbar(
-                                  title: "No Product Colors",
-                                  description: "Please add at least one color");
-                              return;
-                            }
                             // Map<String, String> jsonSpecifications = {
                             //   for (var item in specifications.value)
                             //     item["label"]: item["value"]
@@ -624,17 +572,6 @@ class _AddProductPageState extends State<AddProductPage> {
                             ProductController()
                                 .addProduct(payload)
                                 .then((res) async {
-                              //upload colors
-                              var promises = selectedColors.map((item) =>
-                                  ProductColorController().addProductColor({
-                                    "ProductId": res["id"],
-                                    "color": item.toHexString()
-                                  }));
-                              // print(promises);
-                              var colorRes = await Future.wait(promises);
-                              print(colorRes);
-                              //upload images
-
                               var imagePayload = _images.map((item) async {
                                 var formData = dio.FormData.fromMap({
                                   "ProductId": res["id"],
