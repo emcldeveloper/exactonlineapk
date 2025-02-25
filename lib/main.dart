@@ -4,6 +4,7 @@ import 'package:e_online/firebase_options.dart';
 import 'package:e_online/pages/auth/onboarding_pages.dart';
 import 'package:e_online/pages/error_page.dart';
 import 'package:e_online/pages/splashscreen_page.dart';
+import 'package:e_online/pages/update_page.dart';
 import 'package:e_online/pages/way_page.dart';
 import 'package:e_online/utils/shared_preferences.dart';
 import 'package:e_online/utils/update_checker.dart';
@@ -149,10 +150,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   checkForUpdate(context);
-    // });
-
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: "ExactOnline",
@@ -169,7 +166,25 @@ class MyApp extends StatelessWidget {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const SplashscreenPage();
               }
-              return const EntryPoint();
+              return FutureBuilder(
+                  future: checkForUpdate(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.black,
+                        ),
+                      );
+                    }
+                    Map<String, dynamic> results = snapshot.requireData;
+                    print(results);
+                    return results["currentVersion"] != results["latestVersion"]
+                        ? UpdatePage(
+                            playStoreUrl: results['playStoreUrl'],
+                            appStoreUrl: results["appStoreUrl"],
+                          )
+                        : const EntryPoint();
+                  });
             },
           ),
           // The connectivity listener widget, always on top if no internet.

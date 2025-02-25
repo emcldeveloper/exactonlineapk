@@ -5,52 +5,32 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 
-Future<void> checkForUpdate(BuildContext context) async {
+Future<Map<String, dynamic>> checkForUpdate() async {
   final remoteConfig = FirebaseRemoteConfig.instance;
 
   await remoteConfig.setConfigSettings(RemoteConfigSettings(
     fetchTimeout: Duration(seconds: 10),
-    minimumFetchInterval: Duration.zero, // Always fetch latest
+    minimumFetchInterval: Duration.zero, // Ensures fresh data is fetched
   ));
 
-  await remoteConfig.setDefaults(const {
-    "latest_version": '1.0.1',
-  });
+  // Fetch and activate the latest config
+  await remoteConfig
+      .fetchAndActivate(); // This ensures the latest values are fetched
 
-  await remoteConfig.fetchAndActivate();
+  String latestVersion = remoteConfig.getString('latest_version');
 
-  String latestVersion =
-      remoteConfig.getString('latest_version'); // Set this in Firebase
-  print("latest_version");
-  print(latestVersion);
+  // Get the current app version
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   String currentVersion = packageInfo.version;
-  final appStoreUrl =
-      "https://apps.apple.com/app/your-app-id"; // Replace with your App Store URL
-  final playStoreUrl =
-      "https://play.google.com/store/apps/details?id=your.package.name"; // Replace with your Play Store URL
 
-  if (currentVersion != latestVersion) {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // Prevent closing without update
-      builder: (context) => AlertDialog(
-        title: Text("Update Required"),
-        content: Text("A new version of the app is available. Please update."),
-        actions: [
-          TextButton(
-            onPressed: () => exit(0), // Exit the app if the user refuses
-            child: const Text("Not Now"),
-          ),
-          TextButton(
-            onPressed: () {
-              String url = Platform.isAndroid ? playStoreUrl : appStoreUrl;
-              launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-            },
-            child: Text("Update Now"),
-          ),
-        ],
-      ),
-    );
-  }
+  final appStoreUrl = "https://apps.apple.com/app/your-app-id";
+  final playStoreUrl =
+      "https://play.google.com/store/apps/details?id=com.exactmanpower.e_online";
+
+  return {
+    "currentVersion": currentVersion,
+    "latestVersion": latestVersion,
+    "playStoreUrl": playStoreUrl,
+    "appStoreUrl": appStoreUrl
+  };
 }
