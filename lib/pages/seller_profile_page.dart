@@ -104,32 +104,22 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
     }
   }
 
-void _shareShopProfile() async {
-  const String appLink = "https://api.exactonline.co.tz/shop?shopId="; // Deep link
-  const String playStoreLink = "https://play.google.com/store/apps/details?id=com.exactonline"; // Play Store
-  const String appStoreLink = "https://apps.apple.com/app/idYOUR_APP_ID"; // App Store
+  void _shareShopProfile() async {
+    const String appLink = "https://api.exactonline.co.tz/open-app/";
 
-  String shopId = widget.shopId;
-  String shopName = shopDetails.value['name'] ?? 'Check out this shop!';
-  String address = shopDetails.value['address'] ?? '';
-  String description = shopDetails.value['description'] ?? 'No description available.';
-  String shareText = "$shopName\n$address\n$description";
+    String shopId = widget.shopId;
+    String shopName = shopDetails.value['name'] ?? 'Check out this shop!';
+    String address = shopDetails.value['address'] ?? '';
+    String description =
+        shopDetails.value['description'] ?? 'No description available.';
+    String shareText =
+        "Visit: $shopName shop, located at: $address\nDescription:$description";
 
-  String fullAppLink = "$appLink$shopId";
-
-  // Check if the app is installed
-  bool canLaunchApp = await canLaunchUrlString(fullAppLink);
-
-  if (canLaunchApp) {
-    await launchUrlString(fullAppLink);
-  } else {
-    String storeUrl = Platform.isAndroid ? playStoreLink : appStoreLink;
-    await launchUrlString(storeUrl, mode: LaunchMode.externalApplication);
+    String fullAppLink = "$appLink?shopId=$shopId";
+    await Share.share(shareText +
+        "\n\nCheck out this shop or explore more on ExactOnline!" +
+        fullAppLink);
   }
-
-  await Share.share(shareText);
-
-}
 
   @override
   Widget build(BuildContext context) {
@@ -199,7 +189,7 @@ void _shareShopProfile() async {
               ),
             ),
             const SizedBox(width: 8),
-             InkWell(
+            InkWell(
               onTap: _shareShopProfile,
               child: const Icon(
                 Bootstrap.share,

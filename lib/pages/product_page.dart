@@ -109,40 +109,31 @@ class _ProductPageState extends State<ProductPage> {
     }
   }
 
-void _shareProduct() async {
-  await _sendProductStats("share");
+  void _shareProduct() async {
+    await _sendProductStats("share");
 
-  const String appLink = "https://api.exactonline.co.tz/product?productId=";
-  const String playStoreLink = "https://play.google.com/store/apps/details?id=com.exactonline";
-  const String appStoreLink = "https://apps.apple.com/app/idYOUR_APP_ID";
+    const String appLink = "https://api.exactonline.co.tz/open-app/";
+    const String playStoreLink =
+        "https://play.google.com/store/apps/details?id=com.exactmanpower.e_online";
+    const String appStoreLink = "https://apps.apple.com/app/idYOUR_APP_ID";
 
-  String productId = widget.productData['id'];
-  String productName = widget.productData['name'] ?? 'Check out this product!';
-  String price = widget.productData['sellingPrice'] != null
-      ? "Price: TZS ${toMoneyFormmat(widget.productData['sellingPrice'])}"
-      : '';
-  String description = widget.productData['description'] ?? '';
-  String specifications = widget.productData['specifications'] ?? '';
+    String productId = widget.productData['id'];
+    String productName =
+        widget.productData['name'] ?? 'Check out this product!';
+    String price = widget.productData['sellingPrice'] != null
+        ? "Price: TZS ${toMoneyFormmat(widget.productData['sellingPrice'])}"
+        : '';
+    String description = widget.productData['description'] ?? '';
 
-  String shareText = "$productName\n$price\n$description\nSpecifications: $specifications\n\nGet it here: $appLink$productId";
+    String shareText =
+        "Purchase: $productName, which goes for: $price\nDescription:$description";
 
-  String fullAppLink = "$appLink$productId";
+    String fullAppLink = "$appLink?productId=$productId";
 
-  // Check if the app is installed
-  bool canLaunchApp = await canLaunchUrl(Uri.parse(fullAppLink));
-
-  if (canLaunchApp) {
-    await launchUrl(Uri.parse(fullAppLink));
-  } else {
-    // Redirect to Play Store or App Store
-    String storeUrl = Platform.isAndroid ? playStoreLink : appStoreLink;
-    await launchUrl(Uri.parse(storeUrl), mode: LaunchMode.externalApplication);
+    await Share.share(shareText +
+        "\n\nCheck out this product or explore more on ExactOnline!" +
+        fullAppLink);
   }
-
-  // Share product details
-  await Share.share(shareText);
-}
-
 
   List<Map<String, dynamic>> _callProductReviews() {
     List<Map<String, dynamic>> fetchedReviews =
