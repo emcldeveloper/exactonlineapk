@@ -90,8 +90,6 @@ class _HomePageState extends State<HomePage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     AdsCarousel(),
-                    spacer(),
-                    carouselIndicator(),
                     spacer1(),
                     Column(
                       children: [

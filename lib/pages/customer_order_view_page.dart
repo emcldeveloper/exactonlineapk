@@ -89,11 +89,13 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                       children: [
                         ParagraphText("Total Price"),
                         Builder(builder: (context) {
-                          double totalPrice = orderedProducts
-                              .map((item) =>
-                                  double.parse(item["Product"]["sellingPrice"]))
-                              .toList()
-                              .reduce((prev, item) => prev + item);
+                          double totalPrice = 0;
+                          if (orderedProducts.length > 0)
+                            orderedProducts
+                                .map((item) => double.parse(
+                                    item["Product"]["sellingPrice"]))
+                                .toList()
+                                .reduce((prev, item) => prev + item);
                           return ParagraphText(
                               "TZS ${toMoneyFormmat(totalPrice.toString())}",
                               fontWeight: FontWeight.bold,
@@ -120,7 +122,10 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                           "UserId": widget.order["UserId"]
                         }).then((res) {
                           print(res);
-                          Get.to(() => ConversationPage(res));
+                          Get.to(() => ConversationPage(
+                                res,
+                                order: widget.order,
+                              ));
                         });
                       },
                       text: "Chat with Seller",

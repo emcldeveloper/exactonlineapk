@@ -198,16 +198,20 @@ class _ConversationPageState extends State<ConversationPage> {
                             const SizedBox(width: 8),
                             InkWell(
                               onTap: () {
-                                find.addMessage(
-                                    chatId: widget.chat["id"],
-                                    productId: widget.product != null
-                                        ? widget.product!["id"]
-                                        : null,
-                                    orderId: widget.order != null
-                                        ? widget.order!["id"]
-                                        : null,
-                                    message: messageController.text,
-                                    from: isUser() ? "user" : "shop");
+                                find
+                                    .addMessage(
+                                        chatId: widget.chat["id"],
+                                        productId: widget.product != null
+                                            ? widget.product!["id"]
+                                            : null,
+                                        orderId: widget.order != null
+                                            ? widget.order!["id"]
+                                            : null,
+                                        message: messageController.text,
+                                        from: isUser() ? "user" : "shop")
+                                    .then((res) {
+                                  messageController.text = "";
+                                });
                               },
                               child: Container(
                                 padding: const EdgeInsets.all(13.0),
@@ -254,47 +258,52 @@ class ChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment:
-          isSentByMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-      children: [
-        if (message.hasOrder() && !isSentByMe)
-          GestureDetector(
-              onTap: () {
-                Get.to(() => CustomerOrderViewPage(order: message.order.value));
-              },
-              child: ParagraphText("View Order", fontWeight: FontWeight.bold)),
-        if (message.hasProduct() && !isSentByMe)
-          GestureDetector(
-              onTap: () {
-                showProductInChat(message);
-              },
-              child:
-                  ParagraphText("View Product", fontWeight: FontWeight.bold)),
-        Container(
-          margin: const EdgeInsets.symmetric(vertical: 4),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          decoration: BoxDecoration(
-            color: isSentByMe ? primary.withOpacity(0.4) : Colors.grey[100],
-            borderRadius: BorderRadius.only(
-              topLeft: const Radius.circular(12),
-              topRight: const Radius.circular(12),
-              bottomLeft: Radius.circular(isSentByMe ? 12 : 0),
-              bottomRight: Radius.circular(isSentByMe ? 0 : 12),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Column(
+        crossAxisAlignment:
+            isSentByMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          if (message.hasOrder())
+            GestureDetector(
+                onTap: () {
+                  Get.to(
+                      () => CustomerOrderViewPage(order: message.order.value));
+                },
+                child:
+                    ParagraphText("View Order", fontWeight: FontWeight.bold)),
+          if (message.hasProduct())
+            GestureDetector(
+                onTap: () {
+                  showProductInChat(message);
+                },
+                child:
+                    ParagraphText("View Product", fontWeight: FontWeight.bold)),
+          Container(
+            margin: const EdgeInsets.symmetric(vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            decoration: BoxDecoration(
+              color: isSentByMe ? primary.withOpacity(0.4) : Colors.grey[100],
+              borderRadius: BorderRadius.only(
+                topLeft: const Radius.circular(12),
+                topRight: const Radius.circular(12),
+                bottomLeft: Radius.circular(isSentByMe ? 12 : 0),
+                bottomRight: Radius.circular(isSentByMe ? 0 : 12),
+              ),
+            ),
+            child: Text(
+              text,
+              style: const TextStyle(
+                fontSize: 14,
+              ),
             ),
           ),
-          child: Text(
-            text,
-            style: const TextStyle(
-              fontSize: 14,
-            ),
-          ),
-        ),
-        Text(
-          time,
-          style: TextStyle(color: Colors.grey),
-        )
-      ],
+          Text(
+            time,
+            style: TextStyle(color: Colors.grey),
+          )
+        ],
+      ),
     );
   }
 }
