@@ -118,7 +118,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
                 );
               }
               final item = favoriteController.favorites[index];
-              return FavoriteCard(data: item);
+              return FavoriteCard(data: item["Product"]);
             },
           );
         }),

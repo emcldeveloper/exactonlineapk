@@ -64,8 +64,7 @@ class _FavoriteCardState extends State<FavoriteCard> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ParagraphText(
-                      widget.data["description"] ?? "No description available",
+                  ParagraphText(widget.data["name"] ?? "No name available",
                       maxLines: 2),
                   spacer(),
                   Row(

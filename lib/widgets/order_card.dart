@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class OrderCard extends StatelessWidget {
   final Map<String, dynamic> data;
@@ -42,7 +43,9 @@ class OrderCard extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                           fontSize: 14.0),
                       ParagraphText(data['User']["name"] ?? "N/A"),
-                      ParagraphText(data['updatedAt'] ?? "N/A"),
+                      ParagraphText(
+                          timeago.format(DateTime.parse(data['updatedAt'])) ??
+                              "N/A"),
                     ],
                   ),
                 ),
