@@ -19,8 +19,6 @@ class OrdersController extends GetxController {
       var data = response.data["body"]["rows"];
       print(data);
       return data;
-      print(data);
-      return data;
     } on DioException catch (e) {
       print(e.response);
     }
@@ -51,22 +49,6 @@ class OrdersController extends GetxController {
       }
       var response = await dio.get(
           "/orders/shop/$shopId/?page=$page&limit=$limit&keyword=$keyword",
-          options: Options(headers: {
-            "Authorization":
-                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
-          }));
-
-      var data = response.data["body"]["rows"];
-      print(data);
-      return data;
-    } on DioException catch (e) {
-      print(e.response);
-    }
-  }
-
-  Future getOrder({id}) async {
-    try {
-      var response = await dio.get("/orders/$id",
           options: Options(headers: {
             "Authorization":
                 "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
