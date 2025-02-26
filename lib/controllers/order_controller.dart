@@ -23,6 +23,22 @@ class OrdersController extends GetxController {
     }
   }
 
+  Future getOrder({id}) async {
+    try {
+      var response = await dio.get("/orders/$id",
+          options: Options(headers: {
+            "Authorization":
+                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
+          }));
+
+      var data = response.data["body"];
+      print(data);
+      return data;
+    } on DioException catch (e) {
+      print(e.response);
+    }
+  }
+
   Future getShopOrders(page, limit, keyword) async {
     try {
       var shopId = await SharedPreferencesUtil.getSelectedBusiness();
