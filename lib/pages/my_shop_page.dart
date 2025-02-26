@@ -71,7 +71,8 @@ class _MyShopPageState extends State<MyShopPage> {
       final response = await shopController.getShopDetails(businessId);
       print("🆑 ${response}");
       if (response != null) {
-        bool isSubscribed = response["isSubscribed"];
+        // bool isSubscribed = response["isSubscribed"];
+        bool isSubscribed = true;
 
         if (!isSubscribed) {
           Get.to(() => const SubscriptionPage());
@@ -98,15 +99,17 @@ class _MyShopPageState extends State<MyShopPage> {
     }
   }
 
-  void _handleAddAction({required BuildContext context, required Widget page}) {
+  void _handleAddAction(
+      {required BuildContext context, required Widget page}) async {
     if (shopDetails.value.isNotEmpty &&
         shopDetails.value['isApproved'] == false) {
       _showApprovalBottomSheet(context);
     } else {
       print("Going to: $page"); // Debug print
-      Get.to(() => Container(
+      await Get.to(() => Container(
             child: page,
           ));
+      setState(() {});
     }
   }
 

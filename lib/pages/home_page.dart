@@ -190,7 +190,7 @@ class _HomePageState extends State<HomePage> {
           return DefaultTabController(
             length: categories.value.length,
             child: Scaffold(
-              backgroundColor: mainColor,
+              backgroundColor: Colors.grey[50],
               appBar: AppBar(
                 backgroundColor: mainColor,
                 elevation: 0,

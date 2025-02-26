@@ -16,17 +16,56 @@ class FavouritesPage extends StatefulWidget {
 class _FavouritesPageState extends State<FavouritesPage> {
   final FavoriteController favoriteController = Get.put(FavoriteController());
   var isLoading = false.obs;
+  final ScrollController _scrollController = ScrollController();
+  int _currentPage = 1;
+  final int _limit = 10; // Assuming a reasonable limit; adjust as needed
+  bool _isLoadingMore = false;
+  bool _hasMore = true;
 
   @override
   void initState() {
     super.initState();
-    _getFavoritesData();
+    _getFavoritesData(_currentPage); // Initial fetch
+    _scrollController.addListener(_onScroll); // Attach scroll listener
   }
 
-  Future<void> _getFavoritesData() async {
-    isLoading.value = true;
-    await favoriteController.fetchFavorites();
-    isLoading.value = false;
+  Future<void> _getFavoritesData(int page) async {
+    if (page > 1 && (_isLoadingMore || !_hasMore))
+      return; // Prevent overlap for subsequent pages
+    if (page == 1)
+      isLoading.value = true; // Show initial loading for first page
+    if (page > 1) setState(() => _isLoadingMore = true);
+
+    try {
+      // Assuming fetchFavorites accepts page and limit parameters
+      await favoriteController.fetchFavorites(page: page, limit: _limit);
+      if (favoriteController.favorites.length < _limit * page) {
+        _hasMore = false; // No more data if fewer items than expected
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error loading favorites: $e')),
+      );
+    } finally {
+      if (page == 1) isLoading.value = false;
+      if (page > 1) setState(() => _isLoadingMore = false);
+    }
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+            _scrollController.position.maxScrollExtent * 0.9 &&
+        !_isLoadingMore &&
+        _hasMore) {
+      _currentPage++;
+      _getFavoritesData(_currentPage);
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose(); // Clean up the controller
+    super.dispose();
   }
 
   @override
@@ -52,20 +91,33 @@ class _FavouritesPageState extends State<FavouritesPage> {
         child: Obx(() {
           if (isLoading.value) {
             return const Center(
-                child: CircularProgressIndicator(
-              color: Colors.black,
-            ));
+              child: CircularProgressIndicator(
+                color: Colors.black,
+              ),
+            );
           }
 
-          if (favoriteController.favorites.isEmpty) {
+          if (favoriteController.favorites.isEmpty && !_isLoadingMore) {
             return noData();
           }
 
           return ListView.builder(
-            itemCount: favoriteController.favorites.length,
+            controller: _scrollController, // Attach ScrollController
+            itemCount: favoriteController.favorites.length +
+                (_isLoadingMore ? 1 : 0), // Add loading item
             itemBuilder: (context, index) {
+              if (index == favoriteController.favorites.length &&
+                  _isLoadingMore) {
+                return const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10.0),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.black,
+                    ),
+                  ),
+                );
+              }
               final item = favoriteController.favorites[index];
-
               return FavoriteCard(data: item);
             },
           );

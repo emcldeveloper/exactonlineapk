@@ -38,28 +38,27 @@ class UpdatePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 ParagraphText(
-                  "A new version of the app is available. Please update to continue using all features.",
+                  "A new version of the app is available. Please update to continue using.",
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    customButton(
-                      onTap: () => exit(0),
-                      child: const Text("Not Now"),
-                    ),
-                    customButton(
-                      onTap: () {
-                        String url =
-                            Platform.isAndroid ? playStoreUrl : appStoreUrl;
-                        launchUrl(Uri.parse(url),
-                            mode: LaunchMode.externalApplication);
-                      },
-                      child: const Text("Update Now"),
-                    ),
-                  ],
+                customButton(
+                  text: "Update Now",
+                  onTap: () {
+                    String url =
+                        Platform.isAndroid ? playStoreUrl : appStoreUrl;
+                    launchUrl(Uri.parse(url),
+                        mode: LaunchMode.externalApplication);
+                  },
                 ),
+                SizedBox(
+                  height: 10,
+                ),
+                customButton(
+                    onTap: () => exit(0),
+                    textColor: Colors.black,
+                    buttonColor: Colors.grey[100],
+                    text: "Not Now"),
               ],
             ),
           ),

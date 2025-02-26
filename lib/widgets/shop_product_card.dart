@@ -78,11 +78,11 @@ class _ShopProductCardState extends State<ShopProductCard> {
           children: [
             // Image Section
             ClipRRect(
-              borderRadius: BorderRadius.circular(5),
+              borderRadius: BorderRadius.circular(10),
               child: Container(
-                  width: 100,
                   color: Colors.grey[200],
-                  height: 100,
+                  width: 120,
+                  height: 120,
                   child: widget.data['ProductImages'].length > 0
                       ? CachedNetworkImage(
                           fit: BoxFit.cover,
