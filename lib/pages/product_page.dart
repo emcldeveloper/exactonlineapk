@@ -121,18 +121,33 @@ class _ProductPageState extends State<ProductPage> {
     String productName =
         widget.productData['name'] ?? 'Check out this product!';
     String price = widget.productData['sellingPrice'] != null
-        ? "Price: TZS ${toMoneyFormmat(widget.productData['sellingPrice'])}"
+        ? " TZS ${toMoneyFormmat(widget.productData['sellingPrice'])}"
         : '';
-    String description = widget.productData['description'] ?? '';
 
-    String shareText =
-        "Purchase: $productName, which goes for: $price\nDescription:$description";
+    String shareText = "$productName for a price of $price";
 
     String fullAppLink = "$appLink?productId=$productId";
 
-    await Share.share(shareText +
-        "\n\nCheck out this product or explore more on ExactOnline!" +
-        fullAppLink);
+    // Fetch image URL
+    String imageUrl = widget.productData["ProductImages"][0]["image"];
+
+    try {
+      // Download image to temporary directory
+      final response = await http.get(Uri.parse(imageUrl));
+      final documentDirectory = await getTemporaryDirectory();
+      final file = File('${documentDirectory.path}/product.jpg');
+      await file.writeAsBytes(response.bodyBytes);
+
+      // Share image with text
+      await Share.shareXFiles([XFile(file.path)],
+          text:
+              "$shareText\n\nCheck out this product or explore more on ExactOnline! $fullAppLink");
+    } catch (e) {
+      print("Error sharing product image: $e");
+      // If image fails, share text only
+      await Share.share(
+          "$shareText\n\nCheck out this product or explore more on ExactOnline! $fullAppLink");
+    }
   }
 
   List<Map<String, dynamic>> _callProductReviews() {

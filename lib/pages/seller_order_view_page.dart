@@ -51,7 +51,8 @@ class _SellerOrderViewPageState extends State<SellerOrderViewPage> {
           ),
         ),
         // Use the name from orderData in the title
-        title: HeadingText("Order ${widget.order['id']}"),
+        title: HeadingText(
+            "Order ${widget.order['id'].toString().split('-').first}"),
         centerTitle: true,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
@@ -94,11 +95,15 @@ class _SellerOrderViewPageState extends State<SellerOrderViewPage> {
                       children: [
                         ParagraphText("Total Price"),
                         Builder(builder: (context) {
+                          print(orderedProducts
+                              .map((item) => item["Product"]["sellingPrice"]));
                           double totalPrice = orderedProducts
                               .map((item) =>
-                                  double.parse(item["Product"]["sellingPrice"]))
-                              .toList()
-                              .reduce((prev, item) => prev + item);
+                                  double.tryParse(
+                                      item["Product"]["sellingPrice"] ?? "0") ??
+                                  0)
+                              .fold(0.0, (prev, item) => prev + item);
+
                           return ParagraphText(
                               "TZS ${toMoneyFormmat(totalPrice.toString())}",
                               fontWeight: FontWeight.bold,

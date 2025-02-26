@@ -37,7 +37,8 @@ class OrderCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ParagraphText("Order ${data['id']}",
+                      ParagraphText(
+                          "Order ${data['id'].toString().split('-').first}",
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                           fontWeight: FontWeight.bold,

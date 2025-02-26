@@ -1,5 +1,4 @@
 import 'package:e_online/constants/colors.dart';
-import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/controllers/chat_controller.dart';
 import 'package:e_online/controllers/ordered_products_controller.dart';
 import 'package:e_online/pages/conversation_page.dart';
@@ -23,16 +22,21 @@ class CustomerOrderViewPage extends StatefulWidget {
 }
 
 class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
-  void _removeProduct(int index) {
-    setState(() {
-      productItems.removeAt(index);
-    });
+  /// Groups products by shop ID
+  Map<String, List<dynamic>> groupByShop(List<dynamic> orderedProducts) {
+    Map<String, List<dynamic>> groupedOrders = {};
+    for (var item in orderedProducts) {
+      String shopId = item["Product"]["Shop"]["id"].toString();
+      if (!groupedOrders.containsKey(shopId)) {
+        groupedOrders[shopId] = [];
+      }
+      groupedOrders[shopId]!.add(item);
+    }
+    return groupedOrders;
   }
 
   @override
   Widget build(BuildContext context) {
-    print("Ordered 🌕");
-    print(widget.order);
     return Scaffold(
       backgroundColor: mainColor,
       appBar: AppBar(
@@ -45,8 +49,8 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
             size: 16.0,
           ),
         ),
-        // Use the name from orderData in the title
-        title: HeadingText("Order ${widget.order['id']}"),
+        title: HeadingText(
+            "Order ${widget.order['id'].toString().split('-').first}"),
         centerTitle: true,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
@@ -57,87 +61,99 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
         ),
       ),
       body: FutureBuilder(
-          future: OrderedProductController()
-              .getUserOrderproducts(widget.order["id"]),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: const CircularProgressIndicator(
-                  color: Colors.black,
-                ),
-              );
-            }
-            List orderedProducts = snapshot.requireData;
+        future:
+            OrderedProductController().getUserOrderproducts(widget.order["id"]),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+                child: CircularProgressIndicator(color: Colors.black));
+          }
+          if (!snapshot.hasData || snapshot.data.isEmpty) {
+            return Center(
+                child: ParagraphText("No products found in this order."));
+          }
 
-            print("Ordered products ${orderedProducts}");
-            return SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Column(
-                      children: orderedProducts.map((item) {
-                        return HorizontalProductCard(
-                          data: item,
-                        );
-                      }).toList(),
-                    ),
-                    spacer(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        ParagraphText("Total Price"),
-                        Builder(builder: (context) {
-                          double totalPrice = 0;
-                          if (orderedProducts.length > 0)
-                            orderedProducts
-                                .map((item) => double.parse(
-                                    item["Product"]["sellingPrice"]))
-                                .toList()
-                                .reduce((prev, item) => prev + item);
-                          return ParagraphText(
-                              "TZS ${toMoneyFormmat(totalPrice.toString())}",
-                              fontWeight: FontWeight.bold,
-                              fontSize: 17);
-                        })
-                      ],
-                    ),
-                    spacer3(),
-                    customButton(
-                      onTap: () {
-                        launchUrl(Uri(
-                            scheme: "tel",
-                            path: widget.order["OrderedProducts"]?[0]
-                                ?["Product"]["Shop"]["phone"]));
-                      },
-                      text: "Call Seller",
-                    ),
-                    spacer(),
-                    customButton(
-                      onTap: () {
-                        ChatController().addChat({
-                          "ShopId": widget.order["OrderedProducts"]?[0]
-                              ?["Product"]["Shop"]["id"],
-                          "UserId": widget.order["UserId"]
-                        }).then((res) {
-                          print(res);
-                          Get.to(() => ConversationPage(
-                                res,
-                                order: widget.order,
-                              ));
-                        });
-                      },
-                      text: "Chat with Seller",
-                      buttonColor: primaryColor,
-                      textColor: Colors.black,
-                    ),
-                    spacer3(),
-                  ],
-                ),
+          List orderedProducts = snapshot.requireData;
+          Map<String, List<dynamic>> groupedOrders =
+              groupByShop(orderedProducts);
+
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: groupedOrders.entries.map((entry) {
+                  String shopId = entry.key;
+                  List<dynamic> products = entry.value;
+                  String shopName = products.first["Product"]["Shop"]["name"];
+                  String shopPhone = products.first["Product"]["Shop"]["phone"];
+
+                  double totalPrice = products
+                      .map((item) =>
+                          double.tryParse(
+                              item["Product"]["sellingPrice"] ?? "0") ??
+                          0)
+                      .fold(0.0, (prev, item) => prev + item);
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      /// Shop Name
+                      HeadingText(shopName,
+                          fontSize: 18, fontWeight: FontWeight.bold),
+                      spacer(),
+
+                      /// Display all products under this shop
+                      Column(
+                        children: products
+                            .map((item) => HorizontalProductCard(data: item))
+                            .toList(),
+                      ),
+                      spacer(),
+
+                      /// Total Price for the Shop
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          ParagraphText("Total Price"),
+                          ParagraphText(
+                            "TZS ${toMoneyFormmat(totalPrice.toString())}",
+                            fontWeight: FontWeight.bold,
+                            fontSize: 17,
+                          ),
+                        ],
+                      ),
+                      spacer(),
+
+                      /// Call & Chat Buttons
+                      customButton(
+                        onTap: () =>
+                            launchUrl(Uri(scheme: "tel", path: shopPhone)),
+                        text: "Call Seller",
+                      ),
+                      spacer(),
+                      customButton(
+                        onTap: () {
+                          ChatController().addChat({
+                            "ShopId": shopId,
+                            "UserId": widget.order["UserId"]
+                          }).then((res) {
+                            Get.to(() =>
+                                ConversationPage(res, order: widget.order));
+                          });
+                        },
+                        text: "Chat with Seller",
+                        buttonColor: primaryColor,
+                        textColor: Colors.black,
+                      ),
+                      spacer3(),
+                    ],
+                  );
+                }).toList(),
               ),
-            );
-          }),
+            ),
+          );
+        },
+      ),
     );
   }
 }

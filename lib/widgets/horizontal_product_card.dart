@@ -88,12 +88,16 @@ class _HorizontalProductCardState extends State<HorizontalProductCard> {
         child: Row(
           children: [
             // Image Section
-            Container(
-              width: 100,
-              height: 100,
-              child: CachedNetworkImage(
-                  imageUrl: widget.data["Product"]["ProductImages"][0]
-                      ['image']),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Container(
+                width: 120,
+                height: 120,
+                child: CachedNetworkImage(
+                    fit: BoxFit.cover,
+                    imageUrl: widget.data["Product"]["ProductImages"][0]
+                        ['image']),
+              ),
             ),
 
             const SizedBox(width: 12),
@@ -103,8 +107,7 @@ class _HorizontalProductCardState extends State<HorizontalProductCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ParagraphText(
-                      widget.data["Product"]['description'] ??
-                          "No description available",
+                      widget.data["Product"]['name'] ?? "No name available",
                       maxLines: 2),
                   spacer(),
                   Row(
@@ -117,28 +120,16 @@ class _HorizontalProductCardState extends State<HorizontalProductCard> {
                               fontWeight: FontWeight.bold,
                               fontSize: 16.0,
                             ),
-                            const SizedBox(width: 8),
-                            ParagraphText(
-                              "${widget.data["Product"]['views'] ?? 0} views",
-                              color: mutedTextColor,
-                            ),
                           ],
                         ),
                       ),
-                      const SizedBox(width: 4),
-                      Row(
-                        children: [
-                          const Icon(Icons.star, color: Colors.amber, size: 16),
-                          const SizedBox(width: 4),
-                          ParagraphText(
-                            (widget.data["Product"]['rating']?.toString() ??
-                                "0"),
-                            color: Colors.black,
-                          ),
-                        ],
-                      ),
                     ],
                   ),
+                  ParagraphText(
+                      widget.data["Product"]['Shop']["name"] ??
+                          "No name available",
+                      color: Colors.red,
+                      maxLines: 2),
                 ],
               ),
             ),
