@@ -15,11 +15,6 @@ class OrdersController extends GetxController {
             "Authorization":
                 "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
           }));
-          "/orders/user/${userController.user.value["id"]}/?page=$page&limit=$limit&keyword=$keyword",
-          options: Options(headers: {
-            "Authorization":
-                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
-          }));
 
       var data = response.data["body"]["rows"];
       print(data);
@@ -30,10 +25,7 @@ class OrdersController extends GetxController {
       print(e.response);
     }
     }
-  }
 
-  Future getShopOrders(page, limit, keyword) async {
-    try {
   Future getShopOrders(page, limit, keyword) async {
     try {
       var shopId = await SharedPreferencesUtil.getSelectedBusiness();

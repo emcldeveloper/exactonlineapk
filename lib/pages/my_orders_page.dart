@@ -1,6 +1,7 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/controllers/order_controller.dart';
+import 'package:e_online/pages/customer_order_view_page.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/no_data.dart';
 import 'package:e_online/widgets/order_card.dart';
@@ -8,7 +9,6 @@ import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class MyOrdersPage extends StatelessWidget {
 class MyOrdersPage extends StatelessWidget {
   const MyOrdersPage({super.key});
 

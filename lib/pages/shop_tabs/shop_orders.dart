@@ -1,8 +1,10 @@
 import 'package:e_online/controllers/order_controller.dart';
+import 'package:e_online/pages/seller_order_view_page.dart';
 import 'package:e_online/widgets/no_data.dart';
 import 'package:e_online/widgets/order_card.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class ShopOrders extends StatelessWidget {
   const ShopOrders({super.key});
