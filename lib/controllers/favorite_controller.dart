@@ -15,10 +15,11 @@ class FavoriteController extends GetxController {
     fetchFavorites();
   }
 
-  Future<void> fetchFavorites() async {
+  Future<void> fetchFavorites({page = 1, limit = 10}) async {
     try {
       var userId = userController.user.value['id'] ?? "";
-      var response = await dio.get("/favorites/user/$userId",
+      var response = await dio.get(
+          "/favorites/user/$userId?limit=$limit&page=$page",
           options: Options(headers: {
             "Authorization":
                 "Bearer ${await SharedPreferencesUtil.getAccessToken()}"

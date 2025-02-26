@@ -47,8 +47,8 @@ class _FavoriteCardState extends State<FavoriteCard> {
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: Container(
-                width: 80,
-                height: 80,
+                width: 120,
+                height: 120,
                 child: CachedNetworkImage(
                   fit: BoxFit.cover,
                   imageUrl: widget.data['ProductImages']?[0]?["image"] ?? "",

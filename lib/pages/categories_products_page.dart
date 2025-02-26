@@ -13,9 +13,9 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 class CategoriesProductsPage extends StatefulWidget {
-  var category;
+  final dynamic category;
 
-  CategoriesProductsPage({super.key, required this.category});
+  const CategoriesProductsPage({super.key, required this.category});
 
   @override
   State<CategoriesProductsPage> createState() => _CategoriesProductsPageState();
@@ -24,20 +24,73 @@ class CategoriesProductsPage extends StatefulWidget {
 class _CategoriesProductsPageState extends State<CategoriesProductsPage> {
   var loading = true.obs;
   Rx<List> products = Rx<List>([]);
+  final ScrollController _scrollController = ScrollController();
+  int _currentPage = 1;
+  final int _limit = 10; // Kept at 10 as per original code
+  bool _isLoadingMore = false;
+  bool _hasMore = true;
 
   @override
   void initState() {
-    print(widget.category["id"]);
-    ProductController()
-        .getProducts(
-            page: 1, limit: 10, keyword: "", category: widget.category["id"])
-        .then((res) {
-      products.value = res;
-      print("products.value");
-      print(products.value);
-      loading.value = false;
-    });
     super.initState();
+    _fetchProducts(_currentPage); // Initial fetch
+    _scrollController.addListener(_onScroll); // Attach scroll listener
+  }
+
+  Future<void> _fetchProducts(int page) async {
+    if (page > 1 && (_isLoadingMore || !_hasMore))
+      return; // Prevent overlap for subsequent pages
+    if (page == 1)
+      loading.value = true; // Only show initial loading for first page
+    if (page > 1) setState(() => _isLoadingMore = true);
+
+    try {
+      final res = await ProductController().getProducts(
+        page: page,
+        limit: _limit,
+        keyword: "",
+        category: widget.category["id"],
+      );
+
+      final filteredRes =
+          res; // Assuming filtering is done server-side or not needed here
+
+      if (filteredRes.isEmpty || filteredRes.length < _limit) {
+        _hasMore = false; // No more data to fetch
+      }
+
+      if (page == 1) {
+        products.value = filteredRes; // Replace for first page
+      } else {
+        products.value = [
+          ...products.value,
+          ...filteredRes
+        ]; // Append for subsequent pages
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error loading products: $e')),
+      );
+    } finally {
+      if (page == 1) loading.value = false;
+      if (page > 1) setState(() => _isLoadingMore = false);
+    }
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+            _scrollController.position.maxScrollExtent * 0.9 &&
+        !_isLoadingMore &&
+        _hasMore) {
+      _currentPage++;
+      _fetchProducts(_currentPage);
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose(); // Clean up the controller
+    super.dispose();
   }
 
   @override
@@ -68,28 +121,44 @@ class _CategoriesProductsPageState extends State<CategoriesProductsPage> {
         ),
       ),
       body: GetX<ProductController>(
-          init: ProductController(),
-          builder: (context) {
-            return loading.value
-                ? const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: CircularProgressIndicator(
-                        color: Colors.black,
-                      ),
+        init: ProductController(),
+        builder: (controller) {
+          return loading.value
+              ? const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: CircularProgressIndicator(
+                      color: Colors.black,
                     ),
-                  )
-                : products.value.isEmpty
-                    ? noData()
-                    : Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: ListView.builder(
-                            itemCount: products.value.length,
-                            itemBuilder: (context, index) {
-                              return FavoriteCard(data: products.value[index]);
-                            }),
-                      );
-          }),
+                  ),
+                )
+              : products.value.isEmpty
+                  ? noData()
+                  : Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: ListView.builder(
+                        controller:
+                            _scrollController, // Attach ScrollController
+                        itemCount: products.value.length +
+                            (_isLoadingMore ? 1 : 0), // Add loading item
+                        itemBuilder: (context, index) {
+                          if (index == products.value.length &&
+                              _isLoadingMore) {
+                            return const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 10.0),
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.black,
+                                ),
+                              ),
+                            );
+                          }
+                          return FavoriteCard(data: products.value[index]);
+                        },
+                      ),
+                    );
+        },
+      ),
     );
   }
 }

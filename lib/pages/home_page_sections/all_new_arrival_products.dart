@@ -2,7 +2,6 @@ import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/product_controller.dart';
 import 'package:e_online/widgets/favorite_card.dart';
 import 'package:e_online/widgets/heading_text.dart';
-import 'package:e_online/widgets/product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -15,15 +14,68 @@ class AllNewArrivalProducts extends StatefulWidget {
 
 class _AllNewArrivalProductsState extends State<AllNewArrivalProducts> {
   Rx<List> products = Rx<List>([]);
+  final ScrollController _scrollController = ScrollController();
+  int _currentPage = 1;
+  final int _limit = 10; // Kept at 20 as per original code
+  bool _isLoading = false;
+  bool _hasMore = true;
+
   @override
   void initState() {
-    ProductController()
-        .getNewProducts(page: 1, limit: 20, keyword: "")
-        .then((res) {
-      products.value =
-          res.where((item) => item["ProductImages"].length > 0).toList();
-    });
     super.initState();
+    _fetchProducts(_currentPage); // Initial fetch
+    _scrollController.addListener(_onScroll); // Attach scroll listener
+  }
+
+  Future<void> _fetchProducts(int page) async {
+    if (_isLoading || !_hasMore)
+      return; // Prevent multiple simultaneous fetches
+    setState(() => _isLoading = true);
+
+    try {
+      final res = await ProductController().getNewProducts(
+        page: page,
+        limit: _limit,
+        keyword: "",
+      );
+      final filteredRes =
+          res.where((item) => item["ProductImages"].length > 0).toList();
+
+      if (filteredRes.isEmpty || filteredRes.length < _limit) {
+        _hasMore = false; // No more data to fetch
+      }
+
+      if (page == 1) {
+        products.value = filteredRes; // Replace for first page
+      } else {
+        products.value = [
+          ...products.value,
+          ...filteredRes
+        ]; // Append for subsequent pages
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error loading products: $e')),
+      );
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+            _scrollController.position.maxScrollExtent * 0.9 &&
+        !_isLoading &&
+        _hasMore) {
+      _currentPage++;
+      _fetchProducts(_currentPage);
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose(); // Clean up the controller
+    super.dispose();
   }
 
   @override
@@ -54,23 +106,34 @@ class _AllNewArrivalProductsState extends State<AllNewArrivalProducts> {
         ),
       ),
       body: Obx(
-        () => products.value.isEmpty
+        () => products.value.isEmpty && !_isLoading
             ? const Center(
                 child: CircularProgressIndicator(
-                color: Colors.black,
-              ))
+                  color: Colors.black,
+                ),
+              )
             : Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: SizedBox(
-                  child: ListView.builder(
-                    itemCount: products.value.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 10.0),
-                        child: FavoriteCard(data: products.value[index]),
+                child: ListView.builder(
+                  controller: _scrollController, // Attach ScrollController
+                  itemCount: products.value.length +
+                      (_isLoading ? 1 : 0), // Add loading item
+                  itemBuilder: (context, index) {
+                    if (index == products.value.length && _isLoading) {
+                      return const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10.0),
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.black,
+                          ),
+                        ),
                       );
-                    },
-                  ),
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10.0),
+                      child: FavoriteCard(data: products.value[index]),
+                    );
+                  },
                 ),
               ),
       ),

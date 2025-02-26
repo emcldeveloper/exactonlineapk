@@ -71,76 +71,134 @@ class ReelsPage extends StatelessWidget {
   }
 }
 
-class ProductMasonryGrid extends StatelessWidget {
+class ProductMasonryGrid extends StatefulWidget {
   const ProductMasonryGrid({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: ReelController().getReels(page: 1, limit: 20),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(color: Colors.black),
-          );
-        }
-        if (!snapshot.hasData || snapshot.data == null) {
-          return const Center(child: Text("No reels available."));
-        }
+  State<ProductMasonryGrid> createState() => _ProductMasonryGridState();
+}
 
-        final List<Map<String, dynamic>> reels =
-            (snapshot.data as List<dynamic>)
-                .map((item) => item as Map<String, dynamic>)
-                .toList();
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              childAspectRatio: 0.44,
-            ),
-            itemCount: reels.length,
-            itemBuilder: (context, index) {
-              final reel = reels[index];
-              return ConstrainedBox(
-                constraints: const BoxConstraints(
-                  minHeight: 200,
-                  maxHeight: double.infinity,
+class _ProductMasonryGridState extends State<ProductMasonryGrid> {
+  List<Map<String, dynamic>> reels = [];
+  final ScrollController _scrollController = ScrollController();
+  int _currentPage = 1;
+  final int _limit = 10; // Kept at 20 as per original code
+  bool _isLoading = false;
+  bool _hasMore = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchReels(_currentPage); // Initial fetch
+    _scrollController.addListener(_onScroll); // Attach scroll listener
+  }
+
+  Future<void> _fetchReels(int page) async {
+    if (_isLoading || !_hasMore)
+      return; // Prevent multiple simultaneous fetches
+    setState(() => _isLoading = true);
+
+    try {
+      final res = await ReelController().getReels(page: page, limit: _limit);
+      final newReels = (res as List<dynamic>)
+          .map((item) => item as Map<String, dynamic>)
+          .toList();
+
+      if (newReels.isEmpty || newReels.length < _limit) {
+        _hasMore = false; // No more data to fetch
+      }
+
+      setState(() {
+        if (page == 1) {
+          reels = newReels; // Replace for first page
+        } else {
+          reels.addAll(newReels); // Append for subsequent pages
+        }
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error loading reels: $e')),
+      );
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+            _scrollController.position.maxScrollExtent * 0.9 &&
+        !_isLoading &&
+        _hasMore) {
+      _currentPage++;
+      _fetchReels(_currentPage);
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose(); // Clean up the controller
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return reels.isEmpty && _isLoading
+        ? const Center(
+            child: CircularProgressIndicator(color: Colors.black),
+          )
+        : reels.isEmpty
+            ? const Center(child: Text("No reels available."))
+            : Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: GridView.builder(
+                  controller: _scrollController, // Attach ScrollController
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                    childAspectRatio: 0.44,
+                  ),
+                  itemCount:
+                      reels.length + (_isLoading ? 2 : 0), // Add loading items
+                  itemBuilder: (context, index) {
+                    if (index >= reels.length && _isLoading) {
+                      return const Center(
+                        child: CircularProgressIndicator(color: Colors.black),
+                      );
+                    }
+                    final reel = reels[index];
+                    return ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        minHeight: 200,
+                        maxHeight: double.infinity,
+                      ),
+                      child: ReelCard(data: reel),
+                    );
+                  },
                 ),
-                child: ReelCard(data: reel),
               );
-            },
-          ),
-        );
-      },
-    );
   }
 }
 
 class ReelCard extends StatelessWidget {
   final Map<String, dynamic> data;
 
-  ReelCard({required this.data, super.key});
+  const ReelCard({required this.data, super.key});
 
   @override
   Widget build(BuildContext context) {
     // Extract shop data
     final shopData = data['Shop'] ?? {};
-    print("data za reel general");
-    print(data);
     final shopName = shopData['name'] ?? "No Name";
     final shopImage = shopData['shopImage'];
 
     String formatDuration(String duration) {
       try {
-        // Split the duration string into hours, minutes, and seconds
         final parts = duration.split(':');
         if (parts.length == 3) {
-          final minutes = parts[1]; // Extract minutes
-          final seconds = parts[2]; // Extract seconds
-          return '$minutes:$seconds'; // Return formatted as MM:SS
+          final minutes = parts[1];
+          final seconds = parts[2];
+          return '$minutes:$seconds';
         }
         return '00:00';
       } catch (e) {
@@ -173,20 +231,19 @@ class ReelCard extends StatelessWidget {
                           imageUrl: data['thumbnail'] ?? '',
                           width: double.infinity,
                           fit: BoxFit.cover,
-                          errorWidget: (context, url, error) => Icon(
+                          errorWidget: (context, url, error) => const Icon(
                             Icons.broken_image,
                             size: 100,
                             color: Colors.grey,
                           ),
                         )
-                      : Icon(
+                      : const Icon(
                           Icons.videocam_off,
                           size: 100,
                           color: Colors.grey,
                         ),
                 ),
               ),
-              // Duration indicator
               Positioned(
                 right: 8,
                 bottom: 8,
@@ -199,7 +256,7 @@ class ReelCard extends StatelessWidget {
                   ),
                   child: Text(
                     formatDuration(data['duration'] ?? '00:00'),
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
@@ -209,7 +266,6 @@ class ReelCard extends StatelessWidget {
               ),
             ],
           ),
-          // Content Section
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Column(
@@ -222,12 +278,9 @@ class ReelCard extends StatelessWidget {
                   fontSize: 14,
                 ),
                 spacer(),
-                // Shop Info and Likes
                 Row(
-                  mainAxisSize: MainAxisSize
-                      .min, // Allow Row to shrink to fit its children
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Profile Picture
                     InkWell(
                       onTap: () {
                         Navigator.push(
@@ -240,8 +293,7 @@ class ReelCard extends StatelessWidget {
                         );
                       },
                       child: Row(
-                        mainAxisSize:
-                            MainAxisSize.min, // Prevents Row from expanding
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           CircleAvatar(
                             radius: 12,
@@ -251,27 +303,21 @@ class ReelCard extends StatelessWidget {
                                     as ImageProvider,
                           ),
                           const SizedBox(width: 8),
-                          // Shopname
                           Flexible(
-                            fit: FlexFit
-                                .loose, // Allow shrinking to avoid overflow
+                            fit: FlexFit.loose,
                             child: Text(
                               shopName,
                               style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
                               ),
-                              overflow: TextOverflow
-                                  .ellipsis, // Ensure text doesn't overflow
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
                       ),
                     ),
-
-                    const Spacer(), // Push Likes section to the right
-
-                    // Likes
+                    const Spacer(),
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -291,7 +337,7 @@ class ReelCard extends StatelessWidget {
                       ],
                     ),
                   ],
-                )
+                ),
               ],
             ),
           ),
