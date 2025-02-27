@@ -2,19 +2,21 @@ import 'dart:async';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/firebase_options.dart';
 import 'package:e_online/pages/auth/onboarding_pages.dart';
-import 'package:e_online/pages/error_page.dart';
 import 'package:e_online/pages/splashscreen_page.dart';
 import 'package:e_online/pages/update_page.dart';
 import 'package:e_online/pages/way_page.dart';
 import 'package:e_online/utils/shared_preferences.dart';
 import 'package:e_online/utils/update_checker.dart';
 import 'package:e_online/widgets/network_listener.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:uni_links5/uni_links.dart';
+import 'package:flutter/foundation.dart';
 
 // Background message handler (must be top-level)
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -32,6 +34,14 @@ void main() async {
   await requestNotificationPermission();
   await getToken();
   setupFirebaseMessagingHandlers();
+
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FirebaseCrashlytics.instance.recordFlutterFatalError(details);
+  };
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
 
   runApp(const MyApp());
 }
@@ -146,6 +156,9 @@ void initDeepLinkListener() {
 }
 
 class MyApp extends StatelessWidget {
+  static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  static FirebaseAnalyticsObserver observer =
+      FirebaseAnalyticsObserver(analytics: analytics);
   const MyApp({super.key});
 
   @override
@@ -153,6 +166,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: "ExactOnline",
+      navigatorObservers: [observer],
       theme: ThemeData(
         primaryColor: Colors.black,
         textTheme: GoogleFonts.interTextTheme(),

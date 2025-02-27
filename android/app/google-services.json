@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "94342479258",
-    "project_id": "exactonline-a6e7d",
-    "storage_bucket": "exactonline-a6e7d.firebasestorage.app"
+    "project_number": "773239040686",
+    "project_id": "eonline-e4ef3",
+    "storage_bucket": "eonline-e4ef3.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:94342479258:android:1fd95d688a3504072a8e23",
+        "mobilesdk_app_id": "1:773239040686:android:d363c484025797057f1b3f",
         "android_client_info": {
-          "package_name": "com.exactmanpower.e_online"
+          "package_name": "com.exactmanpower.eOnline"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAFPwe_q5j0YisuBtRO4p0zSIght9LSxwI"
+          "current_key": "AIzaSyAQx85CNEAF1g-QEWSsfAxLqb7r05vrvco"
         }
       ],
       "services": {

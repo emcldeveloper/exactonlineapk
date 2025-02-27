@@ -1,4 +1,4 @@
-package com.exactmanpower.e_online
+package com.exactmanpower.eOnline
 
 import io.flutter.embedding.android.FlutterActivity
 
