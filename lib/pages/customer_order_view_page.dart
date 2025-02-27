@@ -137,6 +137,9 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                             "ShopId": shopId,
                             "UserId": widget.order["UserId"]
                           }).then((res) {
+                            widget.order["Products"] = products
+                                .map((item) => item["Product"])
+                                .toList();
                             Get.to(() =>
                                 ConversationPage(res, order: widget.order));
                           });

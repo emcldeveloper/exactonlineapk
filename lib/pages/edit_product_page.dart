@@ -378,8 +378,8 @@ class _EditProductPageState extends State<EditProductPage> {
                           var payload = {
                             "name": nameController.text,
                             "sellingPrice": priceController.text,
-                            "productLink": nameController.text,
-                            "description": nameController.text,
+                            "productLink": linkController.text,
+                            "description": descriptionController.text,
                             "priceIncludeDelivery": priceIncludeDelivery.value,
                             "specifications": specifications,
                             "deliveryScope": deliveryScopeController.text,

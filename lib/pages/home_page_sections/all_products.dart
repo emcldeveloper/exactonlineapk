@@ -4,85 +4,25 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 
-class AllProducts extends StatefulWidget {
-  const AllProducts({super.key});
+class AllProducts extends StatelessWidget {
+  AllProducts({super.key});
 
-  @override
-  State<AllProducts> createState() => _AllProductsState();
-}
-
-class _AllProductsState extends State<AllProducts> {
-  Rx<List> products = Rx<List>([]);
+  final RxList products = <dynamic>[].obs;
   final ScrollController _scrollController = ScrollController();
+  final RxBool isLoading = false.obs;
+  final RxBool hasMore = true.obs;
   int _currentPage = 1;
-  final int _limit = 50; // Kept at 20 as per original code
-  bool _isLoading = false;
-  bool _hasMore = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchProducts(_currentPage); // Initial fetch
-    _scrollController.addListener(_onScroll); // Attach scroll listener
-  }
-
-  Future<void> _fetchProducts(int page) async {
-    if (_isLoading || !_hasMore)
-      return; // Prevent multiple simultaneous fetches
-    setState(() => _isLoading = true);
-
-    try {
-      final res = await ProductController().getProducts(
-        page: page,
-        limit: _limit,
-        keyword: "",
-      );
-      final filteredRes =
-          res.where((item) => item["ProductImages"].length > 0).toList();
-
-      if (filteredRes.isEmpty || filteredRes.length < _limit) {
-        _hasMore = false; // No more data to fetch
-      }
-
-      if (page == 1) {
-        products.value = filteredRes; // Replace for first page
-      } else {
-        products.value = [
-          ...products.value,
-          ...filteredRes
-        ]; // Append for subsequent pages
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error loading products: $e')),
-      );
-    } finally {
-      setState(() => _isLoading = false);
-    }
-  }
-
-  void _onScroll() {
-    if (_scrollController.position.pixels >=
-            _scrollController.position.maxScrollExtent * 0.9 &&
-        !_isLoading &&
-        _hasMore) {
-      _currentPage++;
-      _fetchProducts(_currentPage);
-    }
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose(); // Clean up the controller
-    super.dispose();
-  }
+  final int _limit = 50;
 
   @override
   Widget build(BuildContext context) {
+    _fetchProducts(_currentPage);
+    _scrollController.addListener(_onScroll);
+
     return Obx(
       () => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: products.value.isEmpty && !_isLoading
+        child: products.isEmpty && !isLoading.value
             ? GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -94,21 +34,18 @@ class _AllProductsState extends State<AllProducts> {
                 ),
                 itemCount: 5,
                 itemBuilder: (context, index) {
-                  return Container(
-                    child: Shimmer.fromColors(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Container(color: Colors.black),
-                      ),
-                      baseColor: Colors.grey.shade200,
-                      highlightColor: Colors.grey.shade50,
-                      enabled: true,
+                  return Shimmer.fromColors(
+                    baseColor: Colors.grey.shade200,
+                    highlightColor: Colors.grey.shade50,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Container(color: Colors.black),
                     ),
                   );
                 },
               )
             : GridView.builder(
-                controller: _scrollController, // Attach ScrollController
+                controller: _scrollController,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -117,28 +54,61 @@ class _AllProductsState extends State<AllProducts> {
                   mainAxisSpacing: 2.0,
                   childAspectRatio: 0.68,
                 ),
-                itemCount: products.value.length +
-                    (_isLoading ? 2 : 0), // Add loading items
+                itemCount: products.length + (isLoading.value ? 2 : 0),
                 itemBuilder: (context, index) {
-                  if (index >= products.value.length && _isLoading) {
-                    // Loading placeholders for grid (2 items for crossAxisCount: 2)
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 5.0),
-                      child: Shimmer.fromColors(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Container(color: Colors.black),
-                        ),
-                        baseColor: Colors.grey.shade200,
-                        highlightColor: Colors.grey.shade50,
-                        enabled: true,
+                  if (index >= products.length && isLoading.value) {
+                    return Shimmer.fromColors(
+                      baseColor: Colors.grey.shade200,
+                      highlightColor: Colors.grey.shade50,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(color: Colors.black),
                       ),
                     );
                   }
-                  return ProductCard(data: products.value[index], height: 190);
+                  return ProductCard(data: products[index], height: 190);
                 },
               ),
       ),
     );
+  }
+
+  Future<void> _fetchProducts(int page) async {
+    if (isLoading.value || !hasMore.value) return;
+
+    isLoading.value = true;
+    try {
+      final res = await ProductController().getProducts(
+        page: page,
+        limit: _limit,
+        keyword: "",
+      );
+      final filteredRes =
+          res.where((item) => item["ProductImages"].isNotEmpty).toList();
+
+      if (filteredRes.isEmpty || filteredRes.length < _limit) {
+        hasMore.value = false;
+      }
+
+      if (page == 1) {
+        products.value = filteredRes;
+      } else {
+        products.addAll(filteredRes);
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Error loading products: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+            _scrollController.position.maxScrollExtent * 0.9 &&
+        !isLoading.value &&
+        hasMore.value) {
+      _currentPage++;
+      _fetchProducts(_currentPage);
+    }
   }
 }

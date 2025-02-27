@@ -26,7 +26,7 @@ Widget userChatCard(Map<String, dynamic> chat) {
                     color: Colors.grey[200],
                     child: Center(
                         child: HeadingText(
-                            "${chat["Shop"]["name"].toString().split(" ")[0][0]}${chat["Shop"]["name"].toString().split(" ")![1]![0]}"))),
+                            "${chat["Shop"]["name"].toString().split(" ")[0][0]}"))),
               ),
         const SizedBox(width: 12),
         Expanded(

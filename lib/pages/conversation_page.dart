@@ -8,6 +8,7 @@ import 'package:e_online/controllers/message_controllers.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/models/message.dart';
 import 'package:e_online/pages/customer_order_view_page.dart';
+import 'package:e_online/pages/product_page.dart';
 import 'package:e_online/pages/viewImage.dart';
 import 'package:e_online/utils/convert_to_money_format.dart';
 import 'package:e_online/widgets/heading_text.dart';
@@ -19,6 +20,7 @@ import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:intl/intl.dart';
+import 'package:money_formatter/money_formatter.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -49,6 +51,7 @@ class _ConversationPageState extends State<ConversationPage> {
   }
 
   TextEditingController messageController = TextEditingController();
+
   // List<String> messages = [];
 
   @override
@@ -126,7 +129,15 @@ class _ConversationPageState extends State<ConversationPage> {
           builder: (find) {
             return StreamBuilder<List<Message>>(
                 initialData: find.messages,
-                stream: find.getMessages(chatId: widget.chat["id"]),
+                stream: widget.product != null
+                    ? find.getProductMessages(
+                        chatId: widget.chat["id"],
+                        productId: widget.product!["id"])
+                    : widget.order != null
+                        ? find.getOrderMessages(
+                            chatId: widget.chat["id"],
+                            orderId: widget.order!["id"])
+                        : find.getMessages(chatId: widget.chat["id"]),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
@@ -135,9 +146,97 @@ class _ConversationPageState extends State<ConversationPage> {
                     ));
                   }
                   List<Message> messages = snapshot.requireData;
-                  print(messages.map((item) => item.message));
+
                   return Column(
                     children: [
+                      if (widget.order != null)
+                        GestureDetector(
+                          onTap: () {
+                            Get.back();
+                          },
+                          child: Container(
+                            color: Colors.grey[100],
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 5),
+                              child: Row(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Container(
+                                        width: 80,
+                                        height: 80,
+                                        child: CachedNetworkImage(
+                                            imageUrl: widget.order!["Products"]
+                                                    [0]["ProductImages"][0]
+                                                ["image"])),
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      HeadingText(
+                                          "Order: ${widget.order!["id"].toString().split("-").last}",
+                                          fontSize: 14),
+                                      ParagraphText(
+                                          "This is conversation about this order",
+                                          fontSize: 12)
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      if (widget.product != null)
+                        GestureDetector(
+                          onTap: () {
+                            Get.to(() =>
+                                ProductPage(productData: widget.product!));
+                          },
+                          child: Container(
+                            color: Colors.grey[100],
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 5),
+                              child: Row(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Container(
+                                        width: 80,
+                                        height: 80,
+                                        child: CachedNetworkImage(
+                                            fit: BoxFit.cover,
+                                            imageUrl:
+                                                widget.product!["ProductImages"]
+                                                    [0]["image"])),
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      HeadingText("${widget.product!["name"]}",
+                                          fontSize: 14),
+                                      ParagraphText(
+                                          "TZS ${toMoneyFormmat(widget.product!["sellingPrice"])}",
+                                          fontSize: 12),
+                                      ParagraphText(
+                                          "This is conversation about this product",
+                                          fontSize: 12)
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
                       Expanded(
                         child: ListView.builder(
                           controller: _scrollController,
@@ -264,21 +363,21 @@ class ChatBubble extends StatelessWidget {
         crossAxisAlignment:
             isSentByMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
-          if (message.hasOrder())
-            GestureDetector(
-                onTap: () {
-                  Get.to(
-                      () => CustomerOrderViewPage(order: message.order.value));
-                },
-                child:
-                    ParagraphText("View Order", fontWeight: FontWeight.bold)),
-          if (message.hasProduct())
-            GestureDetector(
-                onTap: () {
-                  showProductInChat(message);
-                },
-                child:
-                    ParagraphText("View Product", fontWeight: FontWeight.bold)),
+          // if (message.hasOrder())
+          //   GestureDetector(
+          //       onTap: () {
+          //         Get.to(
+          //             () => CustomerOrderViewPage(order: message.order.value));
+          //       },
+          //       child:
+          //           ParagraphText("View Order", fontWeight: FontWeight.bold)),
+          // if (message.hasProduct())
+          //   GestureDetector(
+          //       onTap: () {
+          //         showProductInChat(message);
+          //       },
+          //       child:
+          //           ParagraphText("View Product", fontWeight: FontWeight.bold)),
           Container(
             margin: const EdgeInsets.symmetric(vertical: 4),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
