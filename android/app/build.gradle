@@ -16,7 +16,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.example.e_online"
+    namespace = "com.exactmanpower.eOnline"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
