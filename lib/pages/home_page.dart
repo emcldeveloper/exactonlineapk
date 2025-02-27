@@ -121,7 +121,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         spacer1(),
-                        const NewArrivalProducts(),
+                        NewArrivalProducts(),
                         Container(
                           height: 8,
                           width: double.infinity,

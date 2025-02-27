@@ -129,7 +129,12 @@ class _SellerOrderViewPageState extends State<SellerOrderViewPage> {
                           "UserId": widget.order["UserId"]
                         }).then((res) {
                           print(res);
-                          Get.to(() => ConversationPage(res));
+                          widget.order["Products"] =
+                              orderedProducts.map((item) => item["Product"]);
+                          Get.to(() => ConversationPage(
+                                res,
+                                order: widget.order,
+                              ));
                         });
                       },
                       text: "Chat with Customer",

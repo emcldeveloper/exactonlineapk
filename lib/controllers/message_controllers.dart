@@ -43,4 +43,36 @@ class MessageController extends GetxController {
       return messages;
     });
   }
+
+  Stream<List<Message>> getOrderMessages({chatId, orderId}) {
+    return firestore
+        .collection("messages")
+        .orderBy("createdAt", descending: true)
+        .where("chatId", isEqualTo: chatId)
+        .where("orderId", isEqualTo: orderId)
+        .snapshots()
+        .map((querySnapshot) {
+      List<Message> messages = [];
+      for (var doc in querySnapshot.docs) {
+        messages.add(Message.fromDocumentSnapshot(doc));
+      }
+      return messages;
+    });
+  }
+
+  Stream<List<Message>> getProductMessages({chatId, productId}) {
+    return firestore
+        .collection("messages")
+        .orderBy("createdAt", descending: true)
+        .where("chatId", isEqualTo: chatId)
+        .where("productId", isEqualTo: productId)
+        .snapshots()
+        .map((querySnapshot) {
+      List<Message> messages = [];
+      for (var doc in querySnapshot.docs) {
+        messages.add(Message.fromDocumentSnapshot(doc));
+      }
+      return messages;
+    });
+  }
 }
