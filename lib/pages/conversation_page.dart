@@ -25,10 +25,8 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:timeago/timeago.dart' as timeago;
 
 class ConversationPage extends StatefulWidget {
-  Map<String, dynamic>? product;
-  Map<String, dynamic>? order;
-  Map<String, dynamic> chat;
-  ConversationPage(this.chat, {this.product, this.order, super.key});
+  Map<String, dynamic> topic;
+  ConversationPage(this.topic, {super.key});
 
   @override
   State<ConversationPage> createState() => _ConversationPageState();
@@ -42,13 +40,13 @@ class _ConversationPageState extends State<ConversationPage> {
 
   UserController userController = Get.find();
 //check if is person or user
-  bool isUser() {
-    bool isUser = true;
-    if (widget.chat["UserId"] != userController.user.value["id"]) {
-      isUser = false;
-    }
-    return isUser;
-  }
+  // bool isUser() {
+  //   bool isUser = true;
+  //   if (widget.chat["UserId"] != userController.user.value["id"]) {
+  //     isUser = false;
+  //   }
+  //   return isUser;
+  // }
 
   TextEditingController messageController = TextEditingController();
 
@@ -76,44 +74,44 @@ class _ConversationPageState extends State<ConversationPage> {
         ),
         title: Row(
           children: [
-            ClipOval(
-                child: isUser()
-                    ? widget.chat["Shop"]["shopImage"] != null
-                        ? Container(
-                            height: 30,
-                            width: 30,
-                            child: CachedNetworkImage(
-                              imageUrl: widget.chat["Shop"]["shopImage"],
-                              fit: BoxFit.cover,
-                            ),
-                          )
-                        : Container(
-                            color: Colors.grey[200],
-                            child: const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Icon(Bootstrap.shop),
-                            ),
-                          )
-                    : widget.chat["User"]["image"] != null
-                        ? Container(
-                            height: 30,
-                            width: 30,
-                            child: CachedNetworkImage(
-                              imageUrl: widget.chat["User"]["image"],
-                              fit: BoxFit.cover,
-                            ),
-                          )
-                        : Container(
-                            color: Colors.grey[200],
-                            child: const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Icon(Bootstrap.person),
-                            ),
-                          )),
+            // ClipOval(
+            //     child: isUser()
+            //         ? widget.chat["Shop"]["shopImage"] != null
+            //             ? Container(
+            //                 height: 30,
+            //                 width: 30,
+            //                 child: CachedNetworkImage(
+            //                   imageUrl: widget.chat["Shop"]["shopImage"],
+            //                   fit: BoxFit.cover,
+            //                 ),
+            //               )
+            //             : Container(
+            //                 color: Colors.grey[200],
+            //                 child: const Padding(
+            //                   padding: EdgeInsets.all(8.0),
+            //                   child: Icon(Bootstrap.shop),
+            //                 ),
+            //               )
+            //         // : widget.chat["User"]["image"] != null
+            //         //     ? Container(
+            //         //         height: 30,
+            //         //         width: 30,
+            //         //         child: CachedNetworkImage(
+            //         //           imageUrl: widget.chat["User"]["image"],
+            //         //           fit: BoxFit.cover,
+            //         //         ),
+            //         //       )
+            //             : Container(
+            //                 color: Colors.grey[200],
+            //                 child: const Padding(
+            //                   padding: EdgeInsets.all(8.0),
+            //                   child: Icon(Bootstrap.person),
+            //                 ),
+            //               )),
             const SizedBox(width: 8),
-            HeadingText(isUser()
-                ? widget.chat["Shop"]["name"]
-                : widget.chat["User"]["name"])
+            // HeadingText(isUser()
+            //     ? widget.chat["Shop"]["name"]
+            //     : widget.chat["User"]["name"])
           ],
         ),
         bottom: PreferredSize(
@@ -127,216 +125,193 @@ class _ConversationPageState extends State<ConversationPage> {
       body: GetX<MessageController>(
           init: MessageController(),
           builder: (find) {
-            return StreamBuilder<List<Message>>(
-                initialData: find.messages,
-                stream: widget.product != null
-                    ? find.getProductMessages(
-                        chatId: widget.chat["id"],
-                        productId: widget.product!["id"])
-                    : widget.order != null
-                        ? find.getOrderMessages(
-                            chatId: widget.chat["id"],
-                            orderId: widget.order!["id"])
-                        : find.getMessages(chatId: widget.chat["id"]),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                        child: CircularProgressIndicator(
-                      color: Colors.black,
-                    ));
-                  }
-                  List<Message> messages = snapshot.requireData;
+            return Column(
+              children: [
+                // if (widget.order != null)
+                //   GestureDetector(
+                //     onTap: () {
+                //       Get.back();
+                //     },
+                //     child: Container(
+                //       color: Colors.grey[100],
+                //       child: Padding(
+                //         padding: const EdgeInsets.symmetric(
+                //             horizontal: 20, vertical: 5),
+                //         child: Row(
+                //           children: [
+                //             ClipRRect(
+                //               borderRadius: BorderRadius.circular(10),
+                //               child: Container(
+                //                   width: 80,
+                //                   height: 80,
+                //                   child: CachedNetworkImage(
+                //                       imageUrl: widget.order!["Products"]
+                //                               [0]["ProductImages"][0]
+                //                           ["image"])),
+                //             ),
+                //             SizedBox(
+                //               width: 10,
+                //             ),
+                //             Column(
+                //               crossAxisAlignment:
+                //                   CrossAxisAlignment.start,
+                //               children: [
+                //                 HeadingText(
+                //                     "Order: ${widget.order!["id"].toString().split("-").last}",
+                //                     fontSize: 14),
+                //                 ParagraphText(
+                //                     "This is conversation about this order",
+                //                     fontSize: 12)
+                //               ],
+                //             ),
+                //           ],
+                //         ),
+                //       ),
+                //     ),
+                //   ),
+                // if (widget.product != null)
+                //   GestureDetector(
+                //     onTap: () {
+                //       Get.to(() =>
+                //           ProductPage(productData: widget.product!));
+                //     },
+                //     child: Container(
+                //       color: Colors.grey[100],
+                //       child: Padding(
+                //         padding: const EdgeInsets.symmetric(
+                //             horizontal: 20, vertical: 5),
+                //         child: Row(
+                //           children: [
+                //             ClipRRect(
+                //               borderRadius: BorderRadius.circular(10),
+                //               child: Container(
+                //                   width: 80,
+                //                   height: 80,
+                //                   child: CachedNetworkImage(
+                //                       fit: BoxFit.cover,
+                //                       imageUrl:
+                //                           widget.product!["ProductImages"]
+                //                               [0]["image"])),
+                //             ),
+                //             SizedBox(
+                //               width: 10,
+                //             ),
+                //             Column(
+                //               crossAxisAlignment:
+                //                   CrossAxisAlignment.start,
+                //               children: [
+                //                 HeadingText("${widget.product!["name"]}",
+                //                     fontSize: 14),
+                //                 ParagraphText(
+                //                     "TZS ${toMoneyFormmat(widget.product!["sellingPrice"])}",
+                //                     fontSize: 12),
+                //                 ParagraphText(
+                //                     "This is conversation about this product",
+                //                     fontSize: 12)
+                //               ],
+                //             ),
+                //           ],
+                //         ),
+                //       ),
+                //     ),
+                //   ),
 
-                  return Column(
+                Expanded(
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    reverse: true, // Reverse the list to start from the bottom
+                    padding: const EdgeInsets.all(16.0),
+                    itemCount: messages.length, // Includes the initial message
+                    itemBuilder: (context, index) {
+                      // Correctly access the reversed index for the messages
+                      // return Align(
+                      //   alignment: (isUser() &&
+                      //               messages[index].from == "user") ||
+                      //           (!isUser() &&
+                      //               messages[index].from == "shop")
+                      //       ? Alignment.bottomRight
+                      //       : Alignment.bottomLeft,
+                      //   child: ChatBubble(
+                      //     message: messages[index],
+                      //     text: messages[index].message,
+                      //     isSentByMe: (isUser() &&
+                      //                 messages[index].from == "user") ||
+                      //             (!isUser() &&
+                      //                 messages[index].from == "shop")
+                      //         ? true
+                      //         : false,
+                      //     time: timeago
+                      //         .format(messages[index].createdAt.toDate()),
+                      //   ),
+                      // );
+                    },
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      top: BorderSide(color: Colors.grey.shade200, width: 1.0),
+                    ),
+                  ),
+                  padding: const EdgeInsets.all(12.0),
+                  child: Row(
                     children: [
-                      if (widget.order != null)
-                        GestureDetector(
-                          onTap: () {
-                            Get.back();
-                          },
-                          child: Container(
-                            color: Colors.grey[100],
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 5),
-                              child: Row(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Container(
-                                        width: 80,
-                                        height: 80,
-                                        child: CachedNetworkImage(
-                                            imageUrl: widget.order!["Products"]
-                                                    [0]["ProductImages"][0]
-                                                ["image"])),
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      HeadingText(
-                                          "Order: ${widget.order!["id"].toString().split("-").last}",
-                                          fontSize: 14),
-                                      ParagraphText(
-                                          "This is conversation about this order",
-                                          fontSize: 12)
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      if (widget.product != null)
-                        GestureDetector(
-                          onTap: () {
-                            Get.to(() =>
-                                ProductPage(productData: widget.product!));
-                          },
-                          child: Container(
-                            color: Colors.grey[100],
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 5),
-                              child: Row(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Container(
-                                        width: 80,
-                                        height: 80,
-                                        child: CachedNetworkImage(
-                                            fit: BoxFit.cover,
-                                            imageUrl:
-                                                widget.product!["ProductImages"]
-                                                    [0]["image"])),
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      HeadingText("${widget.product!["name"]}",
-                                          fontSize: 14),
-                                      ParagraphText(
-                                          "TZS ${toMoneyFormmat(widget.product!["sellingPrice"])}",
-                                          fontSize: 12),
-                                      ParagraphText(
-                                          "This is conversation about this product",
-                                          fontSize: 12)
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
                       Expanded(
-                        child: ListView.builder(
-                          controller: _scrollController,
-                          reverse:
-                              true, // Reverse the list to start from the bottom
-                          padding: const EdgeInsets.all(16.0),
-                          itemCount:
-                              messages.length, // Includes the initial message
-                          itemBuilder: (context, index) {
-                            // Correctly access the reversed index for the messages
-                            return Align(
-                              alignment: (isUser() &&
-                                          messages[index].from == "user") ||
-                                      (!isUser() &&
-                                          messages[index].from == "shop")
-                                  ? Alignment.bottomRight
-                                  : Alignment.bottomLeft,
-                              child: ChatBubble(
-                                message: messages[index],
-                                text: messages[index].message,
-                                isSentByMe: (isUser() &&
-                                            messages[index].from == "user") ||
-                                        (!isUser() &&
-                                            messages[index].from == "shop")
-                                    ? true
-                                    : false,
-                                time: timeago
-                                    .format(messages[index].createdAt.toDate()),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border(
-                            top: BorderSide(
-                                color: Colors.grey.shade200, width: 1.0),
+                        child: TextField(
+                          controller: messageController,
+                          decoration: InputDecoration(
+                            fillColor: Colors.grey[100],
+                            filled: true,
+                            hintText: "Write your message here",
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                              borderSide: BorderSide.none,
+                            ),
                           ),
                         ),
-                        padding: const EdgeInsets.all(12.0),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                controller: messageController,
-                                decoration: InputDecoration(
-                                  fillColor: Colors.grey[100],
-                                  filled: true,
-                                  hintText: "Write your message here",
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(30.0),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                ),
-                              ),
+                      ),
+                      const SizedBox(width: 8),
+                      InkWell(
+                        onTap: () {
+                          // find
+                          //     .addMessage(
+                          //         chatId: widget.chat["id"],
+                          //         productId: widget.product != null
+                          //             ? widget.product!["id"]
+                          //             : null,
+                          //         orderId: widget.order != null
+                          //             ? widget.order!["id"]
+                          //             : null,
+                          //         message: messageController.text,
+                          //         from: isUser() ? "user" : "shop")
+                          //     .then((res) {
+                          //   messageController.text = "";
+                          // });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(13.0),
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: Transform.rotate(
+                            angle: 6.3,
+                            child: const HugeIcon(
+                              icon: HugeIcons.strokeRoundedSent,
+                              color: Colors.white,
+                              size: 22.0,
                             ),
-                            const SizedBox(width: 8),
-                            InkWell(
-                              onTap: () {
-                                find
-                                    .addMessage(
-                                        chatId: widget.chat["id"],
-                                        productId: widget.product != null
-                                            ? widget.product!["id"]
-                                            : null,
-                                        orderId: widget.order != null
-                                            ? widget.order!["id"]
-                                            : null,
-                                        message: messageController.text,
-                                        from: isUser() ? "user" : "shop")
-                                    .then((res) {
-                                  messageController.text = "";
-                                });
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(13.0),
-                                decoration: BoxDecoration(
-                                  color: Colors.black,
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                                child: Transform.rotate(
-                                  angle: 6.3,
-                                  child: const HugeIcon(
-                                    icon: HugeIcons.strokeRoundedSent,
-                                    color: Colors.white,
-                                    size: 22.0,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                       ),
-                      SizedBox(
-                        height: 20,
-                      )
                     ],
-                  );
-                });
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                )
+              ],
+            );
           }),
     );
   }

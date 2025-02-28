@@ -140,8 +140,8 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                             widget.order["Products"] = products
                                 .map((item) => item["Product"])
                                 .toList();
-                            Get.to(() =>
-                                ConversationPage(res, order: widget.order));
+                            // Get.to(() =>
+                            //     ConversationPage(res, order: widget.order));
                           });
                         },
                         text: "Chat with Seller",
