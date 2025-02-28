@@ -15,7 +15,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:uni_links5/uni_links.dart';
+// import 'package:uni_links5/uni_links.dart';
 import 'package:flutter/foundation.dart';
 
 // Background message handler (must be top-level)
@@ -147,13 +147,13 @@ void _handleDeepLink(Uri? uri) async {
   }
 }
 
-void initDeepLinkListener() {
-  uriLinkStream.listen((Uri? uri) {
-    if (uri != null) {
-      _handleDeepLink(uri);
-    }
-  });
-}
+// void initDeepLinkListener() {
+//   uriLinkStream.listen((Uri? uri) {
+//     if (uri != null) {
+//       _handleDeepLink(uri);
+//     }
+//   });
+// }
 
 class MyApp extends StatelessWidget {
   static FirebaseAnalytics analytics = FirebaseAnalytics.instance;

@@ -534,10 +534,12 @@ class _ProductPageState extends State<ProductPage> {
                                 _sendProductStats("message");
                                 ChatController().addChat({
                                   "ShopId": product["Shop"]["id"],
+                                  "ProductId": product["id"],
                                   "UserId": userController.user.value["id"]
                                 }).then((res) {
-                                  Get.to(() =>
-                                      ConversationPage(res, product: product));
+                                  print(res);
+                                  // Get.to(() =>
+                                  //     ConversationPage(res, product: product));
                                 });
                               },
                               text: "Message Seller",

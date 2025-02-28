@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.exactmanpower.eOnline</string>
+	<string>com.example.eOnline</string>
 	<key>PROJECT_ID</key>
 	<string>eonline-e4ef3</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:773239040686:ios:c4b56ae342e6f56a7f1b3f</string>
+	<string>1:773239040686:ios:4dbbde0d20445b047f1b3f</string>
 </dict>
 </plist>

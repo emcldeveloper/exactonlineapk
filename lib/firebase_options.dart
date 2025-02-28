@@ -50,19 +50,19 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAFPwe_q5j0YisuBtRO4p0zSIght9LSxwI',
-    appId: '1:94342479258:android:1fd95d688a3504072a8e23',
-    messagingSenderId: '94342479258',
-    projectId: 'exactonline-a6e7d',
-    storageBucket: 'exactonline-a6e7d.firebasestorage.app',
+    apiKey: 'AIzaSyAQx85CNEAF1g-QEWSsfAxLqb7r05vrvco',
+    appId: '1:773239040686:android:d363c484025797057f1b3f',
+    messagingSenderId: '773239040686',
+    projectId: 'eonline-e4ef3',
+    storageBucket: 'eonline-e4ef3.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBJb4g0YuSd7t58HZJy6qvfAm25SHywDWw',
-    appId: '1:94342479258:ios:07292ce7d962ac742a8e23',
-    messagingSenderId: '94342479258',
-    projectId: 'exactonline-a6e7d',
-    storageBucket: 'exactonline-a6e7d.firebasestorage.app',
+    apiKey: 'AIzaSyDRJ21wtCVz3ZZFZnk-sc-ajvX3C05UhjI',
+    appId: '1:773239040686:ios:4dbbde0d20445b047f1b3f',
+    messagingSenderId: '773239040686',
+    projectId: 'eonline-e4ef3',
+    storageBucket: 'eonline-e4ef3.firebasestorage.app',
     iosBundleId: 'com.example.eOnline',
   );
 }
