@@ -5,6 +5,7 @@ import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/message_controllers.dart';
 import 'package:e_online/controllers/topic_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/chatBubble.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -34,6 +35,7 @@ class _ConversationPageState extends State<ConversationPage> {
   @override
   void initState() {
     super.initState();
+    trackScreenView("ConversationPage");
     messages = RxList([]); // Initialize reactive list
 
     // Fetch initial messages

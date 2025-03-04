@@ -7,6 +7,7 @@ import 'package:e_online/controllers/product_controller.dart';
 import 'package:e_online/controllers/shop_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/conversation_page.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/Seller_product_card.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/no_data.dart';
@@ -53,6 +54,7 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
   void initState() {
     super.initState();
     _initializeShopDetails();
+    trackScreenView("SellerProfilePage");
   }
 
   Future<void> _initializeShopDetails() async {
@@ -105,7 +107,7 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
         parameters: {
           "Shop_Id": shopId,
           "User_Id": userId,
-          "shop_Name" : shopDetails.value['name'],
+          "shop_Name": shopDetails.value['name'],
           "address": shopDetails.value['address'],
         },
       );

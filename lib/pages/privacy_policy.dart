@@ -1,4 +1,5 @@
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -16,6 +17,7 @@ class _PrivacyPolicyPageState extends State<PrivacyPolicy> {
   @override
   void initState() {
     super.initState();
+    trackScreenView("PrivacyPolicy");
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..loadRequest(

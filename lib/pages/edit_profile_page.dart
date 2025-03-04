@@ -5,6 +5,7 @@ import 'package:dio/dio.dart' as dio;
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/way_page.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/utils/shared_preferences.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/custom_loader.dart';
@@ -50,6 +51,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   void initState() {
+    trackScreenView("EditProfilePage");
     // TODO: implement initState
     businessnameController.text = userController.user.value["name"] ?? "";
     phoneController.text = userController.user.value["phone"] ?? "";

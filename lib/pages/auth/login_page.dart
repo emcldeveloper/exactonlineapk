@@ -3,6 +3,7 @@ import 'package:e_online/controllers/users_controllers.dart';
 import 'package:e_online/controllers/auth_controller.dart';
 import 'package:e_online/pages/auth/confirmation_code_page.dart';
 import 'package:e_online/pages/auth/registration_page.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/custom_loader.dart';
 import 'package:e_online/widgets/heading_text.dart';
@@ -34,6 +35,8 @@ class _LoginPageState extends State<LoginPage> {
     // TODO: implement initState
     Get.put(usersControllers);
     super.initState();
+    trackScreenView("LoginPage");
+
   }
 
   @override

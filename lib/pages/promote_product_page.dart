@@ -1,4 +1,5 @@
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
@@ -18,6 +19,12 @@ class PromoteProductPage extends StatefulWidget {
 }
 
 class _PromoteProductPageState extends State<PromoteProductPage> {
+  @override
+  void initState() {
+    super.initState();
+    trackScreenView("PromoteProductPage");
+  }
+
   DateTime? _startDate;
   DateTime? _endDate;
   final TextEditingController _startDateController = TextEditingController();

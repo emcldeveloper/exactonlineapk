@@ -6,6 +6,7 @@ import 'package:e_online/controllers/product_controller.dart';
 import 'package:e_online/controllers/product_image_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/home_page.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/utils/snackbars.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/custom_loader.dart';
@@ -94,6 +95,7 @@ class _EditProductPageState extends State<EditProductPage> {
   bool loading = false;
   @override
   void initState() {
+    trackScreenView("EditProductPage");
     CategoriesController()
         .getCategories(keyword: "", page: 1, limit: 100)
         .then((res) {

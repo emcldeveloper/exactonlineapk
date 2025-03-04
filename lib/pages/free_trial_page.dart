@@ -2,6 +2,7 @@ import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/subscription_controller.dart';
 import 'package:e_online/pages/my_shop_page.dart';
 import 'package:e_online/pages/subscription_page.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/utils/shared_preferences.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
@@ -29,6 +30,7 @@ class _FreeTrialPageState extends State<FreeTrialPage> {
   @override
   void initState() {
     super.initState();
+    trackScreenView("FreeTrialPage");
     _initializeSubscriptionDetails();
   }
 

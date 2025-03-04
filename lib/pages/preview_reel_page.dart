@@ -3,6 +3,7 @@ import 'package:e_online/controllers/following_controller.dart';
 import 'package:e_online/controllers/reel_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/seller_profile_page.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/blocking_reel.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
@@ -40,6 +41,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
   @override
   void initState() {
     super.initState();
+    trackScreenView("PreviewReelPage");
     _pageController = PageController();
     userId = userController.user.value['id'] ?? "";
     _initializeReelDetails(widget.reels[currentIndex]['id']);

@@ -7,6 +7,7 @@ import 'package:e_online/controllers/categories_controller.dart';
 import 'package:e_online/controllers/product_controller.dart';
 import 'package:e_online/pages/categories_products_page.dart';
 import 'package:e_online/pages/searched_products.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:e_online/widgets/search_function.dart';
@@ -31,7 +32,8 @@ class _SearchPageState extends State<SearchPage> {
   Rx<List> products = Rx<List>([]);
 
   @override
-  void initState() {
+  void initState() {    
+    trackScreenView("SearchPage");
     // TODO: implement initState
     CategoriesController()
         .getCategories(page: 1, limit: 10, keyword: "")

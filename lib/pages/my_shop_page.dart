@@ -10,6 +10,7 @@ import 'package:e_online/pages/shop_tabs/shop_orders.dart';
 import 'package:e_online/pages/shop_tabs/shop_products.dart';
 import 'package:e_online/pages/shop_tabs/shop_reels.dart';
 import 'package:e_online/pages/subscription_page.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/utils/shared_preferences.dart';
 import 'package:e_online/widgets/ad_card.dart';
 import 'package:e_online/widgets/comingSoon.dart';
@@ -58,6 +59,7 @@ class _MyShopPageState extends State<MyShopPage> {
   @override
   void initState() {
     super.initState();
+    trackScreenView("MyShopPage");
     _initializeShopDetails();
   }
 

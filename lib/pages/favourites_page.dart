@@ -1,5 +1,6 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/favorite_controller.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/favorite_card.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/no_data.dart';
@@ -25,6 +26,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
   @override
   void initState() {
     super.initState();
+    trackScreenView("FavouritesPage");
     _getFavoritesData(_currentPage); // Initial fetch
     _scrollController.addListener(_onScroll); // Attach scroll listener
   }

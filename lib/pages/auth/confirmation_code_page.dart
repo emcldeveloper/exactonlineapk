@@ -4,6 +4,7 @@ import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/auth_controller.dart';
 import 'package:e_online/pages/auth/login_page.dart';
 import 'package:e_online/pages/way_page.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/custom_loader.dart';
 import 'package:e_online/widgets/heading_text.dart';
@@ -37,6 +38,7 @@ class _ConfirmationCodePageState extends State<ConfirmationCodePage> {
   void initState() {
     super.initState();
     _startTimer();
+     trackScreenView("ConfirmationCodePage");
   }
 
   void _startTimer() {

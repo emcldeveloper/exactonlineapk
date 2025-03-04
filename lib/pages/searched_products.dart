@@ -2,6 +2,7 @@ import 'package:e_online/constants/colors.dart';
 import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/controllers/product_controller.dart';
 import 'package:e_online/pages/search_page.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/favorite_card.dart';
 import 'package:e_online/widgets/filter_tiles.dart';
 import 'package:e_online/widgets/heading_text.dart';
@@ -24,6 +25,7 @@ class _SearchedProductsPageState extends State<SearchedProductsPage> {
   Rx<List> products = Rx<List>([]);
   @override
   void initState() {
+    trackScreenView("SearchedProductsPage");
     ProductController()
         .getProducts(
       page: 1,

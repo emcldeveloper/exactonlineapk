@@ -14,6 +14,12 @@ class OrderProductsForCustomerPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+    Future.delayed(Duration.zero, () {
+      analytics.logScreenView(
+        screenName: "OrderProductsForCustomerPage",
+        screenClass: "OrderProductsForCustomerPage",
+      );
+    });
     final List<Map<String, dynamic>> orderItems = [
       {
         'title': "J.Crew T-shirt",
@@ -95,15 +101,15 @@ class OrderProductsForCustomerPage extends StatelessWidget {
               spacer(),
               customButton(
                 onTap: () {
-                    //  analytics.logEvent(
-                    //         name: 'chat_seller',
-                    //         parameters: {
-                    //           'seller_id': shopId,
-                    //           'shopName': shopName,
-                    //           'shopPhone': shopPhone,
-                    //           'from_page': 'OrderProductsForCustomerPage'
-                    //         },
-                    //       );
+                  //  analytics.logEvent(
+                  //         name: 'chat_seller',
+                  //         parameters: {
+                  //           'seller_id': shopId,
+                  //           'shopName': shopName,
+                  //           'shopPhone': shopPhone,
+                  //           'from_page': 'OrderProductsForCustomerPage'
+                  //         },
+                  //       );
                 },
                 text: "Chat with Seller",
                 buttonColor: mutedTextColor,

@@ -1,6 +1,7 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/reel_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/utils/snackbars.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/custom_loader.dart';
@@ -31,6 +32,12 @@ class _AddReelPageState extends State<AddReelPage> {
   final TextEditingController captionController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool loading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    trackScreenView("AddReelPage");
+  }
 
   Future<void> _pickVideo() async {
     try {

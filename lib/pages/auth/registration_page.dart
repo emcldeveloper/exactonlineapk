@@ -25,6 +25,13 @@ class RegistrationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Future.delayed(Duration.zero, () {
+      analytics.logScreenView(
+        screenName: "RegistrationPage",
+        screenClass: "RegistrationPage",
+      );
+    });
+
     return Scaffold(
       backgroundColor: mainColor,
       body: SingleChildScrollView(

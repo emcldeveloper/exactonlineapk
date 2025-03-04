@@ -3,6 +3,7 @@ import 'package:e_online/constants/colors.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -18,6 +19,13 @@ class UpdatePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+    Future.delayed(Duration.zero, () {
+      analytics.logScreenView(
+        screenName: "UpdatePage",
+        screenClass: "UpdatePage",
+      );
+    });
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(

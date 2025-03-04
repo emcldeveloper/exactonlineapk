@@ -4,6 +4,7 @@ import 'package:e_online/controllers/chat_controller.dart';
 import 'package:e_online/controllers/ordered_products_controller.dart';
 import 'package:e_online/pages/conversation_page.dart';
 import 'package:e_online/utils/convert_to_money_format.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/horizontal_product_card.dart';
@@ -35,6 +36,7 @@ class _SellerOrderViewPageState extends State<SellerOrderViewPage> {
   @override
   void initState() {
     super.initState();
+    trackScreenView("SellerOrderViewPage");
   }
 
   @override

@@ -4,6 +4,7 @@ import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/no_data.dart';
 import 'package:e_online/widgets/notification_card.dart';
 import 'package:e_online/widgets/spacer.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -16,6 +17,13 @@ class NotificationsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+    Future.delayed(Duration.zero, () {
+      analytics.logScreenView(
+        screenName: "NotificationsPage",
+        screenClass: "NotificationsPage",
+      );
+    });
     return Scaffold(
       backgroundColor: mainColor,
       appBar: AppBar(

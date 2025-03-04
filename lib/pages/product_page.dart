@@ -14,6 +14,7 @@ import 'package:e_online/pages/cart_page.dart';
 import 'package:e_online/pages/conversation_page.dart';
 import 'package:e_online/pages/viewImage.dart';
 import 'package:e_online/utils/convert_to_money_format.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/utils/snackbars.dart';
 import 'package:e_online/widgets/cartIcon.dart';
 import 'package:e_online/widgets/custom_button.dart';
@@ -57,6 +58,7 @@ class _ProductPageState extends State<ProductPage> {
   @override
   void initState() {
     super.initState();
+    trackScreenView("ProductPage");
     isFavorite.value = widget.productData.containsKey('Favorites') &&
         widget.productData['Favorites'] != null &&
         widget.productData['Favorites'].isNotEmpty;

@@ -26,8 +26,12 @@ class CartPage extends StatelessWidget {
   var loading = false.obs;
   @override
   Widget build(BuildContext context) {
-    // UsersControllers usersControllers = Get.find();
-    // usersControllers.user;
+    Future.delayed(Duration.zero, () {
+      analytics.logScreenView(
+        screenName: "CartPage",
+        screenClass: "CartPage",
+      );
+    });
     var selectedOrderedProduct;
     return Scaffold(
       backgroundColor: mainColor,

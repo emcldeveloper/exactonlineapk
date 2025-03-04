@@ -2,6 +2,7 @@ import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/shop_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/free_trial_page.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/custom_loader.dart';
 import 'package:e_online/widgets/heading_text.dart';
@@ -47,6 +48,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
   String userId = "";
   @override
   void initState() {
+    trackScreenView("RegisterAsSellerPage");
     userId = userController.user.value["id"] ?? "";
     super.initState();
   }

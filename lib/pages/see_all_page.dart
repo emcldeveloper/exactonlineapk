@@ -3,6 +3,7 @@ import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/horizontal_product_card.dart';
 import 'package:e_online/widgets/spacer.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 
 class SeeAllPage extends StatelessWidget {
@@ -10,6 +11,13 @@ class SeeAllPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+    Future.delayed(Duration.zero, () {
+      analytics.logScreenView(
+        screenName: "SeeAllPage",
+        screenClass: "SeeAllPage",
+      );
+    });
     return Scaffold(
       backgroundColor: mainColor,
       appBar: AppBar(

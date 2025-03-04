@@ -5,6 +5,7 @@ import 'package:e_online/controllers/product_color_controller.dart';
 import 'package:e_online/controllers/product_controller.dart';
 import 'package:e_online/controllers/product_image_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/utils/snackbars.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/custom_loader.dart';
@@ -148,6 +149,7 @@ class _AddProductPageState extends State<AddProductPage> {
   @override
   void initState() {
     super.initState();
+      trackScreenView("AddProductPage");
     CategoriesController()
         .getCategories(keyword: "", page: 1, limit: 100)
         .then((res) {
