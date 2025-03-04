@@ -36,11 +36,11 @@ Widget userChatCard(Map<String, dynamic> chat) {
               ParagraphText(
                 chat["Shop"]["name"] ?? 'Unknown',
                 fontWeight: FontWeight.bold,
-                fontSize: 15.0,
+                fontSize: 14.0,
               ),
               spacer(),
               ParagraphText(
-                chat["lastMessage"] ?? "",
+                chat["lastMessage"] ?? "Write new message",
                 color: mutedTextColor,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,

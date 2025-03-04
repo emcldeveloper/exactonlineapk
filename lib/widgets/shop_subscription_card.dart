@@ -54,7 +54,7 @@ class ShopSubscriptionCard extends StatelessWidget {
                           data['Subscription']["hint"]!.trim().isNotEmpty)
                         Container(
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
+                            gradient: const LinearGradient(
                               colors: [Colors.orange, Colors.amber],
                               begin: Alignment.centerLeft,
                               end: Alignment.centerRight,

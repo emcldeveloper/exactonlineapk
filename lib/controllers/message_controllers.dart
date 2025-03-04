@@ -11,53 +11,44 @@ class MessageController extends GetxController {
   Rx<List<Message>> messagesReceiver = Rx<List<Message>>([]);
   List<Message> get messages => messagesReceiver.value;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-  Future addMessage({message, orderId, from, productId, chatId}) async {
+  Future sendMessage({message, TopicId, from, UserId, type}) async {
     try {
-      var id = Timestamp.now().toDate().toLocal().toString();
-      await firestore.collection("messages").doc(id).set({
-        "id": id,
-        "message": message,
-        "chatId": chatId,
-        "orderId": orderId,
-        "from": from,
-        "productId": productId,
-        "createdAt": Timestamp.now()
-      });
-      await ChatController().editChat(chatId, {"lastMessage": message});
-    } catch (e) {
-      print(e);
+      var response = await dio.post(
+        "/messages/",
+        data: {
+          "message": message,
+          "TopicId": TopicId,
+          "from": from,
+          "UserId": UserId,
+          "type": type
+        },
+        options: Options(headers: {
+          "Authorization":
+              "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
+        }),
+      );
+      var data = response.data["body"];
+      return data;
+    } on DioException catch (e) {
+      print(e.response);
     }
   }
 
-  Stream<List<Message>> getMessages({chatId}) {
-    return firestore
-        .collection("messages")
-        .orderBy("createdAt", descending: true)
-        .where("chatId", isEqualTo: chatId)
-        .snapshots()
-        .map((querySnapshot) {
-      List<Message> messages = [];
-      for (var doc in querySnapshot.docs) {
-        messages.add(Message.fromDocumentSnapshot(doc));
-      }
-      return messages;
-    });
-  }
-
-  Stream<List<Message>> getOrderMessages({chatId, orderId}) {
-    return firestore
-        .collection("messages")
-        .orderBy("createdAt", descending: true)
-        .where("chatId", isEqualTo: chatId)
-        .where("orderId", isEqualTo: orderId)
-        .snapshots()
-        .map((querySnapshot) {
-      List<Message> messages = [];
-      for (var doc in querySnapshot.docs) {
-        messages.add(Message.fromDocumentSnapshot(doc));
-      }
-      return messages;
-    });
+  Future getTopicMessages({topicId}) async {
+    try {
+      var response = await dio.get(
+        "/messages/topic/$topicId",
+        options: Options(headers: {
+          "Authorization":
+              "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
+        }),
+      );
+      var data = response.data["body"];
+      print(data);
+      return data;
+    } on DioException catch (e) {
+      print(e.response);
+    }
   }
 
   Stream<List<Message>> getProductMessages({chatId, productId}) {

@@ -1,6 +1,7 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/chat_controller.dart';
 import 'package:e_online/pages/conversation_page.dart';
+import 'package:e_online/pages/topics_page.dart';
 import 'package:e_online/widgets/user_chat_card.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/no_data.dart';
@@ -46,8 +47,14 @@ class _ChatPageState extends State<ChatPage> {
                         children: chats.map((chat) {
                           return GestureDetector(
                             onTap: () async {
-                              await Get.to(() => ConversationPage(chat));
-                              setState(() {});
+                              Get.bottomSheet(ClipRRect(
+                                borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10)),
+                                child: TopicsPage(
+                                  chat: chat,
+                                ),
+                              ));
                             },
                             child: userChatCard(chat),
                           );
@@ -72,13 +79,13 @@ class _ChatPageState extends State<ChatPage> {
               _isSearching = true;
             });
           },
-          child: HugeIcon(
+          child: const HugeIcon(
             icon: HugeIcons.strokeRoundedSearch01,
             color: Colors.black,
             size: 22.0,
           ),
         ),
-        SizedBox(
+        const SizedBox(
           width: 16.0,
         )
       ],

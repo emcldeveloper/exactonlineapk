@@ -1,6 +1,7 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/chat_controller.dart';
 import 'package:e_online/controllers/ordered_products_controller.dart';
+import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/conversation_page.dart';
 import 'package:e_online/utils/convert_to_money_format.dart';
 import 'package:e_online/widgets/custom_button.dart';
@@ -34,6 +35,8 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
     }
     return groupedOrders;
   }
+
+  UserController userController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -135,13 +138,10 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                         onTap: () {
                           ChatController().addChat({
                             "ShopId": shopId,
-                            "UserId": widget.order["UserId"]
+                            "OrderId": widget.order["id"],
+                            "UserId": userController.user.value["id"]
                           }).then((res) {
-                            widget.order["Products"] = products
-                                .map((item) => item["Product"])
-                                .toList();
-                            // Get.to(() =>
-                            //     ConversationPage(res, order: widget.order));
+                            Get.to(() => ConversationPage(res));
                           });
                         },
                         text: "Chat with Seller",

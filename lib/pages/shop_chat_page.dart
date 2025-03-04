@@ -1,6 +1,7 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/chat_controller.dart';
 import 'package:e_online/pages/conversation_page.dart';
+import 'package:e_online/pages/topics_page.dart';
 import 'package:e_online/widgets/shop_chat_card.dart';
 import 'package:e_online/widgets/user_chat_card.dart';
 import 'package:e_online/widgets/heading_text.dart';
@@ -64,8 +65,15 @@ class _ShopChatPageState extends State<ShopChatPage> {
                         children: chats.map((chat) {
                           return GestureDetector(
                             onTap: () async {
-                              await Get.to(() => ConversationPage(chat));
-                              setState(() {});
+                              Get.bottomSheet(ClipRRect(
+                                borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(10)),
+                                child: TopicsPage(
+                                  chat: chat,
+                                  from: "shop",
+                                ),
+                              ));
                             },
                             child: shopChatCard(chat),
                           );
