@@ -14,12 +14,14 @@ import 'package:e_online/widgets/no_data.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/popup_alert.dart';
 import 'package:e_online/widgets/spacer.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 class CartPage extends StatelessWidget {
   CartPage({super.key});
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   OrderedProductController orderedProductController = Get.find();
   var loading = false.obs;
   @override
@@ -96,8 +98,21 @@ class CartPage extends StatelessWidget {
                           spacer3(),
                           customButton(
                             loading: loading.value,
-                            onTap: () {
+                            onTap: () async {
                               loading.value = true;
+                              await analytics.logEvent(
+                                name: 'submit_order',
+                                parameters: {
+                                  'order_id': orderedProductController
+                                      .productsOnCart.value[0]["OrderId"],
+                                  'amount': orderedProductController
+                                      .productsOnCart.value
+                                      .map((item) => double.parse(
+                                          item["Product"]["sellingPrice"]))
+                                      .toList()
+                                      .reduce((prev, item) => prev + item),
+                                },
+                              );
                               OrdersController().editOrder(
                                   orderedProductController
                                       .productsOnCart.value[0]["OrderId"],

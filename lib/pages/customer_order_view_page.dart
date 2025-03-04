@@ -9,6 +9,7 @@ import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/horizontal_product_card.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -23,6 +24,8 @@ class CustomerOrderViewPage extends StatefulWidget {
 }
 
 class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
   /// Groups products by shop ID
   Map<String, List<dynamic>> groupByShop(List<dynamic> orderedProducts) {
     Map<String, List<dynamic>> groupedOrders = {};
@@ -129,13 +132,32 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
 
                       /// Call & Chat Buttons
                       customButton(
-                        onTap: () =>
-                            launchUrl(Uri(scheme: "tel", path: shopPhone)),
+                        onTap: () {
+                          analytics.logEvent(
+                            name: 'call_seller',
+                            parameters: {
+                              'seller_id': shopId,
+                              'shopName': shopName,
+                              'shopPhone': shopPhone,
+                              'from_page': 'CustomerOrderViewPage'
+                            },
+                          );
+                          launchUrl(Uri(scheme: "tel", path: shopPhone));
+                        },
                         text: "Call Seller",
                       ),
                       spacer(),
                       customButton(
                         onTap: () {
+                          analytics.logEvent(
+                            name: 'chat_seller',
+                            parameters: {
+                              'seller_id': shopId,
+                              'shopName': shopName,
+                              'shopPhone': shopPhone,
+                              'from_page': 'CustomerOrderViewPage'
+                            },
+                          );
                           ChatController().addChat({
                             "ShopId": shopId,
                             "OrderId": widget.order["id"],

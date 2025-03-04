@@ -14,6 +14,7 @@ import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/select_form.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:e_online/widgets/text_form.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:get/get.dart';
@@ -36,6 +37,7 @@ class _AddProductPageState extends State<AddProductPage> {
   final ImagePicker _picker = ImagePicker();
   List<Color> selectedColors = [];
   UserController userController = Get.find();
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   TextEditingController nameController = TextEditingController();
   TextEditingController categoryController = TextEditingController(text: "All");
   TextEditingController priceController = TextEditingController();
@@ -530,7 +532,7 @@ class _AddProductPageState extends State<AddProductPage> {
                 customButton(
                   child:
                       loading ? const CustomLoader(color: Colors.white) : null,
-                  onTap: () {
+                  onTap: () async {
                     if (_formKey.currentState!.validate()) {
                       if (_images.isEmpty) {
                         showErrorSnackbar(
@@ -562,6 +564,17 @@ class _AddProductPageState extends State<AddProductPage> {
                       };
                       setState(() => loading = true);
                       print(payload);
+                      await analytics.logEvent(
+                        name: 'seller_add_product',
+                        parameters: {
+                          'item_name': nameController.text,
+                          "description": descriptionController.text,
+                          'category': categoryController.text,
+                          'price': priceIncludeDelivery.value,
+                          "ShopId": userController.user.value["Shops"][0]["id"],
+                        },
+                      );
+
                       ProductController().addProduct(payload).then((res) async {
                         // Upload images
                         var imagePayload = _images.map((item) async {

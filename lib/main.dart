@@ -161,6 +161,10 @@ class MyApp extends StatelessWidget {
       FirebaseAnalyticsObserver(analytics: analytics);
   const MyApp({super.key});
 
+  void trackAppOpen() {
+    analytics.logEvent(name: 'app_opened');
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(

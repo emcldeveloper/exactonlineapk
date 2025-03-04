@@ -7,6 +7,7 @@ import 'package:e_online/widgets/custom_loader.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -14,6 +15,7 @@ import 'package:hugeicons/hugeicons.dart';
 class RegistrationPage extends StatelessWidget {
   RegistrationPage({super.key});
   var isLoading = false.obs;
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
 
@@ -33,7 +35,7 @@ class RegistrationPage extends StatelessWidget {
             children: [
               spacer2(),
               Align(
-              alignment: Alignment.center,
+                alignment: Alignment.center,
                 child: Image.asset("assets/images/register1.png", height: 250),
               ),
               spacer2(),
@@ -156,6 +158,11 @@ class RegistrationPage extends StatelessWidget {
                       try {
                         await authController.registerUser(payload);
                         isLoading.value = false;
+                        await analytics.logEvent(name: 'login', parameters: {
+                          'method': 'email',
+                          'name': username,
+                          'phone': phone
+                        });
                         Get.to(() => ConfirmationCodePage(phoneNumber: phone));
                       } catch (e) {
                         isLoading.value = false;

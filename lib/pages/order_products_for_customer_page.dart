@@ -3,6 +3,7 @@ import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/horizontal_product_card.dart';
 import 'package:e_online/widgets/spacer.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -12,6 +13,7 @@ class OrderProductsForCustomerPage extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    FirebaseAnalytics analytics = FirebaseAnalytics.instance;
     final List<Map<String, dynamic>> orderItems = [
       {
         'title': "J.Crew T-shirt",
@@ -82,12 +84,27 @@ class OrderProductsForCustomerPage extends StatelessWidget {
               spacer2(),
               spacer1(),
               customButton(
-                onTap: () {},
+                onTap: () {
+                  //  analytics.logEvent(
+                  //           name: 'call_seller',
+                  //           parameters: {'seller_id': shopId, 'shopName': shopName, 'shopPhone': shopPhone, 'from_page': 'OrderProductsForCustomerPage' },
+                  //         );
+                },
                 text: "Call Seller",
               ),
               spacer(),
               customButton(
-                onTap: () {},
+                onTap: () {
+                    //  analytics.logEvent(
+                    //         name: 'chat_seller',
+                    //         parameters: {
+                    //           'seller_id': shopId,
+                    //           'shopName': shopName,
+                    //           'shopPhone': shopPhone,
+                    //           'from_page': 'OrderProductsForCustomerPage'
+                    //         },
+                    //       );
+                },
                 text: "Chat with Seller",
                 buttonColor: mutedTextColor,
                 textColor: primaryColor,
