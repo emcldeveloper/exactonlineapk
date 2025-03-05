@@ -176,6 +176,16 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
                 onTap: () async {
                   String googleMapsUrl =
                       "https://www.google.com/maps/search/?api=1&query=${shopDetails.value['shopLat']},${shopDetails.value['shopLong']}";
+                  await analytics.logEvent(
+                    name: 'share_shop_Location',
+                    parameters: {
+                      'shop_id': widget.shopId,
+                      'shop_Name': shopDetails.value['name'],
+                      'shop_address': shopDetails.value['address'],
+                      'shop_description': shopDetails.value['description'],
+                      'map_link': googleMapsUrl,
+                    },
+                  );
                   await launchUrlString(googleMapsUrl);
                 },
               ),

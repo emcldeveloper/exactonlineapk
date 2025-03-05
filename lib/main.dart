@@ -50,10 +50,13 @@ void main() async {
 Future<void> requestNotificationPermission() async {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
 
+  // Request permissions with provisional settings
   NotificationSettings settings = await messaging.requestPermission(
     alert: true,
     badge: true,
     sound: true,
+    provisional:
+        true, // Allows users to receive notifications without full permission
   );
 
   if (settings.authorizationStatus == AuthorizationStatus.authorized) {
@@ -62,6 +65,15 @@ Future<void> requestNotificationPermission() async {
     print("⚠️ User granted provisional permission.");
   } else {
     print("❌ User declined notification permission.");
+  }
+
+  // Ensure APNs token is available before making FCM plugin API calls (For iOS)
+  final apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+  if (apnsToken != null) {
+    print("📌 APNs Token: $apnsToken");
+    // You can now safely use FCM APIs
+  } else {
+    print("⚠️ APNs Token not available yet.");
   }
 
   // Allow notifications to show in the foreground
