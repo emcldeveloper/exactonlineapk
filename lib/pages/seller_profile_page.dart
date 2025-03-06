@@ -7,12 +7,14 @@ import 'package:e_online/controllers/product_controller.dart';
 import 'package:e_online/controllers/shop_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/conversation_page.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/Seller_product_card.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/no_data.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/seller_reels.dart';
 import 'package:e_online/widgets/spacer.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -30,6 +32,7 @@ class SellerProfilePage extends StatefulWidget {
 }
 
 class _SellerProfilePageState extends State<SellerProfilePage> {
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final ShopController shopController = Get.put(ShopController());
   final UserController userController = Get.find();
   final ProductController productController = Get.put(ProductController());
@@ -51,6 +54,7 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
   void initState() {
     super.initState();
     _initializeShopDetails();
+    trackScreenView("SellerProfilePage");
   }
 
   Future<void> _initializeShopDetails() async {
@@ -98,6 +102,16 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
         "UserId": userId,
       };
 
+      await analytics.logEvent(
+        name: 'view_shop_profile',
+        parameters: {
+          "Shop_Id": shopId,
+          "User_Id": userId,
+          "shop_Name": shopDetails.value['name'],
+          "address": shopDetails.value['address'],
+        },
+      );
+
       await shopController.createShopStats(payload);
     } catch (e) {
       debugPrint("Error sending shop stats: $e");
@@ -116,6 +130,17 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
         "Visit: $shopName shop, located at: $address\nDescription:$description";
 
     String fullAppLink = "$appLink?shopId=$shopId";
+
+    await analytics.logEvent(
+      name: 'share_shop',
+      parameters: {
+        'shop_id': shopId,
+        'shop_Name': shopName,
+        'shop_address': address,
+        'shop_description': description,
+        'link': fullAppLink,
+      },
+    );
     await Share.share(shareText +
         "\n\nCheck out this shop or explore more on ExactOnline!" +
         fullAppLink);
@@ -151,6 +176,16 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
                 onTap: () async {
                   String googleMapsUrl =
                       "https://www.google.com/maps/search/?api=1&query=${shopDetails.value['shopLat']},${shopDetails.value['shopLong']}";
+                  await analytics.logEvent(
+                    name: 'share_shop_Location',
+                    parameters: {
+                      'shop_id': widget.shopId,
+                      'shop_Name': shopDetails.value['name'],
+                      'shop_address': shopDetails.value['address'],
+                      'shop_description': shopDetails.value['description'],
+                      'map_link': googleMapsUrl,
+                    },
+                  );
                   await launchUrlString(googleMapsUrl);
                 },
               ),
@@ -164,6 +199,17 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
               onTap: () async {
                 String phoneNumber = shopDetails.value['phone'];
                 String telUrl = "tel:$phoneNumber";
+
+                await analytics.logEvent(
+                  name: 'call_seller',
+                  parameters: {
+                    'seller_id': widget.shopId,
+                    'shopName': shopDetails.value['name'],
+                    'shopPhone': phoneNumber,
+                    'from_page': 'SellerProfilePage'
+                  },
+                );
+
                 if (await canLaunchUrlString(telUrl)) {
                   await launchUrlString(telUrl);
                 } else {
@@ -173,7 +219,17 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
             ),
             const SizedBox(width: 8),
             InkWell(
-              onTap: () {
+              onTap: () async {
+                await analytics.logEvent(
+                  name: 'chat_seller',
+                  parameters: {
+                    'seller_id': widget.shopId,
+                    'shopName': shopDetails.value['name'],
+                    'shopPhone': shopDetails.value['phone'],
+                    'from_page': 'SellerProfilePage'
+                  },
+                );
+
                 ChatController().addChat({
                   "ShopId": widget.shopId,
                   "UserId": userId,

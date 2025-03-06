@@ -16,6 +16,7 @@ import 'package:e_online/widgets/no_data.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/popup_alert.dart';
 import 'package:e_online/widgets/spacer.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -29,13 +30,19 @@ class CartPage extends StatefulWidget {
 
 class _CartPageState extends State<CartPage> {
   CartProductController cartProductController = Get.find();
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  OrderedProductController orderedProductController = Get.find();
   var loading = false.obs;
   var status = "ORDERED".obs;
   @override
   Widget build(BuildContext context) {
-    // UsersControllers usersControllers = Get.find();
-    // usersControllers.user;
-    // var selectedOrderedProduct;
+    Future.delayed(Duration.zero, () {
+      analytics.logScreenView(
+        screenName: "CartPage",
+        screenClass: "CartPage",
+      );
+    });
+    var selectedOrderedProduct;
     return Scaffold(
         backgroundColor: mainColor,
         appBar: AppBar(

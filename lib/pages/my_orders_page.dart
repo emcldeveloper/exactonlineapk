@@ -6,6 +6,7 @@ import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/no_data.dart';
 import 'package:e_online/widgets/order_card.dart';
 import 'package:e_online/widgets/spacer.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -19,6 +20,13 @@ class MyOrdersPage extends StatefulWidget {
 class _MyOrdersPageState extends State<MyOrdersPage> {
   @override
   Widget build(BuildContext context) {
+     FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+    Future.delayed(Duration.zero, () {
+      analytics.logScreenView(
+        screenName: "MyOrdersPage",
+        screenClass: "MyOrdersPage",
+      );
+    });
     return Scaffold(
       backgroundColor: mainColor,
       appBar: AppBar(

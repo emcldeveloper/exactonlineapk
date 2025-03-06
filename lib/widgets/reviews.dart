@@ -1,6 +1,7 @@
 import 'package:e_online/controllers/review_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/widgets/custom_loader.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/widgets/custom_button.dart';
@@ -28,6 +29,7 @@ class ReviewBottomSheet extends StatefulWidget {
 class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
   int selectedRating = 0;
   var isLoading = false.obs;
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final UserController userController = Get.find();
   final ReviewController reviewController = Get.put(ReviewController());
   final TextEditingController myReviewController = TextEditingController();
@@ -91,6 +93,16 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
         selectedRating = 0;
         myReviewController.clear();
       });
+
+      await analytics.logEvent(
+        name: 'review_sent',
+        parameters: {
+          "ProductId": widget.productId,
+          "UserId": userId,
+          "description": myReviewController.text,
+          "rating": selectedRating,
+        },
+      );
 
       isLoading.value = false;
 

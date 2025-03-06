@@ -3,11 +3,13 @@ import 'package:e_online/controllers/users_controllers.dart';
 import 'package:e_online/controllers/auth_controller.dart';
 import 'package:e_online/pages/auth/confirmation_code_page.dart';
 import 'package:e_online/pages/auth/registration_page.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/custom_loader.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -20,6 +22,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   UsersControllers usersControllers = UsersControllers();
   var isLoading = false.obs;
   final TextEditingController phoneController = TextEditingController();
@@ -32,6 +35,8 @@ class _LoginPageState extends State<LoginPage> {
     // TODO: implement initState
     Get.put(usersControllers);
     super.initState();
+    trackScreenView("LoginPage");
+
   }
 
   @override
@@ -118,6 +123,9 @@ class _LoginPageState extends State<LoginPage> {
                       try {
                         await authController.sendUserCode(payload);
                         isLoading.value = false;
+                        await analytics.logEvent(
+                            name: 'login',
+                            parameters: {'method': 'phone', 'phone': phone});
 
                         Get.to(() => ConfirmationCodePage(phoneNumber: phone));
                       } catch (e) {

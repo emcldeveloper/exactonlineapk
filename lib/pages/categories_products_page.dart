@@ -2,6 +2,7 @@ import 'package:e_online/constants/colors.dart';
 import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/controllers/product_controller.dart';
 import 'package:e_online/pages/search_page.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/favorite_card.dart';
 import 'package:e_online/widgets/filter_tiles.dart';
 import 'package:e_online/widgets/heading_text.dart';
@@ -33,6 +34,7 @@ class _CategoriesProductsPageState extends State<CategoriesProductsPage> {
   @override
   void initState() {
     super.initState();
+    trackScreenView("CategoriesProductsPage"); 
     _fetchProducts(_currentPage); // Initial fetch
     _scrollController.addListener(_onScroll); // Attach scroll listener
   }

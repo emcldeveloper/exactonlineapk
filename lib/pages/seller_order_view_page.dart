@@ -5,12 +5,14 @@ import 'package:e_online/controllers/order_controller.dart';
 import 'package:e_online/controllers/ordered_products_controller.dart';
 import 'package:e_online/pages/conversation_page.dart';
 import 'package:e_online/utils/convert_to_money_format.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/horizontal_product_card.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:e_online/widgets/text_form.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -25,6 +27,8 @@ class SellerOrderViewPage extends StatefulWidget {
 }
 
 class _SellerOrderViewPageState extends State<SellerOrderViewPage> {
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+
   void _removeProduct(int index) {
     setState(() {
       productItems.removeAt(index);
@@ -34,6 +38,7 @@ class _SellerOrderViewPageState extends State<SellerOrderViewPage> {
   @override
   void initState() {
     super.initState();
+    trackScreenView("SellerOrderViewPage");
   }
 
   var status = "PENDING".obs;
@@ -268,6 +273,16 @@ class _SellerOrderViewPageState extends State<SellerOrderViewPage> {
                     spacer(),
                     customButton(
                       onTap: () {
+                        analytics.logEvent(
+                          name: 'call_seller',
+                          parameters: {
+                            'seller_id': widget.order["OrderedProducts"]?[0]
+                              ?["Product"]["ShopId"],
+                              // 'shopName': widget.order["User"]["phone"],
+                              // 'shopPhone': widget.order["User"]["phone"],
+                              'from_page': 'SellerOrderViewPage'
+                          },
+                        );
                         launchUrl(Uri(
                             scheme: "tel",
                             path: widget.order["User"]["phone"]));
@@ -277,6 +292,16 @@ class _SellerOrderViewPageState extends State<SellerOrderViewPage> {
                     spacer(),
                     customButton(
                       onTap: () {
+                           analytics.logEvent(
+                            name: 'chat_seller',
+                            parameters: {
+                              'seller_id': widget.order["OrderedProducts"]?[0]
+                              ?["Product"]["ShopId"],
+                              // 'shopName': widget.order["User"]["phone"],
+                              // 'shopPhone': widget.order["User"]["phone"],
+                              'from_page': 'SellerOrderViewPage'
+                            },
+                          );
                         ChatController().addChat({
                           "ShopId": widget.order["ShopId"],
                           "OrderId": widget.order["id"],

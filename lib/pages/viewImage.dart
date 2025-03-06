@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -14,6 +15,12 @@ class ViewImage extends StatefulWidget {
 }
 
 class _ViewImageState extends State<ViewImage> {
+   @override
+  void initState() {
+    super.initState();
+    trackScreenView("ViewImage");
+  }
+
   bool _isZoomed = false;
 
   @override

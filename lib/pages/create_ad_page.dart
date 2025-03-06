@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/pages/main_page.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/editimage.dart';
 import 'package:e_online/widgets/heading_text.dart';
@@ -19,6 +20,12 @@ class CreateAdPage extends StatefulWidget {
 }
 
 class _CreateAdPageState extends State<CreateAdPage> {
+  @override
+  void initState() {
+    super.initState();
+    trackScreenView("CreateAdPage");
+  }
+
   final List<XFile> _images = [];
   final ImagePicker _picker = ImagePicker();
   DateTime? _startDate;

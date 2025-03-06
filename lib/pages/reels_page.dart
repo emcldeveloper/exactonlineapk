@@ -3,6 +3,7 @@ import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/reel_controller.dart';
 import 'package:e_online/pages/preview_reel_page.dart';
 import 'package:e_online/pages/seller_profile_page.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/following.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
@@ -89,6 +90,7 @@ class _ProductMasonryGridState extends State<ProductMasonryGrid> {
   @override
   void initState() {
     super.initState();
+    trackScreenView("ReelsPage");
     _fetchReels(_currentPage); // Initial fetch
     _scrollController.addListener(_onScroll); // Attach scroll listener
   }

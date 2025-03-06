@@ -2,6 +2,7 @@ import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/chat_controller.dart';
 import 'package:e_online/pages/conversation_page.dart';
 import 'package:e_online/pages/topics_page.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/shop_chat_card.dart';
 import 'package:e_online/widgets/user_chat_card.dart';
 import 'package:e_online/widgets/heading_text.dart';
@@ -20,6 +21,12 @@ class ShopChatPage extends StatefulWidget {
 
 class _ShopChatPageState extends State<ShopChatPage> {
   bool _isSearching = false;
+
+  @override
+  void initState() {
+    super.initState();
+    trackScreenView("ShopChatPage");
+  }
 
   final List<Map<String, dynamic>> chatItems = [];
 

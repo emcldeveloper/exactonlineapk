@@ -17,7 +17,7 @@ class WayPage extends StatelessWidget {
         var response = await userController.getUserDetails();
         var userDetails = response["body"];
         print(userDetails);
-        
+
         userController.user.value = userDetails;
         return true;
       } catch (e) {

@@ -1,4 +1,5 @@
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/favorite_card.dart';
 import 'package:e_online/widgets/filter_tiles.dart';
 import 'package:e_online/widgets/spacer.dart';
@@ -69,6 +70,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
   @override
   void initState() {
     super.initState();
+    trackScreenView("SearchResultsPage");
     // Initially show all results
     filteredResults = allResults;
   }

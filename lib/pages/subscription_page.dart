@@ -1,5 +1,6 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/subscription_controller.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/payment_method.dart';
@@ -26,6 +27,7 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
   void initState() {
     subscriptionController.getSubscriptions(page: 1, limit: 10, keyword: "");
     super.initState();
+    trackScreenView("SubscriptionPage");
     _initializeSubscriptionDetails();
   }
 

@@ -1,4 +1,5 @@
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
@@ -17,6 +18,11 @@ class PromotedProductViewPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<PromotedProductViewPage> {
+   @override
+  void initState() {
+    super.initState();
+    trackScreenView("PromotedProductViewPage");
+  }
   void _showInsightsBottomSheet() {
     showModalBottomSheet(
       context: context,

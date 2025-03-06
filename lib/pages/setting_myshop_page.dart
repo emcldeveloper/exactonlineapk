@@ -5,6 +5,7 @@ import 'package:e_online/pages/edit_register_as_seller_page.dart';
 import 'package:e_online/pages/main_page.dart';
 import 'package:e_online/pages/profile_page.dart';
 import 'package:e_online/pages/register_as_seller_page.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/utils/shared_preferences.dart';
 import 'package:e_online/widgets/custom_loader.dart';
 import 'package:e_online/widgets/shop_subscription_card.dart';
@@ -54,6 +55,7 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
   @override
   void initState() {
     super.initState();
+    trackScreenView("SettingMyshopPage");
     _loadSelectedShopDetails();
     userId = userController.user.value['id'] ?? "";
     shopList = userController.user.value['Shops'] ?? [];

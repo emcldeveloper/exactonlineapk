@@ -4,6 +4,7 @@ import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -13,6 +14,13 @@ class JoinAsSellerPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+    Future.delayed(Duration.zero, () {
+      analytics.logScreenView(
+        screenName: "JoinAsSellerPage",
+        screenClass: "JoinAsSellerPage",
+      );
+    });
     List<Map<String, String>> sellerAdvantages = [
       {"adv": "List your products on the platform"},
       {"adv": "Promote your products on the platform"},

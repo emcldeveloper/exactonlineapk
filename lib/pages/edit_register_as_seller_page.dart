@@ -4,6 +4,7 @@ import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/shop_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/setting_myshop_page.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/custom_loader.dart';
 import 'package:e_online/widgets/editimage.dart';
@@ -52,7 +53,7 @@ class _EditRegisterAsSellerPageState extends State<EditRegisterAsSellerPage> {
   @override
   void initState() {
     super.initState();
-
+    trackScreenView("EditRegisterAsSellerPage");
     userId = userController.user.value["id"] ?? "";
     List businesses = userController.user.value['Shops'];
 

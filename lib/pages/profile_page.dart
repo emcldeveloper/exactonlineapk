@@ -10,6 +10,7 @@ import 'package:e_online/pages/my_shop_page.dart';
 import 'package:e_online/pages/privacy_policy.dart';
 import 'package:e_online/pages/subscription_page.dart';
 import 'package:e_online/pages/terms_conditions_page.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/utils/shared_preferences.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
@@ -30,6 +31,11 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   UserController userController = Get.find();
 
+ @override
+  void initState() {
+    super.initState();
+    trackScreenView("ProfilePage"); 
+  }
   bool loadingShopInfo = false;
   @override
   Widget build(BuildContext context) {
@@ -151,7 +157,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         {
                           'icon': Icons.support_agent_outlined,
                           'title': 'Customer Support',
-                          'page': const CustomerSupportPage(),
+                          'page': CustomerSupportPage(),
                         },
                         {
                           'icon': Icons.assignment_outlined,

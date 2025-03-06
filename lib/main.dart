@@ -13,6 +13,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 // import 'package:uni_links5/uni_links.dart';
@@ -25,19 +26,34 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("🔹 Body: ${message.notification?.body}");
 }
 
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
   await requestNotificationPermission();
   await getToken();
   setupFirebaseMessagingHandlers();
 
+// Initialize local notifications
+  var initializationSettingsAndroid =
+      const AndroidInitializationSettings('@mipmap/ic_launcher');
+  var initializationSettings =
+      InitializationSettings(android: initializationSettingsAndroid);
+
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+  // setup crashlytics
   FlutterError.onError = (FlutterErrorDetails details) {
     FirebaseCrashlytics.instance.recordFlutterFatalError(details);
   };
+
   PlatformDispatcher.instance.onError = (error, stack) {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
@@ -49,27 +65,44 @@ void main() async {
 // 🔔 Request Notification Permissions
 Future<void> requestNotificationPermission() async {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
+  try {
+    // Request permissions with provisional settings
+    NotificationSettings settings = await messaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+      provisional:
+          true, // Allows users to receive notifications without full permission
+    );
 
-  NotificationSettings settings = await messaging.requestPermission(
-    alert: true,
-    badge: true,
-    sound: true,
-  );
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print("✅ User granted notification permission.");
+    } else if (settings.authorizationStatus ==
+        AuthorizationStatus.provisional) {
+      print("⚠️ User granted provisional permission.");
+    } else {
+      print("❌ User declined notification permission.");
+    }
 
-  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-    print("✅ User granted notification permission.");
-  } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
-    print("⚠️ User granted provisional permission.");
-  } else {
-    print("❌ User declined notification permission.");
+    // Ensure APNs token is available before making FCM plugin API calls (For iOS)
+    final apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+    if (apnsToken != null) {
+      print("📌 APNs Token: $apnsToken");
+      // You can now safely use FCM APIs
+    } else {
+      print("⚠️ APNs Token not available yet.");
+    }
+
+    // Allow notifications to show in the foreground
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+  } catch (e) {
+    debugPrint("❌ Error requesting notification permission: $e");
   }
-
-  // Allow notifications to show in the foreground
-  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-    alert: true,
-    badge: true,
-    sound: true,
-  );
 }
 
 // 🔑 Get FCM Token
@@ -88,6 +121,9 @@ void setupFirebaseMessagingHandlers() {
     if (message.notification != null) {
       print("🔹 Title: ${message.notification!.title}");
       print("🔹 Body: ${message.notification!.body}");
+
+      // Show local notification
+      showNotification(message);
     }
   });
 
@@ -101,6 +137,26 @@ void setupFirebaseMessagingHandlers() {
 
   // Background messages
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+}
+
+Future<void> showNotification(RemoteMessage message) async {
+  const AndroidNotificationDetails androidPlatformChannelSpecifics =
+      AndroidNotificationDetails(
+    'high_importance_channel', // Channel ID
+    'High Importance Notifications', // Channel Name
+    importance: Importance.high,
+    priority: Priority.high,
+  );
+
+  const NotificationDetails platformChannelSpecifics =
+      NotificationDetails(android: androidPlatformChannelSpecifics);
+
+  await flutterLocalNotificationsPlugin.show(
+    0, // Notification ID
+    message.notification?.title ?? "No Title",
+    message.notification?.body ?? "No Body",
+    platformChannelSpecifics,
+  );
 }
 
 final UserController userController = Get.put(UserController());
@@ -160,6 +216,10 @@ class MyApp extends StatelessWidget {
   static FirebaseAnalyticsObserver observer =
       FirebaseAnalyticsObserver(analytics: analytics);
   const MyApp({super.key});
+
+  void trackAppOpen() {
+    analytics.logEvent(name: 'app_opened');
+  }
 
   @override
   Widget build(BuildContext context) {

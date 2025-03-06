@@ -16,6 +16,7 @@ import 'package:e_online/pages/notifications_page.dart';
 import 'package:e_online/pages/profile_page.dart';
 import 'package:e_online/pages/search_page.dart';
 import 'package:e_online/pages/see_all_page.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/ads_carousel.dart';
 import 'package:e_online/widgets/cartIcon.dart';
 import 'package:e_online/widgets/heading_text.dart';
@@ -58,6 +59,7 @@ class _HomePageState extends State<HomePage> {
       categories.value.addAll(res);
     });
     super.initState();
+    trackScreenView("HomePage");
   }
 
   @override

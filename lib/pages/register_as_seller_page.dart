@@ -2,12 +2,14 @@ import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/shop_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/free_trial_page.dart';
+import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/custom_loader.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -23,6 +25,7 @@ class RegisterAsSellerPage extends StatefulWidget {
 class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
   final List<PlatformFile> _files = [];
   var isLoading = false.obs;
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   final UserController userController = Get.find();
   final ShopController shopController = Get.put(ShopController());
@@ -45,6 +48,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
   String userId = "";
   @override
   void initState() {
+    trackScreenView("RegisterAsSellerPage");
     userId = userController.user.value["id"] ?? "";
     super.initState();
   }
@@ -614,6 +618,14 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                             });
                             await shopController.createShopDocuments(fileData);
                           }
+                          await analytics.logEvent(
+                            name: 'create_business',
+                            parameters: {
+                              'shop_id': shopId,
+                              'shop_name': response['body']["name"],
+                              'date': response['body']['createdAt']
+                            },
+                          );
 
                           isLoading.value = false;
                           Get.snackbar(
@@ -669,7 +681,14 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                             });
                             await shopController.createShopDocuments(fileData);
                           }
-
+                          await analytics.logEvent(
+                            name: 'create_agent',
+                            parameters: {
+                              'shop_id': shopId,
+                              'shop_name': response['body']["name"],
+                              'date': response['body']['createdAt']
+                            },
+                          );
                           isLoading.value = false;
                           Get.snackbar(
                               "Success", "Agent Shop created successfully!",
