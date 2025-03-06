@@ -249,13 +249,6 @@ class _ProductPageState extends State<ProductPage> {
               width: 12.0,
             ),
           ],
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(1.0),
-            child: Container(
-              color: const Color.fromARGB(255, 242, 242, 242),
-              height: 1.0,
-            ),
-          ),
         ),
         body: FutureBuilder(
             future:
@@ -285,39 +278,43 @@ class _ProductPageState extends State<ProductPage> {
                       ),
                       Stack(
                         children: [
-                          Container(
-                            height: 300,
-                            color: Colors.grey[100],
-                            width: double.infinity,
-                            child: CarouselSlider(
-                              items: List.from(product["ProductImages"])
-                                  .map((item) => GestureDetector(
-                                        onTap: () {
-                                          Get.to(() => ViewImage(
-                                                index: index.value,
-                                                images: List.from(product[
-                                                        "ProductImages"])
-                                                    .map((item) =>
-                                                        item["image"] as String)
-                                                    .toList(),
-                                              ));
-                                        },
-                                        child: Container(
-                                          width: double.infinity,
-                                          child: CachedNetworkImage(
-                                            imageUrl: item["image"],
-                                            fit: BoxFit.cover,
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(00),
+                            child: Container(
+                              height: 300,
+                              color: Colors.grey[100],
+                              width: double.infinity,
+                              child: CarouselSlider(
+                                items: List.from(product["ProductImages"])
+                                    .map((item) => GestureDetector(
+                                          onTap: () {
+                                            Get.to(() => ViewImage(
+                                                  index: index.value,
+                                                  images: List.from(product[
+                                                          "ProductImages"])
+                                                      .map((item) =>
+                                                          item["image"]
+                                                              as String)
+                                                      .toList(),
+                                                ));
+                                          },
+                                          child: Container(
+                                            width: double.infinity,
+                                            child: CachedNetworkImage(
+                                              imageUrl: item["image"],
+                                              fit: BoxFit.cover,
+                                            ),
                                           ),
-                                        ),
-                                      ))
-                                  .toList(),
-                              options: CarouselOptions(
-                                  onPageChanged: (current, reason) {
-                                    index.value = current;
-                                  },
-                                  autoPlay: true,
-                                  aspectRatio: 1,
-                                  viewportFraction: 1),
+                                        ))
+                                    .toList(),
+                                options: CarouselOptions(
+                                    onPageChanged: (current, reason) {
+                                      index.value = current;
+                                    },
+                                    autoPlay: true,
+                                    aspectRatio: 1,
+                                    viewportFraction: 1),
+                              ),
                             ),
                           ),
                           Positioned(

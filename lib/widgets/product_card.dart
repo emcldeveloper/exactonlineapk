@@ -98,8 +98,7 @@ class _ProductCardState extends State<ProductCard> {
                               isFavorite.value
                                   ? AntDesign.heart_fill
                                   : AntDesign.heart_outline,
-                              color:
-                                  isFavorite.value ? Colors.red : Colors.black,
+                              color: isFavorite.value ? primary : Colors.black,
                               size: 18.0,
                             ),
                           )),
@@ -153,7 +152,7 @@ class _ProductCardState extends State<ProductCard> {
                     widget.data["Shop"]?["name"] ?? "",
                     fontSize: 12,
                     maxLines: 1,
-                    color: Colors.red,
+                    color: primary,
                   ),
                 ],
               ),
