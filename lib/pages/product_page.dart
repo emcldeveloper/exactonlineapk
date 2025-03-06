@@ -15,7 +15,6 @@ import 'package:e_online/pages/cart_page.dart';
 import 'package:e_online/pages/conversation_page.dart';
 import 'package:e_online/pages/viewImage.dart';
 import 'package:e_online/utils/convert_to_money_format.dart';
-import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/utils/snackbars.dart';
 import 'package:e_online/widgets/cartIcon.dart';
 import 'package:e_online/widgets/custom_button.dart';
@@ -24,7 +23,6 @@ import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/report_seller.dart';
 import 'package:e_online/widgets/reviews.dart';
 import 'package:e_online/widgets/spacer.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -46,7 +44,6 @@ class ProductPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<ProductPage> {
-  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   late String selectedImage = widget.productData["ProductImages"][0]["id"];
   late List<String> productImages;
   final UserController userController = Get.find();
@@ -59,7 +56,6 @@ class _ProductPageState extends State<ProductPage> {
   @override
   void initState() {
     super.initState();
-    trackScreenView("ProductPage");
     isFavorite.value = widget.productData.containsKey('Favorites') &&
         widget.productData['Favorites'] != null &&
         widget.productData['Favorites'].isNotEmpty;
@@ -99,20 +95,8 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   Future<void> _sendProductStats(String type) async {
+    print("being called share statics");
     var userId = userController.user.value['id'] ?? "";
-    if (type == "view") {
-      await analytics.logEvent(
-        name: 'view_product',
-        parameters: {
-          'product_id': widget.productData['id'],
-          'UserId': userId,
-          'product_name': widget.productData['name'],
-          'price': widget.productData['sellingPrice'] != null
-              ? " TZS ${toMoneyFormmat(widget.productData['sellingPrice'])}"
-              : '',
-        },
-      );
-    }
     try {
       var payload = {
         "ProductId": widget.productData['id'],
@@ -147,16 +131,6 @@ class _ProductPageState extends State<ProductPage> {
 
     // Fetch image URL
     String imageUrl = widget.productData["ProductImages"][0]["image"];
-
-    await analytics.logEvent(
-      name: 'share_product',
-      parameters: {
-        'product_id': productId,
-        'product_Name': productName,
-        'price': price,
-        'link': fullAppLink,
-      },
-    );
 
     try {
       // Download image to temporary directory
@@ -511,27 +485,18 @@ class _ProductPageState extends State<ProductPage> {
                               Obx(
                                 () => customButton(
                                   loading: addingToCart.value,
-                                  onTap: () async {
+                                  onTap: () {
                                     addingToCart.value = true;
                                     CartProductController().addCartProduct({
                                       "UserId": userController.user.value["id"],
                                       "ProductId": product["id"]
-                                    }).then((res) async {
+                                    }).then((res) {
                                       showSuccessSnackbar(
                                           title: "Added successfully",
                                           description:
                                               "Product is added to cart successfully");
                                       addingToCart.value = false;
-                                      await analytics.logEvent(
-                                        name: 'add_to_cart',
-                                        parameters: {
-                                          'product_id': product["id"],
-                                          'product_name': product['name'],
-                                          'product_description':
-                                              product['description'],
-                                          'price': product['price'],
-                                        },
-                                      );
+
                                       setState(() {});
                                       cartProductController.getOnCartproducts();
                                     });
@@ -553,15 +518,6 @@ class _ProductPageState extends State<ProductPage> {
                             customButton(
                               onTap: () async {
                                 _sendProductStats("call");
-                                await analytics.logEvent(
-                                  name: 'call_seller',
-                                  parameters: {
-                                    'seller_id': product["Shop"]["id"],
-                                    'shopName': product["Shop"]["name"],
-                                    'shopPhone': product["Shop"]["phone"],
-                                    'from_page': 'ProductPage'
-                                  },
-                                );
                                 await launchUrl(Uri(
                                     scheme: "tel",
                                     path: product["Shop"]["phone"]));
