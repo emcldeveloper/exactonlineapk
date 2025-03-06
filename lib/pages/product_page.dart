@@ -24,6 +24,7 @@ import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/report_seller.dart';
 import 'package:e_online/widgets/reviews.dart';
 import 'package:e_online/widgets/spacer.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -45,6 +46,7 @@ class ProductPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<ProductPage> {
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   late String selectedImage = widget.productData["ProductImages"][0]["id"];
   late List<String> productImages;
   final UserController userController = Get.find();
@@ -483,48 +485,45 @@ class _ProductPageState extends State<ProductPage> {
                             // ),
                             spacer1(),
                             if (product["CartProducts"].length < 1)
-                            if (product["CartProducts"].length < 1)
-                              Obx(
-                                () => customButton(
-                                  loading: addingToCart.value,
-                                  onTap: () {
-                                    addingToCart.value = true;
-                                    await analytics.logEvent(
-                                      name: 'add_to_cart',
-                                      parameters: {
-                                        'product_id': product["id"],
-                                        'product_name': product['name'],
-                                        'product_description':
-                                            product['description'],
-                                        'price': product['sellingPrice'],
-                                      },
-                                    );
+                              if (product["CartProducts"].length < 1)
+                                Obx(
+                                  () => customButton(
+                                    loading: addingToCart.value,
+                                    onTap: () async {
+                                      addingToCart.value = true;
+                                      await analytics.logEvent(
+                                        name: 'add_to_cart',
+                                        parameters: {
+                                          'product_id': product["id"],
+                                          'product_name': product['name'],
+                                          'product_description':
+                                              product['description'],
+                                          'price': product['sellingPrice'],
+                                        },
+                                      );
 
-                                    CartProductController().addCartProduct({
-                                      "UserId": userController.user.value["id"],
-                                      "ProductId": product["id"]
-                                    }).then((res) {
-                                      showSuccessSnackbar(
-                                          title: "Added successfully",
-                                          description:
-                                              "Product is added to cart successfully");
-                                      addingToCart.value = false;
+                                      CartProductController().addCartProduct({
+                                        "UserId":
+                                            userController.user.value["id"],
+                                        "ProductId": product["id"]
+                                      }).then((res) {
+                                        showSuccessSnackbar(
+                                            title: "Added successfully",
+                                            description:
+                                                "Product is added to cart successfully");
+                                        addingToCart.value = false;
 
-                                      setState(() {});
-                                      CartProductController()
-                                          .getOnCartproducts();
-                                    });
-                                  },
-                                  text: "Add to Cart",
+                                        setState(() {});
+                                        CartProductController()
+                                            .getOnCartproducts();
+                                      });
+                                    },
+                                    text: "Add to Cart",
+                                  ),
                                 ),
-                              ),
-                            if (product["CartProducts"].length > 0)
                             if (product["CartProducts"].length > 0)
                               customButton(
                                 loading: addingToCart.value,
-                                onTap: () async {
-                                  await Get.to(() => CartPage());
-                                  setState(() {});
                                 onTap: () async {
                                   await Get.to(() => CartPage());
                                   setState(() {});
@@ -535,6 +534,20 @@ class _ProductPageState extends State<ProductPage> {
                             spacer(),
                             customButton(
                               onTap: () async {
+                                await analytics.logEvent(
+                                  name: 'call_seller',
+                                  parameters: {
+                                    'Shop_Id': product["Shop"]["id"],
+                                    'product_id': product["id"],
+                                    'product_name': product['name'],
+                                    'product_description':
+                                        product['description'],
+                                    'price': product['sellingPrice'],
+                                    'shopName': product["Shop"]["name"],
+                                    'shopPhone': product["Shop"]["phone"],
+                                    'from_page': 'ProductPage'
+                                  },
+                                );
                                 _sendProductStats("call");
                                 await launchUrl(Uri(
                                     scheme: "tel",
@@ -546,7 +559,21 @@ class _ProductPageState extends State<ProductPage> {
                             ),
                             spacer(),
                             customButton(
-                              onTap: () {
+                              onTap: () async {
+                                await analytics.logEvent(
+                                  name: 'chat_seller',
+                                  parameters: {
+                                    'Shop_Id': product["Shop"]["id"],
+                                    'product_id': product["id"],
+                                    'product_name': product['name'],
+                                    'product_description':
+                                        product['description'],
+                                    'price': product['sellingPrice'],
+                                    'shopName': product["Shop"]["name"],
+                                    'shopPhone': product["Shop"]["phone"],
+                                    'from_page': 'ProductPage'
+                                  },
+                                );
                                 _sendProductStats("message");
                                 ChatController().addChat({
                                   "ShopId": product["Shop"]["id"],

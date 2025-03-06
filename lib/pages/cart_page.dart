@@ -18,11 +18,11 @@ import 'package:e_online/widgets/no_data.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/popup_alert.dart';
 import 'package:e_online/widgets/spacer.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 
-class CartPage extends StatefulWidget {
 class CartPage extends StatefulWidget {
   CartPage({super.key});
 
@@ -34,7 +34,6 @@ class _CartPageState extends State<CartPage> {
   FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   CartProductController cartProductController = Get.put(CartProductController());
   var loading = false.obs;
-  var status = "ORDERED".obs;
   var status = "ORDERED".obs;
   @override
   Widget build(BuildContext context) {
@@ -179,10 +178,10 @@ class _CartPageState extends State<CartPage> {
                                     await analytics.logEvent(
                                       name: 'submit_order',
                                       parameters: {
-                                        'order_id': OrderedProductController()
+                                        'order_id': CartProductController()
                                             .productsOnCart
                                             .value[0]["OrderId"],
-                                        'amount': OrderedProductController()
+                                        'amount': CartProductController()
                                             .productsOnCart
                                             .value
                                             .map((item) => double.parse(
