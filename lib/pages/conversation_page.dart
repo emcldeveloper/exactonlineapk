@@ -45,7 +45,19 @@ class _ConversationPageState extends State<ConversationPage> {
       messages.addAll(res);
       _scrollToBottom();
     });
-
+    if (widget.isUser) {
+      messageControllerInstance
+          .updateShopMessages(shopId: widget.topic["Chat"]["ShopId"])
+          .then((res) {
+        print(res);
+      });
+    } else {
+      messageControllerInstance
+          .updateUserMessages(userId: widget.topic["Chat"]["UserId"])
+          .then((res) {
+        print(res);
+      });
+    }
     // Initialize Socket.IO connection
     _connectToSocket();
   }
@@ -65,6 +77,20 @@ class _ConversationPageState extends State<ConversationPage> {
 
     socket.on('receiveMessage', (data) {
       messages.add(data);
+      print("🆎 ${widget.topic}");
+      if (widget.isUser) {
+        messageControllerInstance
+            .updateShopMessages(shopId: widget.topic["Chat"]["ShopId"])
+            .then((res) {
+          print(res);
+        });
+      } else {
+        messageControllerInstance
+            .updateUserMessages(userId: widget.topic["Chat"]["UserId"])
+            .then((res) {
+          print(res);
+        });
+      }
       _scrollToBottom();
     });
 

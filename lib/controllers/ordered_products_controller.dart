@@ -5,7 +5,6 @@ import 'package:e_online/utils/dio.dart';
 import 'package:get/get.dart';
 
 class OrderedProductController extends GetxController {
-  Rx<List> productsOnCart = Rx<List>([]);
   UserController userController = Get.find();
 
   Future addOrderedProduct(var payload) async {
@@ -23,21 +22,7 @@ class OrderedProductController extends GetxController {
     }
   }
 
-  Future getOnCartproducts() async {
-    try {
-      var response = await dio.get("/ordered-products/on-cart",
-          options: Options(headers: {
-            "Authorization":
-                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
-          }));
-      var data = response.data["body"]["rows"];
-      productsOnCart.value = data;
-      return data;
-    } on DioException catch (e) {
-      print(e.response);
-    }
-  }
-
+ 
   Future getUserOrderproducts(id) async {
     try {
       var response = await dio.get("/ordered-products/order/$id",
@@ -85,9 +70,5 @@ class OrderedProductController extends GetxController {
     }
   }
 
-  @override
-  void onInit() {
-    getOnCartproducts();
-    super.onInit();
-  }
+ 
 }

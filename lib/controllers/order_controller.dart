@@ -88,7 +88,7 @@ class OrdersController extends GetxController {
       var data = response.data["body"];
       return data;
     } on DioException catch (e) {
-      print(e.response);
+      print(e);
     }
   }
 }

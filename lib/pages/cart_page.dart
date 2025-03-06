@@ -1,9 +1,11 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/controllers/cart_products_controller.dart';
+import 'package:e_online/controllers/cart_products_controller.dart';
 import 'package:e_online/controllers/order_controller.dart';
 import 'package:e_online/controllers/ordered_products_controller.dart';
 import 'package:e_online/controllers/users_controllers.dart';
+import 'package:e_online/main.dart';
 import 'package:e_online/main.dart';
 import 'package:e_online/pages/main_page.dart';
 import 'package:e_online/pages/my_orders_page.dart';
@@ -16,11 +18,11 @@ import 'package:e_online/widgets/no_data.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/popup_alert.dart';
 import 'package:e_online/widgets/spacer.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 
+class CartPage extends StatefulWidget {
 class CartPage extends StatefulWidget {
   CartPage({super.key});
 
@@ -32,6 +34,7 @@ class _CartPageState extends State<CartPage> {
   FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   CartProductController cartProductController = Get.put(CartProductController());
   var loading = false.obs;
+  var status = "ORDERED".obs;
   var status = "ORDERED".obs;
   @override
   Widget build(BuildContext context) {

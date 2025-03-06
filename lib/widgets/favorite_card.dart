@@ -78,10 +78,10 @@ class _FavoriteCardState extends State<FavoriteCard> {
                               fontSize: 16.0,
                             ),
                             const SizedBox(width: 8),
-                            ParagraphText(
-                              "${widget.data['views'] ?? 0} views",
-                              color: mutedTextColor,
-                            ),
+                            // ParagraphText(
+                            //   "${widget.data['views'] ?? 0} views",
+                            //   color: mutedTextColor,
+                            // ),
                           ],
                         ),
                       ),

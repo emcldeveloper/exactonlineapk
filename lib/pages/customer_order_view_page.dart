@@ -1,5 +1,6 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/chat_controller.dart';
+import 'package:e_online/controllers/order_controller.dart';
 import 'package:e_online/controllers/ordered_products_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/conversation_page.dart';
@@ -47,6 +48,7 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
   }
 
   UserController userController = Get.find();
+  var status = "PENDING".obs;
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +65,7 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
           ),
         ),
         title: HeadingText(
-            "Order ${widget.order['id'].toString().split('-').first}"),
+            "Order #${widget.order['id'].toString().split('-').first}"),
         centerTitle: true,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
@@ -136,6 +138,68 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                         ],
                       ),
                       spacer(),
+                      if (widget.order["status"] == "DELIVERED")
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.green.withAlpha(30),
+                              border: Border.all(
+                                  color: Colors.green.withAlpha(60))),
+                          child: Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: ParagraphText(
+                                  "Order is delivered successfully, thanks for using Exact Online")),
+                        ),
+                      if (widget.order["status"] == "ORDERED")
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.cyan.withAlpha(30),
+                              border:
+                                  Border.all(color: Colors.cyan.withAlpha(60))),
+                          child: Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: ParagraphText(
+                                  "This order is now active, product(s) seller will reach out to you for delivery")),
+                        ),
+                      if (widget.order["status"] == "NEGOTIATION" ||
+                          widget.order["status"] == "PENDING")
+                        Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.orange.withAlpha(30),
+                              border: Border.all(
+                                  color: Colors.orange.withAlpha(60))),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Row(
+                              children: [
+                                Obx(
+                                  () => Checkbox(
+                                      activeColor: Colors.orange,
+                                      value: status.value == "ORDERED",
+                                      onChanged: (value) {
+                                        status.value = "ORDERED";
+                                        OrdersController().editOrder(
+                                            widget.order["id"],
+                                            {"status": "ORDERED"}).then((res) {
+                                          setState(() {
+                                            widget.order["status"] = "ORDERED";
+                                          });
+                                        });
+                                      }),
+                                ),
+                                Expanded(
+                                  child: ParagraphText(
+                                      "Agreed on this price ? press here to confirm order or continue negotiation with seller using buttons below "),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      spacer3(),
 
                       /// Call & Chat Buttons
                       customButton(
