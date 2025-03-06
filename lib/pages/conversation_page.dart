@@ -156,13 +156,22 @@ class _ConversationPageState extends State<ConversationPage> {
                   ),
                 ),
                 backgroundColor: Colors.black,
-                title: Text(
-                  data['Product']?['name'] ??
-                      "Order #${data["Order"]?["id"].toString().split("-").first}" ??
-                      widget.topic["title"] ??
-                      "Chat",
-                  style: const TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
+                title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      data['Product']?['name'] ??
+                          "Order #${data["Order"]?["id"].toString().split("-").first}" ??
+                          widget.topic["title"] ??
+                          "Chat",
+                      style: const TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      "Chatting with ${widget.isUser ? data['Order']['Shop']["name"] : data['Order']['User']["name"]}",
+                      style: const TextStyle(color: Colors.white, fontSize: 12),
+                    ),
+                  ],
                 ),
                 expandedHeight: 205.0,
                 floating: false,
