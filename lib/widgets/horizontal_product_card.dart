@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:e_online/controllers/cart_products_controller.dart';
 import 'package:e_online/utils/convert_to_money_format.dart';
 import 'package:e_online/utils/snackbars.dart';
 import 'package:e_online/widgets/popup_alert.dart';
@@ -14,10 +15,11 @@ import '../controllers/ordered_products_controller.dart';
 class HorizontalProductCard extends StatefulWidget {
   final Map<String, dynamic> data;
   final VoidCallback? onDelete;
-
+  final Function? onRefresh;
   const HorizontalProductCard({
     super.key,
     required this.data,
+    this.onRefresh,
     this.onDelete,
   });
 
@@ -34,12 +36,11 @@ class _HorizontalProductCardState extends State<HorizontalProductCard> {
     }
   }
 
-  OrderedProductController orderedProductController = Get.find();
-
   @override
   void initState() {
     super.initState();
-    print(widget.data["Product"]["ProductImages"]);
+    print(widget.data);
+    // print(widget.data["Product"]["ProductImages"]);
     // Assume the product has an associated index in a larger list
     currentIndex = 0; // Initialize with default value, update as needed
   }
@@ -58,13 +59,15 @@ class _HorizontalProductCardState extends State<HorizontalProductCard> {
       button2Action: () {
         Navigator.of(context).pop(); // Close the first popup
 
-        orderedProductController
-            .deleteOrderedProduct(widget.data["id"])
+        CartProductController()
+            .deleteCartProduct(widget.data["id"])
             .then((res) {
           showSuccessSnackbar(
               title: "Removed Successfully",
               description: "Product is removed from the cart");
-          orderedProductController.getOnCartproducts();
+          // Navigator.of(context).pop(); // Close the first popup
+          widget.onRefresh!();
+          // orderedProductController.getOnCartproducts();
         });
       },
     );
@@ -126,7 +129,7 @@ class _HorizontalProductCardState extends State<HorizontalProductCard> {
                     ],
                   ),
                   ParagraphText(
-                      widget.data["Product"]['Shop']["name"] ??
+                      widget.data["Product"]?['Shop']?["name"] ??
                           "No name available",
                       color: Colors.red,
                       maxLines: 2),

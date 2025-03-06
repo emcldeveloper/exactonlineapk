@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/controllers/cart_products_controller.dart';
 import 'package:e_online/controllers/chat_controller.dart';
 import 'package:e_online/controllers/favorite_controller.dart';
 import 'package:e_online/controllers/order_controller.dart';
@@ -213,7 +214,7 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   var addingToCart = false.obs;
-  OrderedProductController orderedProductController = Get.find();
+  CartProductController cartProductController = Get.find();
   RxInt index = 0.obs;
   @override
   Widget build(BuildContext context) {
@@ -480,38 +481,35 @@ class _ProductPageState extends State<ProductPage> {
                             //   ),
                             // ),
                             spacer1(),
-                            if (product["OrderedProducts"].length < 1)
+                            if (product["CartProducts"].length < 1)
                               Obx(
                                 () => customButton(
                                   loading: addingToCart.value,
                                   onTap: () {
                                     addingToCart.value = true;
-                                    OrdersController().addOrder({}).then((res) {
-                                      orderedProductController
-                                          .addOrderedProduct({
-                                        "OrderId": res["id"],
-                                        "ProductId": product["id"]
-                                      }).then((res) {
-                                        showSuccessSnackbar(
-                                            title: "Added successfully",
-                                            description:
-                                                "Product is added to cart successfully");
-                                        addingToCart.value = false;
+                                    CartProductController().addCartProduct({
+                                      "UserId": userController.user.value["id"],
+                                      "ProductId": product["id"]
+                                    }).then((res) {
+                                      showSuccessSnackbar(
+                                          title: "Added successfully",
+                                          description:
+                                              "Product is added to cart successfully");
+                                      addingToCart.value = false;
 
-                                        setState(() {});
-                                        orderedProductController
-                                            .getOnCartproducts();
-                                      });
+                                      setState(() {});
+                                      cartProductController.getOnCartproducts();
                                     });
                                   },
                                   text: "Add to Cart",
                                 ),
                               ),
-                            if (product["OrderedProducts"].length > 0)
+                            if (product["CartProducts"].length > 0)
                               customButton(
                                 loading: addingToCart.value,
-                                onTap: () {
-                                  Get.to(() => CartPage());
+                                onTap: () async {
+                                  await Get.to(() => CartPage());
+                                  setState(() {});
                                 },
                                 text: "View in Cart",
                               ),
@@ -538,8 +536,7 @@ class _ProductPageState extends State<ProductPage> {
                                   "UserId": userController.user.value["id"]
                                 }).then((res) {
                                   print(res);
-                                  Get.to(() =>
-                                      ConversationPage(res));
+                                  Get.to(() => ConversationPage(res));
                                 });
                               },
                               text: "Message Seller",

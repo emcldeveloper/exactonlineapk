@@ -10,7 +10,8 @@ import 'package:timeago/timeago.dart' as timeago;
 class OrderCard extends StatelessWidget {
   final Map<String, dynamic> data;
 
-  const OrderCard({super.key, required this.data});
+  bool isUser;
+  OrderCard({super.key, this.isUser = true, required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -38,12 +39,14 @@ class OrderCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ParagraphText(
-                          "Order ${data['id'].toString().split('-').first}",
+                          "Order #${data['id'].toString().split('-').first}",
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                           fontWeight: FontWeight.bold,
                           fontSize: 14.0),
-                      ParagraphText(data['User']["name"] ?? "N/A"),
+                      ParagraphText(!isUser
+                          ? data['User']["name"]
+                          : data["Shop"]["name"] ?? "N/A"),
                       ParagraphText(
                           timeago.format(DateTime.parse(data['updatedAt'])) ??
                               "N/A"),
@@ -60,16 +63,27 @@ class OrderCard extends StatelessWidget {
             width: 90,
             height: 35,
             decoration: BoxDecoration(
-              color: data['status'] == 'Completed'
-                  ? Colors.green[100]
-                  : Colors.grey[100],
+              border: Border.all(
+                  color: data['status'] == 'DELIVERED'
+                      ? Colors.green.withAlpha(70)!
+                      : data['status'] == 'ORDERED'
+                          ? Colors.amber.withAlpha(70)
+                          : Colors.grey.withAlpha(70)!),
+              color: data['status'] == 'DELIVERED'
+                  ? Colors.green.withAlpha(30)
+                  : data['status'] == 'ORDERED'
+                      ? Colors.amber.withAlpha(30)
+                      : Colors.grey.withAlpha(30),
               borderRadius: BorderRadius.circular(10),
             ),
             alignment: Alignment.center,
             child: ParagraphText(data['status'] ?? "processing",
-                color: data['status'] == 'Completed'
-                    ? Colors.green[800]
-                    : Colors.black,
+                fontWeight: FontWeight.bold,
+                color: data['status'] == 'DELIVERED'
+                    ? Colors.green[700]
+                    : data['status'] == 'ORDERED'
+                        ? Colors.amber[700]
+                        : Colors.grey[700],
                 fontSize: 11.0),
           ),
         ],

@@ -1,11 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/pages/conversation_page.dart';
+import 'package:e_online/utils/get_hex_color.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:timeago/timeago.dart';
 
 Widget shopChatCard(Map<String, dynamic> chat) {
   return Padding(
@@ -34,7 +36,10 @@ Widget shopChatCard(Map<String, dynamic> chat) {
                       child: Container(
                           height: 40,
                           width: 40,
-                          color: Colors.grey[200],
+                          color: getHexColor(chat["User"]["name"]
+                                  .toString()[0]
+                                  .toLowerCase())
+                              .withAlpha(100),
                           child: Center(
                               child: HeadingText(
                                   "${chat["User"]["name"].toString().split(" ")[0][0]}"))),
@@ -59,6 +64,11 @@ Widget shopChatCard(Map<String, dynamic> chat) {
                   ],
                 ),
               ),
+              Text(
+                format(DateTime.parse(
+                    chat["lastMessageDatetime"] ?? chat["createdAt"])),
+                style: TextStyle(fontSize: 12),
+              )
             ],
           ),
         ),

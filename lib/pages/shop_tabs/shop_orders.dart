@@ -6,9 +6,14 @@ import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ShopOrders extends StatelessWidget {
+class ShopOrders extends StatefulWidget {
   const ShopOrders({super.key});
 
+  @override
+  State<ShopOrders> createState() => _ShopOrdersState();
+}
+
+class _ShopOrdersState extends State<ShopOrders> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -32,12 +37,16 @@ class ShopOrders extends StatelessWidget {
                     child: Column(
                       children: orders.map((item) {
                         return GestureDetector(
-                          onTap: () {
-                            Get.to(SellerOrderViewPage(order: item));
+                          onTap: () async {
+                            await Get.to(SellerOrderViewPage(order: item));
+                            setState(() {});
                           },
                           child: Column(
                             children: [
-                              OrderCard(data: item),
+                              OrderCard(
+                                data: item,
+                                isUser: false,
+                              ),
                               spacer2(),
                             ],
                           ),

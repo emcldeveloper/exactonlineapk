@@ -51,6 +51,42 @@ class MessageController extends GetxController {
     }
   }
 
+  Future updateShopMessages({shopId}) async {
+    try {
+      var response = await dio.patch(
+        "/messages/mark-as-read/shop/$shopId",
+        data: {},
+        options: Options(headers: {
+          "Authorization":
+              "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
+        }),
+      );
+      var data = response.data["body"];
+      print(data);
+      return data;
+    } on DioException catch (e) {
+      print(e.response);
+    }
+  }
+
+  Future updateUserMessages({userId}) async {
+    try {
+      var response = await dio.patch(
+        "/messages/mark-as-read/user/$userId",
+        data: {},
+        options: Options(headers: {
+          "Authorization":
+              "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
+        }),
+      );
+      var data = response.data["body"];
+      print(data);
+      return data;
+    } on DioException catch (e) {
+      print(e.response);
+    }
+  }
+
   Stream<List<Message>> getProductMessages({chatId, productId}) {
     return firestore
         .collection("messages")

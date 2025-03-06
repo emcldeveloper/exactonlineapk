@@ -59,6 +59,7 @@ class NetworkListener extends StatelessWidget {
                         spacer(),
                         ParagraphText(
                           'Please, Connect to the internet before using the App again',
+                          textAlign: TextAlign.center,
                           color: mutedTextColor,
                         ),
                         spacer3(),

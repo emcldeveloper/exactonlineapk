@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/constants/product_items.dart';
+import 'package:e_online/controllers/cart_products_controller.dart';
 import 'package:e_online/controllers/categories_controller.dart';
 import 'package:e_online/controllers/ordered_products_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
@@ -43,11 +44,10 @@ class _HomePageState extends State<HomePage> {
     "assets/ads/ad4.jpg",
   ];
   Rx<List> categories = Rx<List>([]);
-  OrderedProductController orderedProductController =
-      OrderedProductController();
+  CartProductController cartProductController = CartProductController();
   @override
   void initState() {
-    Get.put(orderedProductController);
+    Get.put(cartProductController);
     CategoriesController()
         .getCategories(page: 1, limit: 50, keyword: "")
         .then((res) {
@@ -190,7 +190,7 @@ class _HomePageState extends State<HomePage> {
           return DefaultTabController(
             length: categories.value.length,
             child: Scaffold(
-              backgroundColor: Colors.grey[50],
+              backgroundColor: Colors.white,
               appBar: AppBar(
                 backgroundColor: mainColor,
                 elevation: 0,

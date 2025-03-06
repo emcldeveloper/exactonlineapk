@@ -1,11 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/pages/conversation_page.dart';
+import 'package:e_online/utils/get_hex_color.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:timeago/timeago.dart';
 
 Widget userChatCard(Map<String, dynamic> chat) {
   return Padding(
@@ -17,13 +19,16 @@ Widget userChatCard(Map<String, dynamic> chat) {
             ? Container(
                 height: 30,
                 width: 30,
-                color: Colors.grey[200],
+                color: getHexColor(
+                    chat["Shop"]["name"].toString()[0].toLowerCase()),
                 child: CachedNetworkImage(imageUrl: chat["Shop"]["shopImage"]))
             : ClipOval(
                 child: Container(
                     height: 50,
                     width: 50,
-                    color: Colors.grey[200],
+                    color: getHexColor(
+                            chat["Shop"]["name"].toString()[0].toLowerCase())
+                        .withAlpha(100),
                     child: Center(
                         child: HeadingText(
                             "${chat["Shop"]["name"].toString().split(" ")[0][0]}"))),
@@ -48,6 +53,11 @@ Widget userChatCard(Map<String, dynamic> chat) {
             ],
           ),
         ),
+        Text(
+          format(
+              DateTime.parse(chat["lastMessageDatetime"] ?? chat["createdAt"])),
+          style: TextStyle(fontSize: 12),
+        )
       ],
     ),
   );

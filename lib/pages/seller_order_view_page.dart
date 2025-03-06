@@ -1,6 +1,7 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/controllers/chat_controller.dart';
+import 'package:e_online/controllers/order_controller.dart';
 import 'package:e_online/controllers/ordered_products_controller.dart';
 import 'package:e_online/pages/conversation_page.dart';
 import 'package:e_online/utils/convert_to_money_format.dart';
@@ -9,6 +10,7 @@ import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/horizontal_product_card.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
+import 'package:e_online/widgets/text_form.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -34,6 +36,8 @@ class _SellerOrderViewPageState extends State<SellerOrderViewPage> {
     super.initState();
   }
 
+  var status = "PENDING".obs;
+  TextEditingController priceController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     print("Order 🆎");
@@ -52,7 +56,7 @@ class _SellerOrderViewPageState extends State<SellerOrderViewPage> {
         ),
         // Use the name from orderData in the title
         title: HeadingText(
-            "Order ${widget.order['id'].toString().split('-').first}"),
+            "Order #${widget.order['id'].toString().split('-').first}"),
         centerTitle: true,
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
@@ -95,23 +99,173 @@ class _SellerOrderViewPageState extends State<SellerOrderViewPage> {
                       children: [
                         ParagraphText("Total Price"),
                         Builder(builder: (context) {
-                          print(orderedProducts
-                              .map((item) => item["Product"]["sellingPrice"]));
-                          double totalPrice = orderedProducts
-                              .map((item) =>
-                                  double.tryParse(
-                                      item["Product"]["sellingPrice"] ?? "0") ??
-                                  0)
-                              .fold(0.0, (prev, item) => prev + item);
-
-                          return ParagraphText(
-                              "TZS ${toMoneyFormmat(totalPrice.toString())}",
-                              fontWeight: FontWeight.bold,
-                              fontSize: 17);
+                          return Row(
+                            children: [
+                              ParagraphText(
+                                  "TZS ${toMoneyFormmat(widget.order["totalPrice"].toString())}",
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 17),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              if (widget.order["status"] != "ORDERED" ||
+                                  (widget.order["status"] != "DELIVERED"))
+                                GestureDetector(
+                                    onTap: () {
+                                      Get.bottomSheet(SingleChildScrollView(
+                                        child: Container(
+                                          color: Colors.white,
+                                          width: double.infinity,
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 40, horizontal: 20),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                HeadingText("Update price"),
+                                                TextForm(
+                                                    label: "Order Price",
+                                                    textEditingController:
+                                                        priceController,
+                                                    hint:
+                                                        "Write order price here"),
+                                                customButton(
+                                                    onTap: () {
+                                                      Get.back();
+                                                      setState(() {
+                                                        widget.order[
+                                                                "totalPrice"] =
+                                                            priceController
+                                                                .text;
+                                                      });
+                                                      OrdersController()
+                                                          .editOrder(
+                                                              widget
+                                                                  .order["id"],
+                                                              {
+                                                            "totalPrice":
+                                                                priceController
+                                                                    .text
+                                                          });
+                                                    },
+                                                    text: "Save Changes")
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ));
+                                    },
+                                    child: Icon(
+                                      Icons.edit,
+                                      color: Colors.grey,
+                                    ))
+                            ],
+                          );
                         })
                       ],
                     ),
+                    spacer(),
+                    if (widget.order["status"] == "DELIVERED")
+                      Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.green.withAlpha(30),
+                            border:
+                                Border.all(color: Colors.green.withAlpha(60))),
+                        child: Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: ParagraphText(
+                                "Order is delivered successfully, thanks for using Exact Online")),
+                      ),
+                    if (widget.order["status"] == "ORDERED")
+                      Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.cyan.withAlpha(30),
+                            border:
+                                Border.all(color: Colors.cyan.withAlpha(60))),
+                        child: Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: ParagraphText(
+                                "This order is now active, you can proceed with delivery processes")),
+                      ),
+                    if (widget.order["status"] == "NEGOTIATION" ||
+                        widget.order["status"] == "PENDING")
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10, top: 10),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.cyan.withAlpha(30),
+                              border:
+                                  Border.all(color: Colors.cyan.withAlpha(60))),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: ParagraphText(
+                                      "Customer wants to negotiate price"),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    if (widget.order["status"] == "NEGOTIATION" ||
+                        widget.order["status"] == "PENDING")
+                      Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.orange.withAlpha(30),
+                            border:
+                                Border.all(color: Colors.orange.withAlpha(60))),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Row(
+                            children: [
+                              Obx(
+                                () => Checkbox(
+                                    activeColor: Colors.orange,
+                                    value: status.value == "ORDERED",
+                                    onChanged: (value) {
+                                      status.value = "ORDERED";
+                                      OrdersController().editOrder(
+                                          widget.order["id"],
+                                          {"status": "ORDERED"}).then((res) {
+                                        setState(() {
+                                          widget.order["status"] = "ORDERED";
+                                        });
+                                      });
+                                    }),
+                              ),
+                              Expanded(
+                                child: ParagraphText(
+                                    "Agreed on this price ? press here to confirm order or continue negotiation with customer using buttons below "),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
                     spacer3(),
+                    if (widget.order["status"] == "ORDERED")
+                      customButton(
+                        buttonColor: Colors.amber,
+                        textColor: Colors.black,
+                        onTap: () {
+                          OrdersController().editOrder(widget.order["id"],
+                              {"status": "DELIVERED"}).then((res) {
+                            setState(() {
+                              widget.order["status"] = "DELIVERED";
+                            });
+                          });
+                        },
+                        text: "Mark as delivered",
+                      ),
+                    spacer(),
                     customButton(
                       onTap: () {
                         launchUrl(Uri(
@@ -124,17 +278,14 @@ class _SellerOrderViewPageState extends State<SellerOrderViewPage> {
                     customButton(
                       onTap: () {
                         ChatController().addChat({
-                          "ShopId": widget.order["OrderedProducts"]?[0]
-                              ?["Product"]["ShopId"],
+                          "ShopId": widget.order["ShopId"],
+                          "OrderId": widget.order["id"],
                           "UserId": widget.order["UserId"]
                         }).then((res) {
-                          print(res);
-                          widget.order["Products"] =
-                              orderedProducts.map((item) => item["Product"]);
-                          // Get.to(() => ConversationPage(
-                          //       res,
-                          //       order: widget.order,
-                          //     ));
+                          Get.to(() => ConversationPage(
+                                res,
+                                isUser: false,
+                              ));
                         });
                       },
                       text: "Chat with Customer",

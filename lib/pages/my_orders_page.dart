@@ -9,9 +9,14 @@ import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class MyOrdersPage extends StatelessWidget {
+class MyOrdersPage extends StatefulWidget {
   const MyOrdersPage({super.key});
 
+  @override
+  State<MyOrdersPage> createState() => _MyOrdersPageState();
+}
+
+class _MyOrdersPageState extends State<MyOrdersPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,8 +62,9 @@ class MyOrdersPage extends StatelessWidget {
                       child: Column(
                         children: orders.map((item) {
                           return GestureDetector(
-                            onTap: () {
-                              Get.to(CustomerOrderViewPage(order: item));
+                            onTap: () async {
+                              await Get.to(CustomerOrderViewPage(order: item));
+                              setState(() {});
                             },
                             child: Column(
                               children: [
