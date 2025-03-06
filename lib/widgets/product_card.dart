@@ -12,7 +12,9 @@ import 'package:icons_plus/icons_plus.dart';
 class ProductCard extends StatefulWidget {
   final Map<String, dynamic> data;
   final double? height;
-  const ProductCard({required this.data, this.height, super.key});
+  final bool? isStagger;
+  const ProductCard(
+      {required this.data, this.isStagger = false, this.height, super.key});
 
   @override
   _ProductCardState createState() => _ProductCardState();
@@ -78,7 +80,8 @@ class _ProductCardState extends State<ProductCard> {
                     borderRadius: BorderRadius.circular(10),
                     child: CachedNetworkImage(
                       imageUrl: widget.data["ProductImages"][0]['image'],
-                      height: widget.height ?? 145,
+                      height: widget.height ??
+                          (widget.isStagger == true ? null : 145),
                       width: double.infinity,
                       fit: BoxFit.cover,
                     ),
