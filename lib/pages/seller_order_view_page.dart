@@ -113,8 +113,7 @@ class _SellerOrderViewPageState extends State<SellerOrderViewPage> {
                               SizedBox(
                                 width: 10,
                               ),
-                              if (widget.order["status"] != "ORDERED" ||
-                                  (widget.order["status"] != "DELIVERED"))
+                              if (widget.order["status"] == "NEGOTIATION")
                                 GestureDetector(
                                     onTap: () {
                                       Get.bottomSheet(SingleChildScrollView(
@@ -277,10 +276,10 @@ class _SellerOrderViewPageState extends State<SellerOrderViewPage> {
                           name: 'call_seller',
                           parameters: {
                             'seller_id': widget.order["OrderedProducts"]?[0]
-                              ?["Product"]["ShopId"],
-                              // 'shopName': widget.order["User"]["phone"],
-                              // 'shopPhone': widget.order["User"]["phone"],
-                              'from_page': 'SellerOrderViewPage'
+                                ?["Product"]["ShopId"],
+                            // 'shopName': widget.order["User"]["phone"],
+                            // 'shopPhone': widget.order["User"]["phone"],
+                            'from_page': 'SellerOrderViewPage'
                           },
                         );
                         launchUrl(Uri(
@@ -292,16 +291,16 @@ class _SellerOrderViewPageState extends State<SellerOrderViewPage> {
                     spacer(),
                     customButton(
                       onTap: () {
-                           analytics.logEvent(
-                            name: 'chat_seller',
-                            parameters: {
-                              'seller_id': widget.order["OrderedProducts"]?[0]
-                              ?["Product"]["ShopId"],
-                              // 'shopName': widget.order["User"]["phone"],
-                              // 'shopPhone': widget.order["User"]["phone"],
-                              'from_page': 'SellerOrderViewPage'
-                            },
-                          );
+                        analytics.logEvent(
+                          name: 'chat_seller',
+                          parameters: {
+                            'seller_id': widget.order["OrderedProducts"]?[0]
+                                ?["Product"]["ShopId"],
+                            // 'shopName': widget.order["User"]["phone"],
+                            // 'shopPhone': widget.order["User"]["phone"],
+                            'from_page': 'SellerOrderViewPage'
+                          },
+                        );
                         ChatController().addChat({
                           "ShopId": widget.order["ShopId"],
                           "OrderId": widget.order["id"],

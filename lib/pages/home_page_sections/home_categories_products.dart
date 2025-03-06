@@ -51,7 +51,7 @@ class _HomeCategoriesProductsState extends State<HomeCategoriesProducts> {
                           crossAxisCount: constraints.maxWidth < 500 ? 2 : 3,
                           crossAxisSpacing: 10.0,
                           mainAxisSpacing: 10.0,
-                          childAspectRatio: 0.65,
+                          childAspectRatio: 0.68,
                         ),
                         itemCount: products.value.length,
                         itemBuilder: (context, index) {
