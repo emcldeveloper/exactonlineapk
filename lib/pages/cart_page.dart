@@ -175,14 +175,16 @@ class _CartPageState extends State<CartPage> {
                                                   .toString() ==
                                               shopId)
                                           .toList();
-
                                       final orderResponse =
                                           await OrdersController().addOrder({
                                         "status": status.value,
-                                        "totalPrice": shopProducts.reduce((prev,
-                                                item) =>
-                                            prev +
-                                            item["Product"]["sellingPrice"]),
+                                        "totalPrice": shopProducts.fold(
+                                            0,
+                                            (prev, item) =>
+                                                prev +
+                                                int.parse(item["Product"]
+                                                        ["sellingPrice"]
+                                                    .toString())),
                                         "UserId": userController
                                             .user.value["id"]
                                             .toString(),
