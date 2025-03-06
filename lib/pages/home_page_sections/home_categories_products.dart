@@ -4,9 +4,10 @@ import 'package:e_online/widgets/product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class HomeCategoriesProducts extends StatefulWidget {
-  var category;
+  final dynamic category;
   HomeCategoriesProducts({super.key, this.category});
 
   @override
@@ -14,56 +15,118 @@ class HomeCategoriesProducts extends StatefulWidget {
 }
 
 class _HomeCategoriesProductsState extends State<HomeCategoriesProducts> {
-  Rx<List> products = Rx<List>([]);
-  var loading = true.obs;
+  final RxList products = <dynamic>[].obs;
+  final RxBool isLoading = true.obs;
+  final RxBool isLoadingMore = false.obs;
+  final RxBool hasMore = true.obs;
+  int currentPage = 1;
+  final int limit = 10;
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
-    ProductController()
-        .getProducts(page: 1, limit: 20, keyword: "", category: widget.category)
-        .then((res) {
-      products.value =
-          res.where((item) => item["ProductImages"].length > 0).toList();
-      loading.value = false;
-    });
     super.initState();
+    _fetchProducts(currentPage);
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _fetchProducts(int page) async {
+    if (isLoadingMore.value || (!hasMore.value && page != 1)) return;
+
+    if (page == 1) {
+      isLoading.value = true;
+    } else {
+      isLoadingMore.value = true;
+    }
+
+    try {
+      final res = await ProductController().getProducts(
+        page: page,
+        limit: limit,
+        keyword: "",
+        category: widget.category,
+      );
+      final filteredRes =
+          res.where((item) => item["ProductImages"].isNotEmpty).toList();
+
+      if (filteredRes.isEmpty || filteredRes.length < limit) {
+        hasMore.value = false;
+      }
+
+      if (page == 1) {
+        products.value = filteredRes;
+      } else {
+        products.addAll(filteredRes);
+      }
+    } catch (e) {
+      Get.snackbar("Error", "Error loading products: $e");
+    } finally {
+      isLoading.value = false;
+      isLoadingMore.value = false;
+    }
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+            _scrollController.position.maxScrollExtent * 0.9 &&
+        !isLoadingMore.value &&
+        hasMore.value) {
+      currentPage++;
+      _fetchProducts(currentPage);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() => loading.value
-        ? const Center(
-            child: CircularProgressIndicator(
-              color: Colors.black,
-            ),
-          )
-        : products.value.isEmpty
-            ? noData()
-            : Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    return Expanded(
-                      // Ensure it takes available space
-                      child: GridView.builder(
-                        physics:
-                            const BouncingScrollPhysics(), // Allow scrolling
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: constraints.maxWidth < 500 ? 2 : 3,
-                          crossAxisSpacing: 10.0,
-                          mainAxisSpacing: 10.0,
-                          childAspectRatio: 0.68,
+    return Obx(
+      () => isLoading.value
+          ? const Center(
+              child: CircularProgressIndicator(
+                color: Colors.black,
+              ),
+            )
+          : products.isEmpty
+              ? noData()
+              : Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final crossAxisCount = constraints.maxWidth < 500 ? 2 : 3;
+                      return SingleChildScrollView(
+                        controller: _scrollController,
+                        physics: const BouncingScrollPhysics(),
+                        child: StaggeredGrid.count(
+                          crossAxisCount: crossAxisCount,
+                          mainAxisSpacing: 0,
+                          crossAxisSpacing: 10,
+                          children: [
+                            ...products.map((product) => ProductCard(
+                                  data: product,
+                                  isStagger: true,
+                                )),
+                            if (isLoadingMore.value) ...[
+                              for (var i = 0; i < crossAxisCount; i++)
+                                Shimmer.fromColors(
+                                  baseColor: Colors.grey.shade200,
+                                  highlightColor: Colors.grey.shade50,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Container(color: Colors.black),
+                                  ),
+                                ),
+                            ],
+                          ],
                         ),
-                        itemCount: products.value.length,
-                        itemBuilder: (context, index) {
-                          return ProductCard(
-                            data: products.value[index],
-                            height: 190,
-                          );
-                        },
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
-              ));
+    );
   }
 }

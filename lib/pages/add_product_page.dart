@@ -149,7 +149,7 @@ class _AddProductPageState extends State<AddProductPage> {
   @override
   void initState() {
     super.initState();
-      trackScreenView("AddProductPage");
+    trackScreenView("AddProductPage");
     CategoriesController()
         .getCategories(keyword: "", page: 1, limit: 100)
         .then((res) {
@@ -564,6 +564,7 @@ class _AddProductPageState extends State<AddProductPage> {
                         "CategoryId": categoryController.text,
                         "ShopId": userController.user.value["Shops"][0]["id"],
                       };
+                      print(payload);
                       setState(() => loading = true);
                       print(payload);
                       await analytics.logEvent(
@@ -572,7 +573,7 @@ class _AddProductPageState extends State<AddProductPage> {
                           'item_name': nameController.text,
                           "description": descriptionController.text,
                           'category': categoryController.text,
-                          'price': priceIncludeDelivery.value,
+                          'price': priceController.text,
                           "ShopId": userController.user.value["Shops"][0]["id"],
                         },
                       );

@@ -56,7 +56,7 @@ Widget shopChatCard(Map<String, dynamic> chat) {
                     ),
                     spacer(),
                     ParagraphText(
-                      chat["lastMessage"] ?? "",
+                      chat["lastMessage"] ?? "Send a new message",
                       color: mutedTextColor,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -64,10 +64,31 @@ Widget shopChatCard(Map<String, dynamic> chat) {
                   ],
                 ),
               ),
-              Text(
-                format(DateTime.parse(
-                    chat["lastMessageDatetime"] ?? chat["createdAt"])),
-                style: TextStyle(fontSize: 12),
+              Column(
+                children: [
+                  Text(
+                    format(DateTime.parse(
+                        chat["lastMessageDatetime"] ?? chat["createdAt"])),
+                    style: TextStyle(fontSize: 12),
+                  ),
+                  if (int.parse((chat["unreadMessages"] ?? 0).toString()) > 0)
+                    ClipOval(
+                      child: Container(
+                        width: 18,
+                        height: 18,
+                        color: primary,
+                        child: Center(
+                          child: Text(
+                            (chat["unreadMessages"] ?? 0).toString(),
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               )
             ],
           ),
