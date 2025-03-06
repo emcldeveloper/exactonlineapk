@@ -10,7 +10,9 @@ import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
+// ReelsPage remains unchanged
 class ReelsPage extends StatelessWidget {
   const ReelsPage({super.key});
 
@@ -80,25 +82,25 @@ class ProductMasonryGrid extends StatefulWidget {
 }
 
 class _ProductMasonryGridState extends State<ProductMasonryGrid> {
-  List<Map<String, dynamic>> reels = [];
+  final RxList<Map<String, dynamic>> reels = <Map<String, dynamic>>[].obs;
   final ScrollController _scrollController = ScrollController();
-  int _currentPage = 1;
-  final int _limit = 10; // Kept at 20 as per original code
-  bool _isLoading = false;
-  bool _hasMore = true;
+  final RxInt _currentPage = 1.obs;
+  final int _limit = 10;
+  final RxBool _isLoading = false.obs;
+  final RxBool _hasMore = true.obs;
 
   @override
   void initState() {
     super.initState();
     trackScreenView("ReelsPage");
-    _fetchReels(_currentPage); // Initial fetch
-    _scrollController.addListener(_onScroll); // Attach scroll listener
+    _fetchReels(_currentPage.value);
+    _scrollController.addListener(_onScroll);
   }
 
   Future<void> _fetchReels(int page) async {
-    if (_isLoading || !_hasMore)
-      return; // Prevent multiple simultaneous fetches
-    setState(() => _isLoading = true);
+    if (_isLoading.value || !_hasMore.value) return;
+
+    _isLoading.value = true;
 
     try {
       final res = await ReelController().getReels(page: page, limit: _limit);
@@ -107,81 +109,87 @@ class _ProductMasonryGridState extends State<ProductMasonryGrid> {
           .toList();
 
       if (newReels.isEmpty || newReels.length < _limit) {
-        _hasMore = false; // No more data to fetch
+        _hasMore.value = false;
       }
 
-      setState(() {
-        if (page == 1) {
-          reels = newReels; // Replace for first page
-        } else {
-          reels.addAll(newReels); // Append for subsequent pages
-        }
-      });
+      if (page == 1) {
+        reels.value = newReels;
+      } else {
+        reels.addAll(newReels);
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error loading reels: $e')),
       );
     } finally {
-      setState(() => _isLoading = false);
+      _isLoading.value = false;
     }
   }
 
   void _onScroll() {
     if (_scrollController.position.pixels >=
             _scrollController.position.maxScrollExtent * 0.9 &&
-        !_isLoading &&
-        _hasMore) {
-      _currentPage++;
-      _fetchReels(_currentPage);
+        !_isLoading.value &&
+        _hasMore.value) {
+      _currentPage.value++;
+      _fetchReels(_currentPage.value);
     }
   }
 
   @override
   void dispose() {
-    _scrollController.dispose(); // Clean up the controller
+    _scrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return reels.isEmpty && _isLoading
-        ? const Center(
-            child: CircularProgressIndicator(color: Colors.black),
-          )
-        : reels.isEmpty
-            ? const Center(child: Text("No reels available."))
-            : Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: GridView.builder(
-                  controller: _scrollController, // Attach ScrollController
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: 0.44,
+    return Obx(
+      () => reels.isEmpty && _isLoading.value
+          ? const Center(
+              child: CircularProgressIndicator(color: Colors.black),
+            )
+          : reels.isEmpty
+              ? const Center(child: Text("No reels available."))
+              : SingleChildScrollView(
+                  controller: _scrollController,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: StaggeredGrid.count(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 16,
+                      crossAxisSpacing: 16,
+                      children: [
+                        ...reels.map((reel) => ConstrainedBox(
+                              constraints: const BoxConstraints(
+                                minHeight: 200,
+                                maxHeight: double.infinity,
+                              ),
+                              child: ReelCard(data: reel),
+                            )),
+                        if (_isLoading.value) ...[
+                          for (var i = 0; i < 2; i++)
+                            Container(
+                              height: 200,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[300],
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Center(
+                                child: CircularProgressIndicator(
+                                    color: Colors.black),
+                              ),
+                            ),
+                        ],
+                      ],
+                    ),
                   ),
-                  itemCount:
-                      reels.length + (_isLoading ? 2 : 0), // Add loading items
-                  itemBuilder: (context, index) {
-                    if (index >= reels.length && _isLoading) {
-                      return const Center(
-                        child: CircularProgressIndicator(color: Colors.black),
-                      );
-                    }
-                    final reel = reels[index];
-                    return ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        minHeight: 200,
-                        maxHeight: double.infinity,
-                      ),
-                      child: ReelCard(data: reel),
-                    );
-                  },
                 ),
-              );
+    );
   }
 }
 
+// ReelCard remains unchanged
 class ReelCard extends StatelessWidget {
   final Map<String, dynamic> data;
 
@@ -189,7 +197,6 @@ class ReelCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Extract shop data
     final shopData = data['Shop'] ?? {};
     final shopName = shopData['name'] ?? "No Name";
     final shopImage = shopData['shopImage'];

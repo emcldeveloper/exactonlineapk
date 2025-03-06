@@ -165,7 +165,7 @@ class _TopicsPageState extends State<TopicsPage> {
                                           children: [
                                             ClipRRect(
                                               borderRadius:
-                                                  BorderRadius.circular(100),
+                                                  BorderRadius.circular(10),
                                               child: SizedBox(
                                                 width: 80,
                                                 height: 80,
@@ -225,7 +225,7 @@ class _TopicsPageState extends State<TopicsPage> {
                                           children: [
                                             ClipRRect(
                                               borderRadius:
-                                                  BorderRadius.circular(100),
+                                                  BorderRadius.circular(10),
                                               child: SizedBox(
                                                 width: 80,
                                                 height: 80,

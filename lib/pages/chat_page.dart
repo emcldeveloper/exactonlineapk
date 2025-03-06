@@ -25,6 +25,7 @@ class _ChatPageState extends State<ChatPage> {
     super.initState();
     trackScreenView("ChatPage");
   }
+
   final List<Map<String, dynamic>> chatItems = [];
 
   @override

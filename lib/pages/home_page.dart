@@ -3,7 +3,6 @@ import 'package:e_online/constants/colors.dart';
 import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/controllers/cart_products_controller.dart';
 import 'package:e_online/controllers/categories_controller.dart';
-import 'package:e_online/controllers/ordered_products_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/cart_page.dart';
 import 'package:e_online/pages/home_page_sections/all_for_you_products.dart';
@@ -15,7 +14,6 @@ import 'package:e_online/pages/home_page_sections/new_arrival_products.dart';
 import 'package:e_online/pages/notifications_page.dart';
 import 'package:e_online/pages/profile_page.dart';
 import 'package:e_online/pages/search_page.dart';
-import 'package:e_online/pages/see_all_page.dart';
 import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/ads_carousel.dart';
 import 'package:e_online/widgets/cartIcon.dart';
@@ -35,7 +33,8 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   UserController userController = Get.find();
   int _currentPage = 0;
   final List<String> carouselImages = [
@@ -46,8 +45,12 @@ class _HomePageState extends State<HomePage> {
   ];
   Rx<List> categories = Rx<List>([]);
   CartProductController cartProductController = CartProductController();
+  late TabController _tabController; // Add TabController
+  RxInt page = 0.obs; // Reactive page variable
+
   @override
   void initState() {
+    super.initState();
     Get.put(cartProductController);
     CategoriesController()
         .getCategories(page: 1, limit: 50, keyword: "")
@@ -57,14 +60,27 @@ class _HomePageState extends State<HomePage> {
         {"id": "All", "name": "All"}
       ];
       categories.value.addAll(res);
+      _tabController =
+          TabController(length: categories.value.length, vsync: this);
+      _tabController.addListener(() {
+        if (_tabController.indexIsChanging) return; // Avoid multiple triggers
+        page.value = _tabController.index; // Update page when tab changes
+        print("Tab changed to: ${page.value}");
+      });
     });
-    super.initState();
     trackScreenView("HomePage");
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose(); // Clean up TabController
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     var avatar = userController.user.value["image"];
+
     List<Map<String, dynamic>> filterProducts(String category) {
       if (category == "All") return productItems;
       return productItems
@@ -113,10 +129,20 @@ class _HomePageState extends State<HomePage> {
                                 onTap: () {
                                   Get.to(const AllNewArrivalProducts());
                                 },
-                                child: ParagraphText(
-                                  "See All",
-                                  color: mutedTextColor,
-                                  decoration: TextDecoration.underline,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(50),
+                                      color: Colors.grey.withAlpha(30)),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 6),
+                                    child: ParagraphText(
+                                      "See All",
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13,
+                                      color: mutedTextColor,
+                                    ),
+                                  ),
                                 ),
                               )
                             ],
@@ -148,10 +174,20 @@ class _HomePageState extends State<HomePage> {
                                 onTap: () {
                                   Get.to(const AllForYouProducts());
                                 },
-                                child: ParagraphText(
-                                  "See All",
-                                  color: mutedTextColor,
-                                  decoration: TextDecoration.underline,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(50),
+                                      color: Colors.grey.withAlpha(30)),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 6),
+                                    child: ParagraphText(
+                                      "See All",
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13,
+                                      color: mutedTextColor,
+                                    ),
+                                  ),
                                 ),
                               )
                             ],
@@ -187,139 +223,171 @@ class _HomePageState extends State<HomePage> {
     }
 
     return GetX<CategoriesController>(
-        init: CategoriesController(),
-        builder: (find) {
-          return DefaultTabController(
-            length: categories.value.length,
-            child: Scaffold(
-              backgroundColor: Colors.white,
-              appBar: AppBar(
-                backgroundColor: mainColor,
-                elevation: 0,
-                leading: Container(),
-                leadingWidth: 1.0,
-                title: HeadingText("ExactOnline"),
-                bottom: PreferredSize(
-                  preferredSize: const Size.fromHeight(kToolbarHeight),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Builder(builder: (context) {
-                      return TabBar(
-                        tabAlignment: TabAlignment.start,
-                        dividerColor: const Color.fromARGB(255, 234, 234, 234),
-                        isScrollable: true,
-                        labelColor: Colors.black,
-                        unselectedLabelColor: Colors.black.withOpacity(0.5),
-                        labelStyle: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        unselectedLabelStyle: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.normal,
-                        ),
-                        indicatorSize: TabBarIndicatorSize.label,
-                        indicatorColor: Colors.black,
-                        padding: const EdgeInsets.symmetric(horizontal: 1),
-                        labelPadding:
-                            const EdgeInsets.symmetric(horizontal: 16),
-                        tabs: categories.value
-                            .map((category) => Tab(
-                                  child: Text(
-                                    category["name"],
-                                    style: GoogleFonts.outfit(fontSize: 15),
+      init: CategoriesController(),
+      builder: (find) {
+        if (categories.value.isEmpty || _tabController == null) {
+          return const Center(
+            child: CircularProgressIndicator(color: Colors.black),
+          );
+        }
+
+        return Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            backgroundColor: mainColor,
+            elevation: 0,
+            leading: Container(),
+            leadingWidth: 1.0,
+            title: HeadingText("ExactOnline"),
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(kToolbarHeight),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Obx(
+                  () => TabBar(
+                    controller: _tabController, // Use custom TabController
+                    tabAlignment: TabAlignment.start,
+                    dividerColor: const Color.fromARGB(255, 234, 234, 234),
+                    isScrollable: true,
+                    labelColor: Colors.white,
+                    unselectedLabelColor: Colors.black,
+                    labelStyle: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    unselectedLabelStyle: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal,
+                    ),
+
+                    indicatorSize: TabBarIndicatorSize.label,
+                    indicatorColor: Colors.transparent,
+                    padding: const EdgeInsets.symmetric(horizontal: 1),
+                    labelPadding: EdgeInsets.all(0),
+                    tabs: categories.value
+                        .map((category) => Tab(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal:
+                                        category["name"] == "All" ? 16 : 5),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: Container(
+                                    color: page.value ==
+                                            categories.value.indexOf(category)
+                                        ? primary
+                                        : Colors.grey[100],
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 14, vertical: 3),
+                                      child: Text(
+                                        category["name"],
+                                        style: GoogleFonts.outfit(
+                                            fontSize: 15,
+                                            color: page.value ==
+                                                    categories.value
+                                                        .indexOf(category)
+                                                ? Colors.white
+                                                : Colors.black),
+                                      ),
+                                    ),
                                   ),
-                                ))
-                            .toList(),
-                      );
-                    }),
+                                ),
+                              ),
+                            ))
+                        .toList(),
                   ),
                 ),
-                actions: [
-                  cartIcon(),
-                  const SizedBox(width: 8),
-                  InkWell(
-                      onTap: () {
-                        Get.to(SearchPage());
-                      },
-                      child: const Icon(
-                        Bootstrap.search,
-                        color: Colors.black,
-                        size: 20.0,
-                      )),
-                  const SizedBox(width: 12),
-                  InkWell(
-                      onTap: () {
-                        Get.to(NotificationsPage());
-                      },
-                      child: const Icon(
-                        Bootstrap.bell,
-                        color: Colors.black,
-                        size: 20.0,
-                      )),
-                  const SizedBox(width: 12),
-                  InkWell(
-                    onTap: () {
-                      Get.to(const ProfilePage());
-                    },
-                    child: ClipOval(
-                      child: avatar != null
-                          ? CachedNetworkImage(
-                              imageUrl: avatar,
-                              height: 30,
-                              width: 30,
-                              fit: BoxFit.cover,
-                            )
-                          : HugeIcon(
-                              icon: HugeIcons.strokeRoundedUserCircle,
-                              color: Colors.black,
-                              size: 30,
-                            ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                ],
               ),
-              body: categories.value.isEmpty
-                  ? const Center(
-                      child: CircularProgressIndicator(
-                      color: Colors.black,
-                    ))
-                  : TabBarView(
-                      children: categories.value.map((category) {
-                        return category["id"] == "All"
-                            ? buildProductList(category["id"])
-                            : Padding(
-                                padding: const EdgeInsets.only(top: 10),
-                                child: HomeCategoriesProducts(
-                                  category: category["id"],
-                                ),
-                              );
-                      }).toList(),
-                    ),
             ),
-          );
-        });
+            actions: [
+              cartIcon(),
+              const SizedBox(width: 8),
+              InkWell(
+                onTap: () {
+                  Get.to(SearchPage());
+                },
+                child: const Icon(
+                  Bootstrap.search,
+                  color: Colors.black,
+                  size: 20.0,
+                ),
+              ),
+              const SizedBox(width: 12),
+              InkWell(
+                onTap: () {
+                  Get.to(NotificationsPage());
+                },
+                child: const Icon(
+                  Bootstrap.bell,
+                  color: Colors.black,
+                  size: 20.0,
+                ),
+              ),
+              const SizedBox(width: 12),
+              InkWell(
+                onTap: () {
+                  Get.to(const ProfilePage());
+                },
+                child: ClipOval(
+                  child: avatar != null
+                      ? CachedNetworkImage(
+                          imageUrl: avatar,
+                          height: 30,
+                          width: 30,
+                          fit: BoxFit.cover,
+                        )
+                      : HugeIcon(
+                          icon: HugeIcons.strokeRoundedUserCircle,
+                          color: Colors.black,
+                          size: 30,
+                        ),
+                ),
+              ),
+              const SizedBox(width: 16),
+            ],
+          ),
+          body: categories.value.isEmpty
+              ? const Center(
+                  child: CircularProgressIndicator(color: Colors.black),
+                )
+              : TabBarView(
+                  controller: _tabController, // Use custom TabController
+                  children: categories.value.map((category) {
+                    return category["id"] == "All"
+                        ? buildProductList(category["id"])
+                        : Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: HomeCategoriesProducts(
+                              category: category["id"],
+                            ),
+                          );
+                  }).toList(),
+                ),
+        );
+      },
+    );
   }
 
-  carouselIndicator() {
+  Widget carouselIndicator() {
     return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: List.generate(carouselImages.length, (int number) => number++)
-            .map((i) {
-          return Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(50),
-              child: Container(
-                height: 7,
-                width: i == _currentPage ? 15 : 7,
-                color: i == _currentPage
-                    ? secondaryColor
-                    : const Color(0xffEBEBEB),
-              ),
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(carouselImages.length, (int number) => number++)
+          .map((i) {
+        return Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(50),
+            child: Container(
+              height: 7,
+              width: i == _currentPage ? 15 : 7,
+              color:
+                  i == _currentPage ? secondaryColor : const Color(0xffEBEBEB),
             ),
-          );
-        }).toList());
+          ),
+        );
+      }).toList(),
+    );
   }
 }

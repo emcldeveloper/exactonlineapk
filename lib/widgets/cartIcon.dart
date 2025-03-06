@@ -1,3 +1,4 @@
+import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/cart_products_controller.dart';
 import 'package:e_online/controllers/ordered_products_controller.dart';
 import 'package:e_online/pages/cart_page.dart';
@@ -17,6 +18,7 @@ Widget cartIcon() {
             Bootstrap.cart,
             size: 20,
           ),
+          backgroundColor: primary,
           label: Text(
               cartProductController.productsOnCart.value.length.toString()),
         )),

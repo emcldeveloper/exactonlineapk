@@ -3,6 +3,7 @@ import 'package:e_online/widgets/product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class AllProducts extends StatelessWidget {
   AllProducts({super.key});
@@ -23,17 +24,11 @@ class AllProducts extends StatelessWidget {
       () => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: products.isEmpty && !isLoading.value
-            ? GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10.0,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 4.8 / 5,
-                ),
-                itemCount: 5,
-                itemBuilder: (context, index) {
+            ? StaggeredGrid.count(
+                crossAxisCount: 2,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+                children: List.generate(5, (index) {
                   return Shimmer.fromColors(
                     baseColor: Colors.grey.shade200,
                     highlightColor: Colors.grey.shade50,
@@ -42,32 +37,38 @@ class AllProducts extends StatelessWidget {
                       child: Container(color: Colors.black),
                     ),
                   );
-                },
+                }),
               )
-            : GridView.builder(
-                controller: _scrollController,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10.0,
-                  mainAxisSpacing: 2.0,
-                  childAspectRatio: 0.68,
-                ),
-                itemCount: products.length + (isLoading.value ? 2 : 0),
-                itemBuilder: (context, index) {
-                  if (index >= products.length && isLoading.value) {
-                    return Shimmer.fromColors(
+            : StaggeredGrid.count(
+                crossAxisCount: 2,
+                mainAxisSpacing: 0,
+                crossAxisSpacing: 10,
+                children: [
+                  ...products
+                      .map((product) => ProductCard(
+                            isStagger: true,
+                            data: product,
+                          ))
+                      .toList(),
+                  if (isLoading.value) ...[
+                    Shimmer.fromColors(
                       baseColor: Colors.grey.shade200,
                       highlightColor: Colors.grey.shade50,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: Container(color: Colors.black),
                       ),
-                    );
-                  }
-                  return ProductCard(data: products[index], height: 190);
-                },
+                    ),
+                    Shimmer.fromColors(
+                      baseColor: Colors.grey.shade200,
+                      highlightColor: Colors.grey.shade50,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(color: Colors.black),
+                      ),
+                    ),
+                  ]
+                ],
               ),
       ),
     );
