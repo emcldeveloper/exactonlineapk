@@ -32,7 +32,8 @@ class CartPage extends StatefulWidget {
 
 class _CartPageState extends State<CartPage> {
   FirebaseAnalytics analytics = FirebaseAnalytics.instance;
-  CartProductController cartProductController = Get.put(CartProductController());
+  CartProductController cartProductController =
+      Get.put(CartProductController());
   var loading = false.obs;
   var status = "ORDERED".obs;
   @override
@@ -178,20 +179,21 @@ class _CartPageState extends State<CartPage> {
                                     await analytics.logEvent(
                                       name: 'submit_order',
                                       parameters: {
-                                        'order_id': CartProductController()
-                                            .productsOnCart
-                                            .value[0]["OrderId"],
-                                        'amount': CartProductController()
-                                            .productsOnCart
-                                            .value
-                                            .map((item) => double.parse(
-                                                item["Product"]
-                                                    ["sellingPrice"]))
-                                            .toList()
-                                            .reduce(
-                                                (prev, item) => prev + item),
+                                        'order_id': DateTime.now()
+                                            .millisecondsSinceEpoch
+                                            .toString(), // Generate a unique order ID
+                                        'total_price': cartProducts.fold<num>(
+                                          0,
+                                          (prev, item) =>
+                                              prev +
+                                              double.parse(item["Product"]
+                                                      ["sellingPrice"]
+                                                  .toString()),
+                                        ), // Ensure it's a number
+                                        'num_items': cartProducts.length,
                                       },
                                     );
+
                                     // Create list of futures for order creation
                                     List<Future<void>> orderPromises =
                                         shops.map((shopId) async {
