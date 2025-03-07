@@ -46,6 +46,7 @@ class NewShopDetailsBottomSheet extends StatelessWidget {
                   spacer(),
                   ParagraphText(
                     'You will be able to add products and reels after approval',
+                    textAlign: TextAlign.center,
                     color: mutedTextColor,
                   ),
                   spacer3(),

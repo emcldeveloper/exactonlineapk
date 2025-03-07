@@ -268,9 +268,8 @@ class _HomePageState extends State<HomePage>
                     tabs: categories.value
                         .map((category) => Tab(
                               child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal:
-                                        category["name"] == "All" ? 16 : 5),
+                                padding: EdgeInsets.only(
+                                    left: category["name"] == "All" ? 16 : 5),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(20),
                                   child: Container(
@@ -338,10 +337,16 @@ class _HomePageState extends State<HomePage>
                           width: 30,
                           fit: BoxFit.cover,
                         )
-                      : HugeIcon(
-                          icon: HugeIcons.strokeRoundedUserCircle,
+                      : Container(
                           color: Colors.black,
-                          size: 30,
+                          child: Padding(
+                            padding: const EdgeInsets.all(1),
+                            child: HugeIcon(
+                              icon: Icons.person_2_outlined,
+                              color: Colors.white,
+                              size: 30,
+                            ),
+                          ),
                         ),
                 ),
               ),

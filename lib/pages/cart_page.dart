@@ -261,6 +261,27 @@ class _CartPageState extends State<CartPage> {
                                     setState(() {});
                                     // Optionally show success message
                                     // Get.snackbar("Success", "Order placed successfully");
+                                    showPopupAlert(
+                                      context,
+                                      iconAsset:
+                                          "assets/images/successmark.png",
+                                      heading: "Ordered Successfully",
+                                      text: "Your order is placed successfully",
+                                      button1Text: "Go Back",
+                                      button1Action: () {
+                                        Navigator.of(context)
+                                            .pop(); // Close the popup
+                                        Navigator.of(context)
+                                            .pop(); // Close the popup
+                                      },
+                                      button2Text: "View Orders",
+                                      button2Action: () {
+                                        Navigator.of(context)
+                                            .pop(); // Close the first popup
+                                        Get.back();
+                                        Get.to(() => const MyOrdersPage());
+                                      },
+                                    );
                                   } catch (e) {
                                     // Handle errors
                                     loading.value = false;
