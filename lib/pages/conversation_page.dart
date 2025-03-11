@@ -77,18 +77,31 @@ class _ConversationPageState extends State<ConversationPage> {
 
     socket.on('receiveMessage', (data) {
       messages.add(data);
-      print("🆎 ${widget.topic}");
+      print(widget.isUser);
+      print("🆎 ${widget.topic["Chat"]}");
       if (widget.isUser) {
         messageControllerInstance
             .updateShopMessages(shopId: widget.topic["Chat"]["ShopId"])
             .then((res) {
-          print(res);
+          List newMessages = [];
+          messageControllerInstance
+              .getTopicMessages(topicId: widget.topic["id"])
+              .then((res) {
+            newMessages.addAll(res);
+            messages.addAll(newMessages);
+          });
         });
       } else {
         messageControllerInstance
             .updateUserMessages(userId: widget.topic["Chat"]["UserId"])
             .then((res) {
-          print(res);
+          List newMessages = [];
+          messageControllerInstance
+              .getTopicMessages(topicId: widget.topic["id"])
+              .then((res) {
+            newMessages.addAll(res);
+            messages.addAll(newMessages);
+          });
         });
       }
       _scrollToBottom();
@@ -167,10 +180,12 @@ class _ConversationPageState extends State<ConversationPage> {
                       style: const TextStyle(
                           color: Colors.white, fontWeight: FontWeight.bold),
                     ),
-                    Text(
-                      "Chatting with ${widget.isUser ? data['Order']['Shop']["name"] : data['Order']['User']["name"]}",
-                      style: const TextStyle(color: Colors.white, fontSize: 12),
-                    ),
+                    if (data["Order"] != null)
+                      Text(
+                        "Chatting with ${widget.isUser ? data['Order']['Shop']["name"] : data['Order']['User']["name"]}",
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 12),
+                      ),
                   ],
                 ),
                 expandedHeight: 205.0,
@@ -191,7 +206,7 @@ class _ConversationPageState extends State<ConversationPage> {
                         if (productImages.isNotEmpty)
                           CarouselSlider(
                             options: CarouselOptions(
-                              height: 250.0, // Full height of expanded app bar
+                              height: 230.0, // Full height of expanded app bar
                               autoPlay: true,
                               aspectRatio: 1,
                               viewportFraction: 1,
@@ -206,7 +221,7 @@ class _ConversationPageState extends State<ConversationPage> {
                                         imageUrl: image['image'],
                                         fit: BoxFit.cover,
                                         width: double.infinity,
-                                        height: 250.0, // Match carousel height
+                                        height: 230.0, // Match carousel height
                                         placeholder: (context, url) =>
                                             const Center(
                                           child: CircularProgressIndicator(),

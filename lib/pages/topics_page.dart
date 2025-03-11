@@ -156,6 +156,7 @@ class _TopicsPageState extends State<TopicsPage> {
                                           const EdgeInsets.only(bottom: 10),
                                       child: GestureDetector(
                                         onTap: () {
+                                          Get.back();
                                           Get.to(() => ConversationPage(
                                                 topic,
                                                 isUser: widget.from == null,
@@ -216,6 +217,7 @@ class _TopicsPageState extends State<TopicsPage> {
                                           const EdgeInsets.only(bottom: 10),
                                       child: GestureDetector(
                                         onTap: () {
+                                          Get.back();
                                           Get.to(() => ConversationPage(
                                                 topic,
                                                 isUser: widget.from == null,
