@@ -37,6 +37,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
   Rx<Map<String, dynamic>> reelDetails = Rx<Map<String, dynamic>>({});
   RxBool isLiked = false.obs;
   bool? isFollowing;
+  RxBool isSharing = false.obs;
 
   @override
   void initState() {
@@ -424,7 +425,9 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                                             ),
                                             InkWell(
                                               onTap: () async {
-                                                // Make onTap async
+                                                if (isSharing.value) return;
+
+                                                isSharing.value = true;
                                                 try {
                                                   await _sendReelStats("share");
                                                   String videoUrl = reelDetails
@@ -440,15 +443,34 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                                                 } catch (e) {
                                                   debugPrint(
                                                       "Error sharing reel: $e");
+                                                } finally {
+                                                  isSharing.value = false;
                                                 }
                                               },
-                                              child: const HugeIcon(
-                                                icon: HugeIcons
-                                                    .strokeRoundedShare01,
-                                                color: Colors.white,
-                                                size: 22.0,
-                                              ),
+                                              child: Obx(() => isSharing.value
+                                                  ? const SizedBox(
+                                                      height: 16.0,
+                                                      width: 16.0,
+                                                      child:
+                                                          CircularProgressIndicator(
+                                                              strokeWidth: 2,
+                                                              color:
+                                                                  Colors.white),
+                                                    )
+                                                  : const HugeIcon(
+                                                      icon: HugeIcons
+                                                          .strokeRoundedShare01,
+                                                      color: Colors.white,
+                                                      size: 22.0,
+                                                    )),
                                             ),
+                                            // child: const HugeIcon(
+                                            //   icon: HugeIcons
+                                            //       .strokeRoundedShare01,
+                                            //   color: Colors.white,
+                                            //   size: 22.0,
+                                            // ),
+                                            // ),
                                           ],
                                         ),
                                       ),

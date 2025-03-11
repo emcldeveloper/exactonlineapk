@@ -38,6 +38,7 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
   final ProductController productController = Get.put(ProductController());
   final RxList<dynamic> shopProducts = <dynamic>[].obs;
   final Rx<Map<String, dynamic>> shopDetails = Rx<Map<String, dynamic>>({});
+  RxBool isSharing = false.obs;
   String userId = "";
   String today = [
     "Monday",
@@ -119,6 +120,7 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
   }
 
   void _shareShopProfile() async {
+    isSharing.value = true;
     const String appLink = "https://api.exactonline.co.tz/open-app/";
 
     String shopId = widget.shopId;
@@ -144,6 +146,8 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
     await Share.share(shareText +
         "\n\nCheck out this shop or explore more on ExactOnline!" +
         fullAppLink);
+
+    isSharing.value = false;
   }
 
   @override
@@ -245,14 +249,23 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
               ),
             ),
             const SizedBox(width: 8),
-            InkWell(
-              onTap: _shareShopProfile,
-              child: const Icon(
-                Bootstrap.share,
-                color: Colors.black,
-                size: 20.0,
-              ),
-            ),
+            Obx(() => InkWell(
+                  onTap: _shareShopProfile,
+                  child: isSharing.value
+                      ? SizedBox(
+                          width: 16.0,
+                          height: 16.0,
+                          child: const CircularProgressIndicator(
+                            color: Colors.black,
+                            strokeWidth: 2.0,
+                          ),
+                        )
+                      : const Icon(
+                          Bootstrap.share,
+                          color: Colors.black,
+                          size: 20.0,
+                        ),
+                )),
             const SizedBox(width: 16),
           ],
           bottom: PreferredSize(

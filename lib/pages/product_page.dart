@@ -21,6 +21,7 @@ import 'package:e_online/widgets/cartIcon.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
+import 'package:e_online/widgets/related_products.dart';
 import 'package:e_online/widgets/report_seller.dart';
 import 'package:e_online/widgets/reviews.dart';
 import 'package:e_online/widgets/spacer.dart';
@@ -54,6 +55,7 @@ class _ProductPageState extends State<ProductPage> {
   final FavoriteController favoriteController = Get.put(FavoriteController());
   final ReviewController reviewController = Get.put(ReviewController());
   late List<Map<String, dynamic>> reviews = [];
+  RxBool isSharing = false.obs;
   // String userId = "";
 
   @override
@@ -98,7 +100,6 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   Future<void> _sendProductStats(String type) async {
-    print("being called share statics");
     var userId = userController.user.value['id'] ?? "";
     try {
       var payload = {
@@ -114,6 +115,8 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   void _shareProduct() async {
+    isSharing.value = true;
+
     await _sendProductStats("share");
 
     const String appLink = "https://api.exactonline.co.tz/open-app/";
@@ -152,6 +155,7 @@ class _ProductPageState extends State<ProductPage> {
       await Share.share(
           "$shareText\n\nCheck out this product or explore more on ExactOnline! $fullAppLink");
     }
+    isSharing.value = false;
   }
 
   List<Map<String, dynamic>> _callProductReviews() {
@@ -221,7 +225,9 @@ class _ProductPageState extends State<ProductPage> {
   RxInt index = 0.obs;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return DefaultTabController(
+      length: 2, // Number of tabs
+      child: Scaffold(
         backgroundColor: mainColor,
         appBar: AppBar(
           backgroundColor: mainColor,
@@ -240,361 +246,392 @@ class _ProductPageState extends State<ProductPage> {
             SizedBox(
               width: 8.0,
             ),
-            InkWell(
-              onTap: _shareProduct,
-              child: const Icon(
-                Bootstrap.share,
-                color: Colors.black,
-                size: 20.0,
-              ),
-            ),
+            Obx(() => InkWell(
+                  onTap: _shareProduct,
+                  child: isSharing.value
+                      ? SizedBox(
+                          width: 16.0,
+                          height: 16.0,
+                          child: const CircularProgressIndicator(
+                            color: Colors.black,
+                            strokeWidth: 2.0,
+                          ),
+                        )
+                      : const Icon(
+                          Bootstrap.share,
+                          color: Colors.black,
+                          size: 20.0,
+                        ),
+                )),
             SizedBox(
               width: 12.0,
             ),
           ],
+          bottom: TabBar(
+            labelColor: Colors.black,
+            indicatorColor: Colors.black,
+            tabs: [
+              Tab(text: "Product Details"),
+              Tab(text: "Related Products"),
+            ],
+          ),
         ),
-        body: FutureBuilder(
-            future:
-                ProductController().getProduct(id: widget.productData["id"]),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                    child: CircularProgressIndicator(
-                  color: Colors.black,
-                ));
-              }
-              var product = snapshot.requireData;
-              widget.productData = product;
-              // Set isFavorite based on fetched product
-              isFavorite.value = product.containsKey('Favorites') &&
-                  product['Favorites'] != null &&
-                  product['Favorites'].isNotEmpty;
+        body: TabBarView(
+          children: [
+            // First Tab - Product Details
+            FutureBuilder(
+                future: ProductController()
+                    .getProduct(id: widget.productData["id"]),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                        child: CircularProgressIndicator(
+                      color: Colors.black,
+                    ));
+                  }
+                  var product = snapshot.requireData;
+                  widget.productData = product;
+                  // Set isFavorite based on fetched product
+                  isFavorite.value = product.containsKey('Favorites') &&
+                      product['Favorites'] != null &&
+                      product['Favorites'].isNotEmpty;
 
-              return SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(0.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Stack(
+                  return SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(0.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(00),
-                            child: Container(
-                              height: 300,
-                              color: Colors.grey[100],
-                              width: double.infinity,
-                              child: CarouselSlider(
-                                items: List.from(product["ProductImages"])
-                                    .map((item) => GestureDetector(
-                                          onTap: () {
-                                            Get.to(() => ViewImage(
-                                                  index: index.value,
-                                                  images: List.from(product[
-                                                          "ProductImages"])
-                                                      .map((item) =>
-                                                          item["image"]
-                                                              as String)
-                                                      .toList(),
-                                                ));
-                                          },
-                                          child: Container(
-                                            width: double.infinity,
-                                            child: CachedNetworkImage(
-                                              imageUrl: item["image"],
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        ))
-                                    .toList(),
-                                options: CarouselOptions(
-                                    onPageChanged: (current, reason) {
-                                      index.value = current;
-                                    },
-                                    autoPlay: true,
-                                    aspectRatio: 1,
-                                    viewportFraction: 1),
-                              ),
-                            ),
+                          SizedBox(
+                            height: 10,
                           ),
-                          Positioned(
-                            top: 15,
-                            right: 15,
-                            child: GestureDetector(
-                              onTap: () => _toggleFavorite(product),
-                              child: ClipOval(
-                                child: Obx(() => Container(
-                                      color: Colors.white70,
-                                      padding: const EdgeInsets.all(6.0),
-                                      child: Icon(
-                                        isFavorite.value
-                                            ? AntDesign.heart_fill
-                                            : AntDesign.heart_outline,
-                                        color: isFavorite.value
-                                            ? Colors.red
-                                            : Colors.black,
-                                        size: 18.0,
-                                      ),
-                                    )),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Obx(
-                        () => Row(
-                          spacing: 10,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(
-                                  List.from(product["ProductImages"]).length,
-                                  (index) => (index - 1) + 1,
-                                  growable: true)
-                              .map((item) => ClipOval(
-                                      child: Container(
-                                    width: 10,
-                                    color: index.value == item
-                                        ? Colors.orange
-                                        : Colors.grey[300],
-                                    height: 10,
-                                  )))
-                              .toList(),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            spacer(),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      ParagraphText(
-                                        product['name'] ?? '',
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20.0,
-                                      ),
-                                      ParagraphText(
-                                          "TZS ${toMoneyFormmat(product['sellingPrice'])}",
-                                          fontSize: 16.0),
-                                    ],
+                          Stack(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(00),
+                                child: Container(
+                                  height: 300,
+                                  color: Colors.grey[100],
+                                  width: double.infinity,
+                                  child: CarouselSlider(
+                                    items: List.from(product["ProductImages"])
+                                        .map((item) => GestureDetector(
+                                              onTap: () {
+                                                Get.to(() => ViewImage(
+                                                      index: index.value,
+                                                      images: List.from(product[
+                                                              "ProductImages"])
+                                                          .map((item) =>
+                                                              item["image"]
+                                                                  as String)
+                                                          .toList(),
+                                                    ));
+                                              },
+                                              child: Container(
+                                                width: double.infinity,
+                                                child: CachedNetworkImage(
+                                                  imageUrl: item["image"],
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                            ))
+                                        .toList(),
+                                    options: CarouselOptions(
+                                        onPageChanged: (current, reason) {
+                                          index.value = current;
+                                        },
+                                        autoPlay: true,
+                                        aspectRatio: 1,
+                                        viewportFraction: 1),
                                   ),
                                 ),
-                                const SizedBox(width: 4),
-                                Column(
+                              ),
+                              Positioned(
+                                top: 15,
+                                right: 15,
+                                child: GestureDetector(
+                                  onTap: () => _toggleFavorite(product),
+                                  child: ClipOval(
+                                    child: Obx(() => Container(
+                                          color: Colors.white70,
+                                          padding: const EdgeInsets.all(6.0),
+                                          child: Icon(
+                                            isFavorite.value
+                                                ? AntDesign.heart_fill
+                                                : AntDesign.heart_outline,
+                                            color: isFavorite.value
+                                                ? Colors.red
+                                                : Colors.black,
+                                            size: 18.0,
+                                          ),
+                                        )),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Obx(
+                            () => Row(
+                              spacing: 10,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: List.generate(
+                                      List.from(product["ProductImages"])
+                                          .length,
+                                      (index) => (index - 1) + 1,
+                                      growable: true)
+                                  .map((item) => ClipOval(
+                                          child: Container(
+                                        width: 10,
+                                        color: index.value == item
+                                            ? Colors.orange
+                                            : Colors.grey[300],
+                                        height: 10,
+                                      )))
+                                  .toList(),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                spacer(),
+                                Row(
                                   children: [
-                                    Row(
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          ParagraphText(
+                                            product['name'] ?? '',
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20.0,
+                                          ),
+                                          ParagraphText(
+                                              "TZS ${toMoneyFormmat(product['sellingPrice'])}",
+                                              fontSize: 16.0),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Column(
                                       children: [
-                                        const Icon(
-                                          Icons.star_rounded,
-                                          color: Colors.amber,
-                                          size: 16.0,
+                                        Row(
+                                          children: [
+                                            const Icon(
+                                              Icons.star_rounded,
+                                              color: Colors.amber,
+                                              size: 16.0,
+                                            ),
+                                            const SizedBox(width: 2),
+                                            ParagraphText(
+                                              (product['rating'] ?? 0)
+                                                  .toString(),
+                                            ),
+                                          ],
                                         ),
-                                        const SizedBox(width: 2),
-                                        ParagraphText(
-                                          (product['rating'] ?? 0).toString(),
+                                        GestureDetector(
+                                          onTap: _showReviewsBottomSheet,
+                                          child: ParagraphText(
+                                            "View reviews",
+                                            color: mutedTextColor,
+                                            decoration:
+                                                TextDecoration.underline,
+                                          ),
                                         ),
                                       ],
                                     ),
-                                    GestureDetector(
-                                      onTap: _showReviewsBottomSheet,
-                                      child: ParagraphText(
-                                        "View reviews",
-                                        color: mutedTextColor,
-                                        decoration: TextDecoration.underline,
+                                  ],
+                                ),
+                                spacer(),
+                                ParagraphText(
+                                  product['description'],
+                                ),
+                                spacer1(),
+                                ParagraphText(
+                                  "Specifications",
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14.0,
+                                ),
+
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: widget
+                                      .productData['specifications'].entries
+                                      .map<Widget>((entry) {
+                                    return Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        ParagraphText(
+                                          "${entry.key}:", // Display the key
+                                          color: mutedTextColor,
+                                        ),
+                                        const SizedBox(
+                                          width: 8,
+                                        ),
+                                        ParagraphText(
+                                          "${entry.value}", // Display the corresponding value
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ],
+                                    );
+                                  }).toList(),
+                                ),
+
+                                spacer1(),
+                                // Row(
+                                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                //   children: [
+                                //     HeadingText("Recomended"),
+                                //     ParagraphText(
+                                //       "See All",
+                                //       color: mutedTextColor,
+                                //       decoration: TextDecoration.underline,
+                                //     ),
+                                //   ],
+                                // ),
+                                // spacer1(),
+                                // SizedBox(
+                                //   height: 240,
+                                //   child: ListView.builder(
+                                //     scrollDirection: Axis.horizontal,
+                                //     itemCount: relatedItems.length,
+                                //     itemBuilder: (context, index) {
+                                //       return Padding(
+                                //         padding: const EdgeInsets.only(right: 16.0),
+                                //         child: ProductCard(data: relatedItems[index]),
+                                //       );
+                                //     },
+                                //   ),
+                                // ),
+                                spacer1(),
+                                if (product["CartProducts"].length < 1)
+                                  if (product["CartProducts"].length < 1)
+                                    Obx(
+                                      () => customButton(
+                                        loading: addingToCart.value,
+                                        onTap: () async {
+                                          addingToCart.value = true;
+                                          await analytics.logEvent(
+                                            name: 'add_to_cart',
+                                            parameters: {
+                                              'product_id': product["id"],
+                                              'product_name': product['name'],
+                                              'product_description':
+                                                  product['description'],
+                                              'price': product['sellingPrice'],
+                                            },
+                                          );
+
+                                          CartProductController()
+                                              .addCartProduct({
+                                            "UserId":
+                                                userController.user.value["id"],
+                                            "ProductId": product["id"]
+                                          }).then((res) {
+                                            showSuccessSnackbar(
+                                                title: "Added successfully",
+                                                description:
+                                                    "Product is added to cart successfully");
+                                            addingToCart.value = false;
+
+                                            setState(() {});
+                                            CartProductController()
+                                                .getOnCartproducts();
+                                          });
+                                        },
+                                        text: "Add to Cart",
                                       ),
                                     ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            spacer(),
-                            ParagraphText(
-                              product['description'],
-                            ),
-                            spacer1(),
-                            ParagraphText(
-                              "Specifications",
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14.0,
-                            ),
-
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: widget
-                                  .productData['specifications'].entries
-                                  .map<Widget>((entry) {
-                                return Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    ParagraphText(
-                                      "${entry.key}:", // Display the key
-                                      color: mutedTextColor,
-                                    ),
-                                    const SizedBox(
-                                      width: 8,
-                                    ),
-                                    ParagraphText(
-                                      "${entry.value}", // Display the corresponding value
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ],
-                                );
-                              }).toList(),
-                            ),
-
-                            spacer1(),
-                            // Row(
-                            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            //   children: [
-                            //     HeadingText("Recomended"),
-                            //     ParagraphText(
-                            //       "See All",
-                            //       color: mutedTextColor,
-                            //       decoration: TextDecoration.underline,
-                            //     ),
-                            //   ],
-                            // ),
-                            // spacer1(),
-                            // SizedBox(
-                            //   height: 240,
-                            //   child: ListView.builder(
-                            //     scrollDirection: Axis.horizontal,
-                            //     itemCount: relatedItems.length,
-                            //     itemBuilder: (context, index) {
-                            //       return Padding(
-                            //         padding: const EdgeInsets.only(right: 16.0),
-                            //         child: ProductCard(data: relatedItems[index]),
-                            //       );
-                            //     },
-                            //   ),
-                            // ),
-                            spacer1(),
-                            if (product["CartProducts"].length < 1)
-                              if (product["CartProducts"].length < 1)
-                                Obx(
-                                  () => customButton(
+                                if (product["CartProducts"].length > 0)
+                                  customButton(
                                     loading: addingToCart.value,
                                     onTap: () async {
-                                      addingToCart.value = true;
-                                      await analytics.logEvent(
-                                        name: 'add_to_cart',
-                                        parameters: {
-                                          'product_id': product["id"],
-                                          'product_name': product['name'],
-                                          'product_description':
-                                              product['description'],
-                                          'price': product['sellingPrice'],
-                                        },
-                                      );
-
-                                      CartProductController().addCartProduct({
-                                        "UserId":
-                                            userController.user.value["id"],
-                                        "ProductId": product["id"]
-                                      }).then((res) {
-                                        showSuccessSnackbar(
-                                            title: "Added successfully",
-                                            description:
-                                                "Product is added to cart successfully");
-                                        addingToCart.value = false;
-
-                                        setState(() {});
-                                        CartProductController()
-                                            .getOnCartproducts();
-                                      });
+                                      await Get.to(() => CartPage());
+                                      setState(() {});
                                     },
-                                    text: "Add to Cart",
+                                    text: "View in Cart",
                                   ),
+
+                                spacer(),
+                                customButton(
+                                  onTap: () async {
+                                    await analytics.logEvent(
+                                      name: 'call_seller',
+                                      parameters: {
+                                        'Shop_Id': product["Shop"]["id"],
+                                        'product_id': product["id"],
+                                        'product_name': product['name'],
+                                        'product_description':
+                                            product['description'],
+                                        'price': product['sellingPrice'],
+                                        'shopName': product["Shop"]["name"],
+                                        'shopPhone': product["Shop"]["phone"],
+                                        'from_page': 'ProductPage'
+                                      },
+                                    );
+                                    _sendProductStats("call");
+                                    await launchUrl(Uri(
+                                        scheme: "tel",
+                                        path: product["Shop"]["phone"]));
+                                  },
+                                  text: "Call Seller",
+                                  buttonColor: primaryColor,
+                                  textColor: Colors.black,
                                 ),
-                            if (product["CartProducts"].length > 0)
-                              customButton(
-                                loading: addingToCart.value,
-                                onTap: () async {
-                                  await Get.to(() => CartPage());
-                                  setState(() {});
-                                },
-                                text: "View in Cart",
-                              ),
-
-                            spacer(),
-                            customButton(
-                              onTap: () async {
-                                await analytics.logEvent(
-                                  name: 'call_seller',
-                                  parameters: {
-                                    'Shop_Id': product["Shop"]["id"],
-                                    'product_id': product["id"],
-                                    'product_name': product['name'],
-                                    'product_description':
-                                        product['description'],
-                                    'price': product['sellingPrice'],
-                                    'shopName': product["Shop"]["name"],
-                                    'shopPhone': product["Shop"]["phone"],
-                                    'from_page': 'ProductPage'
+                                spacer(),
+                                customButton(
+                                  onTap: () async {
+                                    await analytics.logEvent(
+                                      name: 'chat_seller',
+                                      parameters: {
+                                        'Shop_Id': product["Shop"]["id"],
+                                        'product_id': product["id"],
+                                        'product_name': product['name'],
+                                        'product_description':
+                                            product['description'],
+                                        'price': product['sellingPrice'],
+                                        'shopName': product["Shop"]["name"],
+                                        'shopPhone': product["Shop"]["phone"],
+                                        'from_page': 'ProductPage'
+                                      },
+                                    );
+                                    _sendProductStats("message");
+                                    ChatController().addChat({
+                                      "ShopId": product["Shop"]["id"],
+                                      "ProductId": product["id"],
+                                      "UserId": userController.user.value["id"]
+                                    }).then((res) {
+                                      print(res);
+                                      Get.to(() => ConversationPage(res));
+                                    });
                                   },
-                                );
-                                _sendProductStats("call");
-                                await launchUrl(Uri(
-                                    scheme: "tel",
-                                    path: product["Shop"]["phone"]));
-                              },
-                              text: "Call Seller",
-                              buttonColor: primaryColor,
-                              textColor: Colors.black,
-                            ),
-                            spacer(),
-                            customButton(
-                              onTap: () async {
-                                await analytics.logEvent(
-                                  name: 'chat_seller',
-                                  parameters: {
-                                    'Shop_Id': product["Shop"]["id"],
-                                    'product_id': product["id"],
-                                    'product_name': product['name'],
-                                    'product_description':
-                                        product['description'],
-                                    'price': product['sellingPrice'],
-                                    'shopName': product["Shop"]["name"],
-                                    'shopPhone': product["Shop"]["phone"],
-                                    'from_page': 'ProductPage'
-                                  },
-                                );
-                                _sendProductStats("message");
-                                ChatController().addChat({
-                                  "ShopId": product["Shop"]["id"],
-                                  "ProductId": product["id"],
-                                  "UserId": userController.user.value["id"]
-                                }).then((res) {
-                                  print(res);
-                                  Get.to(() => ConversationPage(res));
-                                });
-                              },
-                              text: "Message Seller",
-                              buttonColor: primaryColor,
-                              textColor: Colors.black,
-                            ),
-                            spacer(),
+                                  text: "Message Seller",
+                                  buttonColor: primaryColor,
+                                  textColor: Colors.black,
+                                ),
+                                spacer(),
 
-                            spacer2(),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              );
-            }));
+                                spacer2(),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                }),
+
+            // Second Tab - New Page
+            RelatedProducts(),
+          ],
+        ),
+      ),
+    );
   }
 }
