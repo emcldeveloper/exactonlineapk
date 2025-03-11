@@ -54,6 +54,7 @@ class _ProductPageState extends State<ProductPage> {
   final FavoriteController favoriteController = Get.put(FavoriteController());
   final ReviewController reviewController = Get.put(ReviewController());
   late List<Map<String, dynamic>> reviews = [];
+  RxBool isSharing = false.obs;
   // String userId = "";
 
   @override
@@ -98,7 +99,6 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   Future<void> _sendProductStats(String type) async {
-    print("being called share statics");
     var userId = userController.user.value['id'] ?? "";
     try {
       var payload = {
@@ -114,6 +114,8 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   void _shareProduct() async {
+    isSharing.value = true;
+
     await _sendProductStats("share");
 
     const String appLink = "https://api.exactonline.co.tz/open-app/";
@@ -152,6 +154,7 @@ class _ProductPageState extends State<ProductPage> {
       await Share.share(
           "$shareText\n\nCheck out this product or explore more on ExactOnline! $fullAppLink");
     }
+    isSharing.value = false;
   }
 
   List<Map<String, dynamic>> _callProductReviews() {
@@ -240,14 +243,23 @@ class _ProductPageState extends State<ProductPage> {
             SizedBox(
               width: 8.0,
             ),
-            InkWell(
-              onTap: _shareProduct,
-              child: const Icon(
-                Bootstrap.share,
-                color: Colors.black,
-                size: 20.0,
-              ),
-            ),
+            Obx(() => InkWell(
+                  onTap: _shareProduct,
+                  child: isSharing.value
+                      ? SizedBox(
+                          width: 16.0,
+                          height: 16.0,
+                          child: const CircularProgressIndicator(
+                            color: Colors.black,
+                            strokeWidth: 2.0,
+                          ),
+                        )
+                      : const Icon(
+                          Bootstrap.share,
+                          color: Colors.black,
+                          size: 20.0,
+                        ),
+                )),
             SizedBox(
               width: 12.0,
             ),

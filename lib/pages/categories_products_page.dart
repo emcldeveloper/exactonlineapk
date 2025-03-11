@@ -7,11 +7,14 @@ import 'package:e_online/widgets/favorite_card.dart';
 import 'package:e_online/widgets/filter_tiles.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/no_data.dart';
+import 'package:e_online/widgets/product_card.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:shimmer/shimmer.dart';
 
 class CategoriesProductsPage extends StatefulWidget {
   final dynamic category;
@@ -24,6 +27,8 @@ class CategoriesProductsPage extends StatefulWidget {
 
 class _CategoriesProductsPageState extends State<CategoriesProductsPage> {
   var loading = true.obs;
+  final RxBool isLoading = false.obs;
+
   Rx<List> products = Rx<List>([]);
   final ScrollController _scrollController = ScrollController();
   int _currentPage = 1;
@@ -34,7 +39,7 @@ class _CategoriesProductsPageState extends State<CategoriesProductsPage> {
   @override
   void initState() {
     super.initState();
-    trackScreenView("CategoriesProductsPage"); 
+    trackScreenView("CategoriesProductsPage");
     _fetchProducts(_currentPage); // Initial fetch
     _scrollController.addListener(_onScroll); // Attach scroll listener
   }
@@ -136,28 +141,78 @@ class _CategoriesProductsPageState extends State<CategoriesProductsPage> {
                 )
               : products.value.isEmpty
                   ? noData()
+                  // : Padding(
+                  //     padding: const EdgeInsets.symmetric(horizontal: 16),
+                  //     child: ListView.builder(
+                  //       controller:
+                  //           _scrollController, // Attach ScrollController
+                  //       itemCount: products.value.length +
+                  //           (_isLoadingMore ? 1 : 0), // Add loading item
+                  //       itemBuilder: (context, index) {
+                  //         if (index == products.value.length &&
+                  //             _isLoadingMore) {
+                  //           return const Padding(
+                  //             padding: EdgeInsets.symmetric(vertical: 10.0),
+                  //             child: Center(
+                  //               child: CircularProgressIndicator(
+                  //                 color: Colors.black,
+                  //               ),
+                  //             ),
+                  //           );
+                  //         }
+                  //         return FavoriteCard(data: products.value[index]);
+                  //       },
+                  //     ),
+                  //   );
                   : Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: ListView.builder(
-                        controller:
-                            _scrollController, // Attach ScrollController
-                        itemCount: products.value.length +
-                            (_isLoadingMore ? 1 : 0), // Add loading item
-                        itemBuilder: (context, index) {
-                          if (index == products.value.length &&
-                              _isLoadingMore) {
-                            return const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 10.0),
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  color: Colors.black,
-                                ),
-                              ),
-                            );
-                          }
-                          return FavoriteCard(data: products.value[index]);
-                        },
-                      ),
+                      child: products.value.isEmpty && !isLoading.value
+                          ? StaggeredGrid.count(
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 10,
+                              crossAxisSpacing: 10,
+                              children: List.generate(5, (index) {
+                                return Shimmer.fromColors(
+                                  baseColor: Colors.grey.shade200,
+                                  highlightColor: Colors.grey.shade50,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Container(color: Colors.black),
+                                  ),
+                                );
+                              }),
+                            )
+                          : StaggeredGrid.count(
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 0,
+                              crossAxisSpacing: 10,
+                              children: [
+                                ...products.value
+                                    .map((product) => ProductCard(
+                                          isStagger: true,
+                                          data: product,
+                                        ))
+                                    .toList(),
+                                if (isLoading.value) ...[
+                                  Shimmer.fromColors(
+                                    baseColor: Colors.grey.shade200,
+                                    highlightColor: Colors.grey.shade50,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Container(color: Colors.black),
+                                    ),
+                                  ),
+                                  Shimmer.fromColors(
+                                    baseColor: Colors.grey.shade200,
+                                    highlightColor: Colors.grey.shade50,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Container(color: Colors.black),
+                                    ),
+                                  ),
+                                ]
+                              ],
+                            ),
                     );
         },
       ),
