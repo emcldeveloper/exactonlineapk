@@ -26,7 +26,7 @@ class CustomerOrderViewPage extends StatefulWidget {
 }
 
 class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
-    @override
+  @override
   void initState() {
     super.initState();
     trackScreenView("CustomerOrderViewPage");
@@ -162,7 +162,7 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                           child: Padding(
                               padding: const EdgeInsets.all(10),
                               child: ParagraphText(
-                                  "This order is now active, product(s) seller will reach out to you for delivery")),
+                                  "This order is now active, product(s) seller will reach out to you for payment methods confirmation and delivery")),
                         ),
                       if (widget.order["status"] == "NEGOTIATION" ||
                           widget.order["status"] == "PENDING")

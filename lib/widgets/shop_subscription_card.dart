@@ -78,23 +78,23 @@ class ShopSubscriptionCard extends StatelessWidget {
                   RichText(
                     text: TextSpan(
                       children: [
-                        TextSpan(
+                        const TextSpan(
                           text: '. ',
                           style: TextStyle(color: Colors.white),
                         ),
                         TextSpan(
                           text: "$daysRemaining",
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
                         ),
-                        TextSpan(
+                        const TextSpan(
                           text: ' Days remained ',
                           style: TextStyle(color: Colors.white),
                         ),
                       ],
-                      style: TextStyle(color: Colors.white),
+                      style: const TextStyle(color: Colors.white),
                     ),
                   ),
                 ],
@@ -117,13 +117,13 @@ class ShopSubscriptionCard extends StatelessWidget {
                 RichText(
                   text: TextSpan(
                     children: [
-                      TextSpan(
+                      const TextSpan(
                         text: 'at ',
                         style: TextStyle(color: Colors.white),
                       ),
                       TextSpan(
                         text: createdAtFormatted,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                         ),
                       ),

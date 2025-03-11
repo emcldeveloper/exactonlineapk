@@ -36,9 +36,9 @@ class _MainPageState extends State<MainPage> {
         showSelectedLabels: true,
         currentIndex: activeTab,
         showUnselectedLabels: true,
-        unselectedLabelStyle: TextStyle(
-            fontSize: 11, color: const Color.fromARGB(255, 194, 192, 192)),
-        selectedLabelStyle: TextStyle(fontSize: 11),
+        unselectedLabelStyle: const TextStyle(
+            fontSize: 11, color: Color.fromARGB(255, 194, 192, 192)),
+        selectedLabelStyle: const TextStyle(fontSize: 11),
         type: BottomNavigationBarType.fixed,
         onTap: (value) {
           setState(() {
@@ -46,57 +46,57 @@ class _MainPageState extends State<MainPage> {
           });
         },
         items: [
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Padding(
-              padding: const EdgeInsets.only(bottom: 6, top: 6),
+              padding: EdgeInsets.only(bottom: 6, top: 6),
               child: Icon(Icons.home),
             ),
             activeIcon: Padding(
-              padding: const EdgeInsets.only(bottom: 6, top: 6),
+              padding: EdgeInsets.only(bottom: 6, top: 6),
               child: Icon(Icons.home_filled),
             ),
             label: "Home",
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Padding(
-              padding: const EdgeInsets.only(bottom: 6, top: 6),
+              padding: EdgeInsets.only(bottom: 6, top: 6),
               child: Icon(EvaIcons.video_outline),
             ),
             activeIcon: Padding(
-              padding: const EdgeInsets.only(bottom: 6, top: 6),
+              padding: EdgeInsets.only(bottom: 6, top: 6),
               child: Icon(EvaIcons.video),
             ),
             label: "Reels",
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Padding(
-              padding: const EdgeInsets.only(bottom: 6, top: 6),
+              padding: EdgeInsets.only(bottom: 6, top: 6),
               child: Icon(Icons.chat_bubble_outline),
             ),
             activeIcon: Padding(
-              padding: const EdgeInsets.only(bottom: 6, top: 6),
+              padding: EdgeInsets.only(bottom: 6, top: 6),
               child: Icon(Icons.chat_bubble),
             ),
             label: "Chats",
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Padding(
-              padding: const EdgeInsets.only(bottom: 6, top: 6),
+              padding: EdgeInsets.only(bottom: 6, top: 6),
               child: Icon(Icons.favorite_outline),
             ),
             activeIcon: Padding(
-              padding: const EdgeInsets.only(bottom: 6, top: 6),
+              padding: EdgeInsets.only(bottom: 6, top: 6),
               child: Icon(Icons.favorite),
             ),
             label: "Favorites",
           ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Padding(
-              padding: const EdgeInsets.only(bottom: 6, top: 6),
+              padding: EdgeInsets.only(bottom: 6, top: 6),
               child: Icon(Icons.person_2_outlined),
             ),
             activeIcon: Padding(
-              padding: const EdgeInsets.only(bottom: 6, top: 6),
+              padding: EdgeInsets.only(bottom: 6, top: 6),
               child: Icon(Icons.person_2),
             ),
             label: "Profile",

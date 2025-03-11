@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:e_online/controllers/review_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/widgets/custom_loader.dart';

@@ -1,6 +1,6 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/chat_controller.dart';
-import 'package:e_online/pages/conversation_page.dart';
+// import 'package:e_online/pages/conversation_page.dart';
 import 'package:e_online/pages/topics_page.dart';
 import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/user_chat_card.dart';

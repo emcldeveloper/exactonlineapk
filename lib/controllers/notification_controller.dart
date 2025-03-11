@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import, unused_catch_clause
+
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/utils/shared_preferences.dart';
 import 'package:dio/dio.dart';
@@ -15,10 +17,9 @@ class NotificationController extends GetxController {
         }),
       );
       var data = response.data["body"]["rows"];
-      print(data);
       return data;
+    // ignore: empty_catches
     } on DioException catch (e) {
-      print(e.response);
     }
   }
 }

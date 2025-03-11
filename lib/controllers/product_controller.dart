@@ -1,10 +1,10 @@
+// ignore_for_file: prefer_typing_uninitialized_variables
+
 import 'package:dio/dio.dart';
-import 'package:e_online/controllers/auth_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/utils/dio.dart';
 import 'package:e_online/utils/shared_preferences.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductController extends GetxController {
   UserController userController = Get.find();
@@ -41,6 +41,7 @@ class ProductController extends GetxController {
       var data = response.data["body"];
       return data;
     } on DioException catch (e) {
+      // ignore: avoid_print
       print(e.response);
       return e.response;
     }
@@ -54,10 +55,7 @@ class ProductController extends GetxController {
           "Authorization":
               "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
         }));
-    print("category of product return");
-    print(response);
     var data = response.data["body"]["rows"];
-    print(data);
     return data;
   }
 
@@ -71,11 +69,8 @@ class ProductController extends GetxController {
           }));
 
       var data = response.data["body"];
-      print("Got product data");
-      print(data);
       return data;
     } on DioException catch (e) {
-      print(e.response);
       return e.response;
     }
   }
@@ -118,8 +113,6 @@ class ProductController extends GetxController {
 
       return data;
     } on DioException catch (e) {
-      print("Error response");
-      print(e.response);
       return e.response;
     }
   }
@@ -136,8 +129,6 @@ class ProductController extends GetxController {
 
       return data;
     } on DioException catch (e) {
-      print("Error response");
-      print(e.response);
       return e.response;
     }
   }
@@ -153,8 +144,6 @@ class ProductController extends GetxController {
 
       return data;
     } on DioException catch (e) {
-      print("Error response");
-      print(e.response);
       return e.response;
     }
   }
@@ -171,8 +160,6 @@ class ProductController extends GetxController {
 
       return data;
     } on DioException catch (e) {
-      print("Error response");
-      print(e.response);
       return e.response;
     }
   }

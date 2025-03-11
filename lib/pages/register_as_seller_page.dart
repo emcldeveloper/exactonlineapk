@@ -1,3 +1,5 @@
+// ignore_for_file: await_only_futures
+
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/shop_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
@@ -196,7 +198,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                     onTap: () {
                       _pickFiles();
                     },
-                    child: Icon(
+                    child: const Icon(
                       OctIcons.plus,
                       size: 18,
                     )),
@@ -217,7 +219,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
+                          const Icon(
                             AntDesign.cloud_upload_outline,
                             size: 40,
                           ),
@@ -234,8 +236,8 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                       .entries
                       .map(
                         (entry) => ListTile(
-                          contentPadding: EdgeInsets.all(0),
-                          leading: HugeIcon(
+                          contentPadding: const EdgeInsets.all(0),
+                          leading: const HugeIcon(
                             icon: HugeIcons.strokeRoundedPdf01,
                             color: Colors.red,
                             size: 22.0,
@@ -415,7 +417,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                   onTap: () {
                     _pickFiles();
                   },
-                  child: HugeIcon(
+                  child: const HugeIcon(
                     icon: HugeIcons.strokeRoundedAdd01,
                     color: Colors.grey,
                     size: 16.0,
@@ -438,7 +440,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          HugeIcon(
+                          const HugeIcon(
                             icon: AntDesign.cloud_upload_outline,
                             color: Colors.black,
                             size: 40.0,
@@ -456,7 +458,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                       .entries
                       .map(
                         (entry) => ListTile(
-                          leading: HugeIcon(
+                          leading: const HugeIcon(
                             icon: HugeIcons.strokeRoundedPdf01,
                             color: Colors.red,
                             size: 22.0,
@@ -581,7 +583,6 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                       if (_businessFormKey.currentState?.validate() == true) {
                         isLoading.value = true;
                         if (_files.isEmpty) {
-                          print("Please select at least one file.");
                           isLoading.value = false;
                           return;
                         }
@@ -632,7 +633,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                               "Success", "Business Shop created successfully!",
                               backgroundColor: Colors.green,
                               colorText: Colors.white,
-                              icon: HugeIcon(
+                              icon: const HugeIcon(
                                   icon: HugeIcons.strokeRoundedTick01,
                                   color: Colors.white));
                           Get.to(() => FreeTrialPage(shopId: shopId),
@@ -651,7 +652,6 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                       if (_agentFormKey.currentState?.validate() == true) {
                         isLoading.value = true;
                         if (_files.isEmpty) {
-                          print("Please select at least one file.");
                           isLoading.value = false;
                           return;
                         }
@@ -694,14 +694,13 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                               "Success", "Agent Shop created successfully!",
                               backgroundColor: Colors.green,
                               colorText: Colors.white,
-                              icon: HugeIcon(
+                              icon: const HugeIcon(
                                   icon: HugeIcons.strokeRoundedTick01,
                                   color: Colors.white));
                           Get.to(() => FreeTrialPage(shopId: shopId),
                               arguments: {'origin': 'RegisterAsSellerPage'});
                         } catch (e) {
                           isLoading.value = false;
-                          print(e.toString());
                           Get.snackbar("Error", "Error creating shop account",
                               backgroundColor: Colors.redAccent,
                               colorText: Colors.white,

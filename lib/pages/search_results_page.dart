@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/favorite_card.dart';

@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, sized_box_for_whitespace, avoid_print, file_names
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/utils/convert_to_money_format.dart';
 import 'package:flutter/material.dart';

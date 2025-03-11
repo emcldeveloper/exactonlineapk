@@ -190,7 +190,7 @@ class _PromoteProductPageState extends State<PromoteProductPage> {
                       ),
                       borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     ),
-                    suffixIcon: HugeIcon(
+                    suffixIcon: const HugeIcon(
                       icon: HugeIcons.strokeRoundedCalendar01,
                       color: Colors.black,
                       size: 16.0,
@@ -226,7 +226,7 @@ class _PromoteProductPageState extends State<PromoteProductPage> {
                     ),
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
                   ),
-                  suffixIcon: HugeIcon(
+                  suffixIcon: const HugeIcon(
                     icon: HugeIcons.strokeRoundedCalendar01,
                     color: Colors.black,
                     size: 16.0,

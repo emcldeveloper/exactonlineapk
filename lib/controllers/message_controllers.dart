@@ -1,6 +1,6 @@
+// ignore_for_file: non_constant_identifier_names, empty_catches
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:e_online/controllers/chat_controller.dart';
-import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/models/message.dart';
 import 'package:e_online/utils/shared_preferences.dart';
 import 'package:dio/dio.dart';
@@ -29,8 +29,7 @@ class MessageController extends GetxController {
       );
       var data = response.data["body"];
       return data;
-    } on DioException catch (e) {
-      print(e.response);
+    } on DioException {
     }
   }
 
@@ -44,10 +43,8 @@ class MessageController extends GetxController {
         }),
       );
       var data = response.data["body"];
-      print(data);
       return data;
-    } on DioException catch (e) {
-      print(e.response);
+    } on DioException {
     }
   }
 
@@ -62,10 +59,8 @@ class MessageController extends GetxController {
         }),
       );
       var data = response.data["body"];
-      print(data);
       return data;
-    } on DioException catch (e) {
-      print(e.response);
+    } on DioException {
     }
   }
 
@@ -80,10 +75,8 @@ class MessageController extends GetxController {
         }),
       );
       var data = response.data["body"];
-      print(data);
       return data;
-    } on DioException catch (e) {
-      print(e.response);
+    } on DioException {
     }
   }
 
