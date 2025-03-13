@@ -16,6 +16,7 @@ Widget noData() {
             HeadingText("No Data Available"),
             Text(
               "Once data is available, it will be displayed here.",
+              textAlign: TextAlign.center,
               style: TextStyle(color: Colors.grey.shade600),
             ),
           ],

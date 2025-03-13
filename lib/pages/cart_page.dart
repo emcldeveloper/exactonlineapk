@@ -279,7 +279,10 @@ class _CartPageState extends State<CartPage> {
                                         Navigator.of(context)
                                             .pop(); // Close the first popup
                                         Get.back();
-                                        Get.to(() => const MyOrdersPage());
+                                        Get.back();
+                                        Get.to(() => MyOrdersPage(
+                                              from: "cart",
+                                            ));
                                       },
                                     );
                                   } catch (e) {
@@ -290,7 +293,7 @@ class _CartPageState extends State<CartPage> {
                                     // Get.snackbar("Error", "Failed to place order: $e");
                                   }
                                 },
-                                text: "Place an Order",
+                                text: "Proceed",
                               ),
                             ),
                             spacer3(),

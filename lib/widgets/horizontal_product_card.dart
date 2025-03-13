@@ -78,75 +78,64 @@ class _HorizontalProductCardState extends State<HorizontalProductCard> {
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.symmetric(vertical: 8.0),
-      child: GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  ProductPage(productData: widget.data["Product"]),
+      child: Row(
+        children: [
+          // Image Section
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Container(
+              width: 120,
+              height: 120,
+              child: CachedNetworkImage(
+                  fit: BoxFit.cover,
+                  imageUrl: widget.data["Product"]["ProductImages"][0]
+                      ['image']),
             ),
-          );
-        },
-        child: Row(
-          children: [
-            // Image Section
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Container(
-                width: 120,
-                height: 120,
-                child: CachedNetworkImage(
-                    fit: BoxFit.cover,
-                    imageUrl: widget.data["Product"]["ProductImages"][0]
-                        ['image']),
-              ),
-            ),
+          ),
 
-            const SizedBox(width: 12),
+          const SizedBox(width: 12),
 
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ParagraphText(
-                      widget.data["Product"]['name'] ?? "No name available",
-                      maxLines: 2),
-                  spacer(),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Row(
-                          children: [
-                            ParagraphText(
-                              "TZS ${toMoneyFormmat(widget.data["Product"]['sellingPrice'])}",
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16.0,
-                            ),
-                          ],
-                        ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ParagraphText(
+                    widget.data["Product"]['name'] ?? "No name available",
+                    maxLines: 2),
+                spacer(),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Row(
+                        children: [
+                          ParagraphText(
+                            "TZS ${toMoneyFormmat(widget.data["Product"]['sellingPrice'])}",
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16.0,
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  ParagraphText(
-                      widget.data["Product"]?['Shop']?["name"] ??
-                          "No name available",
-                      color: Colors.red,
-                      maxLines: 2),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+                ParagraphText(
+                    widget.data["Product"]?['Shop']?["name"] ??
+                        "No name available",
+                    color: primary,
+                    maxLines: 2),
+              ],
             ),
-            const SizedBox(width: 30),
-            InkWell(
-              onTap: _showConfirmationPopup,
-              child: Icon(
-                Icons.close,
-                color: mutedTextColor,
-                size: 16.0,
-              ),
+          ),
+          const SizedBox(width: 30),
+          InkWell(
+            onTap: _showConfirmationPopup,
+            child: Icon(
+              Icons.close,
+              color: mutedTextColor,
+              size: 16.0,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -109,11 +109,6 @@ class _ShopProductCardState extends State<ShopProductCard> {
                               fontWeight: FontWeight.bold,
                               fontSize: 16.0,
                             ),
-                            const SizedBox(width: 8),
-                            ParagraphText(
-                              "${widget.data['views'] ?? 0} views",
-                              color: mutedTextColor,
-                            ),
                           ],
                         ),
                       ),

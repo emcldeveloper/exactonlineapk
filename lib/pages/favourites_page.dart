@@ -76,9 +76,20 @@ class _FavouritesPageState extends State<FavouritesPage> {
       backgroundColor: mainColor,
       appBar: AppBar(
         backgroundColor: mainColor,
+        leading: InkWell(
+            onTap: () {
+              Get.back();
+            },
+            child: Container(
+              color: Colors.transparent,
+              child: Icon(
+                Icons.arrow_back_ios,
+                color: mutedTextColor,
+                size: 16.0,
+              ),
+            )),
         elevation: 0,
-        leading: Container(),
-        leadingWidth: 1.0,
+        centerTitle: true,
         title: HeadingText('Favorites'),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),

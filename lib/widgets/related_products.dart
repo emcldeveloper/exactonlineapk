@@ -6,7 +6,8 @@ import 'package:shimmer/shimmer.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class RelatedProducts extends StatelessWidget {
-  RelatedProducts({super.key});
+  String? productId;
+  RelatedProducts({super.key, this.productId = ""});
 
   final RxList products = <dynamic>[].obs;
   final ScrollController _scrollController = ScrollController();
@@ -22,13 +23,16 @@ class RelatedProducts extends StatelessWidget {
 
     return Obx(
       () => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 0),
         child: products.isEmpty && !isLoading.value
             ? _buildShimmerGrid()
             : SingleChildScrollView(
                 controller: _scrollController,
                 child: Column(
                   children: [
+                    SizedBox(
+                      height: 15,
+                    ),
                     StaggeredGrid.count(
                       crossAxisCount: 2, // 2 items per row
                       mainAxisSpacing: 12,
@@ -82,7 +86,8 @@ class RelatedProducts extends StatelessWidget {
 
     isLoading.value = true;
     try {
-      final res = await ProductController().getProducts(
+      final res = await ProductController().getRelatedProducts(
+        productId: productId,
         page: page,
         limit: _limit,
         keyword: "",

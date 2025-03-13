@@ -7,10 +7,10 @@ import 'package:get/get.dart';
 class OrdersController extends GetxController {
   UserController userController = Get.find();
 
-  Future getMyOrders(page, limit, keyword) async {
+  Future getMyOrders(page, limit, keyword, status) async {
     try {
       var response = await dio.get(
-          "/orders/user/${userController.user.value["id"]}/?page=$page&limit=$limit&keyword=$keyword",
+          "/orders/user/${userController.user.value["id"]}/?page=$page&limit=$limit&keyword=$keyword&status=$status",
           options: Options(headers: {
             "Authorization":
                 "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
@@ -40,7 +40,7 @@ class OrdersController extends GetxController {
     }
   }
 
-  Future getShopOrders(page, limit, keyword) async {
+  Future getShopOrders(page, limit, keyword, status) async {
     try {
       var shopId = await SharedPreferencesUtil.getSelectedBusiness();
       if (shopId == null) {
@@ -48,7 +48,7 @@ class OrdersController extends GetxController {
         await SharedPreferencesUtil.saveSelectedBusiness(shopId!);
       }
       var response = await dio.get(
-          "/orders/shop/$shopId/?page=$page&limit=$limit&keyword=$keyword",
+          "/orders/shop/$shopId/?page=$page&limit=$limit&keyword=$keyword&status=$status",
           options: Options(headers: {
             "Authorization":
                 "Bearer ${await SharedPreferencesUtil.getAccessToken()}"

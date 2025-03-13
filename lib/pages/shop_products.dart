@@ -6,15 +6,15 @@ import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
-class HomeCategoriesProducts extends StatefulWidget {
-  final dynamic category;
-  const HomeCategoriesProducts({super.key, this.category});
+class ShopProducts extends StatefulWidget {
+  final String shopId;
+  const ShopProducts({super.key, this.shopId = ""});
 
   @override
-  State<HomeCategoriesProducts> createState() => _HomeCategoriesProductsState();
+  State<ShopProducts> createState() => _ShopProductsState();
 }
 
-class _HomeCategoriesProductsState extends State<HomeCategoriesProducts> {
+class _ShopProductsState extends State<ShopProducts> {
   final RxList products = <dynamic>[].obs;
   final RxBool isLoading = true.obs;
   final RxBool isLoadingMore = false.obs;
@@ -38,33 +38,30 @@ class _HomeCategoriesProductsState extends State<HomeCategoriesProducts> {
 
   Future<void> _fetchProducts(int page) async {
     if (isLoadingMore.value || (!hasMore.value && page != 1)) return;
-
     if (page == 1) {
       isLoading.value = true;
     } else {
       isLoadingMore.value = true;
     }
-
     try {
-      final res = await ProductController().getProducts(
-        page: page,
-        limit: limit,
-        keyword: "",
-        category: widget.category,
-      );
-      final filteredRes =
-          res.where((item) => item["ProductImages"].isNotEmpty).toList();
+      List<dynamic> res = await ProductController().getShopProducts(
+          id: widget.shopId, page: page, limit: limit, keyword: "");
+      final filteredRes = res.where((item) {
+        // Explicitly check if ProductImages exists and is not empty
+        final productImages = item["ProductImages"];
+        return productImages != null && productImages.isNotEmpty;
+      }).toList();
 
       if (filteredRes.isEmpty || filteredRes.length < limit) {
         hasMore.value = false;
       }
-
       if (page == 1) {
         products.value = filteredRes;
       } else {
         products.addAll(filteredRes);
       }
     } catch (e) {
+      print(e);
       Get.snackbar("Error", "Error loading products: $e");
     } finally {
       isLoading.value = false;

@@ -7,6 +7,8 @@ import 'package:e_online/controllers/product_controller.dart';
 import 'package:e_online/controllers/shop_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/conversation_page.dart';
+import 'package:e_online/pages/shop_products.dart';
+import 'package:e_online/utils/get_hex_color.dart';
 import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/Seller_product_card.dart';
 import 'package:e_online/widgets/heading_text.dart';
@@ -167,7 +169,6 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
             ),
           ),
           title: HeadingText("Shop Details"),
-          centerTitle: true,
           actions: [
             if (shopDetails.value['shopLat'] != null &&
                 shopDetails.value['shopLong'] != null)
@@ -297,12 +298,12 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
                   children: [
                     ClipOval(
                       child: SizedBox(
-                        height: 80,
-                        width: 80,
+                        height: 60,
+                        width: 60,
                         child: CachedNetworkImage(
                           imageUrl: data['shopImage'] ?? '',
-                          height: 80,
-                          width: 80,
+                          height: 60,
+                          width: 60,
                           fit: BoxFit.cover,
                           placeholder: (context, url) => const Center(
                             child: CircularProgressIndicator(
@@ -310,11 +311,14 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
                             ),
                           ),
                           errorWidget: (context, url, error) => Container(
-                            decoration: BoxDecoration(color: Colors.grey[200]),
+                            decoration: BoxDecoration(color: Colors.grey[100]),
                             alignment: Alignment.center,
-                            child: const Icon(
-                              Bootstrap.shop,
-                              size: 30,
+                            child: Center(
+                              child: Text(
+                                data["name"].toString()[0],
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 20),
+                              ),
                             ),
                           ),
                         ),
@@ -341,7 +345,7 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
                                 decoration: BoxDecoration(
                                   color: isOpen
                                       ? Colors.green[100]
-                                      : Colors.red[100],
+                                      : Colors.red[50],
                                   borderRadius: BorderRadius.circular(15),
                                 ),
                                 alignment: Alignment.center,
@@ -417,17 +421,16 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
                     Expanded(
                       child: TabBarView(
                         children: [
-                          Obx(() => shopProducts.isEmpty
-                              ? noData()
-                              : ListView.builder(
-                                  padding: EdgeInsets.all(16),
-                                  itemCount: shopProducts.length,
-                                  itemBuilder: (context, index) {
-                                    return SellerProductCard(
-                                        data: shopProducts[index]);
-                                  },
-                                )),
-                          SellerMasonryGrid(widget.shopId),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: ShopProducts(
+                              shopId: widget.shopId,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: SellerMasonryGrid(widget.shopId),
+                          ),
                         ],
                       ),
                     ),

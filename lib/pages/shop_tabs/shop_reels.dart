@@ -132,7 +132,7 @@ class ReelCard extends StatelessWidget {
       try {
         final parts = duration.split(':');
         if (parts.length == 3) {
-          final minutes = parts[1]; 
+          final minutes = parts[1];
           final seconds = parts[2];
           return '$minutes:$seconds';
         }
@@ -167,13 +167,13 @@ class ReelCard extends StatelessWidget {
                           imageUrl: data['thumbnail'] ?? '',
                           width: double.infinity,
                           fit: BoxFit.cover,
-                          errorWidget: (context, url, error) => Icon(
+                          errorWidget: (context, url, error) => const Icon(
                             Icons.broken_image,
                             size: 100,
                             color: Colors.grey,
                           ),
                         )
-                      : Icon(
+                      : const Icon(
                           Icons.videocam_off,
                           size: 100,
                           color: Colors.grey,
@@ -218,48 +218,44 @@ class ReelCard extends StatelessWidget {
                 spacer(),
                 // Shop Info and Likes
                 Row(
-                  mainAxisSize: MainAxisSize
-                      .min, // Allow Row to shrink to fit its children
                   children: [
                     // Profile Picture
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SellerProfilePage(
-                              shopId: shopData['id'],
-                            ),
-                          ),
-                        );
-                      },
-                      child: Row(
-                        mainAxisSize:
-                            MainAxisSize.min, // Prevents Row from expanding
-                        children: [
-                          CircleAvatar(
-                            radius: 12,
-                            backgroundImage: shopImage != null
-                                ? NetworkImage(shopImage)
-                                : const AssetImage('assets/images/avatar.png')
-                                    as ImageProvider,
-                          ),
-                          const SizedBox(width: 8),
-                          // Shopname
-                          Flexible(
-                            fit: FlexFit
-                                .loose, // Allow shrinking to avoid overflow
-                            child: Text(
-                              shopName,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
+                    Expanded(
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SellerProfilePage(
+                                shopId: shopData['id'],
                               ),
-                              overflow: TextOverflow
-                                  .ellipsis, // Ensure text doesn't overflow
                             ),
-                          ),
-                        ],
+                          );
+                        },
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 12,
+                              backgroundImage: shopImage != null
+                                  ? NetworkImage(shopImage)
+                                  : const AssetImage('assets/images/avatar.png')
+                                      as ImageProvider,
+                            ),
+                            const SizedBox(width: 8),
+                            // Shopname
+                            Flexible(
+                              child: Text(
+                                shopName,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                overflow: TextOverflow
+                                    .ellipsis, // Ensure text doesn't overflow
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
 

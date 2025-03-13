@@ -188,7 +188,7 @@ class _ConversationPageState extends State<ConversationPage> {
                       ),
                   ],
                 ),
-                expandedHeight: 205.0,
+                expandedHeight: 185.0,
                 floating: false,
                 pinned: true,
                 elevation: 0,
@@ -320,51 +320,100 @@ class _ConversationPageState extends State<ConversationPage> {
                         ),
                       ),
                       padding: const EdgeInsets.all(12.0),
-                      child: Row(
+                      child: Column(
                         children: [
-                          Expanded(
-                            child: TextField(
-                              controller: messageController,
-                              decoration: InputDecoration(
-                                fillColor: Colors.grey[100],
-                                filled: true,
-                                hintText: "Write your message here",
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(30.0),
-                                  borderSide: BorderSide.none,
-                                ),
-                              ),
-                            ),
+                          Container(
+                              height: 30,
+                              child: ListView(
+                                scrollDirection: Axis.horizontal,
+                                children: [
+                                  "Last Price ?",
+                                  "Is this Available",
+                                  "Ask for Location",
+                                  "Make an offer",
+                                  "Please call me",
+                                ]
+                                    .map((item) => GestureDetector(
+                                          onTap: () {
+                                            messageController.text = item;
+                                          },
+                                          child: Padding(
+                                            padding:
+                                                const EdgeInsets.only(right: 5),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                  color: primary.withAlpha(10),
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
+                                                  border: Border.all(
+                                                      color: primary
+                                                          .withAlpha(60))),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 10),
+                                                child: Center(
+                                                  child: Text(
+                                                    item,
+                                                    style: TextStyle(),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ))
+                                    .toList(),
+                              )),
+                          SizedBox(
+                            height: 10,
                           ),
-                          const SizedBox(width: 8),
-                          InkWell(
-                            onTap: () async {
-                              if (messageController.text.isNotEmpty) {
-                                var text = messageController.text;
-                                messageController.clear();
-                                await messageControllerInstance.sendMessage(
-                                  message: text,
-                                  TopicId: widget.topic["id"],
-                                  UserId: userController.user.value["id"],
-                                  from: widget.isUser ? "user" : "shop",
-                                );
-                              }
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(13.0),
-                              decoration: BoxDecoration(
-                                color: Colors.black,
-                                borderRadius: BorderRadius.circular(30),
-                              ),
-                              child: Transform.rotate(
-                                angle: 6.3,
-                                child: const HugeIcon(
-                                  icon: HugeIcons.strokeRoundedSent,
-                                  color: Colors.white,
-                                  size: 22.0,
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: messageController,
+                                  decoration: InputDecoration(
+                                    fillColor: Colors.grey[100],
+                                    filled: true,
+                                    hintText: "Write your message here",
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30.0),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
+                              const SizedBox(width: 8),
+                              InkWell(
+                                onTap: () async {
+                                  if (messageController.text.isNotEmpty) {
+                                    var text = messageController.text;
+                                    messageController.clear();
+                                    await messageControllerInstance.sendMessage(
+                                      message: text,
+                                      TopicId: widget.topic["id"],
+                                      UserId: userController.user.value["id"],
+                                      from: widget.isUser ? "user" : "shop",
+                                    );
+                                  }
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(13.0),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black,
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  child: Transform.rotate(
+                                    angle: 6.3,
+                                    child: const HugeIcon(
+                                      icon: HugeIcons.strokeRoundedSent,
+                                      color: Colors.white,
+                                      size: 22.0,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),

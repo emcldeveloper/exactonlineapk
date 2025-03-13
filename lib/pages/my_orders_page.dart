@@ -11,7 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class MyOrdersPage extends StatefulWidget {
-  const MyOrdersPage({super.key});
+  String from;
+  MyOrdersPage({super.key, this.from = "main"});
 
   @override
   State<MyOrdersPage> createState() => _MyOrdersPageState();
@@ -25,6 +26,7 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
   bool _isLoading = true;
   bool _isLoadingMore = false;
   bool _hasMore = true;
+  var status = "NEGOTIATION".obs;
 
   @override
   void initState() {
@@ -47,7 +49,8 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
     }
 
     try {
-      final res = await OrdersController().getMyOrders(page, _limit, "");
+      final res =
+          await OrdersController().getMyOrders(page, _limit, "", status.value);
 
       if (res.isEmpty || res.length < _limit) {
         _hasMore = false;
@@ -82,6 +85,15 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
     }
   }
 
+  void _refreshOrders() {
+    setState(() {
+      _currentPage = 1;
+      _hasMore = true;
+      orders = [];
+    });
+    _fetchOrders(_currentPage);
+  }
+
   @override
   void dispose() {
     _scrollController.dispose();
@@ -90,74 +102,112 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: mainColor,
-      appBar: AppBar(
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
         backgroundColor: mainColor,
-        leading: InkWell(
-          onTap: () => Get.back(),
-          child: Icon(
-            Icons.arrow_back_ios,
-            color: mutedTextColor,
-            size: 16.0,
+        appBar: AppBar(
+          backgroundColor: mainColor,
+          shadowColor: Colors.white,
+          foregroundColor: Colors.white,
+          leadingWidth: widget.from == "cart" ? 16 : 1,
+          leading: widget.from == "cart"
+              ? InkWell(
+                  onTap: () {
+                    Get.back();
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 16),
+                    child: Container(
+                      color: Colors.transparent,
+                      child: Icon(
+                        Icons.arrow_back_ios,
+                        color: mutedTextColor,
+                        size: 16.0,
+                      ),
+                    ),
+                  ))
+              : Container(),
+          title: HeadingText("My Orders"),
+          centerTitle: widget.from == "cart" ? true : false,
+          bottom: TabBar(
+            isScrollable: true,
+            tabAlignment: TabAlignment.start,
+            indicatorSize: TabBarIndicatorSize.label,
+            labelColor: Colors.black,
+            indicatorColor: Colors.black,
+            labelStyle: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+            unselectedLabelStyle: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.normal,
+            ),
+            onTap: (index) {
+              // Update status based on tab selection
+              switch (index) {
+                case 0: // Pending tab
+                  status.value = "NEGOTIATION";
+                  break;
+                case 1: // Active tab
+                  status.value = "ORDERED";
+                  break;
+                case 2: // Delivered tab
+                  status.value = "DELIVERED";
+                  break;
+              }
+              _refreshOrders(); // Fetch orders with new status
+            },
+            tabs: const [
+              Tab(text: "Pending"),
+              Tab(text: "Active"),
+              Tab(text: "Delivered"),
+            ],
           ),
         ),
-        title: HeadingText("My Orders"),
-        centerTitle: true,
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1.0),
-          child: Container(
-            color: const Color.fromARGB(255, 242, 242, 242),
-            height: 1.0,
-          ),
-        ),
-      ),
-      body: _isLoading
-          ? const Center(
-              child: Padding(
-                padding: EdgeInsets.all(30),
-                child: CircularProgressIndicator(
-                  color: Colors.black,
+        body: _isLoading
+            ? const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(30),
+                  child: CircularProgressIndicator(
+                    color: Colors.black,
+                  ),
                 ),
-              ),
-            )
-          : orders.isEmpty
-              ? noData()
-              : ListView.builder(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.all(16.0),
-                  itemCount: orders.length + (_isLoadingMore ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    if (index == orders.length && _isLoadingMore) {
-                      return const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10.0),
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            color: Colors.black,
+              )
+            : orders.isEmpty
+                ? noData()
+                : ListView.builder(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.all(16.0),
+                    itemCount: orders.length + (_isLoadingMore ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (index == orders.length && _isLoadingMore) {
+                        return const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10.0),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.black,
+                            ),
                           ),
+                        );
+                      }
+                      return GestureDetector(
+                        onTap: () async {
+                          await Get.to(
+                              CustomerOrderViewPage(order: orders[index]));
+                          _refreshOrders();
+                        },
+                        child: Column(
+                          children: [
+                            OrderCard(data: orders[index]),
+                            spacer2(),
+                          ],
                         ),
                       );
-                    }
-                    return GestureDetector(
-                      onTap: () async {
-                        await Get.to(
-                            CustomerOrderViewPage(order: orders[index]));
-                        setState(() {
-                          _currentPage = 1;
-                          _hasMore = true;
-                          orders = [];
-                          _fetchOrders(_currentPage);
-                        });
-                      },
-                      child: Column(
-                        children: [
-                          OrderCard(data: orders[index]),
-                          spacer2(),
-                        ],
-                      ),
-                    );
-                  },
-                ),
+                    },
+                  ),
+      ),
     );
   }
 }

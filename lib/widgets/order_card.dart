@@ -60,7 +60,7 @@ class OrderCard extends StatelessWidget {
             width: 15,
           ),
           Container(
-            width: 90,
+            width: 100,
             height: 35,
             decoration: BoxDecoration(
               border: Border.all(

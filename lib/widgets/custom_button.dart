@@ -31,22 +31,15 @@ Widget customButton({
                   color: Colors.white,
                 ),
               ))
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (child != null) ...[
-                    child, // Display the loader or any custom widget
-                  ] else ...[
-                    Text(
-                      text ?? "",
-                      style: TextStyle(
-                        color: textColor ?? primaryColor,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ],
+            : Center(
+                child: Text(
+                  text ?? "",
+                  style: TextStyle(
+                    color: textColor ?? primaryColor,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
       ),
     ),

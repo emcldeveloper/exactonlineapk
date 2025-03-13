@@ -170,13 +170,13 @@ class ReelCard extends StatelessWidget {
                           imageUrl: data['thumbnail'] ?? '',
                           width: double.infinity,
                           fit: BoxFit.cover,
-                          errorWidget: (context, url, error) => Icon(
+                          errorWidget: (context, url, error) => const Icon(
                             Icons.broken_image,
                             size: 100,
                             color: Colors.grey,
                           ),
                         )
-                      : Icon(
+                      : const Icon(
                           Icons.videocam_off,
                           size: 100,
                           color: Colors.grey,
@@ -264,24 +264,24 @@ class ReelCard extends StatelessWidget {
                     const Spacer(), // Push Likes section to the right
 
                     // Likes
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.favorite_border,
-                          color: Colors.black,
-                          size: 14.0,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          data['likes'].toString(),
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
+                    // Row(
+                    //   mainAxisSize: MainAxisSize.min,
+                    //   children: [
+                    //     const Icon(
+                    //       Icons.favorite_border,
+                    //       color: Colors.black,
+                    //       size: 14.0,
+                    //     ),
+                    //     const SizedBox(width: 4),
+                    //     Text(
+                    //       data['likes'].toString(),
+                    //       style: const TextStyle(
+                    //         fontSize: 12,
+                    //         fontWeight: FontWeight.w500,
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
                   ],
                 )
               ],

@@ -4,6 +4,7 @@ import 'package:e_online/controllers/shop_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/customer_support_page.dart';
 import 'package:e_online/pages/edit_profile_page.dart';
+import 'package:e_online/pages/favourites_page.dart';
 import 'package:e_online/pages/join_as_seller_page.dart';
 import 'package:e_online/pages/my_orders_page.dart';
 import 'package:e_online/pages/my_shop_page.dart';
@@ -31,11 +32,12 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   UserController userController = Get.find();
 
- @override
+  @override
   void initState() {
     super.initState();
-    trackScreenView("ProfilePage"); 
+    trackScreenView("ProfilePage");
   }
+
   bool loadingShopInfo = false;
   @override
   Widget build(BuildContext context) {
@@ -145,9 +147,9 @@ class _ProfilePageState extends State<ProfilePage> {
                             'page': const MyShopPage(),
                           },
                         {
-                          'icon': Bootstrap.bag,
-                          'title': 'My Orders',
-                          'page': const MyOrdersPage(),
+                          'icon': Icons.favorite_outline,
+                          'title': 'Favorites',
+                          'page': const FavouritesPage(),
                         },
                         {
                           'icon': Icons.edit_outlined,

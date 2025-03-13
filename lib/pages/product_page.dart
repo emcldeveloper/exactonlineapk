@@ -14,8 +14,12 @@ import 'package:e_online/controllers/review_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/cart_page.dart';
 import 'package:e_online/pages/conversation_page.dart';
+import 'package:e_online/pages/home_page_sections/all_products.dart';
+import 'package:e_online/pages/my_shop_page.dart';
+import 'package:e_online/pages/seller_profile_page.dart';
 import 'package:e_online/pages/viewImage.dart';
 import 'package:e_online/utils/convert_to_money_format.dart';
+import 'package:e_online/utils/get_hex_color.dart';
 import 'package:e_online/utils/snackbars.dart';
 import 'package:e_online/widgets/cartIcon.dart';
 import 'package:e_online/widgets/custom_button.dart';
@@ -225,84 +229,116 @@ class _ProductPageState extends State<ProductPage> {
   RxInt index = 0.obs;
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2, // Number of tabs
-      child: Scaffold(
+    return Scaffold(
+      backgroundColor: mainColor,
+      appBar: AppBar(
         backgroundColor: mainColor,
-        appBar: AppBar(
-          backgroundColor: mainColor,
-          leading: InkWell(
-            onTap: () => Get.back(),
-            child: Icon(
-              Icons.arrow_back_ios,
-              color: secondaryColor,
-              size: 16.0,
-            ),
-          ),
-          title: HeadingText("Product Details"),
-          centerTitle: true,
-          actions: [
-            cartIcon(),
-            SizedBox(
-              width: 8.0,
-            ),
-            Obx(() => InkWell(
-                  onTap: _shareProduct,
-                  child: isSharing.value
-                      ? SizedBox(
-                          width: 16.0,
-                          height: 16.0,
-                          child: const CircularProgressIndicator(
-                            color: Colors.black,
-                            strokeWidth: 2.0,
-                          ),
-                        )
-                      : const Icon(
-                          Bootstrap.share,
-                          color: Colors.black,
-                          size: 20.0,
-                        ),
-                )),
-            SizedBox(
-              width: 12.0,
-            ),
-          ],
-          bottom: TabBar(
-            labelColor: Colors.black,
-            indicatorColor: Colors.black,
-            tabs: [
-              Tab(text: "Product Details"),
-              Tab(text: "Related Products"),
-            ],
+        leading: InkWell(
+          onTap: () => Get.back(),
+          child: Icon(
+            Icons.arrow_back_ios,
+            color: secondaryColor,
+            size: 16.0,
           ),
         ),
-        body: TabBarView(
-          children: [
-            // First Tab - Product Details
-            FutureBuilder(
-                future: ProductController()
-                    .getProduct(id: widget.productData["id"]),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(
-                        child: CircularProgressIndicator(
-                      color: Colors.black,
-                    ));
-                  }
-                  var product = snapshot.requireData;
-                  widget.productData = product;
-                  // Set isFavorite based on fetched product
-                  isFavorite.value = product.containsKey('Favorites') &&
-                      product['Favorites'] != null &&
-                      product['Favorites'].isNotEmpty;
+        title: HeadingText("Product Details"),
+        centerTitle: true,
+        actions: [
+          SizedBox(
+            width: 12.0,
+          ),
+        ],
+      ),
+      body: FutureBuilder(
+          future: ProductController().getProduct(id: widget.productData["id"]),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                  child: CircularProgressIndicator(
+                color: Colors.black,
+              ));
+            }
+            var product = snapshot.requireData;
+            widget.productData = product;
+            // Set isFavorite based on fetched product
+            isFavorite.value = product.containsKey('Favorites') &&
+                product['Favorites'] != null &&
+                product['Favorites'].isNotEmpty;
 
-                  return SingleChildScrollView(
+            return Container(
+              height: MediaQuery.of(context).size.height,
+              child: Stack(
+                children: [
+                  SingleChildScrollView(
                     child: Padding(
                       padding: const EdgeInsets.all(0.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: GestureDetector(
+                              onTap: () {
+                                Get.to(() => SellerProfilePage(
+                                    shopId: product["Shop"]["id"]));
+                              },
+                              child: Row(
+                                children: [
+                                  ClipOval(
+                                    child: SizedBox(
+                                      height: 40,
+                                      width: 40,
+                                      child: CachedNetworkImage(
+                                        imageUrl:
+                                            product["Shop"]['shopImage'] ?? "",
+                                        height: 40,
+                                        width: 40,
+                                        fit: BoxFit.cover,
+                                        placeholder: (context, url) =>
+                                            const Center(
+                                          child: CircularProgressIndicator(
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                        errorWidget: (context, url, error) =>
+                                            Container(
+                                          decoration: BoxDecoration(
+                                              color: Colors.grey[100]),
+                                          alignment: Alignment.center,
+                                          child: Center(
+                                            child: Text(
+                                              product["Shop"]["name"]
+                                                  .toString()[0],
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 20),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      HeadingText(
+                                          "From ${product["Shop"]["name"]}",
+                                          fontSize: 16.0),
+                                      ParagraphText(
+                                          "${product["Shop"]["address"]}",
+                                          color: Colors.grey,
+                                          fontSize: 13.0),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
                             height: 10,
                           ),
                           Stack(
@@ -370,7 +406,7 @@ class _ProductPageState extends State<ProductPage> {
                               ),
                             ],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 10,
                           ),
                           Obx(
@@ -437,7 +473,7 @@ class _ProductPageState extends State<ProductPage> {
                                         GestureDetector(
                                           onTap: _showReviewsBottomSheet,
                                           child: ParagraphText(
-                                            "View reviews",
+                                            "Reviews",
                                             color: mutedTextColor,
                                             decoration:
                                                 TextDecoration.underline,
@@ -452,171 +488,61 @@ class _ProductPageState extends State<ProductPage> {
                                   product['description'],
                                 ),
                                 spacer1(),
-                                ParagraphText(
-                                  "Specifications",
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14.0,
-                                ),
-
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                if (widget.productData['specifications'].entries
+                                        .length >
+                                    0)
+                                  ParagraphText(
+                                    "Specifications",
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18.0,
+                                  ),
+                                Table(
+                                  border: TableBorder.all(
+                                    color: Colors.grey
+                                        .withAlpha(50), // Border color
+                                    width: 1.0, // Border thickness
+                                  ),
+                                  columnWidths: const {
+                                    0: FlexColumnWidth(
+                                        3), // Adjust width ratio for key column
+                                    1: FlexColumnWidth(
+                                        5), // Adjust width ratio for value column
+                                  },
                                   children: widget
                                       .productData['specifications'].entries
-                                      .map<Widget>((entry) {
-                                    return Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                      .map<TableRow>((entry) {
+                                    return TableRow(
+                                      decoration: BoxDecoration(
+                                        color: Colors
+                                            .white, // Optional background color for rows
+                                      ),
                                       children: [
-                                        ParagraphText(
-                                          "${entry.key}:", // Display the key
-                                          color: mutedTextColor,
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: ParagraphText(
+                                            "${entry.key}",
+                                            color: mutedTextColor,
+                                          ),
                                         ),
-                                        const SizedBox(
-                                          width: 8,
-                                        ),
-                                        ParagraphText(
-                                          "${entry.value}", // Display the corresponding value
-                                          fontWeight: FontWeight.bold,
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: ParagraphText(
+                                            "${entry.value}",
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ],
                                     );
                                   }).toList(),
                                 ),
-
                                 spacer1(),
-                                // Row(
-                                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                //   children: [
-                                //     HeadingText("Recomended"),
-                                //     ParagraphText(
-                                //       "See All",
-                                //       color: mutedTextColor,
-                                //       decoration: TextDecoration.underline,
-                                //     ),
-                                //   ],
-                                // ),
-                                // spacer1(),
-                                // SizedBox(
-                                //   height: 240,
-                                //   child: ListView.builder(
-                                //     scrollDirection: Axis.horizontal,
-                                //     itemCount: relatedItems.length,
-                                //     itemBuilder: (context, index) {
-                                //       return Padding(
-                                //         padding: const EdgeInsets.only(right: 16.0),
-                                //         child: ProductCard(data: relatedItems[index]),
-                                //       );
-                                //     },
-                                //   ),
-                                // ),
+                                HeadingText("Related Products", fontSize: 18),
+                                RelatedProducts(
+                                  productId: widget.productData["id"],
+                                ),
                                 spacer1(),
-                                if (product["CartProducts"].length < 1)
-                                  if (product["CartProducts"].length < 1)
-                                    Obx(
-                                      () => customButton(
-                                        loading: addingToCart.value,
-                                        onTap: () async {
-                                          addingToCart.value = true;
-                                          await analytics.logEvent(
-                                            name: 'add_to_cart',
-                                            parameters: {
-                                              'product_id': product["id"],
-                                              'product_name': product['name'],
-                                              'product_description':
-                                                  product['description'],
-                                              'price': product['sellingPrice'],
-                                            },
-                                          );
-
-                                          CartProductController()
-                                              .addCartProduct({
-                                            "UserId":
-                                                userController.user.value["id"],
-                                            "ProductId": product["id"]
-                                          }).then((res) {
-                                            showSuccessSnackbar(
-                                                title: "Added successfully",
-                                                description:
-                                                    "Product is added to cart successfully");
-                                            addingToCart.value = false;
-
-                                            setState(() {});
-                                            CartProductController()
-                                                .getOnCartproducts();
-                                          });
-                                        },
-                                        text: "Add to Cart",
-                                      ),
-                                    ),
-                                if (product["CartProducts"].length > 0)
-                                  customButton(
-                                    loading: addingToCart.value,
-                                    onTap: () async {
-                                      await Get.to(() => CartPage());
-                                      setState(() {});
-                                    },
-                                    text: "View in Cart",
-                                  ),
-
-                                spacer(),
-                                customButton(
-                                  onTap: () async {
-                                    await analytics.logEvent(
-                                      name: 'call_seller',
-                                      parameters: {
-                                        'Shop_Id': product["Shop"]["id"],
-                                        'product_id': product["id"],
-                                        'product_name': product['name'],
-                                        'product_description':
-                                            product['description'],
-                                        'price': product['sellingPrice'],
-                                        'shopName': product["Shop"]["name"],
-                                        'shopPhone': product["Shop"]["phone"],
-                                        'from_page': 'ProductPage'
-                                      },
-                                    );
-                                    _sendProductStats("call");
-                                    await launchUrl(Uri(
-                                        scheme: "tel",
-                                        path: product["Shop"]["phone"]));
-                                  },
-                                  text: "Call Seller",
-                                  buttonColor: primaryColor,
-                                  textColor: Colors.black,
-                                ),
-                                spacer(),
-                                customButton(
-                                  onTap: () async {
-                                    await analytics.logEvent(
-                                      name: 'chat_seller',
-                                      parameters: {
-                                        'Shop_Id': product["Shop"]["id"],
-                                        'product_id': product["id"],
-                                        'product_name': product['name'],
-                                        'product_description':
-                                            product['description'],
-                                        'price': product['sellingPrice'],
-                                        'shopName': product["Shop"]["name"],
-                                        'shopPhone': product["Shop"]["phone"],
-                                        'from_page': 'ProductPage'
-                                      },
-                                    );
-                                    _sendProductStats("message");
-                                    ChatController().addChat({
-                                      "ShopId": product["Shop"]["id"],
-                                      "ProductId": product["id"],
-                                      "UserId": userController.user.value["id"]
-                                    }).then((res) {
-                                      print(res);
-                                      Get.to(() => ConversationPage(res));
-                                    });
-                                  },
-                                  text: "Message Seller",
-                                  buttonColor: primaryColor,
-                                  textColor: Colors.black,
-                                ),
-                                spacer(),
-
+                                spacer2(),
+                                spacer2(),
                                 spacer2(),
                               ],
                             ),
@@ -624,14 +550,153 @@ class _ProductPageState extends State<ProductPage> {
                         ],
                       ),
                     ),
-                  );
-                }),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    left: 16,
+                    right: 16,
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border(
+                              top: BorderSide(
+                                  color: Colors.grey.withAlpha(30)))),
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 20, top: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          spacing: 20,
+                          children: [
+                            cartIcon(),
+                            Obx(() => InkWell(
+                                  onTap: _shareProduct,
+                                  child: isSharing.value
+                                      ? SizedBox(
+                                          width: 16.0,
+                                          height: 16.0,
+                                          child:
+                                              const CircularProgressIndicator(
+                                            color: Colors.black,
+                                            strokeWidth: 2.0,
+                                          ),
+                                        )
+                                      : const Icon(
+                                          Bootstrap.share,
+                                          color: Colors.black,
+                                          size: 20.0,
+                                        ),
+                                )),
+                            GestureDetector(
+                                onTap: () async {
+                                  await analytics.logEvent(
+                                    name: 'chat_seller',
+                                    parameters: {
+                                      'Shop_Id': product["Shop"]["id"],
+                                      'product_id': product["id"],
+                                      'product_name': product['name'],
+                                      'product_description':
+                                          product['description'],
+                                      'price': product['sellingPrice'],
+                                      'shopName': product["Shop"]["name"],
+                                      'shopPhone': product["Shop"]["phone"],
+                                      'from_page': 'ProductPage'
+                                    },
+                                  );
+                                  _sendProductStats("message");
+                                  ChatController().addChat({
+                                    "ShopId": product["Shop"]["id"],
+                                    "ProductId": product["id"],
+                                    "UserId": userController.user.value["id"]
+                                  }).then((res) {
+                                    print(res);
+                                    Get.to(() => ConversationPage(res));
+                                  });
+                                },
+                                child: Icon(Icons.message_outlined)),
+                            GestureDetector(
+                                onTap: () async {
+                                  await analytics.logEvent(
+                                    name: 'call_seller',
+                                    parameters: {
+                                      'Shop_Id': product["Shop"]["id"],
+                                      'product_id': product["id"],
+                                      'product_name': product['name'],
+                                      'product_description':
+                                          product['description'],
+                                      'price': product['sellingPrice'],
+                                      'shopName': product["Shop"]["name"],
+                                      'shopPhone': product["Shop"]["phone"],
+                                      'from_page': 'ProductPage'
+                                    },
+                                  );
+                                  _sendProductStats("call");
+                                  await launchUrl(Uri(
+                                      scheme: "tel",
+                                      path: product["Shop"]["phone"]));
+                                },
+                                child: Icon(Icons.call)),
+                            if (product["CartProducts"].length < 1)
+                              if (product["CartProducts"].length < 1)
+                                Expanded(
+                                  child: Obx(
+                                    () => customButton(
+                                      width: 200,
+                                      loading: addingToCart.value,
+                                      onTap: () async {
+                                        addingToCart.value = true;
+                                        await analytics.logEvent(
+                                          name: 'add_to_cart',
+                                          parameters: {
+                                            'product_id': product["id"],
+                                            'product_name': product['name'],
+                                            'product_description':
+                                                product['description'],
+                                            'price': product['sellingPrice'],
+                                          },
+                                        );
 
-            // Second Tab - New Page
-            RelatedProducts(),
-          ],
-        ),
-      ),
+                                        CartProductController().addCartProduct({
+                                          "UserId":
+                                              userController.user.value["id"],
+                                          "ProductId": product["id"]
+                                        }).then((res) {
+                                          showSuccessSnackbar(
+                                              title: "Added successfully",
+                                              description:
+                                                  "Product is added to cart successfully");
+                                          addingToCart.value = false;
+
+                                          setState(() {});
+                                          CartProductController()
+                                              .getOnCartproducts();
+                                        });
+                                      },
+                                      text: "Add to Cart",
+                                    ),
+                                  ),
+                                ),
+                            if (product["CartProducts"].length > 0)
+                              Expanded(
+                                child: customButton(
+                                  width: 200,
+                                  loading: addingToCart.value,
+                                  onTap: () async {
+                                    await Get.to(() => CartPage());
+                                    setState(() {});
+                                  },
+                                  text: "View in Cart",
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
     );
   }
 }

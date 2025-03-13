@@ -2,6 +2,7 @@ import 'package:e_online/constants/colors.dart';
 import 'package:e_online/pages/chat_page.dart';
 import 'package:e_online/pages/favourites_page.dart';
 import 'package:e_online/pages/home_page.dart';
+import 'package:e_online/pages/my_orders_page.dart';
 import 'package:e_online/pages/profile_page.dart';
 import 'package:e_online/pages/reels_page.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +24,7 @@ class _MainPageState extends State<MainPage> {
       const HomePage(),
       const ReelsPage(),
       ChatPage(),
-      const FavouritesPage(),
+       MyOrdersPage(),
       const ProfilePage(),
     ];
 
@@ -82,13 +83,13 @@ class _MainPageState extends State<MainPage> {
           const BottomNavigationBarItem(
             icon: Padding(
               padding: EdgeInsets.only(bottom: 6, top: 6),
-              child: Icon(Icons.favorite_outline),
+              child: Icon(Bootstrap.bag),
             ),
             activeIcon: Padding(
               padding: EdgeInsets.only(bottom: 6, top: 6),
-              child: Icon(Icons.favorite),
+              child: Icon(Bootstrap.bag_fill),
             ),
-            label: "Favorites",
+            label: "My Orders",
           ),
           const BottomNavigationBarItem(
             icon: Padding(

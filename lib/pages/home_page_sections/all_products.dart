@@ -6,7 +6,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class AllProducts extends StatelessWidget {
-  AllProducts({super.key});
+  AllProducts({super.key,});
 
   final RxList products = <dynamic>[].obs;
   final ScrollController _scrollController = ScrollController();

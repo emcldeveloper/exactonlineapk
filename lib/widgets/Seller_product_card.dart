@@ -46,12 +46,17 @@ class _SellerProductCardState extends State<SellerProductCard> {
         child: Row(
           children: [
             // Image Section
-            Container(
-              width: 80,
-              height: 80,
-              child: CachedNetworkImage(
-                imageUrl: widget.data['ProductImages']?[0]?["image"] ?? "",
-                errorWidget: (context, url, error) => Icon(Icons.broken_image),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(5),
+              child: Container(
+                width: 80,
+                height: 80,
+                child: CachedNetworkImage(
+                  imageUrl: widget.data['ProductImages']?[0]?["image"] ?? "",
+                  fit: BoxFit.cover,
+                  errorWidget: (context, url, error) =>
+                      Icon(Icons.broken_image),
+                ),
               ),
             ),
 
@@ -75,11 +80,11 @@ class _SellerProductCardState extends State<SellerProductCard> {
                               fontWeight: FontWeight.bold,
                               fontSize: 16.0,
                             ),
-                            const SizedBox(width: 8),
-                            ParagraphText(
-                              "${widget.data['views'] ?? 0} views",
-                              color: mutedTextColor,
-                            ),
+                            // const SizedBox(width: 8),
+                            // ParagraphText(
+                            //   "${widget.data['views'] ?? 0} views",
+                            //   color: mutedTextColor,
+                            // ),
                           ],
                         ),
                       ),
