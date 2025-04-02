@@ -16,6 +16,7 @@ import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
 
 class EditProfilePage extends StatefulWidget {
@@ -34,14 +35,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   final TextEditingController businessnameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
-
   final TextEditingController emailController = TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final ImagePicker _picker = ImagePicker();
 
-  // Function to pick an image
   Future<void> pickImage() async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
@@ -52,7 +51,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   void initState() {
     trackScreenView("EditProfilePage");
-    // TODO: implement initState
     businessnameController.text = userController.user.value["name"] ?? "";
     phoneController.text = userController.user.value["phone"] ?? "";
     emailController.text = userController.user.value["email"] ?? "";
@@ -69,17 +67,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
       appBar: AppBar(
         backgroundColor: mainColor,
         leading: InkWell(
-            onTap: () {
-              Get.back();
-            },
-            child: Container(
-              color: Colors.transparent,
-              child: Icon(
-                Icons.arrow_back_ios,
-                color: mutedTextColor,
-                size: 16.0,
-              ),
-            )),
+          onTap: () {
+            Get.back();
+          },
+          child: Container(
+            color: Colors.transparent,
+            child: Icon(
+              Icons.arrow_back_ios,
+              color: mutedTextColor,
+              size: 16.0,
+            ),
+          ),
+        ),
         title: HeadingText("Edit Profile"),
         centerTitle: true,
         bottom: PreferredSize(
@@ -94,61 +93,64 @@ class _EditProfilePageState extends State<EditProfilePage> {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Obx(() {
-                return InkWell(
-                  onTap: pickImage,
-                  child: SizedBox(
-                    height: 80,
-                    width: 80,
-                    child: Stack(
-                      children: [
-                        ClipOval(
-                          child: selectedImage.value != null
-                              ? Image.file(
-                                  selectedImage.value!,
-                                  height: 80,
-                                  width: 80,
-                                  fit: BoxFit.cover,
-                                )
-                              : avatar != null
-                                  ? CachedNetworkImage(
-                                      imageUrl: avatar,
-                                      height: 80,
-                                      width: 80,
-                                      fit: BoxFit.cover,
-                                    )
-                                  : HugeIcon(
-                                      icon: HugeIcons.strokeRoundedUserCircle,
-                                      color: Colors.black,
-                                      size: 80,
-                                    ),
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: primary,
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(6.0),
-                              child: const Center(
-                                child: HugeIcon(
-                                  icon: HugeIcons.strokeRoundedPencilEdit02,
-                                  color: Colors.white,
-                                  size: 14.0,
+              Center(
+                child: Obx(() {
+                  return InkWell(
+                    onTap: pickImage,
+                    child: SizedBox(
+                      height: 80,
+                      width: 80,
+                      child: Stack(
+                        children: [
+                          ClipOval(
+                            child: selectedImage.value != null
+                                ? Image.file(
+                                    selectedImage.value!,
+                                    height: 80,
+                                    width: 80,
+                                    fit: BoxFit.cover,
+                                  )
+                                : avatar != null
+                                    ? CachedNetworkImage(
+                                        imageUrl: avatar,
+                                        height: 80,
+                                        width: 80,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : const HugeIcon(
+                                        icon: HugeIcons.strokeRoundedUserCircle,
+                                        color: Colors.black,
+                                        size: 80,
+                                      ),
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: primary,
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: const Padding(
+                                padding: EdgeInsets.all(6.0),
+                                child: Center(
+                                  child: HugeIcon(
+                                    icon: HugeIcons.strokeRoundedPencilEdit02,
+                                    color: Colors.white,
+                                    size: 14.0,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              }),
+                  );
+                }),
+              ),
               spacer1(),
               Form(
                 key: _formKey,
@@ -224,13 +226,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           ),
                           borderRadius: BorderRadius.all(Radius.circular(10.0)),
                         ),
-                        enabled: false,
-                        disabledBorder: OutlineInputBorder(
+                        disabledBorder: const OutlineInputBorder(
                           borderSide: BorderSide(
                             color: Colors.transparent,
                           ),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(10.0)),
+                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
                         ),
                         hintText: "Enter phone number",
                         hintStyle:
@@ -265,7 +265,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           ),
                           borderRadius: BorderRadius.all(Radius.circular(10.0)),
                         ),
-                        hintText: "Enter business address",
+                        hintText: "Enter email address",
                         hintStyle:
                             const TextStyle(color: Colors.black, fontSize: 12),
                       ),
@@ -300,7 +300,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         Get.snackbar("Success", "Profile updated successfully!",
                             backgroundColor: Colors.green,
                             colorText: Colors.white,
-                            icon: HugeIcon(
+                            icon: const HugeIcon(
                                 icon: HugeIcons.strokeRoundedTick01,
                                 color: Colors.white));
                       } catch (e) {
@@ -308,7 +308,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         Get.snackbar("Error", e.toString(),
                             backgroundColor: Colors.redAccent,
                             colorText: Colors.white,
-                            icon: HugeIcon(
+                            icon: const HugeIcon(
                                 icon: HugeIcons.strokeRoundedCancel01,
                                 color: Colors.white));
                       }
@@ -316,47 +316,43 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   },
                   text: isLoading.value ? null : "Save Changes",
                   width: double.infinity,
-                  child: isLoading.value
-                      ? const CustomLoader(
-                          color: Colors.white,
-                        )
-                      : null,
+                  loading: isLoading.value,
                 );
               }),
-              spacer1(),
-              InkWell(
-                onTap: () {
-                  showPopupAlert(
-                    context,
-                    iconAsset: "assets/images/closeicon.jpg",
-                    heading: "Log Out",
-                    text: "Are you sure you want to LogOut?",
-                    button1Text: "No",
-                    button1Action: () {
-                      Navigator.of(context).pop();
-                    },
-                    button2Text: "Yes",
-                    button2Action: () async {
-                      Navigator.of(context).pop();
-                      await SharedPreferencesUtil.removeAccessToken();
-                      await SharedPreferencesUtil.clearSelectedBusiness();
-                      Get.offAll(() => WayPage());
-                    },
-                  );
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    HugeIcon(
-                        icon: HugeIcons.strokeRoundedLogout02,
-                        color: Colors.red),
-                    SizedBox(
-                      width: 8,
-                    ),
-                    ParagraphText("Log Out", color: Colors.red),
-                  ],
+              spacer2(),
+              Center(
+                child: InkWell(
+                  onTap: () {
+                    showPopupAlert(
+                      context,
+                      iconAsset: "assets/images/closeicon.jpg",
+                      heading: "Log Out",
+                      text: "Are you sure you want to LogOut?",
+                      button1Text: "No",
+                      button1Action: () {
+                        Navigator.of(context).pop();
+                      },
+                      button2Text: "Yes",
+                      button2Action: () async {
+                        Navigator.of(context).pop();
+                        await SharedPreferencesUtil.removeAccessToken();
+                        await SharedPreferencesUtil.clearSelectedBusiness();
+                        Get.offAll(() => WayPage());
+                      },
+                    );
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const HugeIcon(
+                          icon: AntDesign.poweroff_outline, color: Colors.red),
+                      const SizedBox(width: 8),
+                      ParagraphText("Log Out", color: Colors.red),
+                    ],
+                  ),
                 ),
               ),
+              spacer2(), // Add some padding at the bottom
             ],
           ),
         ),

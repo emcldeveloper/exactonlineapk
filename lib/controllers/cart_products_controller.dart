@@ -25,6 +25,8 @@ class CartProductController extends GetxController {
 
   Future getOnCartproducts() async {
     try {
+      print("🆑");
+      print(userController.user.value["id"]);
       var response = await dio.get(
           "/cart-products/user/${userController.user.value["id"]}",
           options: Options(headers: {
@@ -33,6 +35,7 @@ class CartProductController extends GetxController {
           }));
       var data = response.data["body"]["rows"];
       productsOnCart.value = data;
+      print(data.length);
       return data;
     } on DioException catch (e) {
       print(e.response);

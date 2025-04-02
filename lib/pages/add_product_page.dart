@@ -34,6 +34,7 @@ class AddProductPage extends StatefulWidget {
 class _AddProductPageState extends State<AddProductPage> {
   Rx<bool> priceIncludeDelivery = true.obs;
   Rx<bool> isHidden = false.obs;
+  Rx<bool> isNegotiable = true.obs;
   final List<XFile> _images = [];
   final ImagePicker _picker = ImagePicker();
   List<Color> selectedColors = [];
@@ -362,8 +363,7 @@ class _AddProductPageState extends State<AddProductPage> {
                         value: isHidden.value,
                         activeColor: Colors.white,
                         inactiveTrackColor: Colors.white,
-                        activeTrackColor:
-                            const Color.fromARGB(255, 169, 145, 145),
+                        activeTrackColor: primary,
                         focusColor: Colors.black,
                         inactiveThumbColor: Colors.black,
                         onChanged: (bool value) {
@@ -373,6 +373,39 @@ class _AddProductPageState extends State<AddProductPage> {
                     ),
                   ],
                 ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ParagraphText(
+                            "Is Negotiable ?",
+                            fontWeight: FontWeight.bold,
+                          ),
+                          ParagraphText(
+                            "Specify if product price is negotiable",
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+                    Obx(
+                      () => Switch(
+                        value: isNegotiable.value,
+                        activeColor: Colors.white,
+                        inactiveTrackColor: Colors.white,
+                        activeTrackColor: primary,
+                        focusColor: Colors.black,
+                        inactiveThumbColor: Colors.black,
+                        onChanged: (bool value) {
+                          isNegotiable.value = value;
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+
                 spacer1(),
 
                 // Category-based specifications
@@ -532,8 +565,7 @@ class _AddProductPageState extends State<AddProductPage> {
                 ),
                 spacer3(),
                 customButton(
-                  child:
-                      loading ? const CustomLoader(color: Colors.white) : null,
+                  loading: loading,
                   onTap: () async {
                     if (_formKey.currentState!.validate()) {
                       if (_images.isEmpty) {
@@ -559,11 +591,13 @@ class _AddProductPageState extends State<AddProductPage> {
                         "description": descriptionController.text,
                         "priceIncludeDelivery": priceIncludeDelivery.value,
                         "isHidden": isHidden.value,
+                        "isNegotiable": isNegotiable.value,
                         "specifications": combinedSpecifications,
                         "deliveryScope": deliveryScopeController.text,
                         "CategoryId": categoryController.text,
                         "ShopId": userController.user.value["Shops"][0]["id"],
                       };
+                      print("🆚");
                       print(payload);
                       setState(() => loading = true);
                       print(payload);

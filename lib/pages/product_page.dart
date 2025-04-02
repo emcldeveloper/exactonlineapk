@@ -202,6 +202,7 @@ class _ProductPageState extends State<ProductPage> {
           rating: averageRating,
           productId: productId,
           reviews: reviews,
+          product: widget.productData,
         ),
       ),
     );
@@ -264,6 +265,20 @@ class _ProductPageState extends State<ProductPage> {
             isFavorite.value = product.containsKey('Favorites') &&
                 product['Favorites'] != null &&
                 product['Favorites'].isNotEmpty;
+            double calculateRating(Map<String, dynamic> product) {
+              final reviews = product["ProductReviews"] as List<dynamic>? ?? [];
+              if (reviews.isEmpty) return 0.0;
+
+              final total = reviews.fold<double>(
+                  0,
+                  (acc, review) =>
+                      acc +
+                      ((review as Map)['rating'] as num? ?? 0).toDouble());
+
+              return total / reviews.length;
+            }
+
+            double ratings = calculateRating(product);
 
             return Container(
               height: MediaQuery.of(context).size.height,
@@ -302,8 +317,8 @@ class _ProductPageState extends State<ProductPage> {
                                         ),
                                         errorWidget: (context, url, error) =>
                                             Container(
-                                          decoration: BoxDecoration(
-                                              color: Colors.grey[100]),
+                                          decoration:
+                                              BoxDecoration(color: primary),
                                           alignment: Alignment.center,
                                           child: Center(
                                             child: Text(
@@ -311,6 +326,7 @@ class _ProductPageState extends State<ProductPage> {
                                                   .toString()[0],
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
                                                   fontSize: 20),
                                             ),
                                           ),
@@ -328,10 +344,19 @@ class _ProductPageState extends State<ProductPage> {
                                       HeadingText(
                                           "From ${product["Shop"]["name"]}",
                                           fontSize: 16.0),
-                                      ParagraphText(
-                                          "${product["Shop"]["address"]}",
-                                          color: Colors.grey,
-                                          fontSize: 13.0),
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.pin_drop,
+                                            color: Colors.green,
+                                            size: 18,
+                                          ),
+                                          ParagraphText(
+                                              "${product["Shop"]["address"]}",
+                                              color: Colors.grey,
+                                              fontSize: 13.0),
+                                        ],
+                                      ),
                                     ],
                                   ),
                                 ],
@@ -346,8 +371,8 @@ class _ProductPageState extends State<ProductPage> {
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(00),
                                 child: Container(
-                                  height: 300,
-                                  color: Colors.grey[100],
+                                  height: 285,
+                                  color: Colors.black,
                                   width: double.infinity,
                                   child: CarouselSlider(
                                     items: List.from(product["ProductImages"])
@@ -367,7 +392,7 @@ class _ProductPageState extends State<ProductPage> {
                                                 width: double.infinity,
                                                 child: CachedNetworkImage(
                                                   imageUrl: item["image"],
-                                                  fit: BoxFit.cover,
+                                                  fit: BoxFit.contain,
                                                 ),
                                               ),
                                             ))
@@ -449,6 +474,7 @@ class _ProductPageState extends State<ProductPage> {
                                           ),
                                           ParagraphText(
                                               "TZS ${toMoneyFormmat(product['sellingPrice'])}",
+                                              color: primary,
                                               fontSize: 16.0),
                                         ],
                                       ),
@@ -465,8 +491,7 @@ class _ProductPageState extends State<ProductPage> {
                                             ),
                                             const SizedBox(width: 2),
                                             ParagraphText(
-                                              (product['rating'] ?? 0)
-                                                  .toString(),
+                                              (ratings ?? 0).toString(),
                                             ),
                                           ],
                                         ),
@@ -483,6 +508,9 @@ class _ProductPageState extends State<ProductPage> {
                                     ),
                                   ],
                                 ),
+                                if (widget.productData["isNegotiable"] == true)
+                                  ParagraphText("* price is negotiable",
+                                      color: Colors.grey, maxLines: 2),
                                 spacer(),
                                 ParagraphText(
                                   product['description'],
@@ -668,7 +696,7 @@ class _ProductPageState extends State<ProductPage> {
                                           addingToCart.value = false;
 
                                           setState(() {});
-                                          CartProductController()
+                                          cartProductController
                                               .getOnCartproducts();
                                         });
                                       },

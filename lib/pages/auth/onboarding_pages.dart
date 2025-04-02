@@ -20,25 +20,25 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   final List<Map<String, String>> _onboardingData = [
     {
-      "image": "assets/images/onboarding1.png",
+      "image": "assets/images/onboardingimage1.png",
       "title": "Welcome to the Ultimate\nShopping Experience",
       "description":
           "Explore a world of endless possibilities with our user-friendly platform, offering convenience, variety, and quality at your fingertips."
     },
     {
-      "image": "assets/images/onboarding2.png",
+      "image": "assets/images/onboardingimage3.png",
       "title": "Discover Categories\nTailored for You",
       "description":
           "Browse through an extensive collection of curated categories designed to match your interests, making shopping easier and more enjoyable.",
     },
     {
-      "image": "assets/images/onboarding3.png",
+      "image": "assets/images/onboardingimage5.png",
       "title": "Exclusive Offers Just\nfor You",
       "description":
           "Unlock special discounts and limited-time deals curated to bring you the best value on your favorite items.",
     },
     {
-      "image": "assets/images/onboarding4.png",
+      "image": "assets/images/onboardingimage2.png",
       "title": "Fast, Secure, and Easy\nCheckout",
       "description":
           "Enjoy a hassle-free checkout process with multiple payment options, advanced security measures, and lightning-fast order confirmation.",
@@ -50,7 +50,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
     super.initState();
     _checkOnboardingStatus();
     trackScreenView("OnboardingPage");
-
   }
 
   // Check if onboarding has been seen before
@@ -93,43 +92,59 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   final data = _onboardingData[index];
                   return Padding(
                     padding: const EdgeInsets.all(30.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    child: Stack(
                       children: [
-                        Image.asset(
-                          data["image"]!,
-                          height: 250,
-                          fit: BoxFit.contain,
+                        Container(
+                          height: MediaQuery.of(context).size.height,
+                          child: Image.asset(
+                            data["image"]!,
+                            height: 250,
+                            fit: BoxFit.contain,
+                          ),
                         ),
-                        spacer2(),
-                        HeadingText(
-                          data["title"]!,
-                          fontSize: 23.0,
-                          textAlign: TextAlign.center,
-                        ),
-                        spacer1(),
-                        ParagraphText(
-                          data["description"]!,
-                          color: mutedTextColor,
-                          textAlign: TextAlign.center,
-                        ),
-                        spacer2(),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(
-                            _onboardingData.length,
-                            (index) => AnimatedContainer(
-                              duration: const Duration(milliseconds: 300),
-                              margin:
-                                  const EdgeInsets.symmetric(horizontal: 4.0),
-                              width: _currentPage == index ? 12 : 8,
-                              height: 8,
-                              decoration: BoxDecoration(
-                                color: _currentPage == index
-                                    ? Colors.black
-                                    : const Color(0xffEBEBEB),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
+                        Positioned(
+                          right: 0,
+                          left: 0,
+                          bottom: 0,
+                          child: Container(
+                            color: Colors.white,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                spacer2(),
+                                HeadingText(
+                                  data["title"]!,
+                                  fontSize: 23.0,
+                                  textAlign: TextAlign.center,
+                                ),
+                                spacer1(),
+                                ParagraphText(
+                                  data["description"]!,
+                                  color: mutedTextColor,
+                                  textAlign: TextAlign.center,
+                                ),
+                                spacer2(),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: List.generate(
+                                    _onboardingData.length,
+                                    (index) => AnimatedContainer(
+                                      duration:
+                                          const Duration(milliseconds: 300),
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 4.0),
+                                      width: _currentPage == index ? 12 : 8,
+                                      height: 8,
+                                      decoration: BoxDecoration(
+                                        color: _currentPage == index
+                                            ? Colors.black
+                                            : const Color(0xffEBEBEB),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),

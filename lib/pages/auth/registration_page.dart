@@ -18,6 +18,7 @@ class RegistrationPage extends StatelessWidget {
   FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
 
   final AuthController authController = Get.put(AuthController());
 
@@ -43,7 +44,7 @@ class RegistrationPage extends StatelessWidget {
               spacer2(),
               Align(
                 alignment: Alignment.center,
-                child: Image.asset("assets/images/register1.png", height: 250),
+                child: Image.asset("assets/images/register2.avif", height: 250),
               ),
               spacer2(),
               HeadingText("Create account"),
@@ -148,49 +149,87 @@ class RegistrationPage extends StatelessWidget {
                             TextStyle(color: mutedTextColor, fontSize: 12),
                       ),
                     ),
+                    spacer1(),
+                    Row(
+                      children: [
+                        ParagraphText("Email Address",
+                            fontWeight: FontWeight.bold,
+                            textAlign: TextAlign.start),
+                      ],
+                    ),
+                    spacer(),
+                    TextFormField(
+                      keyboardType: TextInputType.emailAddress,
+                      controller: emailController,
+                      decoration: InputDecoration(
+                        fillColor: primaryColor,
+                        filled: true,
+                        labelStyle:
+                            const TextStyle(color: Colors.black, fontSize: 12),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: primaryColor,
+                          ),
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                            color: Colors.transparent,
+                          ),
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        hintText: "Enter your email here",
+                        hintStyle:
+                            TextStyle(color: mutedTextColor, fontSize: 12),
+                      ),
+                    ),
                   ],
                 ),
               ),
               spacer3(),
               Obx(() {
                 return customButton(
-                  onTap: () async {
-                    if (_formKey.currentState?.validate() == true) {
-                      isLoading.value = true;
-                      final username = usernameController.text;
-                      final phone = phoneController.text;
+                    onTap: () async {
+                      if (_formKey.currentState?.validate() == true) {
+                        isLoading.value = true;
+                        final username = usernameController.text;
+                        final phone = phoneController.text;
+                        final email = emailController.text;
 
-                      final payload = {"name": username, "phone": phone};
+                        final payload = {
+                          "name": username,
+                          "phone": phone,
+                          "email": email
+                        };
 
-                      try {
-                        await authController.registerUser(payload);
-                        isLoading.value = false;
-                        await analytics.logEvent(name: 'login', parameters: {
-                          'method': 'email',
-                          'name': username,
-                          'phone': phone
-                        });
-                        Get.to(() => ConfirmationCodePage(phoneNumber: phone));
-                      } catch (e) {
-                        isLoading.value = false;
-                        Get.snackbar(
-                            "Failed to Register User", "User Already Exists",
-                            backgroundColor: Colors.redAccent,
-                            colorText: Colors.white,
-                            icon: HugeIcon(
-                                icon: HugeIcons.strokeRoundedCancel01,
-                                color: Colors.white));
+                        try {
+                          await authController.registerUser(payload);
+                          isLoading.value = false;
+                          await analytics.logEvent(name: 'login', parameters: {
+                            'method': 'email',
+                            'name': username,
+                            'phone': phone
+                          });
+                          Get.to(
+                              () => ConfirmationCodePage(phoneNumber: phone));
+                        } catch (e) {
+                          isLoading.value = false;
+                          Get.snackbar(
+                              "Failed to Register User", "User Already Exists",
+                              backgroundColor: Colors.redAccent,
+                              colorText: Colors.white,
+                              icon: const HugeIcon(
+                                  icon: HugeIcons.strokeRoundedCancel01,
+                                  color: Colors.white));
+                        }
                       }
-                    }
-                  },
-                  text: isLoading.value ? null : "Register",
-                  width: double.infinity,
-                  child: isLoading.value
-                      ? const CustomLoader(
-                          color: Colors.white,
-                        )
-                      : null,
-                );
+                    },
+                    text: isLoading.value ? null : "Register",
+                    width: double.infinity,
+                    loading: isLoading.value);
               }),
               spacer1(),
               Row(

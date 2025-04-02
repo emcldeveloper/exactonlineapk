@@ -159,7 +159,7 @@ class _ProductMasonryGridState extends State<ProductMasonryGrid> {
                     padding: const EdgeInsets.all(16.0),
                     child: StaggeredGrid.count(
                       crossAxisCount: 2,
-                      mainAxisSpacing: 16,
+                      mainAxisSpacing: 10,
                       crossAxisSpacing: 16,
                       children: [
                         ...reels.map((reel) => ConstrainedBox(

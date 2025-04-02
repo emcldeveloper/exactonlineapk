@@ -298,12 +298,12 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
                   children: [
                     ClipOval(
                       child: SizedBox(
-                        height: 60,
-                        width: 60,
+                        height: 40,
+                        width: 40,
                         child: CachedNetworkImage(
                           imageUrl: data['shopImage'] ?? '',
-                          height: 60,
-                          width: 60,
+                          height: 40,
+                          width: 40,
                           fit: BoxFit.cover,
                           placeholder: (context, url) => const Center(
                             child: CircularProgressIndicator(
@@ -311,13 +311,15 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
                             ),
                           ),
                           errorWidget: (context, url, error) => Container(
-                            decoration: BoxDecoration(color: Colors.grey[100]),
+                            decoration: BoxDecoration(color: primary),
                             alignment: Alignment.center,
                             child: Center(
                               child: Text(
                                 data["name"].toString()[0],
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 20),
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    fontSize: 20),
                               ),
                             ),
                           ),

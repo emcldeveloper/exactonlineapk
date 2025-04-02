@@ -26,7 +26,7 @@ class AllProducts extends StatelessWidget {
         child: products.isEmpty && !isLoading.value
             ? StaggeredGrid.count(
                 crossAxisCount: 2,
-                mainAxisSpacing: 10,
+                mainAxisSpacing: 0,
                 crossAxisSpacing: 10,
                 children: List.generate(5, (index) {
                   return Shimmer.fromColors(

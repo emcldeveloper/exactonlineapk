@@ -48,7 +48,7 @@ class _EditRegisterAsSellerPageState extends State<EditRegisterAsSellerPage> {
   final List<PlatformFile> _files = [];
   var isLoading = false.obs;
   String userId = "";
-  Map<String, dynamic> selectedBusiness = {};
+  Map<dynamic, dynamic> selectedBusiness = {};
 
   @override
   void initState() {
@@ -510,11 +510,7 @@ class _EditRegisterAsSellerPageState extends State<EditRegisterAsSellerPage> {
                       }
                     },
                     text: isLoading.value ? null : "Submit Details",
-                    child: isLoading.value
-                        ? const CustomLoader(
-                            color: Colors.white,
-                          )
-                        : null,
+                    loading: isLoading.value,
                   );
                 }),
                 spacer1(),

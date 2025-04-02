@@ -1,15 +1,15 @@
-import 'package:e_online/controllers/product_controller.dart';
-import 'package:e_online/widgets/product_card.dart';
+import 'package:e_online/controllers/service_controller.dart';
+import 'package:e_online/widgets/service_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
-class RelatedProducts extends StatelessWidget {
-  String? productId;
-  RelatedProducts({super.key, this.productId = ""});
+class RelatedServices extends StatelessWidget {
+  String? serviceId;
+  RelatedServices({super.key, this.serviceId = ""});
 
-  final RxList products = <dynamic>[].obs;
+  final RxList services = <dynamic>[].obs;
   final ScrollController _scrollController = ScrollController();
   final RxBool isLoading = false.obs;
   final RxBool hasMore = true.obs;
@@ -18,13 +18,13 @@ class RelatedProducts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _fetchProducts(_currentPage);
+    _fetchServices(_currentPage);
     _scrollController.addListener(_onScroll);
 
     return Obx(
       () => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 0),
-        child: products.isEmpty && !isLoading.value
+        child: services.isEmpty && !isLoading.value
             ? _buildShimmerGrid()
             : SingleChildScrollView(
                 controller: _scrollController,
@@ -37,10 +37,10 @@ class RelatedProducts extends StatelessWidget {
                       crossAxisCount: 2, // 2 items per row
                       mainAxisSpacing: 0,
                       crossAxisSpacing: 12,
-                      children: products
-                          .map((product) => ProductCard(
+                      children: services
+                          .map((service) => ServiceCard(
                                 isStagger: true,
-                                data: product,
+                                data: service,
                               ))
                           .toList(),
                     ),
@@ -55,7 +55,7 @@ class RelatedProducts extends StatelessWidget {
   Widget _buildShimmerGrid() {
     return StaggeredGrid.count(
       crossAxisCount: 2,
-      mainAxisSpacing: 12,
+      mainAxisSpacing: 0,
       crossAxisSpacing: 12,
       children: List.generate(
         5,
@@ -81,31 +81,30 @@ class RelatedProducts extends StatelessWidget {
     );
   }
 
-  Future<void> _fetchProducts(int page) async {
+  Future<void> _fetchServices(int page) async {
     if (isLoading.value || !hasMore.value) return;
-
     isLoading.value = true;
     try {
-      final res = await ProductController().getRelatedProducts(
-        productId: productId,
+      final res = await ServiceController().getRelatedServices(
+        serviceId: serviceId,
         page: page,
         limit: _limit,
         keyword: "",
       );
       final filteredRes =
-          res.where((item) => item["ProductImages"].isNotEmpty).toList();
+          res.where((item) => item["ServiceImages"].isNotEmpty).toList();
 
       if (filteredRes.isEmpty || filteredRes.length < _limit) {
         hasMore.value = false;
       }
 
       if (page == 1) {
-        products.value = filteredRes;
+        services.value = filteredRes;
       } else {
-        products.addAll(filteredRes);
+        services.addAll(filteredRes);
       }
     } catch (e) {
-      Get.snackbar("Error", "Error loading products: $e");
+      Get.snackbar("Error", "Error loading services: $e");
     } finally {
       isLoading.value = false;
     }
@@ -117,7 +116,7 @@ class RelatedProducts extends StatelessWidget {
         !isLoading.value &&
         hasMore.value) {
       _currentPage++;
-      _fetchProducts(_currentPage);
+      _fetchServices(_currentPage);
     }
   }
 }

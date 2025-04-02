@@ -90,11 +90,22 @@ class _ProfilePageState extends State<ProfilePage> {
                                             width: 80,
                                             fit: BoxFit.cover,
                                           )
-                                        : const HugeIcon(
-                                            icon: HugeIcons
-                                                .strokeRoundedUserCircle,
-                                            color: Colors.black,
-                                            size: 80,
+                                        : ClipOval(
+                                            child: Container(
+                                              height: 80,
+                                              width: 80,
+                                              color: Colors.black.withAlpha(20),
+                                              child: const Padding(
+                                                padding: EdgeInsets.all(8.0),
+                                                child: Center(
+                                                  child: Icon(
+                                                    AntDesign.user_outline,
+                                                    size: 30,
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
                                           ),
                                   ),
                                   Positioned(

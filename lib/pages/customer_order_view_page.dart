@@ -9,11 +9,13 @@ import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/horizontal_product_card.dart';
+import 'package:e_online/widgets/no_data.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:icons_plus/icons_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CustomerOrderViewPage extends StatefulWidget {
@@ -84,8 +86,7 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                 child: CircularProgressIndicator(color: Colors.black));
           }
           if (!snapshot.hasData || snapshot.data.isEmpty) {
-            return Center(
-                child: ParagraphText("No products found in this order."));
+            return Center(child: noData());
           }
 
           List orderedProducts = snapshot.requireData;
@@ -120,7 +121,13 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                       /// Display all products under this shop
                       Column(
                         children: products
-                            .map((item) => HorizontalProductCard(data: item))
+                            .map((item) => HorizontalProductCard(
+                                  data: item,
+                                  isOrder: true,
+                                  onRefresh: () {
+                                    setState(() {});
+                                  },
+                                ))
                             .toList(),
                       ),
                       spacer(),
@@ -199,48 +206,61 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                             ),
                           ),
                         ),
-                      spacer3(),
+                      spacer1(),
 
                       /// Call & Chat Buttons
-                      customButton(
-                        onTap: () {
-                          analytics.logEvent(
-                            name: 'call_seller',
-                            parameters: {
-                              'seller_id': shopId,
-                              'shopName': shopName,
-                              'shopPhone': shopPhone,
-                              'from_page': 'CustomerOrderViewPage'
-                            },
-                          );
-                          launchUrl(Uri(scheme: "tel", path: shopPhone));
-                        },
-                        text: "Call Seller",
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Expanded(
+                            child: customButton(
+                              buttonColor: Colors.grey[200],
+                              textColor: Colors.black,
+                              onTap: () {
+                                analytics.logEvent(
+                                  name: 'chat_seller',
+                                  parameters: {
+                                    'seller_id': shopId,
+                                    'shopName': shopName,
+                                    'shopPhone': shopPhone,
+                                    'from_page': 'CustomerOrderViewPage'
+                                  },
+                                );
+                                ChatController().addChat({
+                                  "ShopId": shopId,
+                                  "OrderId": widget.order["id"],
+                                  "UserId": userController.user.value["id"]
+                                }).then((res) {
+                                  Get.to(() => ConversationPage(res));
+                                });
+                              },
+                              text: "Message Seller",
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: customButton(
+                              onTap: () {
+                                analytics.logEvent(
+                                  name: 'call_seller',
+                                  parameters: {
+                                    'seller_id': shopId,
+                                    'shopName': shopName,
+                                    'shopPhone': shopPhone,
+                                    'from_page': 'CustomerOrderViewPage'
+                                  },
+                                );
+                                launchUrl(Uri(scheme: "tel", path: shopPhone));
+                              },
+                              text: "Call Seller",
+                            ),
+                          ),
+                        ],
                       ),
                       spacer(),
-                      customButton(
-                        onTap: () {
-                          analytics.logEvent(
-                            name: 'chat_seller',
-                            parameters: {
-                              'seller_id': shopId,
-                              'shopName': shopName,
-                              'shopPhone': shopPhone,
-                              'from_page': 'CustomerOrderViewPage'
-                            },
-                          );
-                          ChatController().addChat({
-                            "ShopId": shopId,
-                            "OrderId": widget.order["id"],
-                            "UserId": userController.user.value["id"]
-                          }).then((res) {
-                            Get.to(() => ConversationPage(res));
-                          });
-                        },
-                        text: "Chat with Seller",
-                        buttonColor: primaryColor,
-                        textColor: Colors.black,
-                      ),
+                      spacer(),
                       spacer3(),
                     ],
                   );

@@ -16,10 +16,12 @@ class HorizontalProductCard extends StatefulWidget {
   final Map<String, dynamic> data;
   final VoidCallback? onDelete;
   final Function? onRefresh;
-  const HorizontalProductCard({
+  bool? isOrder;
+  HorizontalProductCard({
     super.key,
     required this.data,
     this.onRefresh,
+    this.isOrder = false,
     this.onDelete,
   });
 
@@ -58,17 +60,29 @@ class _HorizontalProductCardState extends State<HorizontalProductCard> {
       button2Text: "Remove",
       button2Action: () {
         Navigator.of(context).pop(); // Close the first popup
-
-        CartProductController()
-            .deleteCartProduct(widget.data["id"])
-            .then((res) {
-          showSuccessSnackbar(
-              title: "Removed Successfully",
-              description: "Product is removed from the cart");
-          // Navigator.of(context).pop(); // Close the first popup
-          widget.onRefresh!();
-          // orderedProductController.getOnCartproducts();
-        });
+        if (widget.isOrder == true) {
+          OrderedProductController()
+              .deleteOrderedProduct(widget.data["id"])
+              .then((res) {
+            showSuccessSnackbar(
+                title: "Removed Successfully",
+                description: "Product is removed from the order");
+            // Navigator.of(context).pop(); // Close the first popup
+            widget.onRefresh!();
+            // orderedProductController.getOnCartproducts();
+          });
+        } else {
+          CartProductController()
+              .deleteCartProduct(widget.data["id"])
+              .then((res) {
+            showSuccessSnackbar(
+                title: "Removed Successfully",
+                description: "Product is removed from the cart");
+            // Navigator.of(context).pop(); // Close the first popup
+            widget.onRefresh!();
+            // orderedProductController.getOnCartproducts();
+          });
+        }
       },
     );
   }
@@ -123,6 +137,9 @@ class _HorizontalProductCardState extends State<HorizontalProductCard> {
                         "No name available",
                     color: primary,
                     maxLines: 2),
+                if (widget.data["Product"]["isNegotiable"] == true)
+                  ParagraphText("* price is negotiable",
+                      color: Colors.grey, maxLines: 2),
               ],
             ),
           ),

@@ -1,7 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:e_online/controllers/auth_controller.dart';
 import 'package:e_online/controllers/review_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
+import 'package:e_online/utils/snackbars.dart';
 import 'package:e_online/widgets/custom_loader.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
@@ -15,14 +17,15 @@ import 'package:get/get.dart';
 class ReviewBottomSheet extends StatefulWidget {
   final double rating;
   final String productId;
+  final Map<String, dynamic> product;
   final List<Map<String, dynamic>> reviews;
 
-  const ReviewBottomSheet({
-    super.key,
-    required this.rating,
-    required this.productId,
-    this.reviews = const [],
-  });
+  const ReviewBottomSheet(
+      {super.key,
+      required this.rating,
+      required this.productId,
+      this.reviews = const [],
+      required this.product});
 
   @override
   State<ReviewBottomSheet> createState() => _ReviewBottomSheetState();
@@ -66,57 +69,64 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
   }
 
   Future<void> _sendProductReview() async {
-    if (selectedRating == 0 || myReviewController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please provide a rating and a review.')),
-      );
-      return;
-    }
+    if (userController.user.value["id"] == widget.product["Shop"]["UserId"]) {
+      showErrorSnackbar(
+          title: "You can't review",
+          description: "Owners can not review their products");
+    } else {
+      if (selectedRating == 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Please provide a rating and a review.')),
+        );
+        return;
+      }
 
-    isLoading.value = true;
-    var userId = userController.user.value['id'] ?? "";
-    var newReview = {
-      "ProductId": widget.productId,
-      "UserId": userId,
-      "rating": selectedRating,
-      "description": myReviewController.text,
-    };
+      isLoading.value = true;
+      var userId = userController.user.value['id'] ?? "";
+      var newReview = {
+        "ProductId": widget.productId,
+        "UserId": userId,
+        "rating": selectedRating,
+        "description": myReviewController.text,
+      };
 
-    try {
-      await reviewController.addReview(newReview);
+      try {
+        await reviewController.addReview(newReview);
 
-      setState(() {
-        allReviews.insert(0, {
-          "name": "You",
-          "description": myReviewController.text,
-          "rating": selectedRating,
+        setState(() {
+          allReviews.insert(0, {
+            "name": "You",
+            "description": myReviewController.text,
+            "rating": selectedRating,
+          });
+          _calculateAverageRating();
+          selectedRating = 0;
+          myReviewController.clear();
         });
-        _calculateAverageRating();
-        selectedRating = 0;
-        myReviewController.clear();
-      });
 
-      await analytics.logEvent(
-        name: 'review_sent',
-        parameters: {
-          "ProductId": widget.productId,
-          "UserId": userId,
-          "description": myReviewController.text,
-          "rating": selectedRating,
-        },
-      );
+        await analytics.logEvent(
+          name: 'review_sent',
+          parameters: {
+            "ProductId": widget.productId,
+            "UserId": userId,
+            "description": myReviewController.text,
+            "rating": selectedRating,
+          },
+        );
 
-      isLoading.value = false;
+        isLoading.value = false;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Review submitted successfully!')),
-      );
-    } catch (e) {
-      isLoading.value = false;
-      debugPrint("Error sending product review: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to submit review. Try again.')),
-      );
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Review submitted successfully!')),
+        );
+      } catch (e) {
+        isLoading.value = false;
+        debugPrint("Error sending product review: $e");
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to submit review. Try again.')),
+        );
+      }
     }
   }
 
@@ -199,7 +209,9 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                     spacer(),
-                                    ParagraphText(review['description'] ?? ''),
+                                    ParagraphText(review['description'] != ""
+                                        ? review['description']
+                                        : 'No Review'),
                                   ],
                                 ),
                               ),
@@ -304,12 +316,7 @@ class _ReviewBottomSheetState extends State<ReviewBottomSheet> {
                         child: customButton(
                           onTap: _sendProductReview,
                           text: isLoading.value ? null : "Submit",
-                          child: isLoading.value
-                              ? const CustomLoader(
-                                  color: Colors.white,
-                                  size: 15.0,
-                                )
-                              : null,
+                          loading: isLoading.value,
                           rounded: 15.0,
                         ),
                       ),

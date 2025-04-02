@@ -365,18 +365,11 @@ class _EditProductPageState extends State<EditProductPage> {
                         hint: "Write short product description"),
                     spacer3(),
                     customButton(
-                      child: loading
-                          ? const CustomLoader(
-                              color: Colors.white,
-                            )
-                          : null,
+                                               loading: loading,
+
                       onTap: () {
                         if (_formKey.currentState!.validate()) {
-                          // Map<String, String> jsonSpecifications = {
-                          //   for (var item in specifications.value)
-                          //     item["label"]: item["value"]
-                          // };
-
+                        
                           var payload = {
                             "name": nameController.text,
                             "sellingPrice": priceController.text,

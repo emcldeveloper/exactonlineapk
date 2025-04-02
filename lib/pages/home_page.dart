@@ -8,9 +8,11 @@ import 'package:e_online/pages/cart_page.dart';
 import 'package:e_online/pages/home_page_sections/all_for_you_products.dart';
 import 'package:e_online/pages/home_page_sections/all_new_arrival_products.dart';
 import 'package:e_online/pages/home_page_sections/all_products.dart';
+import 'package:e_online/pages/home_page_sections/all_services.dart';
 import 'package:e_online/pages/home_page_sections/for_you_products.dart';
 import 'package:e_online/pages/home_page_sections/home_categories_products.dart';
 import 'package:e_online/pages/home_page_sections/new_arrival_products.dart';
+import 'package:e_online/pages/home_page_sections/popular_services.dart';
 import 'package:e_online/pages/notifications_page.dart';
 import 'package:e_online/pages/profile_page.dart';
 import 'package:e_online/pages/search_page.dart';
@@ -107,7 +109,7 @@ class _HomePageState extends State<HomePage>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AdsCarousel(),
+                    const AdsCarousel(),
                     spacer1(),
                     Column(
                       children: [
@@ -155,6 +157,51 @@ class _HomePageState extends State<HomePage>
                           width: double.infinity,
                           color: const Color.fromARGB(255, 242, 242, 242),
                         ),
+                        // spacer1(),
+                        // Padding(
+                        //   padding: const EdgeInsets.symmetric(horizontal: 16),
+                        //   child: Row(
+                        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //     crossAxisAlignment: CrossAxisAlignment.center,
+                        //     children: [
+                        //       Column(
+                        //         crossAxisAlignment: CrossAxisAlignment.start,
+                        //         children: [
+                        //           ParagraphText("For You",
+                        //               fontWeight: FontWeight.bold,
+                        //               fontSize: 18.0),
+                        //         ],
+                        //       ),
+                        //       InkWell(
+                        //         onTap: () {
+                        //           Get.to(const AllForYouProducts());
+                        //         },
+                        //         child: Container(
+                        //           decoration: BoxDecoration(
+                        //               borderRadius: BorderRadius.circular(50),
+                        //               color: Colors.grey.withAlpha(30)),
+                        //           child: Padding(
+                        //             padding: const EdgeInsets.symmetric(
+                        //                 horizontal: 10, vertical: 6),
+                        //             child: ParagraphText(
+                        //               "See All",
+                        //               fontWeight: FontWeight.bold,
+                        //               fontSize: 13,
+                        //               color: mutedTextColor,
+                        //             ),
+                        //           ),
+                        //         ),
+                        //       )
+                        //     ],
+                        //   ),
+                        // ),
+                        // spacer1(),
+                        // ForYouProducts(),
+                        // Container(
+                        //   height: 8,
+                        //   width: double.infinity,
+                        //   color: const Color.fromARGB(255, 242, 242, 242),
+                        // ),
                         spacer1(),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -165,14 +212,14 @@ class _HomePageState extends State<HomePage>
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  ParagraphText("For You",
+                                  ParagraphText("Services",
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18.0),
                                 ],
                               ),
                               InkWell(
                                 onTap: () {
-                                  Get.to(const AllForYouProducts());
+                                  Get.to(AllServices());
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
@@ -194,7 +241,7 @@ class _HomePageState extends State<HomePage>
                           ),
                         ),
                         spacer1(),
-                        ForYouProducts(),
+                        PopularServices(),
                         Container(
                           height: 8,
                           width: double.infinity,
@@ -340,11 +387,11 @@ class _HomePageState extends State<HomePage>
                       : Container(
                           color: Colors.black,
                           child: Padding(
-                            padding: const EdgeInsets.all(1),
+                            padding: const EdgeInsets.all(7),
                             child: HugeIcon(
-                              icon: Icons.person_2_outlined,
+                              icon: AntDesign.user_outline,
                               color: Colors.white,
-                              size: 30,
+                              size: 20,
                             ),
                           ),
                         ),

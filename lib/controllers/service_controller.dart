@@ -6,9 +6,9 @@ import 'package:e_online/utils/dio.dart';
 import 'package:e_online/utils/shared_preferences.dart';
 import 'package:get/get.dart';
 
-class ProductController extends GetxController {
+class ServiceController extends GetxController {
   UserController userController = Get.find();
-  Future getShopProducts({id, page, limit, keyword}) async {
+  Future getShopServices({id, page, limit, keyword}) async {
     var shopId;
     if (id == null) {
       shopId = await SharedPreferencesUtil.getSelectedBusiness();
@@ -21,22 +21,21 @@ class ProductController extends GetxController {
     }
 
     var response = await dio.get(
-        "/products/shop/$shopId/?page=${page ?? 1}&limit=${limit ?? 10}&keyword=${keyword ?? ""}",
+        "/services/shop/$shopId/?page=${page ?? 1}&limit=${limit ?? 10}&keyword=${keyword ?? ""}",
         options: Options(headers: {
           "Authorization":
               "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
         }));
 
     var data = response.data["body"]["rows"];
-    print("🆎");
-    print(shopId);
+    print("🆑🇮🇲");
     print(data);
     return data;
   }
 
-  Future getSearchProducts({keyword}) async {
+  Future getSearchServices({keyword}) async {
     try {
-      var response = await dio.get("/products/search/$keyword",
+      var response = await dio.get("/services/search/$keyword",
           options: Options(headers: {
             "Authorization":
                 "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
@@ -50,10 +49,11 @@ class ProductController extends GetxController {
     }
   }
 
-  Future<List> getProducts({page, limit, keyword, category}) async {
+  Future<List> getServices({page, limit, keyword, category}) async {
     // print(shopId);
+    print(keyword);
     var response = await dio.get(
-        "/products/?page=${page ?? 1}&limit=${limit ?? 10}&keyword=${keyword ?? ""}&category=${category ?? "All"}",
+        "/services/?page=${page ?? 1}&limit=${limit ?? 10}&keyword=${keyword ?? ""}&category=${category ?? "All"}",
         options: Options(headers: {
           "Authorization":
               "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
@@ -62,9 +62,9 @@ class ProductController extends GetxController {
     return data;
   }
 
-  Future<List> getRelatedProducts({productId, page, limit, keyword}) async {
+  Future<List> getRelatedServices({serviceId, page, limit, keyword}) async {
     var response = await dio.get(
-        "/products/related/product/$productId/?page=${page ?? 1}&limit=${limit ?? 10}&keyword=${keyword ?? ""}",
+        "/services/related/service/$serviceId/?page=${page ?? 1}&limit=${limit ?? 10}&keyword=${keyword ?? ""}",
         options: Options(headers: {
           "Authorization":
               "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
@@ -74,10 +74,10 @@ class ProductController extends GetxController {
     return data;
   }
 
-  Future getProduct({id}) async {
+  Future getService({id}) async {
     // print(shopId);
     try {
-      var response = await dio.get("/products/$id",
+      var response = await dio.get("/services/$id",
           options: Options(headers: {
             "Authorization":
                 "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
@@ -90,10 +90,10 @@ class ProductController extends GetxController {
     }
   }
 
-  Future<List> getNewProducts({page, limit, keyword}) async {
+  Future<List> getNewServices({page, limit, keyword}) async {
     // print(shopId);
     var response = await dio.get(
-        "/products/new/?page=${page ?? 1}&limit=${limit ?? 10}&keyword=${keyword ?? ""}",
+        "/services/new/?page=${page ?? 1}&limit=${limit ?? 10}&keyword=${keyword ?? ""}",
         options: Options(headers: {
           "Authorization":
               "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
@@ -103,10 +103,10 @@ class ProductController extends GetxController {
     return data;
   }
 
-  Future<List> getProductsForYou({page, limit, keyword}) async {
+  Future<List> getPopularServices({page, limit, keyword}) async {
     // print(shopId);
     var response = await dio.get(
-        "/products/for-you/?page=${page ?? 1}&limit=${limit ?? 10}&keyword=${keyword ?? ""}",
+        "/services/popular/?page=${page ?? 1}&limit=${limit ?? 10}&keyword=${keyword ?? ""}",
         options: Options(headers: {
           "Authorization":
               "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
@@ -116,9 +116,22 @@ class ProductController extends GetxController {
     return data;
   }
 
-  Future addProduct(var payload) async {
+  Future<List> getServicesForYou({page, limit, keyword}) async {
+    // print(shopId);
+    var response = await dio.get(
+        "/services/for-you/?page=${page ?? 1}&limit=${limit ?? 10}&keyword=${keyword ?? ""}",
+        options: Options(headers: {
+          "Authorization":
+              "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
+        }));
+
+    var data = response.data["body"]["rows"];
+    return data;
+  }
+
+  Future addService(var payload) async {
     try {
-      var response = await dio.post("/products",
+      var response = await dio.post("/services",
           data: payload,
           options: Options(headers: {
             "Authorization":
@@ -132,9 +145,9 @@ class ProductController extends GetxController {
     }
   }
 
-  Future editProduct(id, var payload) async {
+  Future editService(id, var payload) async {
     try {
-      var response = await dio.patch("/products/$id",
+      var response = await dio.patch("/services/$id",
           data: payload,
           options: Options(headers: {
             "Authorization":
@@ -148,9 +161,9 @@ class ProductController extends GetxController {
     }
   }
 
-  Future deleteProduct(id) async {
+  Future deleteService(id) async {
     try {
-      var response = await dio.delete("/products/$id",
+      var response = await dio.delete("/services/$id",
           options: Options(headers: {
             "Authorization":
                 "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
@@ -163,9 +176,9 @@ class ProductController extends GetxController {
     }
   }
 
-  Future addProductStats(var payload) async {
+  Future addServiceStats(var payload) async {
     try {
-      var response = await dio.post("/product-stats",
+      var response = await dio.post("/service-stats",
           data: payload,
           options: Options(headers: {
             "Authorization":

@@ -122,7 +122,6 @@ class PaymentMethodBottomSheet extends StatelessWidget {
                 //   "description": "This is a sample product.",
                 // };
                 Get.to(() => MyShopPage());
-                // Get.to(() => PromotedProductViewPage(productData: productData));
               },
               text: buttonText,
             ),

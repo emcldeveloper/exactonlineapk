@@ -36,7 +36,6 @@ class _LoginPageState extends State<LoginPage> {
     Get.put(usersControllers);
     super.initState();
     trackScreenView("LoginPage");
-
   }
 
   @override
@@ -52,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
               spacer2(),
               Align(
                 alignment: Alignment.center,
-                child: Image.asset("assets/images/login1.png", height: 250),
+                child: Image.asset("assets/images/login.avif", height: 250),
               ),
               spacer2(),
               HeadingText("Login to continue"),
@@ -114,39 +113,35 @@ class _LoginPageState extends State<LoginPage> {
               spacer3(),
               Obx(() {
                 return customButton(
-                  onTap: () async {
-                    if (_formKey.currentState?.validate() == true) {
-                      isLoading.value = true;
-                      final phone = phoneController.text;
-                      final payload = {"phone": phone};
+                    onTap: () async {
+                      if (_formKey.currentState?.validate() == true) {
+                        isLoading.value = true;
+                        final phone = phoneController.text;
+                        final payload = {"phone": phone};
 
-                      try {
-                        await authController.sendUserCode(payload);
-                        isLoading.value = false;
-                        await analytics.logEvent(
-                            name: 'login',
-                            parameters: {'method': 'phone', 'phone': phone});
+                        try {
+                          await authController.sendUserCode(payload);
+                          isLoading.value = false;
+                          await analytics.logEvent(
+                              name: 'login',
+                              parameters: {'method': 'phone', 'phone': phone});
 
-                        Get.to(() => ConfirmationCodePage(phoneNumber: phone));
-                      } catch (e) {
-                        isLoading.value = false;
-                        Get.snackbar("Failed to Login", "User Not Found",
-                            backgroundColor: Colors.redAccent,
-                            colorText: Colors.white,
-                            icon: HugeIcon(
-                                icon: HugeIcons.strokeRoundedCancel01,
-                                color: Colors.white));
+                          Get.to(
+                              () => ConfirmationCodePage(phoneNumber: phone));
+                        } catch (e) {
+                          isLoading.value = false;
+                          Get.snackbar("Failed to Login", "User Not Found",
+                              backgroundColor: Colors.redAccent,
+                              colorText: Colors.white,
+                              icon: HugeIcon(
+                                  icon: HugeIcons.strokeRoundedCancel01,
+                                  color: Colors.white));
+                        }
                       }
-                    }
-                  },
-                  text: isLoading.value ? null : "Login",
-                  width: double.infinity,
-                  child: isLoading.value
-                      ? const CustomLoader(
-                          color: Colors.white,
-                        )
-                      : null,
-                );
+                    },
+                    text: isLoading.value ? null : "Login",
+                    width: double.infinity,
+                    loading: isLoading.value);
               }),
               spacer1(),
               Row(

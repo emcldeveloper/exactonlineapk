@@ -38,7 +38,7 @@ class _ConfirmationCodePageState extends State<ConfirmationCodePage> {
   void initState() {
     super.initState();
     _startTimer();
-     trackScreenView("ConfirmationCodePage");
+    trackScreenView("ConfirmationCodePage");
   }
 
   void _startTimer() {
@@ -82,10 +82,10 @@ class _ConfirmationCodePageState extends State<ConfirmationCodePage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               spacer2(),
+              spacer2(),
               Align(
                 alignment: Alignment.center,
-                child:
-                    Image.asset("assets/images/verification1.png", height: 250),
+                child: Image.asset("assets/images/code.avif", height: 250),
               ),
               spacer1(),
               HeadingText("Verify your number"),
@@ -182,51 +182,46 @@ class _ConfirmationCodePageState extends State<ConfirmationCodePage> {
               spacer3(),
               Obx(() {
                 return customButton(
-                  onTap: () async {
-                    isLoading.value = true;
-                    final passcode = passcodeController.text;
-                    final payload = {
-                      "phone": widget.phoneNumber,
-                      "passcode": passcode
-                    };
-                    try {
-                      final response =
-                          await authController.verifyUserCode(payload);
-                      if (response['status'] == true) {
+                    onTap: () async {
+                      isLoading.value = true;
+                      final passcode = passcodeController.text;
+                      final payload = {
+                        "phone": widget.phoneNumber,
+                        "passcode": passcode
+                      };
+                      try {
+                        final response =
+                            await authController.verifyUserCode(payload);
+                        if (response['status'] == true) {
+                          isLoading.value = false;
+                          String accessToken = response['body']['ACCESS_TOKEN'];
+                          SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          await prefs.setString('ACCESS_TOKEN', accessToken);
+                          Get.offAll(() => WayPage());
+                        } else {
+                          isLoading.value = false;
+                          String errorMessage = response['body']['message'];
+                          Get.snackbar("Verification Failed", errorMessage,
+                              backgroundColor: Colors.redAccent,
+                              colorText: Colors.white,
+                              icon: HugeIcon(
+                                  icon: HugeIcons.strokeRoundedCancel01,
+                                  color: Colors.white));
+                        }
+                      } catch (e) {
                         isLoading.value = false;
-                        String accessToken = response['body']['ACCESS_TOKEN'];
-                        SharedPreferences prefs =
-                            await SharedPreferences.getInstance();
-                        await prefs.setString('ACCESS_TOKEN', accessToken);
-                        Get.offAll(() => WayPage());
-                      } else {
-                        isLoading.value = false;
-                        String errorMessage = response['body']['message'];
-                        Get.snackbar("Verification Failed", errorMessage,
+                        Get.snackbar(
+                            "Failed to Verify Code", "Wrong code Provided",
                             backgroundColor: Colors.redAccent,
                             colorText: Colors.white,
                             icon: HugeIcon(
                                 icon: HugeIcons.strokeRoundedCancel01,
                                 color: Colors.white));
                       }
-                    } catch (e) {
-                      isLoading.value = false;
-                      Get.snackbar(
-                          "Failed to Verify Code", "Wrong code Provided",
-                          backgroundColor: Colors.redAccent,
-                          colorText: Colors.white,
-                          icon: HugeIcon(
-                              icon: HugeIcons.strokeRoundedCancel01,
-                              color: Colors.white));
-                    }
-                  },
-                  text: isLoading.value ? null : "Verify Account",
-                  child: isLoading.value
-                      ? const CustomLoader(
-                          color: Colors.white,
-                        )
-                      : null,
-                );
+                    },
+                    text: isLoading.value ? null : "Verify Account",
+                    loading: isLoading.value);
               }),
               spacer1(),
               Row(

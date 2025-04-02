@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/controllers/user_controller.dart';
-import 'package:e_online/widgets/seller_product_menu.dart';
+import 'package:e_online/widgets/seller_service_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
@@ -9,21 +9,21 @@ import 'package:get/get.dart';
 import 'package:get/get_rx/src/rx_typedefs/rx_typedefs.dart';
 import 'package:money_formatter/money_formatter.dart';
 
-class ShopProductCard extends StatefulWidget {
+class ShopServiceCard extends StatefulWidget {
   final Map<String, dynamic> data;
   Function onDelete;
 
-  ShopProductCard({
+  ShopServiceCard({
     super.key,
     required this.onDelete,
     required this.data,
   });
 
   @override
-  State<ShopProductCard> createState() => _ShopProductCardState();
+  State<ShopServiceCard> createState() => _ShopServiceCardState();
 }
 
-class _ShopProductCardState extends State<ShopProductCard> {
+class _ShopServiceCardState extends State<ShopServiceCard> {
   final UserController userController = Get.find();
   late int currentIndex;
   final List<String> _images = [];
@@ -41,14 +41,14 @@ class _ShopProductCardState extends State<ShopProductCard> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) => ProductEditBottomSheet(
-        selectedProduct: widget.data,
+      builder: (context) => ServiceEditBottomSheet(
+        selectedService: widget.data,
         onView: () {
           // Handle view logic
           Navigator.pop(context);
         },
         onReplace: () async {
-          // Logic to replace the product image
+          // Logic to replace the service image
           setState(() {
             if (currentIndex < _images.length) {
               _images[currentIndex] = 'new_image_path';
@@ -57,7 +57,7 @@ class _ShopProductCardState extends State<ShopProductCard> {
           Navigator.pop(context);
         },
         onDelete: () {
-          // Logic to delete the product
+          // Logic to delete the service
           widget.onDelete();
         },
       ),
@@ -83,10 +83,10 @@ class _ShopProductCardState extends State<ShopProductCard> {
                   color: Colors.grey[200],
                   width: 120,
                   height: 120,
-                  child: widget.data['ProductImages'].length > 0
+                  child: widget.data['ServiceImages'].length > 0
                       ? CachedNetworkImage(
                           fit: BoxFit.cover,
-                          imageUrl: widget.data['ProductImages'][0]["image"])
+                          imageUrl: widget.data['ServiceImages'][0]["image"])
                       : Container()),
             ),
             const SizedBox(width: 12),
@@ -104,7 +104,7 @@ class _ShopProductCardState extends State<ShopProductCard> {
                         child: Row(
                           children: [
                             ParagraphText(
-                              "TZS ${MoneyFormatter(amount: double.parse(widget.data['sellingPrice'])).output.withoutFractionDigits}" ??
+                              "TZS ${MoneyFormatter(amount: double.parse(widget.data['price'])).output.withoutFractionDigits}" ??
                                   "N/A",
                               fontWeight: FontWeight.bold,
                               fontSize: 16.0,

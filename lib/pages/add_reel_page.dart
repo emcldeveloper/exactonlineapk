@@ -190,7 +190,7 @@ class _AddReelPageState extends State<AddReelPage> {
                                       ),
                                       child: Column(
                                         children: [
-                                          Expanded(
+                                          const Expanded(
                                             child: Center(
                                               child: Icon(
                                                 Icons.play_circle_fill,
@@ -223,11 +223,7 @@ class _AddReelPageState extends State<AddReelPage> {
                     ),
                     spacer3(),
                     customButton(
-                      child: loading
-                          ? const CustomLoader(
-                              color: Colors.white,
-                            )
-                          : null,
+                      loading: loading,
                       onTap: _uploadReel,
                       text: loading ? "" : "Add Reel",
                     ),

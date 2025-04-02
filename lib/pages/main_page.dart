@@ -1,11 +1,15 @@
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/chat_page.dart';
 import 'package:e_online/pages/favourites_page.dart';
 import 'package:e_online/pages/home_page.dart';
 import 'package:e_online/pages/my_orders_page.dart';
 import 'package:e_online/pages/profile_page.dart';
 import 'package:e_online/pages/reels_page.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:get/instance_manager.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 class MainPage extends StatefulWidget {
@@ -17,14 +21,19 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int activeTab = 0;
-
+  UserController userController = Get.find();
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   @override
   Widget build(BuildContext context) {
+    _firebaseMessaging.getToken().then((value) {
+      userController
+          .updateUserData(userController.user.value["id"], {"token": value});
+    });
     List<Widget> pages = [
       const HomePage(),
       const ReelsPage(),
       ChatPage(),
-       MyOrdersPage(),
+      MyOrdersPage(),
       const ProfilePage(),
     ];
 
@@ -37,9 +46,9 @@ class _MainPageState extends State<MainPage> {
         showSelectedLabels: true,
         currentIndex: activeTab,
         showUnselectedLabels: true,
-        unselectedLabelStyle: const TextStyle(
+        unselectedLabelStyle: GoogleFonts.geologica(
             fontSize: 11, color: Color.fromARGB(255, 194, 192, 192)),
-        selectedLabelStyle: const TextStyle(fontSize: 11),
+        selectedLabelStyle: GoogleFonts.geologica(fontSize: 11),
         type: BottomNavigationBarType.fixed,
         onTap: (value) {
           setState(() {

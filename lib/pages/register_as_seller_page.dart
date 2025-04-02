@@ -578,146 +578,144 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
               spacer3(),
               Obx(() {
                 return customButton(
-                  onTap: () async {
-                    if (selectedBusiness == "Business") {
-                      if (_businessFormKey.currentState?.validate() == true) {
-                        isLoading.value = true;
-                        if (_files.isEmpty) {
-                          isLoading.value = false;
-                          return;
-                        }
-
-                        // Create the payload for the initial request
-                        final payload = {
-                          "UserId": userId.isNotEmpty ? userId : "unknown",
-                          "registeredBy": "business",
-                          "name": businessnameController.text.trim(),
-                          "phone": phoneController.text.trim(),
-                          "address": businessaddressController.text.trim(),
-                          "description":
-                              businessdescriptionController.text.trim(),
-                        };
-                        try {
-                          // Send the initial data to create the shop
-                          var response =
-                              await shopController.createShop(payload);
-                          var shopId = response['body']["id"];
-                          //add shop to shops in user payload
-                          userController.user.value["Shops"] = [
-                            response['body']
-                          ];
-
-                          // Send files one by one
-                          for (var file in _files) {
-                            var fileData = dio.FormData.fromMap({
-                              "file": await dio.MultipartFile.fromFile(
-                                file.path!,
-                                filename: file.name,
-                              ),
-                              "title": file.name,
-                              "ShopId": shopId,
-                            });
-                            await shopController.createShopDocuments(fileData);
+                    onTap: () async {
+                      if (selectedBusiness == "Business") {
+                        if (_businessFormKey.currentState?.validate() == true) {
+                          isLoading.value = true;
+                          if (_files.isEmpty) {
+                            isLoading.value = false;
+                            return;
                           }
-                          await analytics.logEvent(
-                            name: 'create_business',
-                            parameters: {
-                              'shop_id': shopId,
-                              'shop_name': response['body']["name"],
-                              'date': response['body']['createdAt']
-                            },
-                          );
 
-                          isLoading.value = false;
-                          Get.snackbar(
-                              "Success", "Business Shop created successfully!",
-                              backgroundColor: Colors.green,
-                              colorText: Colors.white,
-                              icon: const HugeIcon(
-                                  icon: HugeIcons.strokeRoundedTick01,
-                                  color: Colors.white));
-                          Get.to(() => FreeTrialPage(shopId: shopId),
-                              arguments: {'origin': 'RegisterAsSellerPage'});
-                        } catch (e) {
-                          isLoading.value = false;
-                          Get.snackbar("Error", "Error creating shop account",
-                              backgroundColor: Colors.redAccent,
-                              colorText: Colors.white,
-                              icon: const HugeIcon(
-                                  icon: HugeIcons.strokeRoundedCancel02,
-                                  color: Colors.white));
+                          // Create the payload for the initial request
+                          final payload = {
+                            "UserId": userId.isNotEmpty ? userId : "unknown",
+                            "registeredBy": "business",
+                            "name": businessnameController.text.trim(),
+                            "phone": phoneController.text.trim(),
+                            "address": businessaddressController.text.trim(),
+                            "description":
+                                businessdescriptionController.text.trim(),
+                          };
+                          try {
+                            // Send the initial data to create the shop
+                            var response =
+                                await shopController.createShop(payload);
+                            var shopId = response['body']["id"];
+                            //add shop to shops in user payload
+                            userController.user.value["Shops"] = [
+                              response['body']
+                            ];
+
+                            // Send files one by one
+                            for (var file in _files) {
+                              var fileData = dio.FormData.fromMap({
+                                "file": await dio.MultipartFile.fromFile(
+                                  file.path!,
+                                  filename: file.name,
+                                ),
+                                "title": file.name,
+                                "ShopId": shopId,
+                              });
+                              await shopController
+                                  .createShopDocuments(fileData);
+                            }
+                            await analytics.logEvent(
+                              name: 'create_business',
+                              parameters: {
+                                'shop_id': shopId,
+                                'shop_name': response['body']["name"],
+                                'date': response['body']['createdAt']
+                              },
+                            );
+
+                            isLoading.value = false;
+                            Get.snackbar("Success",
+                                "Business Shop created successfully!",
+                                backgroundColor: Colors.green,
+                                colorText: Colors.white,
+                                icon: const HugeIcon(
+                                    icon: HugeIcons.strokeRoundedTick01,
+                                    color: Colors.white));
+                            Get.to(() => FreeTrialPage(shopId: shopId),
+                                arguments: {'origin': 'RegisterAsSellerPage'});
+                          } catch (e) {
+                            isLoading.value = false;
+                            Get.snackbar("Error", "Error creating shop account",
+                                backgroundColor: Colors.redAccent,
+                                colorText: Colors.white,
+                                icon: const HugeIcon(
+                                    icon: HugeIcons.strokeRoundedCancel02,
+                                    color: Colors.white));
+                          }
+                        }
+                      } else {
+                        if (_agentFormKey.currentState?.validate() == true) {
+                          isLoading.value = true;
+                          if (_files.isEmpty) {
+                            isLoading.value = false;
+                            return;
+                          }
+
+                          // Create the payload for the initial request
+                          final payload = {
+                            "UserId": userId.isNotEmpty ? userId : "unknown",
+                            "registeredBy": "agent",
+                            "name": agentnameController.text.trim(),
+                            "address": agentaddressController.text.trim(),
+                            "phone": agentphoneController.text.trim(),
+                            "description":
+                                agentdescriptionController.text.trim(),
+                          };
+
+                          try {
+                            // Send the initial data to create the shop
+                            var response =
+                                await shopController.createShop(payload);
+                            var shopId = response['body']["id"];
+                            // Send files one by one
+                            for (var file in _files) {
+                              var fileData = dio.FormData.fromMap({
+                                "file": await MultipartFile(file.path!,
+                                    filename: file.name),
+                                "title": file.name, // Sending filename as title
+                                "ShopId": shopId,
+                              });
+                              await shopController
+                                  .createShopDocuments(fileData);
+                            }
+                            await analytics.logEvent(
+                              name: 'create_agent',
+                              parameters: {
+                                'shop_id': shopId,
+                                'shop_name': response['body']["name"],
+                                'date': response['body']['createdAt']
+                              },
+                            );
+                            isLoading.value = false;
+                            Get.snackbar(
+                                "Success", "Agent Shop created successfully!",
+                                backgroundColor: Colors.green,
+                                colorText: Colors.white,
+                                icon: const HugeIcon(
+                                    icon: HugeIcons.strokeRoundedTick01,
+                                    color: Colors.white));
+                            Get.to(() => FreeTrialPage(shopId: shopId),
+                                arguments: {'origin': 'RegisterAsSellerPage'});
+                          } catch (e) {
+                            isLoading.value = false;
+                            Get.snackbar("Error", "Error creating shop account",
+                                backgroundColor: Colors.redAccent,
+                                colorText: Colors.white,
+                                icon: const HugeIcon(
+                                    icon: HugeIcons.strokeRoundedCancel02,
+                                    color: Colors.white));
+                          }
                         }
                       }
-                    } else {
-                      if (_agentFormKey.currentState?.validate() == true) {
-                        isLoading.value = true;
-                        if (_files.isEmpty) {
-                          isLoading.value = false;
-                          return;
-                        }
-
-                        // Create the payload for the initial request
-                        final payload = {
-                          "UserId": userId.isNotEmpty ? userId : "unknown",
-                          "registeredBy": "agent",
-                          "name": agentnameController.text.trim(),
-                          "address": agentaddressController.text.trim(),
-                          "phone": agentphoneController.text.trim(),
-                          "description": agentdescriptionController.text.trim(),
-                        };
-
-                        try {
-                          // Send the initial data to create the shop
-                          var response =
-                              await shopController.createShop(payload);
-                          var shopId = response['body']["id"];
-                          // Send files one by one
-                          for (var file in _files) {
-                            var fileData = dio.FormData.fromMap({
-                              "file": await MultipartFile(file.path!,
-                                  filename: file.name),
-                              "title": file.name, // Sending filename as title
-                              "ShopId": shopId,
-                            });
-                            await shopController.createShopDocuments(fileData);
-                          }
-                          await analytics.logEvent(
-                            name: 'create_agent',
-                            parameters: {
-                              'shop_id': shopId,
-                              'shop_name': response['body']["name"],
-                              'date': response['body']['createdAt']
-                            },
-                          );
-                          isLoading.value = false;
-                          Get.snackbar(
-                              "Success", "Agent Shop created successfully!",
-                              backgroundColor: Colors.green,
-                              colorText: Colors.white,
-                              icon: const HugeIcon(
-                                  icon: HugeIcons.strokeRoundedTick01,
-                                  color: Colors.white));
-                          Get.to(() => FreeTrialPage(shopId: shopId),
-                              arguments: {'origin': 'RegisterAsSellerPage'});
-                        } catch (e) {
-                          isLoading.value = false;
-                          Get.snackbar("Error", "Error creating shop account",
-                              backgroundColor: Colors.redAccent,
-                              colorText: Colors.white,
-                              icon: const HugeIcon(
-                                  icon: HugeIcons.strokeRoundedCancel02,
-                                  color: Colors.white));
-                        }
-                      }
-                    }
-                  },
-                  text: isLoading.value ? null : "Submit Details",
-                  child: isLoading.value
-                      ? const CustomLoader(
-                          color: Colors.white,
-                        )
-                      : null,
-                );
+                    },
+                    text: isLoading.value ? null : "Submit Details",
+                    loading: isLoading.value);
               }),
               spacer1(),
             ],

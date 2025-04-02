@@ -158,11 +158,7 @@ class ShopController extends GetxController {
         }),
       );
       var data = response.data;
-      Get.snackbar("Success", "Shop-Calendar created successfully",
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-          icon: const HugeIcon(
-              icon: HugeIcons.strokeRoundedTick01, color: Colors.white));
+
       return data;
     } on DioException {
       // Show a Snackbar with the error

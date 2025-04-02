@@ -36,33 +36,19 @@ class _ConversationPageState extends State<ConversationPage> {
   void initState() {
     super.initState();
     trackScreenView("ConversationPage");
-    messages = RxList([]); // Initialize reactive list
+    messages = RxList([]);
 
     // Fetch initial messages
     messageControllerInstance
         .getTopicMessages(topicId: widget.topic["id"])
         .then((res) {
-      messages.addAll(res);
+      messages.addAll(res.reversed); // Reverse to match reverse: true
       _scrollToBottom();
     });
-    if (widget.isUser) {
-      messageControllerInstance
-          .updateShopMessages(shopId: widget.topic["Chat"]["ShopId"])
-          .then((res) {
-        print(res);
-      });
-    } else {
-      messageControllerInstance
-          .updateUserMessages(userId: widget.topic["Chat"]["UserId"])
-          .then((res) {
-        print(res);
-      });
-    }
-    // Initialize Socket.IO connection
+
     _connectToSocket();
   }
 
-  // Connect to Socket.IO server
   void _connectToSocket() {
     socket = IO.io('https://api.exactonline.co.tz', <String, dynamic>{
       'transports': ['websocket'],
@@ -76,35 +62,10 @@ class _ConversationPageState extends State<ConversationPage> {
     });
 
     socket.on('receiveMessage', (data) {
-      messages.add(data);
-      print(widget.isUser);
-      print("🆎 ${widget.topic["Chat"]}");
-      if (widget.isUser) {
-        messageControllerInstance
-            .updateShopMessages(shopId: widget.topic["Chat"]["ShopId"])
-            .then((res) {
-          List newMessages = [];
-          messageControllerInstance
-              .getTopicMessages(topicId: widget.topic["id"])
-              .then((res) {
-            newMessages.addAll(res);
-            messages.addAll(newMessages);
-          });
-        });
-      } else {
-        messageControllerInstance
-            .updateUserMessages(userId: widget.topic["Chat"]["UserId"])
-            .then((res) {
-          List newMessages = [];
-          messageControllerInstance
-              .getTopicMessages(topicId: widget.topic["id"])
-              .then((res) {
-            newMessages.addAll(res);
-            messages.addAll(newMessages);
-          });
-        });
+      if (!messages.any((msg) => msg['id'] == data['id'])) {
+        messages.insert(0, data);
+        _scrollToBottom();
       }
-      _scrollToBottom();
     });
 
     socket.onDisconnect((_) {
@@ -112,7 +73,6 @@ class _ConversationPageState extends State<ConversationPage> {
     });
   }
 
-  // Scroll to the bottom of the ListView
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
@@ -143,8 +103,7 @@ class _ConversationPageState extends State<ConversationPage> {
           if (data == null) {
             return const Center(child: Text('No topic data found'));
           }
-          print(data);
-
+          // print(data);
           // Extract product images
           List<dynamic> productImages = data['Product'] != null &&
                   data['Product']['ProductImages'] != null
@@ -180,12 +139,10 @@ class _ConversationPageState extends State<ConversationPage> {
                       style: const TextStyle(
                           color: Colors.white, fontWeight: FontWeight.bold),
                     ),
-                    if (data["Order"] != null)
-                      Text(
-                        "Chatting with ${widget.isUser ? data['Order']['Shop']["name"] : data['Order']['User']["name"]}",
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 12),
-                      ),
+                    Text(
+                      "Chatting with ${widget.isUser ? data['Chat']['Shop']["name"] : data['Chat']['User']["name"]}",
+                      style: const TextStyle(color: Colors.white, fontSize: 12),
+                    ),
                   ],
                 ),
                 expandedHeight: 185.0,
@@ -206,7 +163,7 @@ class _ConversationPageState extends State<ConversationPage> {
                         if (productImages.isNotEmpty)
                           CarouselSlider(
                             options: CarouselOptions(
-                              height: 230.0, // Full height of expanded app bar
+                              height: 185.0, // Full height of expanded app bar
                               autoPlay: true,
                               aspectRatio: 1,
                               viewportFraction: 1,
@@ -221,7 +178,7 @@ class _ConversationPageState extends State<ConversationPage> {
                                         imageUrl: image['image'],
                                         fit: BoxFit.cover,
                                         width: double.infinity,
-                                        height: 230.0, // Match carousel height
+                                        height: 185.0, // Match carousel height
                                         placeholder: (context, url) =>
                                             const Center(
                                           child: CircularProgressIndicator(),
@@ -233,7 +190,7 @@ class _ConversationPageState extends State<ConversationPage> {
                                         ),
                                       ),
                                       Container(
-                                        height: 250.0,
+                                        height: 185.0,
                                         color: Colors.black.withAlpha(50),
                                       ),
                                     ],
@@ -264,7 +221,7 @@ class _ConversationPageState extends State<ConversationPage> {
                 bottom: PreferredSize(
                   preferredSize: const Size.fromHeight(1.0),
                   child: Container(
-                    color: const Color.fromARGB(255, 242, 242, 242),
+                    color: const Color.fromARGB(255, 255, 255, 255),
                     height: 1.0,
                   ),
                 ),
@@ -283,28 +240,35 @@ class _ConversationPageState extends State<ConversationPage> {
                           itemCount: messages.length,
                           itemBuilder: (context, index) {
                             final reversedIndex = messages.length - 1 - index;
+                            List reversedMessages = messages.reversed.toList();
                             return Align(
                               alignment: (widget.isUser &&
-                                          messages[reversedIndex]["from"] ==
+                                          reversedMessages[reversedIndex]
+                                                  ["from"] ==
                                               "user") ||
                                       (!widget.isUser &&
-                                          messages[reversedIndex]["from"] ==
+                                          reversedMessages[reversedIndex]
+                                                  ["from"] ==
                                               "shop")
                                   ? Alignment.bottomRight
                                   : Alignment.bottomLeft,
                               child: ChatBubble(
-                                message: messages[reversedIndex],
-                                text: messages[reversedIndex]["message"],
+                                message: reversedMessages[reversedIndex],
+                                text: reversedMessages[reversedIndex]
+                                    ["message"],
                                 isSentByMe: (widget.isUser &&
-                                            messages[reversedIndex]["from"] ==
+                                            reversedMessages[reversedIndex]
+                                                    ["from"] ==
                                                 "user") ||
                                         (!widget.isUser &&
-                                            messages[reversedIndex]["from"] ==
+                                            reversedMessages[reversedIndex]
+                                                    ["from"] ==
                                                 "shop")
                                     ? true
                                     : false,
                                 time: timeago.format(DateTime.parse(
-                                    messages[reversedIndex]["createdAt"])),
+                                    reversedMessages[reversedIndex]
+                                        ["createdAt"])),
                               ),
                             );
                           },
@@ -322,48 +286,62 @@ class _ConversationPageState extends State<ConversationPage> {
                       padding: const EdgeInsets.all(12.0),
                       child: Column(
                         children: [
-                          Container(
-                              height: 30,
-                              child: ListView(
-                                scrollDirection: Axis.horizontal,
-                                children: [
-                                  "Last Price ?",
-                                  "Is this Available",
-                                  "Ask for Location",
-                                  "Make an offer",
-                                  "Please call me",
-                                ]
-                                    .map((item) => GestureDetector(
-                                          onTap: () {
-                                            messageController.text = item;
-                                          },
-                                          child: Padding(
-                                            padding:
-                                                const EdgeInsets.only(right: 5),
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                  color: primary.withAlpha(10),
-                                                  borderRadius:
-                                                      BorderRadius.circular(20),
-                                                  border: Border.all(
-                                                      color: primary
-                                                          .withAlpha(60))),
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 10),
-                                                child: Center(
-                                                  child: Text(
-                                                    item,
-                                                    style: TextStyle(),
+                          Builder(builder: (context) {
+                            List<String> suggestions = [];
+                            if (widget.isUser) {
+                              suggestions = [
+                                "Last Price ?",
+                                "Is this Available ?",
+                                "Where is your shop located ?",
+                                "Please call me",
+                              ];
+                            } else {
+                              suggestions = [
+                                "Available",
+                                data['Chat']['Shop']["address"],
+                                "Alright!",
+                                "What is your location ?",
+                              ];
+                            }
+                            return SizedBox(
+                                height: 30,
+                                child: ListView(
+                                  scrollDirection: Axis.horizontal,
+                                  children: suggestions
+                                      .map((item) => GestureDetector(
+                                            onTap: () {
+                                              messageController.text = item;
+                                            },
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  right: 5),
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                    color:
+                                                        primary.withAlpha(10),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
+                                                    border: Border.all(
+                                                        color: primary
+                                                            .withAlpha(60))),
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 10),
+                                                  child: Center(
+                                                    child: Text(
+                                                      item,
+                                                      style: TextStyle(),
+                                                    ),
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        ))
-                                    .toList(),
-                              )),
+                                          ))
+                                      .toList(),
+                                ));
+                          }),
                           SizedBox(
                             height: 10,
                           ),

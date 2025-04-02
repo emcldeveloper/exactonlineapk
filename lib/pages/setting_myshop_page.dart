@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/controllers/location_controller.dart';
 import 'package:e_online/controllers/shop_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
@@ -20,6 +21,8 @@ import 'package:e_online/widgets/spacer.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:icons_plus/icons_plus.dart';
+// ... (previous imports remain the same)
 
 class SettingMyshopPage extends StatefulWidget {
   var from;
@@ -65,7 +68,6 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
 
   Future _loadSelectedShopDetails() async {
     isLoadingTime.value = true;
-    print("onload page am being called");
     final businessId = await SharedPreferencesUtil.getSelectedBusiness();
     var shopDetails = await shopController.getShopDetails(businessId);
 
@@ -74,7 +76,6 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
       userController.user.value["selectedShop"] = shopDetails;
       shopCalendars.value = shopDetails["ShopCalenders"] ?? [];
 
-      // Extract location if available
       if (shopDetails.isNotEmpty &&
           shopDetails.containsKey("shopLat") &&
           shopDetails.containsKey("shopLong")) {
@@ -87,24 +88,27 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
     isLoadingTime.value = false;
   }
 
-  // Update location
   Future<void> _updateLocation() async {
-    final businessId = await SharedPreferencesUtil.getSelectedBusiness();
-    isLoading.value = true;
-    Position? position = await locationController.getCurrentLocation();
-    isLoading.value = false;
-    if (position != null) {
-      await shopController.updateShopData(businessId, _location);
-      setState(() {
-        _location = {
-          "shopLat": position.latitude,
-          "shopLong": position.longitude
-        };
-      });
-    } else {
-      setState(() {
-        _location = "Failed to get location";
-      });
+    try {
+      final businessId = await SharedPreferencesUtil.getSelectedBusiness();
+      isLoading.value = true;
+      Position? position = await locationController.getCurrentLocation();
+      isLoading.value = false;
+      if (position != null) {
+        await shopController.updateShopData(businessId, _location);
+        setState(() {
+          _location = {
+            "shopLat": position.latitude,
+            "shopLong": position.longitude
+          };
+        });
+      } else {
+        setState(() {
+          _location = "Failed to get location";
+        });
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -125,55 +129,63 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
       context: context,
       isScrollControlled: true,
       builder: (context) => SettingShopDetails(
-          onSave: (openTime, closeTime, is24Hours, isClosed) async {
-        if (!mounted) return;
+        onSave: (openTime, closeTime, is24Hours, isClosed, applyToAll,
+            selectedDays) async {
+          if (!mounted) return;
 
-        setState(() {
-          if (isClosed) {
-            selectedTimes[day] = "Closed";
-          } else if (is24Hours) {
-            selectedTimes[day] = "24 Hours";
-          } else {
-            String openTimeStr =
-                openTime != null ? openTime.format(context) : "Not Set";
-            String closeTimeStr =
-                closeTime != null ? closeTime.format(context) : "Not Set";
-            selectedTimes[day] = "$openTimeStr - $closeTimeStr";
-          }
-        });
-
-        final businessId = await SharedPreferencesUtil.getSelectedBusiness();
-
-        // Prepare data payload to send to API
-        var payload = {
-          "ShopId": businessId,
-          "day": day,
-          "openTime": is24Hours
-              ? "00:00"
-              : (openTime != null ? _formatTime(openTime) : null),
-          "closeTime": is24Hours
-              ? "23:59"
-              : (closeTime != null ? _formatTime(closeTime) : null),
-          "isOpen": (!isClosed).toString(),
-        };
-
-        // Send data to API
-        try {
-          await shopController.createShopCalendar(payload);
-          await _loadSelectedShopDetails();
-        } catch (e) {
-          // Handle the error here
-          Get.snackbar("Error", "Failed to save Shop-Calendar",
-              backgroundColor: Colors.redAccent,
+          final businessId = await SharedPreferencesUtil.getSelectedBusiness();
+          List<String> daysToUpdate = applyToAll ? selectedDays : [day];
+          Get.snackbar("Updating...", "Updating You Calender",
+              backgroundColor: Colors.green,
               colorText: Colors.white,
               icon: const HugeIcon(
-                  icon: HugeIcons.strokeRoundedCancel02, color: Colors.white));
-        }
-      }),
+                  icon: HugeIcons.strokeRoundedTick01, color: Colors.white));
+          for (String currentDay in daysToUpdate) {
+            setState(() {
+              if (isClosed) {
+                selectedTimes[currentDay] = "Closed";
+              } else if (is24Hours) {
+                selectedTimes[currentDay] = "24 Hours";
+              } else {
+                String openTimeStr =
+                    openTime != null ? openTime.format(context) : "Not Set";
+                String closeTimeStr =
+                    closeTime != null ? closeTime.format(context) : "Not Set";
+                selectedTimes[currentDay] = "$openTimeStr - $closeTimeStr";
+              }
+            });
+
+            var payload = {
+              "ShopId": businessId,
+              "day": currentDay,
+              "openTime": is24Hours
+                  ? "00:00"
+                  : (openTime != null ? _formatTime(openTime) : null),
+              "closeTime": is24Hours
+                  ? "23:59"
+                  : (closeTime != null ? _formatTime(closeTime) : null),
+              "isOpen": (!isClosed).toString(),
+            };
+
+            try {
+              await shopController.createShopCalendar(payload);
+            } catch (e) {
+              Get.snackbar(
+                  "Error", "Failed to save Shop-Calendar for $currentDay",
+                  backgroundColor: Colors.redAccent,
+                  colorText: Colors.white,
+                  icon: const HugeIcon(
+                      icon: HugeIcons.strokeRoundedCancel02,
+                      color: Colors.white));
+            }
+          }
+
+          await _loadSelectedShopDetails();
+        },
+      ),
     );
   }
 
-// Helper function to format TimeOfDay to HH:mm string
   String _formatTime(TimeOfDay time) {
     final hours = time.hour.toString().padLeft(2, '0');
     final minutes = time.minute.toString().padLeft(2, '0');
@@ -260,7 +272,6 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                       ],
                     ),
                     spacer1(),
-                    // Business Details
                     Container(
                       padding: const EdgeInsets.all(12.0),
                       decoration: BoxDecoration(
@@ -317,7 +328,6 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                                         Get.to(() => EditRegisterAsSellerPage(
                                             selectedBusiness?.value["id"]));
                                       } else {
-                                        // Handle the case where no business is selected
                                         print("No business selected");
                                       }
                                     },
@@ -397,8 +407,7 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                                     }
 
                                     return Container(
-                                      width: constraints
-                                          .maxWidth, // Responsive width
+                                      width: constraints.maxWidth,
                                       padding:
                                           EdgeInsets.symmetric(vertical: 8),
                                       decoration: BoxDecoration(
@@ -475,14 +484,20 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                           child: Row(
                             children: [
-                              CircleAvatar(
-                                radius: 20,
-                                backgroundImage: shop['shopImage'] != null
-                                    ? NetworkImage(shop['shopImage'])
-                                    : const AssetImage(
-                                            'assets/images/avatar.png')
-                                        as ImageProvider,
-                              ),
+                              shop['shopImage'] != null
+                                  ? CachedNetworkImage(
+                                      imageUrl: shop['shopImage'])
+                                  : ClipOval(
+                                      child: Container(
+                                        height: 40,
+                                        color: Colors.grey[200],
+                                        width: 40,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Icon(Icons.image_outlined),
+                                        ),
+                                      ),
+                                    ),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Column(

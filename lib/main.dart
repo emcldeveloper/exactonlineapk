@@ -229,7 +229,7 @@ class MyApp extends StatelessWidget {
       navigatorObservers: [observer],
       theme: ThemeData(
         primaryColor: Colors.black,
-        textTheme: GoogleFonts.interTextTheme(),
+        textTheme: GoogleFonts.geologicaTextTheme(),
       ),
       home: Stack(
         children: [

@@ -36,13 +36,13 @@ Widget shopChatCard(Map<String, dynamic> chat) {
                       child: Container(
                           height: 40,
                           width: 40,
-                          color: getHexColor(chat["User"]["name"]
+                          color: getHexColor(chat["User"]!["name"]
                                   .toString()[0]
                                   .toLowerCase())
                               .withAlpha(100),
                           child: Center(
                               child: HeadingText(
-                                  "${chat["User"]["name"].toString().split(" ")[0][0]}"))),
+                                  "${chat["User"]!["name"].toString().split(" ")[0][0]}"))),
                     ),
               const SizedBox(width: 12),
               Expanded(

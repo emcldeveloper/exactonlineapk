@@ -15,7 +15,7 @@ class ViewImage extends StatefulWidget {
 }
 
 class _ViewImageState extends State<ViewImage> {
-   @override
+  @override
   void initState() {
     super.initState();
     trackScreenView("ViewImage");
@@ -33,7 +33,7 @@ class _ViewImageState extends State<ViewImage> {
           onTap: () => Get.back(),
           child: Container(
             color: Colors.transparent,
-            child: Icon(
+            child: const Icon(
               Icons.arrow_back_ios_new_outlined,
               color: Colors.white,
               size: 16.0,
@@ -61,7 +61,7 @@ class _ViewImageState extends State<ViewImage> {
               .toList(),
           options: CarouselOptions(
             initialPage: widget.index,
-            aspectRatio: 0.75,
+            aspectRatio: 0.58,
             viewportFraction: 1,
             enableInfiniteScroll:
                 !_isZoomed, // Disable infinite scroll when zooming

@@ -3,12 +3,14 @@ import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/controllers/shop_controller.dart';
 import 'package:e_online/pages/add_product_page.dart';
 import 'package:e_online/pages/add_reel_page.dart';
+import 'package:e_online/pages/add_service_page.dart';
 import 'package:e_online/pages/create_ad_page.dart';
 import 'package:e_online/pages/setting_myshop_page.dart';
 import 'package:e_online/pages/shop_chat_page.dart';
 import 'package:e_online/pages/shop_tabs/shop_orders.dart';
 import 'package:e_online/pages/shop_tabs/shop_products.dart';
 import 'package:e_online/pages/shop_tabs/shop_reels.dart';
+import 'package:e_online/pages/shop_tabs/shop_services.dart';
 import 'package:e_online/pages/subscription_page.dart';
 import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/utils/shared_preferences.dart';
@@ -52,6 +54,7 @@ class _MyShopPageState extends State<MyShopPage> {
     "Shop Products",
     "Reels",
     "My Orders",
+    "Shop Services",
     "Promoted",
     "Ads",
   ];
@@ -71,7 +74,7 @@ class _MyShopPageState extends State<MyShopPage> {
         print("No business selected");
       }
       final response = await shopController.getShopDetails(businessId);
-      print("🆑 ${response}");
+      print("🆑 ${businessId} ${response}");
       if (response != null) {
         // bool isSubscribed = response["isSubscribed"];
         bool isSubscribed = true;
@@ -260,6 +263,7 @@ class _MyShopPageState extends State<MyShopPage> {
                         ShopProducts(),
                         ShopMasonryGrid(),
                         ShopOrders(),
+                        ShopServices(),
                         noData(),
                         noData()
                       ]),
@@ -279,10 +283,12 @@ class _MyShopPageState extends State<MyShopPage> {
         return "Add Reel";
       case 2:
         return "Add New Product";
-      case 3:
-        return "Promote Product";
       case 4:
+        return "Promote Product";
+      case 5:
         return "Create Ad";
+      case 3:
+        return "Add New Service";
       default:
         return "Action";
     }
@@ -302,15 +308,18 @@ class _MyShopPageState extends State<MyShopPage> {
         page = const AddProductPage();
         break;
       case 3:
-        page = SettingMyshopPage();
+        page = const AddServicePage();
         break;
       case 4:
+        page = SettingMyshopPage();
+        break;
+      case 5:
         page = const CreateAdPage();
         break;
     }
 
     if (page != null) {
-      if (_currentIndex >= 3) {
+      if (![0, 1, 2, 3].contains(_currentIndex)) {
         Get.bottomSheet(Container(
           color: Colors.white,
           child: CommingSoon(),

@@ -15,7 +15,7 @@ Widget customButton({
   return GestureDetector(
     onTap: onTap,
     child: Container(
-      width: width ?? double.infinity,
+      width: width,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(rounded ?? 30.0),
         color: buttonColor ?? Colors.black,
@@ -27,7 +27,7 @@ Widget customButton({
                 child: Container(
                 height: 18,
                 width: 18,
-                child: CircularProgressIndicator(
+                child: const CircularProgressIndicator(
                   color: Colors.white,
                 ),
               ))

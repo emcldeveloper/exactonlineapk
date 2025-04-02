@@ -1,27 +1,40 @@
 // ignore_for_file: sized_box_for_whitespace
 
+import 'package:e_online/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
+import 'package:get/get_rx/get_rx.dart';
 
 class SettingShopDetails extends StatefulWidget {
   final Function(TimeOfDay? openTime, TimeOfDay? closeTime, bool is24Hours,
-      bool isClosed) onSave;
+      bool isClosed, bool applyToAll,List<String> selectedDays) onSave;
 
   const SettingShopDetails({super.key, required this.onSave});
 
   @override
-  State<SettingShopDetails> createState() => _SettingShopDetailsBottomSheetState();
+  State<SettingShopDetails> createState() =>
+      _SettingShopDetailsBottomSheetState();
 }
 
 class _SettingShopDetailsBottomSheetState extends State<SettingShopDetails> {
   bool is24Hours = false;
   bool isClosed = false;
+  bool applyToAll = false; // New state for applying to all days
   TimeOfDay? openTime;
   TimeOfDay? closeTime;
-
-  Future<TimeOfDay?> _selectTime(BuildContext context, TimeOfDay initialTime) async {
+  List<String> selectedDays = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday'
+  ];
+  Future<TimeOfDay?> _selectTime(
+      BuildContext context, TimeOfDay initialTime) async {
     if (!mounted) return null;
     try {
       return await showTimePicker(
@@ -53,7 +66,8 @@ class _SettingShopDetailsBottomSheetState extends State<SettingShopDetails> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           spacer(),
-          ParagraphText("Set Time", fontWeight: FontWeight.bold, fontSize: 16.0),
+          ParagraphText("Set Time",
+              fontWeight: FontWeight.bold, fontSize: 16.0),
           spacer1(),
           Row(
             children: [
@@ -63,6 +77,7 @@ class _SettingShopDetailsBottomSheetState extends State<SettingShopDetails> {
                     width: 20,
                     child: Checkbox(
                       value: is24Hours,
+                      activeColor: primary,
                       onChanged: (value) {
                         setState(() {
                           is24Hours = value ?? false;
@@ -83,6 +98,7 @@ class _SettingShopDetailsBottomSheetState extends State<SettingShopDetails> {
                 children: [
                   Checkbox(
                     value: isClosed,
+                    activeColor: primary,
                     onChanged: (value) {
                       setState(() {
                         isClosed = value ?? false;
@@ -99,7 +115,7 @@ class _SettingShopDetailsBottomSheetState extends State<SettingShopDetails> {
               )
             ],
           ),
-          spacer1(),
+          spacer(),
           if (!is24Hours && !isClosed) ...[
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -115,12 +131,15 @@ class _SettingShopDetailsBottomSheetState extends State<SettingShopDetails> {
                     }
                   },
                 ),
+                const SizedBox(
+                  width: 10,
+                ),
                 _buildTimePicker(
                   label: "Close Time",
                   selectedTime: closeTime,
                   onTap: () async {
-                    final time =
-                        await _selectTime(context, closeTime ?? TimeOfDay.now());
+                    final time = await _selectTime(
+                        context, closeTime ?? TimeOfDay.now());
                     if (time != null) {
                       setState(() => closeTime = time);
                     }
@@ -129,11 +148,65 @@ class _SettingShopDetailsBottomSheetState extends State<SettingShopDetails> {
               ],
             ),
           ],
+          spacer(),
+          Row(
+            children: [
+              Container(
+                width: 20,
+                child: Checkbox(
+                  value: applyToAll,
+                  activeColor: primary,
+                  onChanged: (value) {
+                    setState(() {
+                      applyToAll = value ?? false;
+                    });
+                  },
+                ),
+              ),
+              SizedBox(width: 10),
+              const Text("Apply to all days"),
+            ],
+          ),
+          spacer(),
+          if (applyToAll)
+            Column(
+              children: [
+                'Monday',
+                'Tuesday',
+                'Wednesday',
+                'Thursday',
+                'Friday',
+                'Saturday',
+                'Sunday'
+              ]
+                  .map((item) => Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          ParagraphText(item),
+                          Switch(
+                              activeTrackColor: primary,
+                              value: selectedDays.contains(item),
+                              onChanged: (value) {
+                                if (value == false) {
+                                  setState(() {
+                                    selectedDays.remove(item);
+                                  });
+                                } else {
+                                  setState(() {
+                                    selectedDays.add(item);
+                                  });
+                                }
+                              })
+                        ],
+                      ))
+                  .toList(),
+            ),
           spacer2(),
           customButton(
             onTap: () {
               try {
-                widget.onSave(openTime, closeTime, is24Hours, isClosed);
+                widget.onSave(
+                    openTime, closeTime, is24Hours, isClosed, applyToAll,selectedDays);
               } catch (e) {
                 debugPrint("Error during onSave: $e");
               }
@@ -151,28 +224,30 @@ class _SettingShopDetailsBottomSheetState extends State<SettingShopDetails> {
     required TimeOfDay? selectedTime,
     required VoidCallback onTap,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ParagraphText(label, fontWeight: FontWeight.bold),
-        InkWell(
-          onTap: onTap,
-          child: Container(
-            width: 180,
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-            decoration: BoxDecoration(
-              color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              selectedTime != null
-                  ? selectedTime.format(context)
-                  : "Select Time",
-              style: const TextStyle(color: Colors.black),
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ParagraphText(label, fontWeight: FontWeight.bold),
+          InkWell(
+            onTap: onTap,
+            child: Container(
+              width: 180,
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                selectedTime != null
+                    ? selectedTime.format(context)
+                    : "Select Time",
+                style: const TextStyle(color: Colors.black),
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

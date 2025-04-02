@@ -9,6 +9,7 @@ import 'package:e_online/widgets/spacer.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class MyOrdersPage extends StatefulWidget {
   String from;
@@ -26,7 +27,7 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
   bool _isLoading = true;
   bool _isLoadingMore = false;
   bool _hasMore = true;
-  var status = "NEGOTIATION".obs;
+  var status = "ORDERED".obs;
 
   @override
   void initState() {
@@ -133,24 +134,26 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
           bottom: TabBar(
             isScrollable: true,
             tabAlignment: TabAlignment.start,
+            dividerColor: Color.fromARGB(255, 234, 234, 234),
             indicatorSize: TabBarIndicatorSize.label,
+            unselectedLabelColor: Colors.grey,
             labelColor: Colors.black,
             indicatorColor: Colors.black,
-            labelStyle: const TextStyle(
+            labelStyle: GoogleFonts.geologica(
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
-            unselectedLabelStyle: const TextStyle(
+            unselectedLabelStyle: GoogleFonts.geologica(
               fontSize: 16,
               fontWeight: FontWeight.normal,
             ),
             onTap: (index) {
               // Update status based on tab selection
               switch (index) {
-                case 0: // Pending tab
+                case 1: // Pending tab
                   status.value = "NEGOTIATION";
                   break;
-                case 1: // Active tab
+                case 0: // Active tab
                   status.value = "ORDERED";
                   break;
                 case 2: // Delivered tab
@@ -160,9 +163,9 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
               _refreshOrders(); // Fetch orders with new status
             },
             tabs: const [
-              Tab(text: "Pending"),
               Tab(text: "Active"),
-              Tab(text: "Delivered"),
+              Tab(text: "Pending"),
+              Tab(text: "Completed"),
             ],
           ),
         ),

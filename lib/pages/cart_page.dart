@@ -99,6 +99,7 @@ class _CartPageState extends State<CartPage> {
                               children: cartProducts.map((item) {
                                 return HorizontalProductCard(
                                   data: item,
+                                  isOrder: false,
                                   onRefresh: () {
                                     setState(() {});
                                     cartProductController.getOnCartproducts();
