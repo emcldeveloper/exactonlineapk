@@ -7,6 +7,7 @@ import 'package:e_online/controllers/cart_products_controller.dart';
 import 'package:e_online/controllers/cart_products_controller.dart';
 import 'package:e_online/controllers/chat_controller.dart';
 import 'package:e_online/controllers/favorite_controller.dart';
+import 'package:e_online/controllers/following_controller.dart';
 import 'package:e_online/controllers/order_controller.dart';
 import 'package:e_online/controllers/ordered_products_controller.dart';
 import 'package:e_online/controllers/product_controller.dart';
@@ -254,7 +255,7 @@ class _ProductPageState extends State<ProductPage> {
           future: ProductController().getProduct(id: widget.productData["id"]),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
+              return const Center(
                   child: CircularProgressIndicator(
                 color: Colors.black,
               ));
@@ -337,28 +338,88 @@ class _ProductPageState extends State<ProductPage> {
                                   SizedBox(
                                     width: 10,
                                   ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      HeadingText(
-                                          "From ${product["Shop"]["name"]}",
-                                          fontSize: 16.0),
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.pin_drop,
-                                            color: Colors.green,
-                                            size: 18,
-                                          ),
-                                          ParagraphText(
-                                              "${product["Shop"]["address"]}",
-                                              color: Colors.grey,
-                                              fontSize: 13.0),
-                                        ],
-                                      ),
-                                    ],
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        HeadingText(
+                                            "From ${product["Shop"]["name"]}",
+                                            fontSize: 16.0),
+                                        Row(
+                                          children: [
+                                            const Icon(
+                                              Icons.pin_drop,
+                                              color: Colors.green,
+                                              size: 18,
+                                            ),
+                                            ParagraphText(
+                                                "${product["Shop"]["address"]}",
+                                                color: Colors.grey,
+                                                fontSize: 13.0),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
+                                  if (product["Shop"]["following"] == false)
+                                    GestureDetector(
+                                      onTap: () {
+                                        var payload = {
+                                          "ShopId": product["Shop"]["id"],
+                                          "UserId":
+                                              userController.user.value["id"]
+                                        };
+                                        // print(payload);
+                                        FollowingController()
+                                            .followShop(payload)
+                                            .then((res) => {setState(() {})});
+                                      },
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(40),
+                                        child: Container(
+                                          color: primary,
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 4),
+                                            child: ParagraphText("Follow",
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                                fontSize: 12),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  if (product["Shop"]["following"] == true)
+                                    GestureDetector(
+                                      onTap: () {
+                                        var payload = {
+                                          "ShopId": product["Shop"]["id"],
+                                          "UserId":
+                                              userController.user.value["id"]
+                                        };
+                                        // print(payload);
+                                        FollowingController()
+                                            .deleteFollowing(product["Shop"]
+                                                ["ShopFollowers"][0]["id"])
+                                            .then((res) => {setState(() {})});
+                                      },
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(40),
+                                        child: Container(
+                                          color: primary.withAlpha(20),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 4),
+                                            child: ParagraphText("Following",
+                                                fontWeight: FontWeight.bold,
+                                                color: primary,
+                                                fontSize: 12),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                               
                                 ],
                               ),
                             ),
@@ -392,7 +453,7 @@ class _ProductPageState extends State<ProductPage> {
                                                 width: double.infinity,
                                                 child: CachedNetworkImage(
                                                   imageUrl: item["image"],
-                                                  fit: BoxFit.contain,
+                                                  fit: BoxFit.cover,
                                                 ),
                                               ),
                                             ))

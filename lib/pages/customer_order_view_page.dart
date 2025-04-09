@@ -169,7 +169,45 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                           child: Padding(
                               padding: const EdgeInsets.all(10),
                               child: ParagraphText(
-                                  "This order is now active, product(s) seller will reach out to you for payment methods confirmation and delivery")),
+                                  "This order is now active, ${widget.order["Shop"]["name"]} will reach out to you for payment methods confirmation and delivery")),
+                        ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      if (widget.order["status"] == "ORDERED")
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.orange.withAlpha(30),
+                              border: Border.all(
+                                  color: Colors.orange.withAlpha(60))),
+                          child: Row(
+                            children: [
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              const Icon(
+                                Icons.help,
+                                color: Colors.orange,
+                              ),
+                              Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      ParagraphText(
+                                        "Warning",
+                                      ),
+                                      ParagraphText(
+                                          "Do not pay before delivery",
+                                          color: Colors.grey[700],
+                                          fontSize: 12),
+                                    ],
+                                  )),
+                            ],
+                          ),
                         ),
                       if (widget.order["status"] == "NEGOTIATION" ||
                           widget.order["status"] == "PENDING")

@@ -153,12 +153,13 @@ class _ProductCardState extends State<ProductCard> {
                       maxLines: 1,
                       color: Colors.red,
                     ),
-                  ParagraphText(
-                    widget.data["Shop"]?["name"] ?? "",
-                    fontSize: 12,
-                    maxLines: 1,
-                    color: primary,
-                  ),
+                  if (widget.data["Shop"] != null)
+                    ParagraphText(
+                      widget.data["Shop"]?["name"] ?? "",
+                      fontSize: 12,
+                      maxLines: 1,
+                      color: primary,
+                    ),
                 ],
               ),
             ),

@@ -5,6 +5,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/chat_controller.dart';
 import 'package:e_online/controllers/favorite_controller.dart';
+import 'package:e_online/controllers/following_controller.dart';
 import 'package:e_online/controllers/order_controller.dart';
 import 'package:e_online/controllers/service_controller.dart';
 import 'package:e_online/controllers/review_controller.dart';
@@ -287,28 +288,87 @@ class _ServicePageState extends State<ServicePage> {
                                   SizedBox(
                                     width: 10,
                                   ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      HeadingText(
-                                          "From ${service["Shop"]["name"]}",
-                                          fontSize: 16.0),
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.pin_drop,
-                                            color: Colors.green,
-                                            size: 18,
-                                          ),
-                                          ParagraphText(
-                                              "${service["Shop"]["address"]}",
-                                              color: Colors.grey,
-                                              fontSize: 13.0),
-                                        ],
-                                      ),
-                                    ],
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        HeadingText(
+                                            "From ${service["Shop"]["name"]}",
+                                            fontSize: 16.0),
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.pin_drop,
+                                              color: Colors.green,
+                                              size: 18,
+                                            ),
+                                            ParagraphText(
+                                                "${service["Shop"]["address"]}",
+                                                color: Colors.grey,
+                                                fontSize: 13.0),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
+                                     if (service["Shop"]["following"] == false)
+                                    GestureDetector(
+                                      onTap: () {
+                                        var payload = {
+                                          "ShopId": service["Shop"]["id"],
+                                          "UserId":
+                                              userController.user.value["id"]
+                                        };
+                                        // print(payload);
+                                        FollowingController()
+                                            .followShop(payload)
+                                            .then((res) => {setState(() {})});
+                                      },
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(40),
+                                        child: Container(
+                                          color: primary,
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 4),
+                                            child: ParagraphText("Follow",
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                                fontSize: 12),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  if (service["Shop"]["following"] == true)
+                                    GestureDetector(
+                                      onTap: () {
+                                        var payload = {
+                                          "ShopId": service["Shop"]["id"],
+                                          "UserId":
+                                              userController.user.value["id"]
+                                        };
+                                        // print(payload);
+                                        FollowingController()
+                                            .deleteFollowing(service["Shop"]
+                                                ["ShopFollowers"][0]["id"])
+                                            .then((res) => {setState(() {})});
+                                      },
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(40),
+                                        child: Container(
+                                          color: primary.withAlpha(20),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 4),
+                                            child: ParagraphText("Following",
+                                                fontWeight: FontWeight.bold,
+                                                color: primary,
+                                                fontSize: 12),
+                                          ),
+                                        ),
+                                      ),
+                                    )
                                 ],
                               ),
                             ),
@@ -342,7 +402,7 @@ class _ServicePageState extends State<ServicePage> {
                                                 width: double.infinity,
                                                 child: CachedNetworkImage(
                                                   imageUrl: item["image"],
-                                                  fit: BoxFit.contain,
+                                                  fit: BoxFit.cover,
                                                 ),
                                               ),
                                             ))
@@ -439,13 +499,55 @@ class _ServicePageState extends State<ServicePage> {
                           child: Padding(
                             padding: const EdgeInsets.only(
                                 left: 16, right: 16, bottom: 50, top: 20),
-                            child: customButton(
-                                onTap: () async {
-                                  await launchUrl(Uri(
-                                      scheme: "tel",
-                                      path: service["Shop"]["phone"]));
-                                },
-                                text: "Call Us"),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: customButton(
+                                      textColor: Colors.black87,
+                                      buttonColor: Colors.grey[200],
+                                      onTap: () async {
+                                        await analytics.logEvent(
+                                          name: 'chat_seller',
+                                          parameters: {
+                                            'Shop_Id': service["Shop"]["id"],
+                                            'service_id': service["id"],
+                                            'service_name': service['name'],
+                                            'service_description':
+                                                service['description'],
+                                            'price': service['price'],
+                                            'shopName': service["Shop"]["name"],
+                                            'shopPhone': service["Shop"]
+                                                ["phone"],
+                                            'from_page': 'ServicePage'
+                                          },
+                                        );
+                                        // _sendServiceStats("message");
+                                        ChatController().addChat({
+                                          "ShopId": service["Shop"]["id"],
+                                          "ServiceId": service["id"],
+                                          "UserId":
+                                              userController.user.value["id"]
+                                        }).then((res) {
+                                          print(res);
+                                          Get.to(() => ConversationPage(res));
+                                        });
+                                      },
+                                      text: "Message"),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Expanded(
+                                  child: customButton(
+                                      onTap: () async {
+                                        await launchUrl(Uri(
+                                            scheme: "tel",
+                                            path: service["Shop"]["phone"]));
+                                      },
+                                      text: "Call Us"),
+                                ),
+                              ],
+                            ),
                           )))
                 ],
               ),

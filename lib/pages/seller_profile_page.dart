@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/chat_controller.dart';
+import 'package:e_online/controllers/following_controller.dart';
 import 'package:e_online/controllers/product_controller.dart';
 import 'package:e_online/controllers/shop_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
@@ -343,25 +344,79 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
                                   ],
                                 ),
                               ),
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: isOpen
-                                      ? Colors.green[100]
-                                      : Colors.red[50],
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                alignment: Alignment.center,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0, vertical: 2.0),
-                                  child: ParagraphText(
-                                    isOpen ? "Open" : "Closed",
-                                    fontSize: 13.0,
-                                    color: isOpen
-                                        ? Colors.green[800]
-                                        : Colors.red[800],
+                              if (data["following"] == false)
+                                GestureDetector(
+                                  onTap: () {
+                                    var payload = {
+                                      "ShopId": data["id"],
+                                      "UserId": userController.user.value["id"]
+                                    };
+                                    // print(payload);
+                                    FollowingController()
+                                        .followShop(payload)
+                                        .then((res) =>
+                                            {_initializeShopDetails()});
+                                  },
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(40),
+                                    child: Container(
+                                      color: primary,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 4),
+                                        child: ParagraphText("Follow",
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                            fontSize: 12),
+                                      ),
+                                    ),
                                   ),
                                 ),
+                              if (data["following"] == true)
+                                GestureDetector(
+                                  onTap: () {
+                                    ;
+                                    FollowingController()
+                                        .deleteFollowing(
+                                            data["ShopFollowers"][0]["id"])
+                                        .then((res) =>
+                                            {_initializeShopDetails()});
+                                  },
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(40),
+                                    child: Container(
+                                      color: primary.withAlpha(20),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 4),
+                                        child: ParagraphText("Following",
+                                            fontWeight: FontWeight.bold,
+                                            color: primary,
+                                            fontSize: 12),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.map_outlined,
+                                size: 16,
+                                color: isOpen
+                                    ? Colors.green[800]
+                                    : Colors.red[800],
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              ParagraphText(
+                                isOpen ? "Shop is Open" : "Shop is Closed",
+                                fontSize: 12.0,
+                                color: isOpen
+                                    ? Colors.green[800]
+                                    : Colors.red[800],
                               ),
                             ],
                           ),

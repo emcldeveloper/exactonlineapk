@@ -156,7 +156,7 @@ class ReelCard extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => PreviewReelPage(reels: [data]),
+                      builder: (context) => PreviewReelPage(reel: data),
                     ),
                   );
                 },

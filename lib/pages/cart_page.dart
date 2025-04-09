@@ -154,8 +154,10 @@ class _CartPageState extends State<CartPage> {
                                             }
                                           }),
                                     ),
-                                    ParagraphText(
-                                        "I want to negotiate this price first")
+                                    Expanded(
+                                      child: ParagraphText(
+                                          "I want to negotiate this price first"),
+                                    )
                                   ],
                                 ),
                               ),

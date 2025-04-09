@@ -18,7 +18,7 @@ class FollowingController extends GetxController {
                 "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
           }));
       var data = response.data["body"];
-      print(data);
+      // print(data);
       Get.snackbar("Success", "Successfully Followed Shop",
           backgroundColor: Colors.green, colorText: Colors.white);
       return data;
@@ -72,8 +72,8 @@ class FollowingController extends GetxController {
 
   Future deleteFollowing(id) async {
     try {
-      print("starting deleting");
-      var response = await dio.get("/shop-followers/$id",
+      // print("starting deleting");
+      var response = await dio.delete("/shop-followers/$id",
           options: Options(headers: {
             "Authorization":
                 "Bearer ${await SharedPreferencesUtil.getAccessToken()}"

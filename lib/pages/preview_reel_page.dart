@@ -14,9 +14,9 @@ import 'package:share_plus/share_plus.dart';
 import 'package:video_player/video_player.dart';
 
 class PreviewReelPage extends StatefulWidget {
-  final List<Map<String, dynamic>> reels;
+  final Map<String, dynamic> reel; // Kept as a single reel for initial input
 
-  const PreviewReelPage({required this.reels, super.key});
+  const PreviewReelPage({required this.reel, super.key});
 
   @override
   State<PreviewReelPage> createState() => _PreviewReelPageState();
@@ -36,6 +36,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
   String userId = "";
   Rx<Map<String, dynamic>> reelDetails = Rx<Map<String, dynamic>>({});
   RxBool isLiked = false.obs;
+  List reels = []; // Store the list of reels
   bool? isFollowing;
   RxBool isSharing = false.obs;
 
@@ -43,26 +44,28 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
   void initState() {
     super.initState();
     trackScreenView("PreviewReelPage");
-    _pageController = PageController();
+    _pageController = PageController(initialPage: 0);
     userId = userController.user.value['id'] ?? "";
-    _initializeReelDetails(widget.reels[currentIndex]['id']);
+    _initializeReelDetails(widget.reel['id']);
     ever(reelDetails, (value) {
       print('Reel details updated: $value');
     });
-    _sendReelStats("view");
+    // _sendReelStats("view");
   }
 
   Future<void> _initializeReelDetails(String reelId) async {
     try {
-      final details = await reelController.getSpecificReels(
+      reels = await reelController.getSpecificReels(
         selectedId: reelId,
         page: 1,
         limit: 20,
       );
-      reelDetails.value = details;
-      _initializeVideoPlayer(reelDetails.value['videoUrl']);
-      isFollowing = reelDetails.value['Shop']['following'] ?? false;
-      isLiked.value = reelDetails.value['Shop']['liked'] ?? false;
+      print("Reels");
+      print(reels);
+      reelDetails.value = reels[currentIndex]; // Load the reel at currentIndex
+      _initializeVideoPlayer(reels[currentIndex]['videoUrl']);
+      isFollowing = reels[currentIndex]['Shop']['following'] ?? false;
+      isLiked.value = reels[currentIndex]['Shop']['liked'] ?? false;
       isLoading.value = false;
     } catch (e) {
       print("Error fetching reel details: $e");
@@ -81,11 +84,16 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
   void _onPageChanged(int index) {
     setState(() {
       currentIndex = index;
-      _videoController.dispose();
+      _videoController.dispose(); // Dispose of the old controller
+      isLoading.value = true; // Show loading indicator
     });
-    _initializeReelDetails(widget.reels[index]['id']).then((_) {
-      _initializeVideoPlayer(reelDetails.value['videoUrl']);
-    });
+    reelDetails.value = reels[index]; // Update reelDetails with the new reel
+    _initializeVideoPlayer(reels[index]['videoUrl']);
+    isFollowing = reels[index]['Shop']['following'] ?? false;
+    isLiked.value = reels[index]['Shop']['liked'] ?? false;
+    isLoading.value = false;
+    setState(() {}); // Ensure UI updates
+    _sendReelStats("view"); // Track view for the new reel
   }
 
   void toggleBlockingReel() {
@@ -119,13 +127,12 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
 
   Future<void> followShop() async {
     final shop = reelDetails.value['Shop'];
-    var payload = {
-      "ShopId": shop['id'],
-      "UserId": userId,
-    };
 
     try {
-      var result = await followingController.followShop(payload);
+      var result = await followingController.followShop({
+        "ShopId": shop['id'],
+        "UserId": userId,
+      });
       if (result != null) {
         setState(() {
           isFollowing = true;
@@ -137,7 +144,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
   }
 
   Future<void> _sendReelStats(String type) async {
-    var reelId = widget.reels[currentIndex]['id'];
+    var reelId = reels[currentIndex]['id']; // Use the current reel's ID
     var payload = {"ReelId": reelId, "UserId": userId, "type": type};
     try {
       if (type == "like") {
@@ -167,8 +174,6 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
           reelDetails.value['likes'] = (reelDetails.value['likes'] ?? 0) + 1;
           reelDetails.refresh();
         }
-
-        _initializeReelDetails(widget.reels[currentIndex]['id']);
       } else {
         await reelController.addReelStats(payload);
       }
@@ -195,7 +200,7 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
             : PageView.builder(
                 controller: _pageController,
                 scrollDirection: Axis.vertical,
-                itemCount: widget.reels.length,
+                itemCount: reels.length, // Use the full list length
                 onPageChanged: _onPageChanged,
                 itemBuilder: (context, index) {
                   return Obx(() {
@@ -402,8 +407,8 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                                                 ),
                                                 const SizedBox(width: 4),
                                                 Obx(() => ParagraphText(
-                                                      (reelDetails.value['Shop']
-                                                                  ['likes'] ??
+                                                      (reelDetails.value[
+                                                                  'likes'] ??
                                                               0)
                                                           .toString(),
                                                       color: Colors.white,
@@ -464,13 +469,6 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                                                       size: 22.0,
                                                     )),
                                             ),
-                                            // child: const HugeIcon(
-                                            //   icon: HugeIcons
-                                            //       .strokeRoundedShare01,
-                                            //   color: Colors.white,
-                                            //   size: 22.0,
-                                            // ),
-                                            // ),
                                           ],
                                         ),
                                       ),

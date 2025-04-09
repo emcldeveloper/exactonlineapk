@@ -9,7 +9,7 @@ import 'package:get/get_rx/get_rx.dart';
 
 class SettingShopDetails extends StatefulWidget {
   final Function(TimeOfDay? openTime, TimeOfDay? closeTime, bool is24Hours,
-      bool isClosed, bool applyToAll,List<String> selectedDays) onSave;
+      bool isClosed, bool applyToAll, List<String> selectedDays) onSave;
 
   const SettingShopDetails({super.key, required this.onSave});
 
@@ -90,7 +90,7 @@ class _SettingShopDetailsBottomSheetState extends State<SettingShopDetails> {
                       },
                     ),
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   const Text("Open 24 hours")
                 ],
               ),
@@ -205,8 +205,8 @@ class _SettingShopDetailsBottomSheetState extends State<SettingShopDetails> {
           customButton(
             onTap: () {
               try {
-                widget.onSave(
-                    openTime, closeTime, is24Hours, isClosed, applyToAll,selectedDays);
+                widget.onSave(openTime, closeTime, is24Hours, isClosed,
+                    applyToAll, selectedDays);
               } catch (e) {
                 debugPrint("Error during onSave: $e");
               }

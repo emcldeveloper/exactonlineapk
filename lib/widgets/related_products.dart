@@ -55,7 +55,7 @@ class RelatedProducts extends StatelessWidget {
   Widget _buildShimmerGrid() {
     return StaggeredGrid.count(
       crossAxisCount: 2,
-      mainAxisSpacing: 12,
+      mainAxisSpacing: 0,
       crossAxisSpacing: 12,
       children: List.generate(
         5,

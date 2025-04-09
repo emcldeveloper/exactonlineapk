@@ -105,10 +105,10 @@ class _ConversationPageState extends State<ConversationPage> {
           }
           // print(data);
           // Extract product images
-          List<dynamic> productImages = data['Product'] != null &&
-                  data['Product']['ProductImages'] != null
-              ? data['Product']['ProductImages']
-              : data["Order"]["OrderedProducts"][0]["Product"]["ProductImages"];
+          List<dynamic>? productImages = data['Product']?['ProductImages'] ??
+              data['Service']?['ServiceImages'] ??
+              data['Order']?['OrderedProducts']?[0]?['Product']
+                  ?['ProductImages'];
 
           return CustomScrollView(
             controller: _scrollController,
@@ -133,6 +133,7 @@ class _ConversationPageState extends State<ConversationPage> {
                   children: [
                     Text(
                       data['Product']?['name'] ??
+                          data['Service']?['name'] ??
                           "Order #${data["Order"]?["id"].toString().split("-").first}" ??
                           widget.topic["title"] ??
                           "Chat",
@@ -160,7 +161,7 @@ class _ConversationPageState extends State<ConversationPage> {
                           MainAxisAlignment.start, // Align content to top
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        if (productImages.isNotEmpty)
+                        if (productImages!.isNotEmpty)
                           CarouselSlider(
                             options: CarouselOptions(
                               height: 185.0, // Full height of expanded app bar

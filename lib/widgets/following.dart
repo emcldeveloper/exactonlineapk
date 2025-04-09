@@ -1,6 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/following_controller.dart';
 import 'package:e_online/pages/seller_profile_page.dart';
+import 'package:e_online/utils/get_hex_color.dart';
+import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/no_data.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
@@ -37,8 +40,7 @@ class _ReelsFollowingTabState extends State<ReelsFollowingTab> {
           'id': shop['id'],
           'name': shop['name'] ?? 'No Name',
           'followers': '${shop['followers']} followers',
-          'imageUrl':
-              shop['shopImage'] ?? 'assets/images/avatar.png', 
+          'imageUrl': shop['shopImage'] ?? 'assets/images/avatar.png',
         };
       }).toList();
       loading.value = false;
@@ -88,27 +90,25 @@ class _ReelsFollowingTabState extends State<ReelsFollowingTab> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         ClipOval(
-                          child: profile['imageUrl'] != null &&
-                                  profile['imageUrl'].isNotEmpty
-                              ? Image.network(
-                                  profile['imageUrl'],
+                          child: profile['shopImage'] != null &&
+                                  profile['shopImage'].isNotEmpty
+                              ? CachedNetworkImage(
+                                  imageUrl: profile['shopImage'],
                                   height: 80,
                                   width: 80,
                                   fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return ClipOval(
-                                      child: HugeIcon(
-                                        icon: HugeIcons.strokeRoundedUserCircle,
-                                        color: Colors.black,
-                                        size: 80,
-                                      ),
-                                    );
-                                  },
                                 )
-                              : HugeIcon(
-                                  icon: HugeIcons.strokeRoundedUserCircle,
-                                  color: Colors.black,
-                                  size: 80,
+                              : ClipOval(
+                                  child: Container(
+                                      height: 80,
+                                      width: 80,
+                                      color: getHexColor(profile["name"]
+                                              .toString()[0]
+                                              .toLowerCase())
+                                          .withAlpha(100),
+                                      child: Center(
+                                          child: HeadingText(
+                                              "${profile["name"].toString().split(" ")[0][0]}"))),
                                 ),
                         ),
                         spacer(),

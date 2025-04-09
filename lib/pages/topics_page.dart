@@ -210,6 +210,66 @@ class _TopicsPageState extends State<TopicsPage> {
                                         ),
                                       ),
                                     ),
+                                  if (topic["ServiceId"] != null)
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 10),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          Get.back();
+                                          Get.to(() => ConversationPage(
+                                                topic,
+                                                isUser: widget.from == null,
+                                              ));
+                                        },
+                                        child: Row(
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              child: SizedBox(
+                                                width: 80,
+                                                height: 80,
+                                                child: CachedNetworkImage(
+                                                  fit: BoxFit.cover,
+                                                  imageUrl: topic["Service"]
+                                                              ['ServiceImages']
+                                                          ?[0]?["image"] ??
+                                                      "",
+                                                  errorWidget: (context, url,
+                                                          error) =>
+                                                      const Icon(
+                                                          Icons.broken_image),
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  ParagraphText(
+                                                      topic["Service"]["name"],
+                                                      fontSize: 15),
+                                                  ParagraphText(
+                                                      "${topic["lastMessage"] ?? "No Message"}",
+                                                      color: Colors.grey[500])
+                                                ],
+                                              ),
+                                            ),
+                                            Text(
+                                              format(DateTime.parse(topic[
+                                                      "lastMessageDatetime"] ??
+                                                  topic["createdAt"])),
+                                              style: TextStyle(fontSize: 12),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
                                   if (topic["OrderId"] != null &&
                                       topic["Order"] != null)
                                     Padding(
