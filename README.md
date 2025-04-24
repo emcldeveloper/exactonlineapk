@@ -46,7 +46,7 @@ Before setting up the project, ensure you have the following installed:
    - Create a `.env` file in the root directory (if required) to store API endpoints or other configurations.
    - Example `.env`:
      ```
-     API_BASE_URL=http://localhost:3000/api
+     API_BASE_URL=https://api.exactonline.co.tz
      ```
    - Use a package like [flutter_dotenv](https://pub.dev/packages/flutter_dotenv) to load these variables.
 
