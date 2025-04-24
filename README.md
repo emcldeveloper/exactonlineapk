@@ -100,21 +100,6 @@ exact-online-frontend/
 └── README.md                  # This file
 ```
 
-## API Integration
-The frontend communicates with the [Exact Online Backend](https://github.com/johnchuma/exact-online-backend) via HTTP requests. Key details:
-- **API Base URL**: Configured in `.env` (e.g., `http://localhost:3000/api`).
-- **HTTP Client**: Uses [http](https://pub.dev/packages/http) or [dio](https://pub.dev/packages/dio) for API calls.
-- **Endpoints**:
-  - `POST /auth/login`: Authenticate a user
-  - `GET /data`: Fetch data for the dashboard
-  - (Add specific endpoints used by your app)
-- **Authentication**: Stores tokens in secure storage using [flutter_secure_storage](https://pub.dev/packages/flutter_secure_storage).
-
-To test API integration:
-1. Ensure the backend is running (e.g., `npm start` in the backend repo).
-2. Update `.env` with the correct API base URL.
-3. Run the app and test features like login or data fetching.
-
 ## Contributing
 We welcome contributions! To contribute:
 1. Fork the repository: `https://github.com/johnchuma/exact-online-frontend`
