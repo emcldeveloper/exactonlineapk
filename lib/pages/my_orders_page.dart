@@ -27,7 +27,7 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
   bool _isLoading = true;
   bool _isLoadingMore = false;
   bool _hasMore = true;
-  var status = "ORDERED".obs;
+  var status = "IN PROGRESS".obs;
 
   @override
   void initState() {
@@ -151,21 +151,21 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
               // Update status based on tab selection
               switch (index) {
                 case 1: // Pending tab
-                  status.value = "NEGOTIATION";
+                  status.value = "NEW ORDER";
                   break;
                 case 0: // Active tab
-                  status.value = "ORDERED";
+                  status.value = "IN PROGRESS";
                   break;
                 case 2: // Delivered tab
-                  status.value = "DELIVERED";
+                  status.value = "CONFIRMED";
                   break;
               }
               _refreshOrders(); // Fetch orders with new status
             },
             tabs: const [
-              Tab(text: "Active"),
-              Tab(text: "Pending"),
-              Tab(text: "Completed"),
+              Tab(text: "In Progress"),
+              Tab(text: "New Orders"),
+              Tab(text: "Confirmed Orders"),
             ],
           ),
         ),

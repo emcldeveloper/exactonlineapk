@@ -5,6 +5,7 @@ import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/reel_controller.dart';
 import 'package:e_online/pages/preview_reel_page.dart';
 import 'package:e_online/pages/seller_profile_page.dart';
+import 'package:e_online/utils/get_hex_color.dart';
 import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/following.dart';
 import 'package:e_online/widgets/heading_text.dart';
@@ -291,41 +292,53 @@ class ReelCard extends StatelessWidget {
                 spacer(),
                 Row(
                   children: [
-                    Expanded(
-                      child: InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SellerProfilePage(
-                                shopId: shopData['id'],
-                              ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SellerProfilePage(
+                              shopId: shopData['id'],
                             ),
-                          );
-                        },
-                        child: Row(
-                          children: [
-                            CircleAvatar(
-                              radius: 12,
-                              backgroundImage: shopImage != null
-                                  ? NetworkImage(shopImage)
-                                  : const AssetImage('assets/images/avatar.png')
-                                      as ImageProvider,
+                          ),
+                        );
+                      },
+                      child: Row(
+                        children: [
+                          ClipOval(
+                            child: shopImage != null && shopImage.isNotEmpty
+                                ? CachedNetworkImage(
+                                    imageUrl: shopImage,
+                                    height: 23,
+                                    width: 23,
+                                    fit: BoxFit.cover,
+                                  )
+                                : ClipOval(
+                                    child: Container(
+                                        height: 23,
+                                        width: 23,
+                                        color: getHexColor(shopName
+                                                .toString()[0]
+                                                .toLowerCase())
+                                            .withAlpha(100),
+                                        child: Center(
+                                            child: HeadingText(
+                                                shopName
+                                                    .toString()
+                                                    .split(" ")[0][0],
+                                                fontSize: 11))),
+                                  ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            shopName,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
                             ),
-                            const SizedBox(width: 8),
-                            Flexible(
-                              fit: FlexFit.loose,
-                              child: Text(
-                                shopName,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
                       ),
                     ),
                     const Spacer(),

@@ -113,7 +113,7 @@ class _SellerOrderViewPageState extends State<SellerOrderViewPage> {
                               SizedBox(
                                 width: 10,
                               ),
-                              if (widget.order["status"] == "NEGOTIATION")
+                              if (widget.order["status"] == "NEW ORDER")
                                 GestureDetector(
                                     onTap: () {
                                       Get.bottomSheet(SingleChildScrollView(
@@ -196,8 +196,7 @@ class _SellerOrderViewPageState extends State<SellerOrderViewPage> {
                             child: ParagraphText(
                                 "This order is now active, you can proceed with delivery processes")),
                       ),
-                    if (widget.order["status"] == "NEGOTIATION" ||
-                        widget.order["status"] == "PENDING")
+                    if (widget.order["status"] == "NEW ORDER")
                       Padding(
                         padding: const EdgeInsets.only(bottom: 10, top: 10),
                         child: Container(
@@ -219,8 +218,51 @@ class _SellerOrderViewPageState extends State<SellerOrderViewPage> {
                           ),
                         ),
                       ),
-                    if (widget.order["status"] == "NEGOTIATION" ||
-                        widget.order["status"] == "PENDING")
+                    if (widget.order["status"] == "IN PROGRESS")
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10, top: 10),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.orange.withAlpha(30),
+                              border: Border.all(
+                                  color: Colors.orange.withAlpha(60))),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: ParagraphText(
+                                      "Please approve this order to inform user that you are working on it"),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    if (widget.order["status"] == "CONFIRMED")
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 10, top: 10),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.orange.withAlpha(30),
+                              border: Border.all(
+                                  color: Colors.orange.withAlpha(60))),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: ParagraphText(
+                                      "This order is now confirmed, you can go ahead with payment and delivery"),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    if (widget.order["status"] == "NEW ORDER")
                       Container(
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10),
@@ -234,14 +276,16 @@ class _SellerOrderViewPageState extends State<SellerOrderViewPage> {
                               Obx(
                                 () => Checkbox(
                                     activeColor: Colors.orange,
-                                    value: status.value == "ORDERED",
+                                    value: status.value == "IN PROGRESS",
                                     onChanged: (value) {
-                                      status.value = "ORDERED";
+                                      status.value = "IN PROGRESS";
                                       OrdersController().editOrder(
-                                          widget.order["id"],
-                                          {"status": "ORDERED"}).then((res) {
+                                          widget.order["id"], {
+                                        "status": "IN PROGRESS  "
+                                      }).then((res) {
                                         setState(() {
-                                          widget.order["status"] = "ORDERED";
+                                          widget.order["status"] =
+                                              "IN PROGRESS";
                                         });
                                       });
                                     }),
@@ -255,19 +299,19 @@ class _SellerOrderViewPageState extends State<SellerOrderViewPage> {
                         ),
                       ),
                     spacer3(),
-                    if (widget.order["status"] == "ORDERED")
+                    if (widget.order["status"] == "IN PROGRESS")
                       customButton(
                         buttonColor: Colors.amber,
                         textColor: Colors.black,
                         onTap: () {
                           OrdersController().editOrder(widget.order["id"],
-                              {"status": "DELIVERED"}).then((res) {
+                              {"status": "CONFIRMED"}).then((res) {
                             setState(() {
-                              widget.order["status"] = "DELIVERED";
+                              widget.order["status"] = "CONFIRMED";
                             });
                           });
                         },
-                        text: "Mark as delivered",
+                        text: "Approve order",
                       ),
                     spacer(),
                     customButton(

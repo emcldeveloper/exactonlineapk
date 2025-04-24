@@ -35,7 +35,7 @@ class _CartPageState extends State<CartPage> {
   CartProductController cartProductController =
       Get.put(CartProductController());
   var loading = false.obs;
-  var status = "ORDERED".obs;
+  var status = "IN PROGRESS".obs;
   @override
   Widget build(BuildContext context) {
     Future.delayed(Duration.zero, () {
@@ -145,12 +145,12 @@ class _CartPageState extends State<CartPage> {
                                     Obx(
                                       () => Checkbox(
                                           activeColor: Colors.orange,
-                                          value: status.value == "NEGOTIATION",
+                                          value: status.value == "NEW ORDER",
                                           onChanged: (value) {
                                             if (value != true) {
-                                              status.value = "ORDERED";
+                                              status.value = "IN PROGRESS";
                                             } else {
-                                              status.value = "NEGOTIATION";
+                                              status.value = "NEW ORDER";
                                             }
                                           }),
                                     ),

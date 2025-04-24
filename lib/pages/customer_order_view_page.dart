@@ -136,29 +136,16 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          ParagraphText("Total Price"),
+                          ParagraphText("Order Price"),
                           ParagraphText(
-                            "TZS ${toMoneyFormmat(totalPrice.toString())}",
-                            fontWeight: FontWeight.bold,
-                            fontSize: 17,
-                          ),
+                              "TZS ${toMoneyFormmat(widget.order["totalPrice"].toString())}",
+                              fontWeight: FontWeight.bold,
+                              fontSize: 17),
                         ],
                       ),
                       spacer(),
-                      if (widget.order["status"] == "DELIVERED")
-                        Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.green.withAlpha(30),
-                              border: Border.all(
-                                  color: Colors.green.withAlpha(60))),
-                          child: Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: ParagraphText(
-                                  "Order is delivered successfully, thanks for using Exact Online")),
-                        ),
-                      if (widget.order["status"] == "ORDERED")
+
+                      if (widget.order["status"] == "CONFIRMED")
                         Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
@@ -169,12 +156,12 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                           child: Padding(
                               padding: const EdgeInsets.all(10),
                               child: ParagraphText(
-                                  "This order is now active, ${widget.order["Shop"]["name"]} will reach out to you for payment methods confirmation and delivery")),
+                                  "This order is now active, ${widget.order["Shop"]["name"]} will reach out to you for pending payment pick/Delivery")),
                         ),
                       const SizedBox(
                         height: 5,
                       ),
-                      if (widget.order["status"] == "ORDERED")
+                      if (widget.order["status"] == "CONFIRMED")
                         Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
@@ -209,8 +196,8 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                             ],
                           ),
                         ),
-                      if (widget.order["status"] == "NEGOTIATION" ||
-                          widget.order["status"] == "PENDING")
+                      // ParagraphText(widget.order["status"]),
+                      if (widget.order["status"] == "NEW ORDER")
                         Container(
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
@@ -224,14 +211,16 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                                 Obx(
                                   () => Checkbox(
                                       activeColor: Colors.orange,
-                                      value: status.value == "ORDERED",
+                                      value: status.value == "IN PROGRESS",
                                       onChanged: (value) {
-                                        status.value = "ORDERED";
+                                        status.value = "IN PROGRESS";
                                         OrdersController().editOrder(
-                                            widget.order["id"],
-                                            {"status": "ORDERED"}).then((res) {
+                                            widget.order["id"], {
+                                          "status": "IN PROGRESS"
+                                        }).then((res) {
                                           setState(() {
-                                            widget.order["status"] = "ORDERED";
+                                            widget.order["status"] =
+                                                "IN PROGRESS";
                                           });
                                         });
                                       }),
@@ -239,6 +228,26 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                                 Expanded(
                                   child: ParagraphText(
                                       "Agreed on this price ? press here to confirm order or continue negotiation with seller using buttons below "),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      spacer1(),
+                      if (widget.order["status"] == "IN PROGRESS")
+                        Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.orange.withAlpha(30),
+                              border: Border.all(
+                                  color: Colors.orange.withAlpha(60))),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: ParagraphText(
+                                      "Wait for seller to confirm this order."),
                                 )
                               ],
                             ),

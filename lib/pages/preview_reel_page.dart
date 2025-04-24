@@ -1,10 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/following_controller.dart';
 import 'package:e_online/controllers/reel_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/seller_profile_page.dart';
+import 'package:e_online/utils/get_hex_color.dart';
 import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/blocking_reel.dart';
+import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
@@ -342,13 +345,35 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
                                         },
                                         child: Row(
                                           children: [
-                                            CircleAvatar(
-                                              radius: 12,
-                                              backgroundImage: shopImage != null
-                                                  ? NetworkImage(shopImage)
-                                                  : const AssetImage(
-                                                          'assets/images/avatar.png')
-                                                      as ImageProvider,
+                                            ClipOval(
+                                              child: shopImage != null &&
+                                                      shopImage.isNotEmpty
+                                                  ? CachedNetworkImage(
+                                                      imageUrl: shopImage,
+                                                      height: 30,
+                                                      width: 30,
+                                                      fit: BoxFit.cover,
+                                                    )
+                                                  : ClipOval(
+                                                      child: Container(
+                                                          height: 30,
+                                                          width: 30,
+                                                          color: getHexColor(shopName
+                                                                  .toString()[0]
+                                                                  .toLowerCase())
+                                                              .withAlpha(100),
+                                                          child: Center(
+                                                              child: HeadingText(
+                                                                  shopName
+                                                                          .toString()
+                                                                          .split(
+                                                                              " ")[
+                                                                      0][0],
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontSize:
+                                                                      14))),
+                                                    ),
                                             ),
                                             const SizedBox(width: 8),
                                             ParagraphText(
