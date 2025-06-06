@@ -132,36 +132,40 @@ class _CartPageState extends State<CartPage> {
                             SizedBox(
                               height: 10,
                             ),
-                            Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Colors.orange.withAlpha(30),
-                                  border: Border.all(
-                                      color: Colors.orange.withAlpha(60))),
-                              child: Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: Row(
-                                  children: [
-                                    Obx(
-                                      () => Checkbox(
-                                          activeColor: Colors.orange,
-                                          value: status.value == "NEW ORDER",
-                                          onChanged: (value) {
-                                            if (value != true) {
-                                              status.value = "IN PROGRESS";
-                                            } else {
-                                              status.value = "NEW ORDER";
-                                            }
-                                          }),
-                                    ),
-                                    Expanded(
-                                      child: ParagraphText(
-                                          "I want to negotiate this price first"),
-                                    )
-                                  ],
+                            if (cartProducts
+                                .map((item) => item["Product"]["isNegotiable"])
+                                .toList()
+                                .contains(true))
+                              Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.orange.withAlpha(30),
+                                    border: Border.all(
+                                        color: Colors.orange.withAlpha(60))),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: Row(
+                                    children: [
+                                      Obx(
+                                        () => Checkbox(
+                                            activeColor: Colors.orange,
+                                            value: status.value == "NEW ORDER",
+                                            onChanged: (value) {
+                                              if (value != true) {
+                                                status.value = "IN PROGRESS";
+                                              } else {
+                                                status.value = "NEW ORDER";
+                                              }
+                                            }),
+                                      ),
+                                      Expanded(
+                                        child: ParagraphText(
+                                            "I want to negotiate this price first"),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
                             spacer3(),
                             Obx(
                               () => customButton(

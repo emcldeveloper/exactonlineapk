@@ -15,7 +15,8 @@ import 'package:timeago/timeago.dart';
 class TopicsPage extends StatefulWidget {
   var chat;
   var from;
-  TopicsPage({this.chat, this.from, super.key});
+  Function? refreshPage;
+  TopicsPage({this.chat, this.from, this.refreshPage, super.key});
 
   @override
   State<TopicsPage> createState() => _TopicsPageState();
@@ -215,12 +216,13 @@ class _TopicsPageState extends State<TopicsPage> {
                                       padding:
                                           const EdgeInsets.only(bottom: 10),
                                       child: GestureDetector(
-                                        onTap: () {
+                                        onTap: () async {
                                           Get.back();
-                                          Get.to(() => ConversationPage(
+                                          await Get.to(() => ConversationPage(
                                                 topic,
                                                 isUser: widget.from == null,
                                               ));
+                                          widget.refreshPage!();
                                         },
                                         child: Row(
                                           children: [
@@ -276,12 +278,13 @@ class _TopicsPageState extends State<TopicsPage> {
                                       padding:
                                           const EdgeInsets.only(bottom: 10),
                                       child: GestureDetector(
-                                        onTap: () {
+                                        onTap: () async {
                                           Get.back();
-                                          Get.to(() => ConversationPage(
+                                          await Get.to(() => ConversationPage(
                                                 topic,
                                                 isUser: widget.from == null,
                                               ));
+                                          widget.refreshPage!();
                                         },
                                         child: Row(
                                           children: [

@@ -221,7 +221,13 @@ class _AddProductPageState extends State<AddProductPage> {
                               size: 50.0,
                             ),
                             spacer(),
-                            ParagraphText("Select product images"),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: ParagraphText(
+                                  "Select product images (Images must be related to the product you are uploading)",
+                                  textAlign: TextAlign.center),
+                            ),
                           ],
                         ),
                       ),

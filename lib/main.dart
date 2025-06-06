@@ -5,6 +5,7 @@ import 'package:e_online/pages/auth/onboarding_pages.dart';
 import 'package:e_online/pages/splashscreen_page.dart';
 import 'package:e_online/pages/update_page.dart';
 import 'package:e_online/pages/way_page.dart';
+import 'package:e_online/utils/fcm_messaging_utils.dart';
 import 'package:e_online/utils/shared_preferences.dart';
 import 'package:e_online/utils/update_checker.dart';
 import 'package:e_online/widgets/network_listener.dart';
@@ -20,11 +21,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/foundation.dart';
 
 // Background message handler (must be top-level)
-Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print("📩 [Background] Message received: ${message.messageId}");
-  print("🔹 Title: ${message.notification?.title}");
-  print("🔹 Body: ${message.notification?.body}");
-}
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
@@ -35,11 +31,9 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-
-  await requestNotificationPermission();
+  await setupFirebaseMessaging();
+  await initializeFirebaseMessaging();
   await getToken();
-  setupFirebaseMessagingHandlers();
 
 // Initialize local notifications
   var initializationSettingsAndroid =
@@ -62,101 +56,10 @@ void main() async {
   runApp(const MyApp());
 }
 
-// 🔔 Request Notification Permissions
-Future<void> requestNotificationPermission() async {
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
-  try {
-    // Request permissions with provisional settings
-    NotificationSettings settings = await messaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-      provisional:
-          true, // Allows users to receive notifications without full permission
-    );
-
-    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      print("✅ User granted notification permission.");
-    } else if (settings.authorizationStatus ==
-        AuthorizationStatus.provisional) {
-      print("⚠️ User granted provisional permission.");
-    } else {
-      print("❌ User declined notification permission.");
-    }
-
-    // Ensure APNs token is available before making FCM plugin API calls (For iOS)
-    final apnsToken = await FirebaseMessaging.instance.getAPNSToken();
-    if (apnsToken != null) {
-      print("📌 APNs Token: $apnsToken");
-      // You can now safely use FCM APIs
-    } else {
-      print("⚠️ APNs Token not available yet.");
-    }
-
-    // Allow notifications to show in the foreground
-    await FirebaseMessaging.instance
-        .setForegroundNotificationPresentationOptions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-  } catch (e) {
-    debugPrint("❌ Error requesting notification permission: $e");
-  }
-}
-
 // 🔑 Get FCM Token
 Future<void> getToken() async {
   String? token = await FirebaseMessaging.instance.getToken();
   print("📌 FCM Token: $token");
-}
-
-// 🔥 Handle Firebase Messaging (Foreground, Background, Terminated)
-void setupFirebaseMessagingHandlers() {
-  // Foreground notifications
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    print("📩 [Foreground] Message received!");
-    print("🔹 Data: ${message.data}");
-
-    if (message.notification != null) {
-      print("🔹 Title: ${message.notification!.title}");
-      print("🔹 Body: ${message.notification!.body}");
-
-      // Show local notification
-      showNotification(message);
-    }
-  });
-
-  // When app is opened from a terminated state (tap on notification)
-  FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
-    if (message != null) {
-      print(
-          "📩 [Terminated] App opened via notification: ${message.notification?.title}");
-    }
-  });
-
-  // Background messages
-  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-}
-
-Future<void> showNotification(RemoteMessage message) async {
-  const AndroidNotificationDetails androidPlatformChannelSpecifics =
-      AndroidNotificationDetails(
-    'high_importance_channel', // Channel ID
-    'High Importance Notifications', // Channel Name
-    importance: Importance.high,
-    priority: Priority.high,
-  );
-
-  const NotificationDetails platformChannelSpecifics =
-      NotificationDetails(android: androidPlatformChannelSpecifics);
-
-  await flutterLocalNotificationsPlugin.show(
-    0, // Notification ID
-    message.notification?.title ?? "No Title",
-    message.notification?.body ?? "No Body",
-    platformChannelSpecifics,
-  );
 }
 
 final UserController userController = Get.put(UserController());
@@ -179,38 +82,6 @@ Future<bool> checkIfUserIsLoggedIn() async {
   return false;
 }
 
-void _handleDeepLink(Uri? uri) async {
-  if (uri != null) {
-    String? productId = uri.queryParameters['productId'];
-    String? shopId = uri.queryParameters['shopId'];
-
-    bool isLoggedIn = await checkIfUserIsLoggedIn();
-
-    if (productId != null) {
-      if (isLoggedIn) {
-        Get.toNamed('/product', arguments: {'id': productId});
-      } else {
-        Get.toNamed('/login',
-            arguments: {'redirect': '/product?id=$productId'});
-      }
-    } else if (shopId != null) {
-      if (isLoggedIn) {
-        Get.toNamed('/shop', arguments: {'id': shopId});
-      } else {
-        Get.toNamed('/login', arguments: {'redirect': '/shop?id=$shopId'});
-      }
-    }
-  }
-}
-
-// void initDeepLinkListener() {
-//   uriLinkStream.listen((Uri? uri) {
-//     if (uri != null) {
-//       _handleDeepLink(uri);
-//     }
-//   });
-// }
-
 class MyApp extends StatelessWidget {
   static FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   static FirebaseAnalyticsObserver observer =
@@ -229,7 +100,7 @@ class MyApp extends StatelessWidget {
       navigatorObservers: [observer],
       theme: ThemeData(
         primaryColor: Colors.black,
-        textTheme: GoogleFonts.geologicaTextTheme(),
+        textTheme: GoogleFonts.interTextTheme(),
       ),
       home: Stack(
         children: [
@@ -244,7 +115,7 @@ class MyApp extends StatelessWidget {
                   future: checkForUpdate(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Scaffold(
+                      return const Scaffold(
                         backgroundColor: Colors.white,
                         body: Center(
                           child: CircularProgressIndicator(

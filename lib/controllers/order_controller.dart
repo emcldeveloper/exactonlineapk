@@ -81,6 +81,7 @@ class OrdersController extends GetxController {
     try {
       var response = await dio.patch("/orders/$id",
           data: payload ?? {},
+        
           options: Options(headers: {
             "Authorization":
                 "Bearer ${await SharedPreferencesUtil.getAccessToken()}"

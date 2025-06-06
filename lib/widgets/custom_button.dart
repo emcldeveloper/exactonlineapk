@@ -21,7 +21,8 @@ Widget customButton({
         color: buttonColor ?? Colors.black,
       ),
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: vertical ?? 18.0),
+        padding:
+            EdgeInsets.symmetric(vertical: vertical ?? 18.0, horizontal: 20),
         child: loading
             ? Center(
                 child: Container(

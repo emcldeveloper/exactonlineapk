@@ -1,4 +1,4 @@
-package com.exactmanpower.eOnline
+package com.exactonline.exactonline
 
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService

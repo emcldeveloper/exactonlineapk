@@ -126,7 +126,7 @@ class _ProductPageState extends State<ProductPage> {
 
     const String appLink = "https://api.exactonline.co.tz/open-app/";
     const String playStoreLink =
-        "https://play.google.com/store/apps/details?id=com.exactmanpower.eOnline";
+        "https://play.google.com/store/apps/details?id=com.exactonline.exactonline";
     const String appStoreLink = "https://apps.apple.com/app/idYOUR_APP_ID";
 
     String productId = widget.productData['id'];
@@ -419,7 +419,6 @@ class _ProductPageState extends State<ProductPage> {
                                         ),
                                       ),
                                     )
-                               
                                 ],
                               ),
                             ),

@@ -29,8 +29,7 @@ class MessageController extends GetxController {
       );
       var data = response.data["body"];
       return data;
-    } on DioException {
-    }
+    } on DioException {}
   }
 
   Future getTopicMessages({topicId}) async {
@@ -44,14 +43,13 @@ class MessageController extends GetxController {
       );
       var data = response.data["body"];
       return data;
-    } on DioException {
-    }
+    } on DioException {}
   }
 
-  Future updateShopMessages({shopId}) async {
+  Future updateShopMessages({shopId, chatId}) async {
     try {
       var response = await dio.patch(
-        "/messages/mark-as-read/shop/$shopId",
+        "/messages/mark-as-read/shop/$shopId/?ChatId=$chatId",
         data: {},
         options: Options(headers: {
           "Authorization":
@@ -60,14 +58,13 @@ class MessageController extends GetxController {
       );
       var data = response.data["body"];
       return data;
-    } on DioException {
-    }
+    } on DioException {}
   }
 
-  Future updateUserMessages({userId}) async {
+  Future updateUserMessages({userId, chatId}) async {
     try {
       var response = await dio.patch(
-        "/messages/mark-as-read/user/$userId",
+        "/messages/mark-as-read/user/$userId?ChatId=$chatId",
         data: {},
         options: Options(headers: {
           "Authorization":
@@ -76,8 +73,7 @@ class MessageController extends GetxController {
       );
       var data = response.data["body"];
       return data;
-    } on DioException {
-    }
+    } on DioException {}
   }
 
   Stream<List<Message>> getProductMessages({chatId, productId}) {

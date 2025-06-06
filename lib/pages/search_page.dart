@@ -32,7 +32,7 @@ class _SearchPageState extends State<SearchPage> {
   Rx<List> products = Rx<List>([]);
 
   @override
-  void initState() {    
+  void initState() {
     trackScreenView("SearchPage");
     // TODO: implement initState
     CategoriesController()
@@ -206,6 +206,8 @@ class _SearchPageState extends State<SearchPage> {
                                             spacer(),
                                             ParagraphText(
                                               categories.value[index]['name'],
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
                                               fontWeight: FontWeight.w400,
                                               fontSize: 12.0,
                                             ),

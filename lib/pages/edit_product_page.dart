@@ -1,16 +1,11 @@
 import 'dart:io';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/categories_controller.dart';
-import 'package:e_online/controllers/product_color_controller.dart';
 import 'package:e_online/controllers/product_controller.dart';
-import 'package:e_online/controllers/product_image_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
-import 'package:e_online/pages/home_page.dart';
 import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/utils/snackbars.dart';
 import 'package:e_online/widgets/custom_button.dart';
-import 'package:e_online/widgets/custom_loader.dart';
-import 'package:e_online/widgets/editimage.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/select_form.dart';
@@ -20,7 +15,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:dio/dio.dart' as dio;

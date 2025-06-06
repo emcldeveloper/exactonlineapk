@@ -12,7 +12,8 @@ Widget noData() {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-                height: 200, child: Image.asset("assets/images/nodata.png")),
+                height: 200,
+                child: Image.asset("assets/icons/searchicon.avif")),
             HeadingText("No Data Available"),
             Text(
               "Once data is available, it will be displayed here.",

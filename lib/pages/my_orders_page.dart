@@ -27,7 +27,7 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
   bool _isLoading = true;
   bool _isLoadingMore = false;
   bool _hasMore = true;
-  var status = "IN PROGRESS".obs;
+  var status = "NEW ORDER".obs;
 
   @override
   void initState() {
@@ -104,7 +104,7 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 5,
       child: Scaffold(
         backgroundColor: mainColor,
         appBar: AppBar(
@@ -139,33 +139,41 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
             unselectedLabelColor: Colors.grey,
             labelColor: Colors.black,
             indicatorColor: Colors.black,
-            labelStyle: GoogleFonts.geologica(
+            labelStyle: GoogleFonts.inter(
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
-            unselectedLabelStyle: GoogleFonts.geologica(
+            unselectedLabelStyle: GoogleFonts.inter(
               fontSize: 16,
               fontWeight: FontWeight.normal,
             ),
             onTap: (index) {
               // Update status based on tab selection
               switch (index) {
-                case 1: // Pending tab
+                case 0: // Pending tab
                   status.value = "NEW ORDER";
                   break;
-                case 0: // Active tab
+                case 1: // Active tab
                   status.value = "IN PROGRESS";
                   break;
                 case 2: // Delivered tab
                   status.value = "CONFIRMED";
                   break;
+                case 3: // Delivered tab
+                  status.value = "DELIVERED";
+                  break;
+                case 4: // Delivered tab
+                  status.value = "CANCELED";
+                  break;
               }
               _refreshOrders(); // Fetch orders with new status
             },
             tabs: const [
-              Tab(text: "In Progress"),
               Tab(text: "New Orders"),
+              Tab(text: "In Progress"),
               Tab(text: "Confirmed Orders"),
+              Tab(text: "Delivered Orders"),
+              Tab(text: "Canceled Orders"),
             ],
           ),
         ),

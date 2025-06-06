@@ -4,6 +4,7 @@ import 'package:e_online/controllers/order_controller.dart';
 import 'package:e_online/controllers/ordered_products_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/conversation_page.dart';
+import 'package:e_online/utils/constants.dart';
 import 'package:e_online/utils/convert_to_money_format.dart';
 import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/custom_button.dart';
@@ -17,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:timeline_list/timeline_list.dart';
 
 class CustomerOrderViewPage extends StatefulWidget {
   final Map<String, dynamic> order;
@@ -90,6 +92,8 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
           }
 
           List orderedProducts = snapshot.requireData;
+          print("🅰️");
+          print(orderedProducts);
           Map<String, List<dynamic>> groupedOrders =
               groupByShop(orderedProducts);
 
@@ -102,13 +106,6 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                   List<dynamic> products = entry.value;
                   String shopName = products.first["Product"]["Shop"]["name"];
                   String shopPhone = products.first["Product"]["Shop"]["phone"];
-
-                  double totalPrice = products
-                      .map((item) =>
-                          double.tryParse(
-                              item["Product"]["sellingPrice"] ?? "0") ??
-                          0)
-                      .fold(0.0, (prev, item) => prev + item);
 
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,6 +121,7 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                             .map((item) => HorizontalProductCard(
                                   data: item,
                                   isOrder: true,
+                                  order: widget.order,
                                   onRefresh: () {
                                     setState(() {});
                                   },
@@ -132,19 +130,123 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                       ),
                       spacer(),
 
-                      /// Total Price for the Shop
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          ParagraphText("Order Price"),
-                          ParagraphText(
-                              "TZS ${toMoneyFormmat(widget.order["totalPrice"].toString())}",
-                              fontWeight: FontWeight.bold,
-                              fontSize: 17),
-                        ],
-                      ),
-                      spacer(),
+                      /// payment summary
+                      Builder(builder: (context) {
+                        num subtotal = orderedProducts.fold<num>(
+                          0,
+                          (prev, item) =>
+                              prev +
+                              double.parse(item["Product"]["sellingPrice"]),
+                        );
+                        num orderPrice = widget.order["totalPrice"];
+                        num discount = subtotal - orderPrice;
 
+                        return Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                ParagraphText("Sub Total"),
+                                ParagraphText(
+                                    "TZS ${toMoneyFormmat(subtotal.toString())}",
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                ParagraphText("Tax"),
+                                ParagraphText("TZS 0",
+                                    fontWeight: FontWeight.bold, fontSize: 15),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                ParagraphText("Discount"),
+                                ParagraphText(
+                                    "TZS ${toMoneyFormmat(discount.toString())}",
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15),
+                              ],
+                            ),
+                            spacer(),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                ParagraphText("Total Cost"),
+                                ParagraphText(
+                                    "TZS ${toMoneyFormmat(orderPrice.toString())}",
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15),
+                              ],
+                            ),
+                          ],
+                        );
+                      }),
+                      if (widget.order["status"] != "CANCELED")
+                        const SizedBox(
+                          height: 20,
+                        ),
+                      if (widget.order["status"] != "CANCELED")
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            HeadingText("Order status", fontSize: 17),
+                            Builder(builder: (context) {
+                              var currentStep = steps.firstWhere((element) =>
+                                  element["value"] == widget.order["status"]);
+                              return Timeline(
+                                properties: const TimelineProperties(
+                                    iconSize: 20,
+                                    iconAlignment: MarkerIconAlignment.center),
+                                children: steps
+                                    .map((item) => Marker(
+                                        icon: ClipOval(
+                                          child: Container(
+                                              color: currentStep["index"] >=
+                                                      item["index"]
+                                                  ? Colors.green
+                                                  : Colors.grey[400],
+                                              child: Icon(
+                                                Icons.check,
+                                                color: currentStep["index"] >=
+                                                        item["index"]
+                                                    ? Colors.white
+                                                    : Colors.black,
+                                                size: 15,
+                                              )),
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            HeadingText(item["step"],
+                                                fontSize: 14),
+                                            ParagraphText(item["subtitle"],
+                                                color: Colors.grey[600])
+                                          ],
+                                        )))
+                                    .toList(),
+                              );
+                            }),
+                          ],
+                        ),
+
+                      spacer2(),
+                      if (widget.order["status"] == "CANCELED")
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.red.withAlpha(30),
+                              border:
+                                  Border.all(color: Colors.red.withAlpha(60))),
+                          child: Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: ParagraphText("This order is canceled")),
+                        ),
                       if (widget.order["status"] == "CONFIRMED")
                         Container(
                           width: double.infinity,
@@ -161,6 +263,19 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                       const SizedBox(
                         height: 5,
                       ),
+                      if (widget.order["status"] == "DELIVERED")
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.green.withAlpha(30),
+                              border: Border.all(
+                                  color: Colors.green.withAlpha(60))),
+                          child: Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: ParagraphText(
+                                  "Order is delivered successfully, thank you for using Exact Online")),
+                        ),
                       if (widget.order["status"] == "CONFIRMED")
                         Container(
                           width: double.infinity,
@@ -255,57 +370,89 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                         ),
                       spacer1(),
 
-                      /// Call & Chat Buttons
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Expanded(
-                            child: customButton(
-                              buttonColor: Colors.grey[200],
-                              textColor: Colors.black,
-                              onTap: () {
-                                analytics.logEvent(
-                                  name: 'chat_seller',
-                                  parameters: {
-                                    'seller_id': shopId,
-                                    'shopName': shopName,
-                                    'shopPhone': shopPhone,
-                                    'from_page': 'CustomerOrderViewPage'
-                                  },
-                                );
-                                ChatController().addChat({
-                                  "ShopId": shopId,
-                                  "OrderId": widget.order["id"],
-                                  "UserId": userController.user.value["id"]
-                                }).then((res) {
-                                  Get.to(() => ConversationPage(res));
-                                });
-                              },
-                              text: "Message Seller",
+                      // Call & Chat Buttons
+                      if (!["CANCELED"].contains(widget.order["status"]))
+                        Row(
+                          spacing: 5,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: customButton(
+                                onTap: () {
+                                  analytics.logEvent(
+                                    name: 'call_seller',
+                                    parameters: {
+                                      'seller_id': shopId,
+                                      'shopName': shopName,
+                                      'shopPhone': shopPhone,
+                                      'from_page': 'CustomerOrderViewPage'
+                                    },
+                                  );
+                                  launchUrl(
+                                      Uri(scheme: "tel", path: shopPhone));
+                                },
+                                text: "Call",
+                                buttonColor: Colors.black12.withAlpha(10),
+                                textColor: Colors.black,
+                              ),
                             ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: customButton(
-                              onTap: () {
-                                analytics.logEvent(
-                                  name: 'call_seller',
-                                  parameters: {
-                                    'seller_id': shopId,
-                                    'shopName': shopName,
-                                    'shopPhone': shopPhone,
-                                    'from_page': 'CustomerOrderViewPage'
-                                  },
-                                );
-                                launchUrl(Uri(scheme: "tel", path: shopPhone));
-                              },
-                              text: "Call Seller",
+                            Expanded(
+                              child: customButton(
+                                onTap: () {
+                                  analytics.logEvent(
+                                    name: 'chat_seller',
+                                    parameters: {
+                                      'seller_id': shopId,
+                                      'shopName': shopName,
+                                      'shopPhone': shopPhone,
+                                      'from_page': 'CustomerOrderViewPage'
+                                    },
+                                  );
+                                  ChatController().addChat({
+                                    "ShopId": shopId,
+                                    "OrderId": widget.order["id"],
+                                    "UserId": userController.user.value["id"]
+                                  }).then((res) {
+                                    Get.to(() => ConversationPage(res));
+                                  });
+                                },
+                                text: "Message",
+                                buttonColor: Colors.black87,
+                                textColor: Colors.white,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
+                            if (widget.order["status"] == "NEW ORDER")
+                              customButton(
+                                onTap: () {
+                                  OrdersController().editOrder(
+                                      widget.order["id"],
+                                      {"status": "CANCELED"}).then((res) {
+                                    setState(() {
+                                      widget.order["status"] = "CANCELED";
+                                    });
+                                  });
+                                },
+                                text: "Cancel order",
+                                buttonColor: primaryColor,
+                                textColor: Colors.red,
+                              ),
+                            if (widget.order["status"] == "DELIVERED")
+                              customButton(
+                                onTap: () {
+                                  OrdersController().editOrder(
+                                      widget.order["id"],
+                                      {"status": "CLOSED"}).then((res) {
+                                    setState(() {
+                                      widget.order["status"] = "CLOSED";
+                                    });
+                                  });
+                                },
+                                text: "Confirm Delivery",
+                                buttonColor: Colors.amber,
+                                textColor: Colors.black,
+                              ),
+                          ],
+                        ),
                       spacer(),
                       spacer(),
                       spacer3(),

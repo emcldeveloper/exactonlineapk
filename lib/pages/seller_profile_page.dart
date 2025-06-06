@@ -224,33 +224,6 @@ class _SellerProfilePageState extends State<SellerProfilePage> {
               },
             ),
             const SizedBox(width: 8),
-            InkWell(
-              onTap: () async {
-                await analytics.logEvent(
-                  name: 'chat_seller',
-                  parameters: {
-                    'seller_id': widget.shopId,
-                    'shopName': shopDetails.value['name'],
-                    'shopPhone': shopDetails.value['phone'],
-                    'from_page': 'SellerProfilePage'
-                  },
-                );
-
-                ChatController().addChat({
-                  "ShopId": widget.shopId,
-                  "UserId": userId,
-                }).then((res) {
-                  print(res);
-                  Get.to(() => ConversationPage(res));
-                });
-              },
-              child: Icon(
-                Icons.chat_bubble_outline,
-                color: Colors.black,
-                size: 22.0,
-              ),
-            ),
-            const SizedBox(width: 8),
             Obx(() => InkWell(
                   onTap: _shareShopProfile,
                   child: isSharing.value

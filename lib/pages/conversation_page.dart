@@ -37,7 +37,17 @@ class _ConversationPageState extends State<ConversationPage> {
     super.initState();
     trackScreenView("ConversationPage");
     messages = RxList([]);
-
+    if (widget.isUser) {
+      //clear unread messages
+      messageControllerInstance.updateUserMessages(
+          userId: widget.topic["Chat"]["UserId"],
+          chatId: widget.topic["ChatId"]);
+    } else {
+      //clear unread messages
+      messageControllerInstance.updateShopMessages(
+          shopId: widget.topic["Chat"]["ShopId"],
+          chatId: widget.topic["ChatId"]);
+    }
     // Fetch initial messages
     messageControllerInstance
         .getTopicMessages(topicId: widget.topic["id"])

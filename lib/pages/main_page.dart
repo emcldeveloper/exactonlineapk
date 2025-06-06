@@ -46,9 +46,9 @@ class _MainPageState extends State<MainPage> {
         showSelectedLabels: true,
         currentIndex: activeTab,
         showUnselectedLabels: true,
-        unselectedLabelStyle: GoogleFonts.geologica(
+        unselectedLabelStyle: GoogleFonts.inter(
             fontSize: 11, color: Color.fromARGB(255, 194, 192, 192)),
-        selectedLabelStyle: GoogleFonts.geologica(fontSize: 11),
+        selectedLabelStyle: GoogleFonts.inter(fontSize: 11),
         type: BottomNavigationBarType.fixed,
         onTap: (value) {
           setState(() {

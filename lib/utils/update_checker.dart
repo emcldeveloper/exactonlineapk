@@ -25,7 +25,7 @@ Future<Map<String, dynamic>> checkForUpdate() async {
 
   final appStoreUrl = "https://apps.apple.com/app/your-app-id";
   final playStoreUrl =
-      "https://play.google.com/store/apps/details?id=com.exactmanpower.eOnline";
+      "https://play.google.com/store/apps/details?id=com.exactonline.exactonline";
 
   return {
     "currentVersion": currentVersion,

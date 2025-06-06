@@ -16,12 +16,15 @@ Widget userChatCard(Map<String, dynamic> chat) {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         chat["Shop"]?["shopImage"] != null
-            ? Container(
-                height: 30,
-                width: 30,
-                color: getHexColor(
-                    chat["Shop"]["name"].toString()[0].toLowerCase()),
-                child: CachedNetworkImage(imageUrl: chat["Shop"]["shopImage"]))
+            ? ClipOval(
+                child: Container(
+                    height: 50,
+                    width: 50,
+                    color: getHexColor(
+                        chat["Shop"]["name"].toString()[0].toLowerCase()),
+                    child: CachedNetworkImage(
+                        imageUrl: chat["Shop"]["shopImage"])),
+              )
             : ClipOval(
                 child: Container(
                     height: 50,

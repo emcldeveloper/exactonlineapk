@@ -53,12 +53,15 @@ class _ChatPageState extends State<ChatPage> {
                         children: chats.map((chat) {
                           return GestureDetector(
                             onTap: () async {
-                              Get.bottomSheet(ClipRRect(
+                              await Get.bottomSheet(ClipRRect(
                                 borderRadius: const BorderRadius.only(
                                     topLeft: Radius.circular(10),
                                     topRight: Radius.circular(10)),
                                 child: TopicsPage(
                                   chat: chat,
+                                  refreshPage: () {
+                                    setState(() {});
+                                  },
                                 ),
                               ));
                             },

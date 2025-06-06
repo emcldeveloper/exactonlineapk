@@ -329,7 +329,7 @@ class _HomePageState extends State<HomePage>
                                           horizontal: 14, vertical: 3),
                                       child: Text(
                                         category["name"],
-                                        style: GoogleFonts.outfit(
+                                        style: GoogleFonts.inter(
                                             fontSize: 15,
                                             color: page.value ==
                                                     categories.value

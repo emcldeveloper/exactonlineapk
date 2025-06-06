@@ -17,9 +17,11 @@ class HorizontalProductCard extends StatefulWidget {
   final VoidCallback? onDelete;
   final Function? onRefresh;
   bool? isOrder;
+  Map<String, dynamic>? order;
   HorizontalProductCard({
     super.key,
     required this.data,
+    this.order,
     this.onRefresh,
     this.isOrder = false,
     this.onDelete,
@@ -144,14 +146,26 @@ class _HorizontalProductCardState extends State<HorizontalProductCard> {
             ),
           ),
           const SizedBox(width: 30),
-          InkWell(
-            onTap: _showConfirmationPopup,
-            child: Icon(
-              Icons.close,
-              color: mutedTextColor,
-              size: 16.0,
+          if (widget.isOrder == false)
+            InkWell(
+              onTap: _showConfirmationPopup,
+              child: Icon(
+                Icons.close,
+                color: mutedTextColor,
+                size: 16.0,
+              ),
             ),
-          ),
+          if (widget.isOrder == true)
+            if (widget.order != null)
+              if (widget.order!["status"] == "NEW ORDER")
+                InkWell(
+                  onTap: _showConfirmationPopup,
+                  child: Icon(
+                    Icons.close,
+                    color: mutedTextColor,
+                    size: 16.0,
+                  ),
+                ),
         ],
       ),
     );

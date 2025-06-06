@@ -73,13 +73,16 @@ class _ShopChatPageState extends State<ShopChatPage> {
                           return GestureDetector(
                             onTap: () async {
                               // print(chat);
-                              Get.bottomSheet(ClipRRect(
+                              await Get.bottomSheet(ClipRRect(
                                 borderRadius: const BorderRadius.only(
                                     topLeft: Radius.circular(10),
                                     topRight: Radius.circular(10)),
                                 child: TopicsPage(
                                   chat: chat,
                                   from: "shop",
+                                  refreshPage: () {
+                                    setState(() {});
+                                  },
                                 ),
                               ));
                             },

@@ -196,7 +196,7 @@ class _AllServicesState extends State<AllServices>
                     const EdgeInsets.symmetric(horizontal: 14, vertical: 3),
                 child: Text(
                   category["name"],
-                  style: GoogleFonts.outfit(
+                  style: GoogleFonts.inter(
                     fontSize: 15,
                     color: currentTabIndex.value == index
                         ? Colors.white

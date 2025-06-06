@@ -1,12 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:e_online/constants/colors.dart';
-import 'package:e_online/pages/customer_order_view_page.dart';
+import 'package:e_online/utils/get_hex_color.dart';
+import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
+// ignore: must_be_immutable
 class OrderCard extends StatelessWidget {
   final Map<String, dynamic> data;
 
@@ -22,14 +23,36 @@ class OrderCard extends StatelessWidget {
           Expanded(
             child: Row(
               children: [
-                Badge(
-                  child: const Icon(Bootstrap.cart),
-                  backgroundColor: primary,
-                  label: const Icon(
-                    Icons.check,
-                    color: Colors.white,
-                    size: 7,
-                  ),
+                ClipOval(
+                  child: (!isUser
+                              ? data['User']["image"]
+                              : data["Shop"]["shopImage"]) !=
+                          null
+                      ? CachedNetworkImage(
+                          imageUrl: !isUser
+                              ? data['User']["image"]
+                              : data["Shop"]["shopImage"],
+                          height: 80,
+                          width: 80,
+                          fit: BoxFit.cover,
+                        )
+                      : ClipOval(
+                          child: Container(
+                              height: 80,
+                              width: 80,
+                              color: getHexColor((!isUser
+                                          ? data['User']["name"]
+                                          : data["Shop"]["name"])
+                                      .toString()[0]
+                                      .toLowerCase())
+                                  .withAlpha(100),
+                              child: Center(
+                                  child: HeadingText((!isUser
+                                          ? data['User']["name"]
+                                          : data["Shop"]["name"])
+                                      .toString()
+                                      .split(" ")[0][0]))),
+                        ),
                 ),
                 const SizedBox(
                   width: 20,
