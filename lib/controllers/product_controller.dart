@@ -51,7 +51,6 @@ class ProductController extends GetxController {
   }
 
   Future<List> getProducts({page, limit, keyword, category}) async {
-    // print(shopId);
     var response = await dio.get(
         "/products/?page=${page ?? 1}&limit=${limit ?? 10}&keyword=${keyword ?? ""}&category=${category ?? "All"}",
         options: Options(headers: {

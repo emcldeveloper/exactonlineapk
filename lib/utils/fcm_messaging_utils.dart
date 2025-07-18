@@ -1,3 +1,4 @@
+import 'package:e_online/controllers/order_controller.dart';
 import 'package:e_online/pages/customer_order_view_page.dart';
 import 'package:e_online/pages/seller_order_view_page.dart';
 import 'package:e_online/utils/local_notifications_util.dart';
@@ -65,11 +66,18 @@ Future<void> setupFirebaseMessaging() async {
   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
     var data = message.data;
     if (data["type"] == "order") {
-      if (data["to"] == "user") {
-        Get.to(() => CustomerOrderViewPage(order: data["order"]));
-      } else {
-        Get.to(() => SellerOrderViewPage(order: data["order"]));
-      }
+      OrdersController().getOrder(id: data["orderId"]).then((order) {
+        if (order != null) {
+          if (data["to"] == "user") {
+            Get.to(() => CustomerOrderViewPage(order: order));
+          } else {
+            Get.to(() => SellerOrderViewPage(order: order));
+          }
+        } else {
+          print("Order not found");
+          return;
+        }
+      });
     }
     print('Notification clicked: ${message.data}');
   });

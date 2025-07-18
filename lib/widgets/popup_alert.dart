@@ -56,21 +56,24 @@ class PopupAlert extends StatelessWidget {
           spacer1(),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            spacing: 5,
             children: [
-              customButton(
-                width: 120,
-                vertical: 10,
-                onTap: button1Action,
-                text: button1Text,
-                textColor: Colors.black,
-                buttonColor: primaryColor,
+              Expanded(
+                child: customButton(
+                  vertical: 10,
+                  onTap: button1Action,
+                  text: button1Text,
+                  textColor: Colors.black,
+                  buttonColor: primaryColor,
+                ),
               ),
-              customButton(
-                width: 120,
-                vertical: 10,
-                onTap: button2Action,
-                text: button2Text,
-                buttonColor: secondaryColor,
+              Expanded(
+                child: customButton(
+                  vertical: 10,
+                  onTap: button2Action,
+                  text: button2Text,
+                  buttonColor: secondaryColor,
+                ),
               ),
             ],
           ),

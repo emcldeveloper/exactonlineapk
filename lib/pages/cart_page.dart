@@ -1,11 +1,10 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/controllers/cart_products_controller.dart';
-import 'package:e_online/controllers/cart_products_controller.dart';
+import 'package:e_online/controllers/cart_services_controller.dart';
 import 'package:e_online/controllers/order_controller.dart';
 import 'package:e_online/controllers/ordered_products_controller.dart';
 import 'package:e_online/controllers/users_controllers.dart';
-import 'package:e_online/main.dart';
 import 'package:e_online/main.dart';
 import 'package:e_online/pages/main_page.dart';
 import 'package:e_online/pages/my_orders_page.dart';
@@ -14,6 +13,7 @@ import 'package:e_online/utils/convert_to_money_format.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/horizontal_product_card.dart';
+import 'package:e_online/widgets/horizontal_service_card.dart';
 import 'package:e_online/widgets/no_data.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/popup_alert.dart';
@@ -34,6 +34,8 @@ class _CartPageState extends State<CartPage> {
   FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   CartProductController cartProductController =
       Get.put(CartProductController());
+  CartServicesController cartServicesController =
+      Get.put(CartServicesController());
   var loading = false.obs;
   var status = "IN PROGRESS".obs;
   @override
@@ -70,7 +72,10 @@ class _CartPageState extends State<CartPage> {
           ),
         ),
         body: FutureBuilder(
-            future: CartProductController().getOnCartproducts(),
+            future: Future.wait([
+              CartProductController().getOnCartproducts(),
+              cartServicesController.getOnCartServices(),
+            ]),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(
@@ -79,9 +84,15 @@ class _CartPageState extends State<CartPage> {
                   ),
                 );
               }
-              List cartProducts = snapshot.requireData;
-              print(cartProducts);
-              return cartProducts.isEmpty
+
+              List cartProducts = snapshot.requireData[0] ?? [];
+              List cartServices = snapshot.requireData[1] ?? [];
+              List allCartItems = [...cartProducts, ...cartServices];
+
+              print("Cart products: $cartProducts");
+              print("Cart services: $cartServices");
+
+              return allCartItems.isEmpty
                   ? noData()
                   : SingleChildScrollView(
                       child: Padding(
@@ -90,24 +101,53 @@ class _CartPageState extends State<CartPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             spacer(),
-                            HeadingText("Selected products"),
+                            HeadingText("Selected items"),
                             ParagraphText(
-                                "You have selected ${cartProducts.length} products",
+                                "You have selected ${allCartItems.length} items (${cartProducts.length} products, ${cartServices.length} services)",
                                 color: mutedTextColor),
                             spacer(),
-                            Column(
-                              children: cartProducts.map((item) {
-                                return HorizontalProductCard(
-                                  data: item,
-                                  isOrder: false,
-                                  onRefresh: () {
-                                    setState(() {});
-                                    cartProductController.getOnCartproducts();
-                                  },
-                                );
-                              }).toList(),
-                            ),
-                            spacer(),
+
+                            // Products Section
+                            if (cartProducts.isNotEmpty) ...[
+                              ParagraphText("Products",
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                              const SizedBox(height: 8),
+                              Column(
+                                children: cartProducts.map((item) {
+                                  return HorizontalProductCard(
+                                    data: item,
+                                    isOrder: false,
+                                    onRefresh: () {
+                                      setState(() {});
+                                      cartProductController.getOnCartproducts();
+                                    },
+                                  );
+                                }).toList(),
+                              ),
+                              spacer(),
+                            ],
+
+                            // Services Section
+                            if (cartServices.isNotEmpty) ...[
+                              ParagraphText("Services",
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                              const SizedBox(height: 8),
+                              Column(
+                                children: cartServices.map((item) {
+                                  return HorizontalServiceCard(
+                                    data: item,
+                                    isOrder: false,
+                                    onRefresh: () {
+                                      setState(() {});
+                                      cartServicesController
+                                          .getOnCartServices();
+                                    },
+                                  );
+                                }).toList(),
+                              ),
+                              spacer(),
+                            ],
+
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -115,13 +155,26 @@ class _CartPageState extends State<CartPage> {
                                 ParagraphText("Total Price"),
                                 Builder(builder: (context) {
                                   double totalPrice = 0.0;
+
+                                  // Add products price
                                   if (cartProducts.isNotEmpty) {
-                                    totalPrice = cartProducts
+                                    totalPrice += cartProducts
                                         .map((item) => double.parse(
-                                            item["Product"]["sellingPrice"]))
+                                            item["Product"]["sellingPrice"]
+                                                .toString()))
                                         .toList()
                                         .reduce((prev, item) => prev + item);
                                   }
+
+                                  // Add services price
+                                  if (cartServices.isNotEmpty) {
+                                    totalPrice += cartServices
+                                        .map((item) => double.parse(
+                                            item["price"]?.toString() ?? "0"))
+                                        .toList()
+                                        .reduce((prev, item) => prev + item);
+                                  }
+
                                   return ParagraphText(
                                       "TZS ${toMoneyFormmat(totalPrice.toString())}",
                                       fontWeight: FontWeight.bold,
@@ -160,7 +213,7 @@ class _CartPageState extends State<CartPage> {
                                       ),
                                       Expanded(
                                         child: ParagraphText(
-                                            "I want to negotiate this price first"),
+                                            "I want to negotiate prices for negotiable items first"),
                                       )
                                     ],
                                   ),
@@ -175,116 +228,159 @@ class _CartPageState extends State<CartPage> {
                                     // Set loading state
                                     loading.value = true;
 
-                                    // Use Set<String> instead of dynamic Set for shop IDs
-                                    Set<String> shops = {};
-                                    for (var cartProduct in cartProducts) {
-                                      shops.add(cartProduct["Product"]["Shop"]
-                                              ["id"]
-                                          .toString());
+                                    // Calculate total for analytics
+                                    double totalCartValue = 0.0;
+
+                                    // Add products price
+                                    if (cartProducts.isNotEmpty) {
+                                      totalCartValue +=
+                                          cartProducts.fold<double>(
+                                        0,
+                                        (prev, item) =>
+                                            prev +
+                                            double.parse(item["Product"]
+                                                    ["sellingPrice"]
+                                                .toString()),
+                                      );
                                     }
-                                    // analytics for placing order
+
+                                    // Add services price
+                                    if (cartServices.isNotEmpty) {
+                                      totalCartValue +=
+                                          cartServices.fold<double>(
+                                        0,
+                                        (prev, item) =>
+                                            prev +
+                                            double.parse(
+                                                item["price"]?.toString() ??
+                                                    "0"),
+                                      );
+                                    }
+
+                                    // Analytics for placing order
                                     await analytics.logEvent(
                                       name: 'submit_order',
                                       parameters: {
                                         'order_id': DateTime.now()
                                             .millisecondsSinceEpoch
-                                            .toString(), // Generate a unique order ID
-                                        'total_price': cartProducts.fold<num>(
-                                          0,
-                                          (prev, item) =>
-                                              prev +
-                                              double.parse(item["Product"]
-                                                      ["sellingPrice"]
-                                                  .toString()),
-                                        ), // Ensure it's a number
-                                        'num_items': cartProducts.length,
+                                            .toString(),
+                                        'total_price': totalCartValue,
+                                        'num_items': allCartItems.length,
+                                        'num_products': cartProducts.length,
+                                        'num_services': cartServices.length,
                                       },
                                     );
 
-                                    // Create list of futures for order creation
-                                    List<Future<void>> orderPromises =
-                                        shops.map((shopId) async {
-                                      // Create order for each shop
-                                      List shopProducts = cartProducts
-                                          .where((element) =>
-                                              element["Product"]["Shop"]["id"]
-                                                  .toString() ==
-                                              shopId)
-                                          .toList();
-                                      final orderResponse =
-                                          await OrdersController().addOrder({
-                                        "status": status.value,
-                                        "totalPrice": shopProducts.fold(
-                                            0,
-                                            (prev, item) =>
-                                                prev +
-                                                int.parse(item["Product"]
-                                                        ["sellingPrice"]
-                                                    .toString())),
-                                        "UserId": userController
-                                            .user.value["id"]
-                                            .toString(),
-                                        "ShopId": shopId,
-                                      });
+                                    // Process only products for now (services ordering can be enhanced later)
+                                    if (cartProducts.isNotEmpty) {
+                                      // Use Set<String> for shop IDs
+                                      Set<String> shops = {};
+                                      for (var cartProduct in cartProducts) {
+                                        shops.add(cartProduct["Product"]["Shop"]
+                                                ["id"]
+                                            .toString());
+                                      }
 
-                                      // Create ordered products futures
-                                      List<Future> orderedProductPromises =
-                                          shopProducts
-                                              .map((cartProduct) =>
-                                                  OrderedProductController()
-                                                      .addOrderedProduct({
-                                                    "OrderId":
-                                                        orderResponse["id"]
-                                                            .toString(),
-                                                    "ProductId":
-                                                        cartProduct["Product"]
-                                                                ["id"]
-                                                            .toString(),
-                                                  }))
+                                      // Create list of futures for order creation
+                                      List<Future<void>> orderPromises =
+                                          shops.map((shopId) async {
+                                        // Create order for each shop
+                                        List shopProducts = cartProducts
+                                            .where((element) =>
+                                                element["Product"]["Shop"]["id"]
+                                                    .toString() ==
+                                                shopId)
+                                            .toList();
+                                        final orderResponse =
+                                            await OrdersController().addOrder({
+                                          "status": status.value,
+                                          "totalPrice": shopProducts.fold(
+                                              0,
+                                              (prev, item) =>
+                                                  prev +
+                                                  int.parse(item["Product"]
+                                                          ["sellingPrice"]
+                                                      .toString())),
+                                          "UserId": userController
+                                              .user.value["id"]
+                                              .toString(),
+                                          "ShopId": shopId,
+                                        });
+
+                                        // Create ordered products futures
+                                        List<Future> orderedProductPromises =
+                                            shopProducts
+                                                .map((cartProduct) =>
+                                                    OrderedProductController()
+                                                        .addOrderedProduct({
+                                                      "OrderId":
+                                                          orderResponse["id"]
+                                                              .toString(),
+                                                      "ProductId":
+                                                          cartProduct["Product"]
+                                                                  ["id"]
+                                                              .toString(),
+                                                    }))
+                                                .toList();
+
+                                        // Wait for all ordered products to be added
+                                        await Future.wait(
+                                            orderedProductPromises);
+
+                                        // Create delete cart products futures
+                                        List<Future> deletePromises =
+                                            shopProducts
+                                                .map((cartProduct) =>
+                                                    CartProductController()
+                                                        .deleteCartProduct(
+                                                            cartProduct["id"]
+                                                                .toString()))
+                                                .toList();
+
+                                        // Wait for all cart products to be deleted
+                                        await Future.wait(deletePromises);
+                                      }).toList();
+
+                                      // Wait for all orders and their operations to complete
+                                      await Future.wait(orderPromises);
+                                    }
+
+                                    // Clear cart services (for now, just remove them from cart)
+                                    if (cartServices.isNotEmpty) {
+                                      List<Future> deleteServicePromises =
+                                          cartServices
+                                              .map((cartService) =>
+                                                  cartServicesController
+                                                      .deleteCartService(
+                                                          cartService["id"]
+                                                              .toString()))
                                               .toList();
-
-                                      // Wait for all ordered products to be added
-                                      await Future.wait(orderedProductPromises);
-
-                                      // Create delete cart products futures
-                                      List<Future> deletePromises = shopProducts
-                                          .map((cartProduct) =>
-                                              CartProductController()
-                                                  .deleteCartProduct(
-                                                      cartProduct["id"]
-                                                          .toString()))
-                                          .toList();
-
-                                      // Wait for all cart products to be deleted
-                                      await Future.wait(deletePromises);
-                                    }).toList();
-
-                                    // Wait for all orders and their operations to complete
-                                    await Future.wait(orderPromises);
+                                      await Future.wait(deleteServicePromises);
+                                    }
 
                                     // Reset loading state on success
                                     loading.value = false;
                                     cartProductController.getOnCartproducts();
+                                    cartServicesController.getOnCartServices();
                                     setState(() {});
-                                    // Optionally show success message
-                                    // Get.snackbar("Success", "Order placed successfully");
+
+                                    // Show success message
                                     showPopupAlert(
                                       context,
                                       iconAsset:
                                           "assets/images/successmark.png",
                                       heading: "Ordered Successfully",
-                                      text: "Your order is placed successfully",
+                                      text: cartServices.isNotEmpty
+                                          ? "Your product orders are placed successfully. Service requests have been sent to providers."
+                                          : "Your order is placed successfully",
                                       button1Text: "Go Back",
                                       button1Action: () {
-                                        Navigator.of(context)
-                                            .pop(); // Close the popup
-                                        Navigator.of(context)
-                                            .pop(); // Close the popup
+                                        Navigator.of(context).pop();
+                                        Navigator.of(context).pop();
                                       },
                                       button2Text: "View Orders",
                                       button2Action: () {
-                                        Navigator.of(context)
-                                            .pop(); // Close the first popup
+                                        Navigator.of(context).pop();
                                         Get.back();
                                         Get.back();
                                         Get.to(() => MyOrdersPage(
@@ -296,11 +392,11 @@ class _CartPageState extends State<CartPage> {
                                     // Handle errors
                                     loading.value = false;
                                     print("Error placing order: $e");
-                                    // Optionally show error message
-                                    // Get.snackbar("Error", "Failed to place order: $e");
+                                    Get.snackbar(
+                                        "Error", "Failed to place order: $e");
                                   }
                                 },
-                                text: "Proceed",
+                                text: "Place Order",
                               ),
                             ),
                             spacer3(),

@@ -109,7 +109,8 @@ class _SellerOrderViewPageState extends State<SellerOrderViewPage> {
                         0,
                         (prev, item) =>
                             prev +
-                            double.parse(item["Product"]["sellingPrice"]),
+                            double.parse(
+                                item["Product"]["sellingPrice"].toString()),
                       );
                       num orderPrice = widget.order["totalPrice"];
                       num discount = subtotal - orderPrice;
@@ -286,10 +287,11 @@ class _SellerOrderViewPageState extends State<SellerOrderViewPage> {
                             borderRadius: BorderRadius.circular(10),
                             color: Colors.red.withAlpha(30),
                             border:
-                                Border.all(color: Colors.red.withAlpha(60))),
+                                Border.all(color: Colors.red.withAlpha(40))),
                         child: Padding(
                             padding: const EdgeInsets.all(10),
-                            child: ParagraphText("This order is canceled")),
+                            child: ParagraphText(
+                                "🔔 Alert: This order has been cancelled.")),
                       ),
                     if (widget.order["status"] == "ORDERED")
                       Container(

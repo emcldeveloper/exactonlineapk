@@ -276,7 +276,7 @@ class _ProductPageState extends State<ProductPage> {
                       acc +
                       ((review as Map)['rating'] as num? ?? 0).toDouble());
 
-              return total / reviews.length;
+              return (total / reviews.length).toPrecision(1);
             }
 
             double ratings = calculateRating(product);

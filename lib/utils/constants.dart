@@ -12,9 +12,9 @@ List<Map<String, dynamic>> steps = [
     "index": 2
   },
   {
-    "step": "Confirmed",
+    "step": "Order Approval",
     "value": "CONFIRMED",
-    "subtitle": "Seller confirmed the order",
+    "subtitle": "Seller approved the order",
     "index": 3
   },
   {

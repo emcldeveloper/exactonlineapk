@@ -158,6 +158,7 @@ class _ProductCardState extends State<ProductCard> {
                       widget.data["Shop"]?["name"] ?? "",
                       fontSize: 12,
                       maxLines: 1,
+                      fontWeight: FontWeight.bold,
                       color: primary,
                     ),
                 ],

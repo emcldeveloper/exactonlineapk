@@ -136,6 +136,7 @@ class _ServiceCardState extends State<ServiceCard> {
                   ParagraphText(
                     widget.data["Shop"]?["name"] ?? "",
                     fontSize: 12,
+                    fontWeight: FontWeight.bold,
                     maxLines: 1,
                     color: primary,
                   ),

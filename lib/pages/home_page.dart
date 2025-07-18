@@ -20,6 +20,7 @@ import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/ads_carousel.dart';
 import 'package:e_online/widgets/cartIcon.dart';
 import 'package:e_online/widgets/heading_text.dart';
+import 'package:e_online/widgets/homeReels.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
@@ -286,67 +287,6 @@ class _HomePageState extends State<HomePage>
             leading: Container(),
             leadingWidth: 1.0,
             title: HeadingText("ExactOnline"),
-            bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(kToolbarHeight),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Obx(
-                  () => TabBar(
-                    controller: _tabController, // Use custom TabController
-                    tabAlignment: TabAlignment.start,
-                    dividerColor: const Color.fromARGB(255, 234, 234, 234),
-                    isScrollable: true,
-                    labelColor: Colors.white,
-                    unselectedLabelColor: Colors.black,
-                    labelStyle: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    unselectedLabelStyle: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.normal,
-                    ),
-
-                    indicatorSize: TabBarIndicatorSize.label,
-                    indicatorColor: Colors.transparent,
-                    padding: const EdgeInsets.symmetric(horizontal: 1),
-                    labelPadding: EdgeInsets.all(0),
-                    tabs: categories.value
-                        .map((category) => Tab(
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    left: category["name"] == "All" ? 16 : 5),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Container(
-                                    color: page.value ==
-                                            categories.value.indexOf(category)
-                                        ? primary
-                                        : Colors.grey[100],
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 14, vertical: 3),
-                                      child: Text(
-                                        category["name"],
-                                        style: GoogleFonts.inter(
-                                            fontSize: 15,
-                                            color: page.value ==
-                                                    categories.value
-                                                        .indexOf(category)
-                                                ? Colors.white
-                                                : Colors.black),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ))
-                        .toList(),
-                  ),
-                ),
-              ),
-            ),
             actions: [
               cartIcon(),
               const SizedBox(width: 8),
@@ -400,23 +340,111 @@ class _HomePageState extends State<HomePage>
               const SizedBox(width: 16),
             ],
           ),
-          body: categories.value.isEmpty
-              ? const Center(
-                  child: CircularProgressIndicator(color: Colors.black),
-                )
-              : TabBarView(
-                  controller: _tabController, // Use custom TabController
-                  children: categories.value.map((category) {
-                    return category["id"] == "All"
-                        ? buildProductList(category["id"])
-                        : Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: HomeCategoriesProducts(
-                              category: category["id"],
+          body: Column(
+            children: [
+              HomeReels(),
+              Expanded(
+                child: Scaffold(
+                  backgroundColor: Colors.white,
+                  appBar: AppBar(
+                    backgroundColor: mainColor,
+                    toolbarHeight: 5,
+                    elevation: 0,
+                    leading: Container(),
+                    leadingWidth: 1.0,
+                    bottom: PreferredSize(
+                      preferredSize: const Size.fromHeight(kToolbarHeight),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Obx(
+                          () => TabBar(
+                            controller:
+                                _tabController, // Use custom TabController
+                            tabAlignment: TabAlignment.start,
+                            dividerColor:
+                                const Color.fromARGB(255, 234, 234, 234),
+                            isScrollable: true,
+                            labelColor: Colors.white,
+                            unselectedLabelColor: Colors.black,
+                            labelStyle: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
                             ),
-                          );
-                  }).toList(),
+                            unselectedLabelStyle: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.normal,
+                            ),
+
+                            indicatorSize: TabBarIndicatorSize.label,
+                            indicatorColor: Colors.transparent,
+                            padding: const EdgeInsets.symmetric(horizontal: 1),
+                            labelPadding: EdgeInsets.all(0),
+                            tabs: categories.value
+                                .map((category) => Tab(
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                            left: category["name"] == "All"
+                                                ? 16
+                                                : 5),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          child: Container(
+                                            color: page.value ==
+                                                    categories.value
+                                                        .indexOf(category)
+                                                ? primary
+                                                : Colors.grey[100],
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 14,
+                                                      vertical: 3),
+                                              child: Text(
+                                                category["name"],
+                                                style: GoogleFonts.inter(
+                                                    fontSize: 15,
+                                                    color: page.value ==
+                                                            categories.value
+                                                                .indexOf(
+                                                                    category)
+                                                        ? Colors.white
+                                                        : Colors.black),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ))
+                                .toList(),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  body: categories.value.isEmpty
+                      ? const Center(
+                          child: CircularProgressIndicator(color: Colors.black),
+                        )
+                      : TabBarView(
+                          controller:
+                              _tabController, // Use custom TabController
+                          children: categories.value.map((category) {
+                            return category["id"] == "All"
+                                ? buildProductList(category["id"])
+                                : Padding(
+                                    padding: const EdgeInsets.only(top: 10),
+                                    child: HomeCategoriesProducts(
+                                      category: category["id"],
+                                    ),
+                                  );
+                          }).toList(),
+                        ),
                 ),
+              ),
+            ],
+          ),
         );
       },
     );

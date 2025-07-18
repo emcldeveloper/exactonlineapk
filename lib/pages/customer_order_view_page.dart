@@ -136,7 +136,8 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                           0,
                           (prev, item) =>
                               prev +
-                              double.parse(item["Product"]["sellingPrice"]),
+                              double.parse(
+                                  item["Product"]["sellingPrice"].toString()),
                         );
                         num orderPrice = widget.order["totalPrice"];
                         num discount = subtotal - orderPrice;
@@ -233,8 +234,9 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                             }),
                           ],
                         ),
-
-                      spacer2(),
+                      if (widget.order["status"] == "CANCELED" ||
+                          widget.order["status"] == "CONFIRMED")
+                        spacer2(),
                       if (widget.order["status"] == "CANCELED")
                         Container(
                           width: double.infinity,
@@ -242,10 +244,11 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                               borderRadius: BorderRadius.circular(10),
                               color: Colors.red.withAlpha(30),
                               border:
-                                  Border.all(color: Colors.red.withAlpha(60))),
+                                  Border.all(color: Colors.red.withAlpha(40))),
                           child: Padding(
                               padding: const EdgeInsets.all(10),
-                              child: ParagraphText("This order is canceled")),
+                              child: ParagraphText(
+                                  "🔔 Alert: Your order has been cancelled.")),
                         ),
                       if (widget.order["status"] == "CONFIRMED")
                         Container(
@@ -258,7 +261,7 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                           child: Padding(
                               padding: const EdgeInsets.all(10),
                               child: ParagraphText(
-                                  "This order is now active, ${widget.order["Shop"]["name"]} will reach out to you for pending payment pick/Delivery")),
+                                  "🔔 Your order is now active! ${widget.order["Shop"]["name"]} will contact you shortly with payment instructions and delivery or pickup details.")),
                         ),
                       const SizedBox(
                         height: 5,
@@ -274,8 +277,9 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                           child: Padding(
                               padding: const EdgeInsets.all(10),
                               child: ParagraphText(
-                                  "Order is delivered successfully, thank you for using Exact Online")),
+                                  "Your order has been delivered successfully. Please confirm receipt. Thank you for using ExactOnline.")),
                         ),
+                      spacer1(),
                       if (widget.order["status"] == "CONFIRMED")
                         Container(
                           width: double.infinity,
@@ -284,32 +288,11 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                               color: Colors.orange.withAlpha(30),
                               border: Border.all(
                                   color: Colors.orange.withAlpha(60))),
-                          child: Row(
-                            children: [
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              const Icon(
-                                Icons.help,
-                                color: Colors.orange,
-                              ),
-                              Padding(
-                                  padding: const EdgeInsets.all(10),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      ParagraphText(
-                                        "Warning",
-                                      ),
-                                      ParagraphText(
-                                          "Do not pay before delivery",
-                                          color: Colors.grey[700],
-                                          fontSize: 12),
-                                    ],
-                                  )),
-                            ],
-                          ),
+                          child: Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: ParagraphText(
+                                "⚠️ Warning: Do Not Pay Before Pickup or Delivery!",
+                              )),
                         ),
                       // ParagraphText(widget.order["status"]),
                       if (widget.order["status"] == "NEW ORDER")
@@ -362,7 +345,7 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                               children: [
                                 Expanded(
                                   child: ParagraphText(
-                                      "Wait for seller to confirm this order."),
+                                      "🔔 Awaiting seller confirmation."),
                                 )
                               ],
                             ),

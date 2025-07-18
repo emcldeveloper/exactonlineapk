@@ -104,7 +104,7 @@ class _ShopProductCardState extends State<ShopProductCard> {
                         child: Row(
                           children: [
                             ParagraphText(
-                              "TZS ${MoneyFormatter(amount: double.parse(widget.data['sellingPrice'])).output.withoutFractionDigits}" ??
+                              "TZS ${MoneyFormatter(amount: double.parse(widget.data['sellingPrice'].toString())).output.withoutFractionDigits}" ??
                                   "N/A",
                               fontWeight: FontWeight.bold,
                               fontSize: 16.0,
