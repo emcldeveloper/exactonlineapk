@@ -92,6 +92,46 @@ class MyApp extends StatelessWidget {
     analytics.logEvent(name: 'app_opened');
   }
 
+  // Compare two version strings (e.g., "1.2.3" vs "1.2.4")
+  // Returns true if latestVersion is greater than currentVersion
+  bool _isVersionGreater(String latestVersion, String currentVersion) {
+    try {
+      print(latestVersion);
+      print(currentVersion);
+      // Remove any non-numeric characters except dots
+      String cleanLatest = latestVersion.replaceAll(RegExp(r'[^0-9.]'), '');
+      String cleanCurrent = currentVersion.replaceAll(RegExp(r'[^0-9.]'), '');
+
+      List<int> latest =
+          cleanLatest.split('.').map((e) => int.tryParse(e) ?? 0).toList();
+      List<int> current =
+          cleanCurrent.split('.').map((e) => int.tryParse(e) ?? 0).toList();
+
+      // Ensure both lists have the same length by padding with zeros
+      int maxLength =
+          latest.length > current.length ? latest.length : current.length;
+
+      while (latest.length < maxLength) latest.add(0);
+      while (current.length < maxLength) current.add(0);
+      
+      // Compare version numbers
+      for (int i = 0; i < maxLength; i++) {
+        if (latest[i] > current[i]) {
+          return true; // Latest version is greater
+        } else if (latest[i] < current[i]) {
+          return false; // Current version is greater
+        }
+        // If equal, continue to next part
+      }
+
+      return false; // Versions are equal
+    } catch (e) {
+      print("Error comparing versions: $e");
+      // If there's an error parsing, fall back to string comparison
+      return latestVersion != currentVersion;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -124,9 +164,15 @@ class MyApp extends StatelessWidget {
                         ),
                       );
                     }
+
                     Map<String, dynamic> results = snapshot.requireData;
-                    print(results);
-                    return results["currentVersion"] != results["latestVersion"]
+                    // print(results);
+
+                    // Only show update page if latestVersion is greater than currentVersion
+                    bool shouldUpdate = _isVersionGreater(
+                        results["latestVersion"], results["currentVersion"]);
+
+                    return shouldUpdate
                         ? UpdatePage(
                             playStoreUrl: results['playStoreUrl'],
                             appStoreUrl: results["appStoreUrl"],

@@ -1,10 +1,12 @@
 import 'dart:io';
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/main.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class UpdatePage extends StatelessWidget {
@@ -59,11 +61,11 @@ class UpdatePage extends StatelessWidget {
                         mode: LaunchMode.externalApplication);
                   },
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 customButton(
-                    onTap: () => exit(0),
+                    onTap: () => {Get.to(() => const EntryPoint())},
                     textColor: Colors.black,
                     buttonColor: Colors.grey[100],
                     text: "Not Now"),
