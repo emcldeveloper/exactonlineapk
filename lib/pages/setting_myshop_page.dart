@@ -9,10 +9,8 @@ import 'package:e_online/pages/register_as_seller_page.dart';
 import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/utils/shared_preferences.dart';
 import 'package:e_online/widgets/custom_loader.dart';
-import 'package:e_online/widgets/shop_subscription_card.dart';
 import 'package:flutter/material.dart';
 import 'package:e_online/constants/colors.dart';
-import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/widgets/active_business_selection.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
@@ -21,12 +19,11 @@ import 'package:e_online/widgets/spacer.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:icons_plus/icons_plus.dart';
 // ... (previous imports remain the same)
 
 class SettingMyshopPage extends StatefulWidget {
-  var from;
-  SettingMyshopPage({super.key, this.from});
+  final dynamic from;
+  const SettingMyshopPage({super.key, this.from});
 
   @override
   State<SettingMyshopPage> createState() => _SettingMyshopPageState();
@@ -133,13 +130,28 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
             selectedDays) async {
           if (!mounted) return;
 
+          // Validate that we have the required times when not closed or 24 hours
+          if (!isClosed &&
+              !is24Hours &&
+              (openTime == null || closeTime == null)) {
+            Get.snackbar(
+                "Error", "Please select both opening and closing times",
+                backgroundColor: Colors.redAccent,
+                colorText: Colors.white,
+                icon: const HugeIcon(
+                    icon: HugeIcons.strokeRoundedCancel02,
+                    color: Colors.white));
+            return;
+          }
+
           final businessId = await SharedPreferencesUtil.getSelectedBusiness();
           List<String> daysToUpdate = applyToAll ? selectedDays : [day];
-          Get.snackbar("Updating...", "Updating You Calender",
+          Get.snackbar("Updating...", "Updating Your Calendar",
               backgroundColor: Colors.green,
               colorText: Colors.white,
               icon: const HugeIcon(
                   icon: HugeIcons.strokeRoundedTick01, color: Colors.white));
+
           for (String currentDay in daysToUpdate) {
             setState(() {
               if (isClosed) {
@@ -148,9 +160,10 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                 selectedTimes[currentDay] = "24 Hours";
               } else {
                 String openTimeStr =
-                    openTime != null ? openTime.format(context) : "Not Set";
-                String closeTimeStr =
-                    closeTime != null ? closeTime.format(context) : "Not Set";
+                    openTime != null ? _formatTimeDisplay(openTime) : "Not Set";
+                String closeTimeStr = closeTime != null
+                    ? _formatTimeDisplay(closeTime)
+                    : "Not Set";
                 selectedTimes[currentDay] = "$openTimeStr - $closeTimeStr";
               }
             });
@@ -170,8 +183,9 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
             try {
               await shopController.createShopCalendar(payload);
             } catch (e) {
-              Get.snackbar(
-                  "Error", "Failed to save Shop-Calendar for $currentDay",
+              print("Error creating shop calendar: $e"); // Add debug print
+              Get.snackbar("Error",
+                  "Failed to save Shop-Calendar for $currentDay: ${e.toString()}",
                   backgroundColor: Colors.redAccent,
                   colorText: Colors.white,
                   icon: const HugeIcon(
@@ -190,6 +204,258 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
     final hours = time.hour.toString().padLeft(2, '0');
     final minutes = time.minute.toString().padLeft(2, '0');
     return "$hours:$minutes";
+  }
+
+  String _formatTimeDisplay(TimeOfDay time) {
+    final hour = time.hourOfPeriod == 0 ? 12 : time.hourOfPeriod;
+    final minute = time.minute.toString().padLeft(2, '0');
+    final period = time.period == DayPeriod.am ? 'AM' : 'PM';
+    return "$hour:$minute $period";
+  }
+
+  void _confirmDeleteShop() {
+    if (selectedBusiness?.value["id"] == null) {
+      Get.snackbar("Error", "No business selected to delete",
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+          icon: const HugeIcon(
+              icon: HugeIcons.strokeRoundedCancel02, color: Colors.white));
+      return;
+    }
+
+    Get.dialog(
+      AlertDialog(
+        title: const Text("Delete Business"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Are you sure you want to delete this business?"),
+            const SizedBox(height: 8),
+            Text(
+              '"${selectedBusiness?.value["name"] ?? "Unknown Business"}"',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.red,
+              ),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              "This action cannot be undone. All data associated with this business will be permanently deleted.",
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text("Cancel"),
+          ),
+          ElevatedButton(
+            onPressed: () => _deleteShop(),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text("Delete"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _deleteShop() async {
+    try {
+      Get.back(); // Close the dialog
+
+      // Show loading
+      Get.dialog(
+        const AlertDialog(
+          content: Row(
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 16),
+              Text("Deleting business..."),
+            ],
+          ),
+        ),
+        barrierDismissible: false,
+      );
+
+      // Delete the shop
+      await shopController.deleteShop(selectedBusiness?.value["id"]);
+
+      // Close loading dialog
+      Get.back();
+
+      // Refresh user data to update shop list
+      final updatedUserData = await userController.getUserDetails();
+      if (updatedUserData != null) {
+        userController.user.value = updatedUserData;
+        setState(() {
+          shopList = userController.user.value['Shops'] ?? [];
+        });
+      }
+
+      // If the deleted shop was the current one, redirect to main page
+      final currentBusinessId =
+          await SharedPreferencesUtil.getSelectedBusiness();
+      if (currentBusinessId == selectedBusiness?.value["id"]) {
+        // Clear the selected business
+        await SharedPreferencesUtil.saveSelectedBusiness("");
+
+        Get.snackbar("Success",
+            "Business deleted successfully. Please select another business to continue.",
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+            duration: const Duration(seconds: 4),
+            icon: const HugeIcon(
+                icon: HugeIcons.strokeRoundedTick01, color: Colors.white));
+
+        // Navigate back to main page or business selection
+        Get.offAll(() => const MainPage());
+      } else {
+        // Just refresh the current page
+        await _loadSelectedShopDetails();
+      }
+    } catch (e) {
+      // Close loading dialog if still open
+      if (Get.isDialogOpen == true) {
+        Get.back();
+      }
+
+      Get.snackbar("Error", "Failed to delete business: ${e.toString()}",
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+          icon: const HugeIcon(
+              icon: HugeIcons.strokeRoundedCancel02, color: Colors.white));
+
+      print("Error deleting shop: $e");
+    }
+  }
+
+  void _confirmDeleteSpecificShop(Map<String, dynamic> shop) {
+    Get.dialog(
+      AlertDialog(
+        title: const Text("Delete Business"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Are you sure you want to delete this business?"),
+            const SizedBox(height: 8),
+            Text(
+              '"${shop["name"] ?? "Unknown Business"}"',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.red,
+              ),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              "This action cannot be undone. All data associated with this business will be permanently deleted.",
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text("Cancel"),
+          ),
+          ElevatedButton(
+            onPressed: () => _deleteSpecificShop(shop),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text("Delete"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _deleteSpecificShop(Map<String, dynamic> shop) async {
+    try {
+      Get.back(); // Close the dialog
+
+      // Show loading
+      Get.dialog(
+        const AlertDialog(
+          content: Row(
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 16),
+              Text("Deleting business..."),
+            ],
+          ),
+        ),
+        barrierDismissible: false,
+      );
+
+      // Delete the shop
+      await shopController.deleteShop(shop["id"]);
+
+      // Close loading dialog
+      Get.back();
+
+      // Refresh user data to update shop list
+      final updatedUserData = await userController.getUserDetails();
+      if (updatedUserData != null) {
+        userController.user.value = updatedUserData;
+        setState(() {
+          shopList = userController.user.value['Shops'] ?? [];
+        });
+      }
+
+      // If the deleted shop was the current one, handle appropriately
+      final currentBusinessId =
+          await SharedPreferencesUtil.getSelectedBusiness();
+      if (currentBusinessId == shop["id"]) {
+        // Clear the selected business
+        await SharedPreferencesUtil.saveSelectedBusiness("");
+
+        Get.snackbar("Success",
+            "Current business deleted successfully. Please select another business to continue.",
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+            duration: const Duration(seconds: 4),
+            icon: const HugeIcon(
+                icon: HugeIcons.strokeRoundedTick01, color: Colors.white));
+
+        // Navigate back to main page
+        Get.offAll(() => const MainPage());
+      } else {
+        Get.snackbar("Success", "Business deleted successfully",
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+            icon: const HugeIcon(
+                icon: HugeIcons.strokeRoundedTick01, color: Colors.white));
+
+        // Just refresh the current page
+        await _loadSelectedShopDetails();
+      }
+    } catch (e) {
+      // Close loading dialog if still open
+      if (Get.isDialogOpen == true) {
+        Get.back();
+      }
+
+      Get.snackbar("Error", "Failed to delete business: ${e.toString()}",
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+          icon: const HugeIcon(
+              icon: HugeIcons.strokeRoundedCancel02, color: Colors.white));
+
+      print("Error deleting specific shop: $e");
+    }
   }
 
   @override
@@ -237,11 +503,11 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Obx(() => selectedBusiness?.value['isSubscribed'] == true
-                        ? ShopSubscriptionCard(
-                            data: selectedBusiness?.value['ShopSubscription'])
-                        : ParagraphText("No Active Subscription",
-                            color: mutedTextColor)),
+                    // Obx(() => selectedBusiness?.value['isSubscribed'] == true
+                    //     ? ShopSubscriptionCard(
+                    //         data: selectedBusiness?.value['ShopSubscription'])
+                    //     : ParagraphText("No Active Subscription",
+                    //         color: mutedTextColor)),
                     spacer1(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -303,19 +569,10 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                               Row(
                                 children: [
                                   InkWell(
-                                    onTap: () async {
-                                      if (selectedBusiness != null &&
-                                          selectedBusiness?.value["id"] !=
-                                              null) {
-                                        await shopController.deleteShop(
-                                            selectedBusiness?.value["id"]);
-                                      } else {
-                                        print("No business selected");
-                                      }
-                                    },
+                                    onTap: () => _confirmDeleteShop(),
                                     child: HugeIcon(
                                       icon: HugeIcons.strokeRoundedDelete01,
-                                      color: Colors.grey,
+                                      color: Colors.red,
                                       size: 22.0,
                                     ),
                                   ),
@@ -456,7 +713,7 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                       children: [
                         Expanded(
                           child: ParagraphText(
-                            "Other businesses",
+                            "All businesses",
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -480,45 +737,150 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                       itemCount: shopList.length,
                       itemBuilder: (context, index) {
                         final shop = shopList[index];
+                        bool isCurrentShop =
+                            shop['id'] == selectedBusiness?.value['id'];
+
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Row(
-                            children: [
-                              shop['shopImage'] != null
-                                  ? CachedNetworkImage(
-                                      imageUrl: shop['shopImage'])
-                                  : ClipOval(
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: isCurrentShop
+                                  ? Colors.orange.withOpacity(0.1)
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(8),
+                              border: isCurrentShop
+                                  ? Border.all(color: Colors.orange, width: 1)
+                                  : null,
+                            ),
+                            child: Row(
+                              children: [
+                                shop['shopImage'] != null
+                                    ? ClipOval(
+                                        child: CachedNetworkImage(
+                                          imageUrl: shop['shopImage'],
+                                          height: 40,
+                                          width: 40,
+                                          fit: BoxFit.cover,
+                                          errorWidget: (context, url, error) =>
+                                              Container(
+                                            height: 40,
+                                            width: 40,
+                                            color: Colors.grey[200],
+                                            child: const Icon(
+                                                Icons.image_outlined),
+                                          ),
+                                        ),
+                                      )
+                                    : ClipOval(
+                                        child: Container(
+                                          height: 40,
+                                          color: Colors.grey[200],
+                                          width: 40,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Icon(Icons.business,
+                                                color: Colors.grey[600]),
+                                          ),
+                                        ),
+                                      ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: ParagraphText(
+                                              shop["name"] ?? "Unknown Shop",
+                                              fontWeight: FontWeight.bold,
+                                              color: isCurrentShop
+                                                  ? Colors.orange
+                                                  : Colors.black,
+                                            ),
+                                          ),
+                                          if (isCurrentShop)
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 2),
+                                              decoration: BoxDecoration(
+                                                color: Colors.orange,
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              child: const Text(
+                                                "Current",
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                      spacer(),
+                                      ParagraphText(
+                                        shop['createdAt'] != null
+                                            ? "Created on: ${shop['createdAt']}"
+                                            : "No Date available",
+                                        fontSize: 12,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Row(
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        if (shop["id"] != null) {
+                                          Get.to(() => EditRegisterAsSellerPage(
+                                              shop["id"]));
+                                        }
+                                      },
                                       child: Container(
-                                        height: 40,
-                                        color: Colors.grey[200],
-                                        width: 40,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Icon(Icons.image_outlined),
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: Colors.blue.withOpacity(0.1),
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                        ),
+                                        child: HugeIcon(
+                                          icon: HugeIcons
+                                              .strokeRoundedPencilEdit02,
+                                          color: Colors.blue,
+                                          size: 18.0,
                                         ),
                                       ),
                                     ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    ParagraphText(
-                                      shop["name"] ?? "Unknown Shop",
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    spacer(),
-                                    ParagraphText(
-                                      shop['createdAt'] != null
-                                          ? "Created on: ${shop['createdAt']}"
-                                          : "No Date available",
-                                      fontSize: 12,
+                                    const SizedBox(width: 8),
+                                    InkWell(
+                                      onTap: () =>
+                                          _confirmDeleteSpecificShop(shop),
+                                      child: Container(
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: Colors.red.withOpacity(0.1),
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                        ),
+                                        child: HugeIcon(
+                                          icon: HugeIcons.strokeRoundedDelete01,
+                                          color: Colors.red,
+                                          size: 18.0,
+                                        ),
+                                      ),
                                     ),
                                   ],
                                 ),
-                              ),
-                              const SizedBox(width: 8),
-                            ],
+                              ],
+                            ),
                           ),
                         );
                       },

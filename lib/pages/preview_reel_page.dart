@@ -31,6 +31,11 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
   late PageController _pageController;
   late VideoPlayerController _videoController =
       VideoPlayerController.networkUrl(Uri(path: ""));
+
+  // Preloading controllers for adjacent videos
+  VideoPlayerController? _nextVideoController;
+  VideoPlayerController? _previousVideoController;
+
   int currentIndex = 0;
   final UserController userController = Get.find();
   final ReelController reelController = Get.put(ReelController());
@@ -69,9 +74,14 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
       _initializeVideoPlayer(reels[currentIndex]['videoUrl']);
       isFollowing = reels[currentIndex]['Shop']['following'] ?? false;
       isLiked.value = reels[currentIndex]['Shop']['liked'] ?? false;
-      isLoading.value = false;
+
+      // Start preloading adjacent videos after main video starts loading
+      Future.delayed(const Duration(milliseconds: 500), () {
+        _preloadAdjacentVideos();
+      });
     } catch (e) {
       print("Error fetching reel details: $e");
+      isLoading.value = false;
     }
   }
 
@@ -81,21 +91,128 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
         setState(() {});
         _videoController.play();
         _videoController.setLooping(true);
+        isLoading.value = false;
       });
   }
 
+  void _preloadAdjacentVideos() {
+    // Preload next video
+    if (currentIndex + 1 < reels.length) {
+      _disposeNextController();
+      final nextVideoUrl = reels[currentIndex + 1]['videoUrl'];
+      if (nextVideoUrl != null && nextVideoUrl.isNotEmpty) {
+        _nextVideoController = VideoPlayerController.network(nextVideoUrl)
+          ..initialize().then((_) {
+            print("Next video preloaded: ${currentIndex + 1}");
+          }).catchError((error) {
+            print("Error preloading next video: $error");
+          });
+      }
+    }
+
+    // Preload previous video
+    if (currentIndex - 1 >= 0) {
+      _disposePreviousController();
+      final previousVideoUrl = reels[currentIndex - 1]['videoUrl'];
+      if (previousVideoUrl != null && previousVideoUrl.isNotEmpty) {
+        _previousVideoController =
+            VideoPlayerController.network(previousVideoUrl)
+              ..initialize().then((_) {
+                print("Previous video preloaded: ${currentIndex - 1}");
+              }).catchError((error) {
+                print("Error preloading previous video: $error");
+              });
+      }
+    }
+  }
+
+  void _disposeNextController() {
+    _nextVideoController?.dispose();
+    _nextVideoController = null;
+  }
+
+  void _disposePreviousController() {
+    _previousVideoController?.dispose();
+    _previousVideoController = null;
+  }
+
+  void _switchToPreloadedVideo({required bool isNext}) {
+    final targetController =
+        isNext ? _nextVideoController : _previousVideoController;
+
+    if (targetController != null && targetController.value.isInitialized) {
+      // Dispose current controller
+      _videoController.dispose();
+
+      // Switch to preloaded controller
+      _videoController = targetController;
+      _videoController.play();
+      _videoController.setLooping(true);
+
+      // Clear the reference since we've moved it to main controller
+      if (isNext) {
+        _nextVideoController = null;
+      } else {
+        _previousVideoController = null;
+      }
+
+      print("Switched to ${isNext ? 'next' : 'previous'} preloaded video");
+    }
+  }
+
   void _onPageChanged(int index) {
+    final bool isMovingForward = index > currentIndex;
+
     setState(() {
       currentIndex = index;
-      _videoController.dispose(); // Dispose of the old controller
-      isLoading.value = true; // Show loading indicator
+      isLoading.value = true;
     });
+
     reelDetails.value = reels[index]; // Update reelDetails with the new reel
-    _initializeVideoPlayer(reels[index]['videoUrl']);
     isFollowing = reels[index]['Shop']['following'] ?? false;
     isLiked.value = reels[index]['Shop']['liked'] ?? false;
+
+    // Try to use preloaded video first
+    bool usedPreloadedVideo = false;
+
+    if (isMovingForward &&
+        _nextVideoController != null &&
+        _nextVideoController!.value.isInitialized) {
+      // Moving to next video and we have it preloaded
+      _switchToPreloadedVideo(isNext: true);
+      usedPreloadedVideo = true;
+      print("Used preloaded next video");
+    } else if (!isMovingForward &&
+        _previousVideoController != null &&
+        _previousVideoController!.value.isInitialized) {
+      // Moving to previous video and we have it preloaded
+      _switchToPreloadedVideo(isNext: false);
+      usedPreloadedVideo = true;
+      print("Used preloaded previous video");
+    }
+
+    // If no preloaded video available, load normally
+    if (!usedPreloadedVideo) {
+      _videoController.dispose();
+      _initializeVideoPlayer(reels[index]['videoUrl']);
+      print("Loading video normally for index: $index");
+    }
+
+    // Clean up unused preloaded controllers
+    if (isMovingForward) {
+      _disposePreviousController();
+    } else {
+      _disposeNextController();
+    }
+
     isLoading.value = false;
-    setState(() {}); // Ensure UI updates
+    setState(() {});
+
+    // Preload new adjacent videos
+    Future.delayed(const Duration(milliseconds: 300), () {
+      _preloadAdjacentVideos();
+    });
+
     _sendReelStats("view"); // Track view for the new reel
   }
 
@@ -188,6 +305,8 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
   @override
   void dispose() {
     _videoController.dispose();
+    _nextVideoController?.dispose();
+    _previousVideoController?.dispose();
     _pageController.dispose();
     super.dispose();
   }

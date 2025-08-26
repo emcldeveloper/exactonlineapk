@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class AllServices extends StatefulWidget {
@@ -220,40 +219,35 @@ class _AllServicesState extends State<AllServices>
             )
           : services.isEmpty
               ? noData()
-              : StaggeredGrid.count(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 0,
-                  crossAxisSpacing: 10,
-                  children: [
-                    ...services.map((service) => ServiceCard(
-                          isStagger: true,
-                          data: service,
-                        )),
-                    if (isLoading.value) ..._buildLoadingIndicators(),
-                  ],
+              : SingleChildScrollView(
+                  controller: _scrollController,
+                  child: Column(
+                    children: [
+                      StaggeredGrid.count(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 0,
+                        crossAxisSpacing: 10,
+                        children: services
+                            .map((service) => ServiceCard(
+                                  isStagger: true,
+                                  data: service,
+                                ))
+                            .toList(),
+                      ),
+                      if (isLoading.value)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 20.0),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
                 )),
     );
-  }
-
-  List<Widget> _buildLoadingIndicators() {
-    return [
-      Shimmer.fromColors(
-        baseColor: Colors.grey.shade200,
-        highlightColor: Colors.grey.shade50,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: Container(color: Colors.black),
-        ),
-      ),
-      Shimmer.fromColors(
-        baseColor: Colors.grey.shade200,
-        highlightColor: Colors.grey.shade50,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: Container(color: Colors.black),
-        ),
-      ),
-    ];
   }
 
   Future<void> _fetchServices(int page) async {

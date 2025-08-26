@@ -4,6 +4,7 @@ import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/shop_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/free_trial_page.dart';
+import 'package:e_online/pages/my_shop_page.dart';
 import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/custom_loader.dart';
@@ -706,10 +707,7 @@ class _RegisterAsSellerPageState extends State<RegisterAsSellerPage> {
                                   icon: const HugeIcon(
                                       icon: HugeIcons.strokeRoundedTick01,
                                       color: Colors.white));
-                              Get.to(() => FreeTrialPage(shopId: shopId),
-                                  arguments: {
-                                    'origin': 'RegisterAsSellerPage'
-                                  });
+                              Get.to(() => const MyShopPage());
                             } catch (e) {
                               isLoading.value = false;
                               Get.snackbar(

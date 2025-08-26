@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
-import 'package:get/get_rx/get_rx.dart';
 
 class SettingShopDetails extends StatefulWidget {
   final Function(TimeOfDay? openTime, TimeOfDay? closeTime, bool is24Hours,
@@ -51,6 +50,13 @@ class _SettingShopDetailsBottomSheetState extends State<SettingShopDetails> {
       debugPrint("Time Picker Error: $e");
       return null;
     }
+  }
+
+  String _formatTimeDisplay(TimeOfDay time) {
+    final hour = time.hourOfPeriod == 0 ? 12 : time.hourOfPeriod;
+    final minute = time.minute.toString().padLeft(2, '0');
+    final period = time.period == DayPeriod.am ? 'AM' : 'PM';
+    return "$hour:$minute $period";
   }
 
   @override
@@ -205,12 +211,43 @@ class _SettingShopDetailsBottomSheetState extends State<SettingShopDetails> {
           customButton(
             onTap: () {
               try {
+                // Validate that we have required times when not closed or 24 hours
+                if (!isClosed &&
+                    !is24Hours &&
+                    (openTime == null || closeTime == null)) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content:
+                          Text("Please select both opening and closing times"),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                  return;
+                }
+
+                // Validate that at least one day is selected when applying to all
+                if (applyToAll && selectedDays.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Please select at least one day"),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                  return;
+                }
+
                 widget.onSave(openTime, closeTime, is24Hours, isClosed,
                     applyToAll, selectedDays);
+                if (mounted) Navigator.pop(context);
               } catch (e) {
                 debugPrint("Error during onSave: $e");
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("Error saving: ${e.toString()}"),
+                    backgroundColor: Colors.red,
+                  ),
+                );
               }
-              if (mounted) Navigator.pop(context);
             },
             text: "Save Changes",
           ),
@@ -240,7 +277,7 @@ class _SettingShopDetailsBottomSheetState extends State<SettingShopDetails> {
               ),
               child: Text(
                 selectedTime != null
-                    ? selectedTime.format(context)
+                    ? _formatTimeDisplay(selectedTime)
                     : "Select Time",
                 style: const TextStyle(color: Colors.black),
               ),

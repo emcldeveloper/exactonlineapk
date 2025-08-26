@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/utils/dio.dart';
 import 'package:e_online/utils/shared_preferences.dart';
@@ -18,16 +19,27 @@ class FavoriteController extends GetxController {
   Future<void> fetchFavorites({page = 1, limit = 10}) async {
     try {
       var userId = userController.user.value['id'] ?? "";
-      var response = await dio.get(
-          "/favorites/user/$userId?limit=$limit&page=$page",
-          options: Options(headers: {
-            "Authorization":
-                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
-          }));
+      var response =
+          await dio.get("/favorites/user/$userId?limit=$limit&page=$page",
+              options: CacheOptions(
+                store: MemCacheStore(),
+                policy: CachePolicy.noCache, // Disable caching for this request
+              ).toOptions().copyWith(
+                headers: {
+                  "Authorization":
+                      "Bearer ${await SharedPreferencesUtil.getAccessToken()}",
+                },
+              ));
 
       var data = List<Map<String, dynamic>>.from(response.data["body"]["rows"]);
       print(data);
-      favorites.value = data;
+
+      // Handle pagination properly
+      if (page == 1) {
+        favorites.value = data; // Replace for first page
+      } else {
+        favorites.addAll(data); // Append for subsequent pages
+      }
     } on DioException catch (e) {
       print("Error fetching favorites: ${e.response}");
     }

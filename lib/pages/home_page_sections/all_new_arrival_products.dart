@@ -1,8 +1,9 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/product_controller.dart';
-import 'package:e_online/widgets/favorite_card.dart';
 import 'package:e_online/widgets/heading_text.dart';
+import 'package:e_online/widgets/product_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 
 class AllNewArrivalProducts extends StatefulWidget {
@@ -114,26 +115,34 @@ class _AllNewArrivalProductsState extends State<AllNewArrivalProducts> {
               )
             : Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: ListView.builder(
-                  controller: _scrollController, // Attach ScrollController
-                  itemCount: products.value.length +
-                      (_isLoading ? 1 : 0), // Add loading item
-                  itemBuilder: (context, index) {
-                    if (index == products.value.length && _isLoading) {
-                      return const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10.0),
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            color: Colors.black,
+                child: SingleChildScrollView(
+                  controller: _scrollController,
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 16),
+                      StaggeredGrid.count(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 0,
+                        crossAxisSpacing: 10,
+                        children: products.value
+                            .map((product) => ProductCard(
+                                  isStagger: true,
+                                  data: product,
+                                ))
+                            .toList(),
+                      ),
+                      if (_isLoading)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 20.0),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.black,
+                            ),
                           ),
                         ),
-                      );
-                    }
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 10.0),
-                      child: FavoriteCard(data: products.value[index]),
-                    );
-                  },
+                      const SizedBox(height: 20),
+                    ],
+                  ),
                 ),
               ),
       ),

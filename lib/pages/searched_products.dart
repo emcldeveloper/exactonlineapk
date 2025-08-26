@@ -1,20 +1,18 @@
 import 'package:e_online/constants/colors.dart';
-import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/controllers/product_controller.dart';
-import 'package:e_online/pages/search_page.dart';
 import 'package:e_online/utils/page_analytics.dart';
-import 'package:e_online/widgets/favorite_card.dart';
 import 'package:e_online/widgets/filter_tiles.dart';
 import 'package:e_online/widgets/heading_text.dart';
+import 'package:e_online/widgets/product_card.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:icons_plus/icons_plus.dart';
 
 class SearchedProductsPage extends StatefulWidget {
-  String keyword;
-  SearchedProductsPage({super.key, required this.keyword});
+  final String keyword;
+  const SearchedProductsPage({super.key, required this.keyword});
 
   @override
   State<SearchedProductsPage> createState() => _SearchedProductsPageState();
@@ -111,12 +109,16 @@ class _SearchedProductsPageState extends State<SearchedProductsPage> {
                             const FilterTilesWidget(),
                             spacer(),
                             Expanded(
-                              child: ListView.builder(
-                                itemCount: products.value.length,
-                                itemBuilder: (context, index) {
-                                  final item = products.value[index];
-                                  return FavoriteCard(data: item);
-                                },
+                              child: StaggeredGrid.count(
+                                crossAxisCount: 2,
+                                mainAxisSpacing: 0,
+                                crossAxisSpacing: 10,
+                                children: products.value
+                                    .map((product) => ProductCard(
+                                          isStagger: true,
+                                          data: product,
+                                        ))
+                                    .toList(),
                               ),
                             ),
                           ],

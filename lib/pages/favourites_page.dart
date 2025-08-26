@@ -1,10 +1,11 @@
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/favorite_controller.dart';
 import 'package:e_online/utils/page_analytics.dart';
-import 'package:e_online/widgets/favorite_card.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/no_data.dart';
+import 'package:e_online/widgets/product_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 
 class FavouritesPage extends StatefulWidget {
@@ -27,6 +28,9 @@ class _FavouritesPageState extends State<FavouritesPage> {
   void initState() {
     super.initState();
     trackScreenView("FavouritesPage");
+    // Reset pagination state
+    _currentPage = 1;
+    _hasMore = true;
     _getFavoritesData(_currentPage); // Initial fetch
     _scrollController.addListener(_onScroll); // Attach scroll listener
   }
@@ -39,10 +43,20 @@ class _FavouritesPageState extends State<FavouritesPage> {
     if (page > 1) setState(() => _isLoadingMore = true);
 
     try {
-      // Assuming fetchFavorites accepts page and limit parameters
+      // Get the current count before fetching
+      final currentCount = favoriteController.favorites.length;
+
+      // Fetch favorites with pagination
       await favoriteController.fetchFavorites(page: page, limit: _limit);
-      if (favoriteController.favorites.length < _limit * page) {
-        _hasMore = false; // No more data if fewer items than expected
+
+      // Check if we got new data for pagination
+      final newCount = favoriteController.favorites.length;
+      if (page > 1 && newCount == currentCount) {
+        _hasMore = false; // No new data received
+      } else if (page == 1 && newCount < _limit) {
+        _hasMore = false; // First page with less than limit means no more data
+      } else if (page > 1 && (newCount - currentCount) < _limit) {
+        _hasMore = false; // Received less than limit new items
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -114,25 +128,36 @@ class _FavouritesPageState extends State<FavouritesPage> {
             return noData();
           }
 
-          return ListView.builder(
-            controller: _scrollController, // Attach ScrollController
-            itemCount: favoriteController.favorites.length +
-                (_isLoadingMore ? 1 : 0), // Add loading item
-            itemBuilder: (context, index) {
-              if (index == favoriteController.favorites.length &&
-                  _isLoadingMore) {
-                return const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10.0),
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      color: Colors.black,
+          return SingleChildScrollView(
+            controller: _scrollController,
+            child: Column(
+              children: [
+                const SizedBox(height: 16),
+                StaggeredGrid.count(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 0,
+                  crossAxisSpacing: 10,
+                  children: favoriteController.favorites
+                      .map((item) => ProductCard(
+                            key: ValueKey(
+                                item["Product"]["id"]), // Add unique key
+                            isStagger: true,
+                            data: item["Product"],
+                          ))
+                      .toList(),
+                ),
+                if (_isLoadingMore)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 20.0),
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.black,
+                      ),
                     ),
                   ),
-                );
-              }
-              final item = favoriteController.favorites[index];
-              return FavoriteCard(data: item["Product"]);
-            },
+                const SizedBox(height: 20),
+              ],
+            ),
           );
         }),
       ),
