@@ -1,3 +1,4 @@
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/utils/shared_preferences.dart';
 import 'package:dio/dio.dart';
@@ -33,10 +34,15 @@ class ChatController extends GetxController {
       print("Shop ${shopId}");
       var response = await dio.get(
           "/chats/shop/$shopId/?page=$page&limit=$limit&keyword=$keyword",
-          options: Options(headers: {
-            "Authorization":
-                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
-          }));
+          options: CacheOptions(
+                store: MemCacheStore(),
+                policy: CachePolicy.noCache, // Disable caching for this request
+              ).toOptions().copyWith(
+                headers: {
+                  "Authorization":
+                      "Bearer ${await SharedPreferencesUtil.getAccessToken()}",
+                },
+              ));
 
       var data = response.data["body"]["rows"];
       print(data);

@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_typing_uninitialized_variables
 
 import 'package:dio/dio.dart';
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/utils/dio.dart';
 import 'package:e_online/utils/shared_preferences.dart';
@@ -77,10 +78,15 @@ class ProductController extends GetxController {
     // print(shopId);
     try {
       var response = await dio.get("/products/$id",
-          options: Options(headers: {
-            "Authorization":
-                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
-          }));
+         options: CacheOptions(
+                store: MemCacheStore(),
+                policy: CachePolicy.noCache, // Disable caching for this request
+              ).toOptions().copyWith(
+                headers: {
+                  "Authorization":
+                      "Bearer ${await SharedPreferencesUtil.getAccessToken()}",
+                },
+              ));
 
       var data = response.data["body"];
       return data;

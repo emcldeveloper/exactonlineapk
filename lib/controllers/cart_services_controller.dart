@@ -1,3 +1,4 @@
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/utils/shared_preferences.dart';
 import 'package:dio/dio.dart';
@@ -30,10 +31,15 @@ class CartServicesController extends GetxController {
           "🔧 Getting cart services for user: ${userController.user.value["id"]}");
       var response = await dio.get(
           "/cart-products/services/user/${userController.user.value["id"]}",
-          options: Options(headers: {
-            "Authorization":
-                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
-          }));
+          options: CacheOptions(
+            store: MemCacheStore(),
+            policy: CachePolicy.noCache, // Disable caching for this request
+          ).toOptions().copyWith(
+            headers: {
+              "Authorization":
+                  "Bearer ${await SharedPreferencesUtil.getAccessToken()}",
+            },
+          ));
       var data = response.data["body"]["rows"];
       servicesOnCart.value = data;
       print("Cart services count: ${data.length}");

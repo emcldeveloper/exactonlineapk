@@ -118,6 +118,7 @@ class MyApp extends StatelessWidget {
       for (int i = 0; i < maxLength; i++) {
         if (latest[i] > current[i]) {
           return true; // Latest version is greater
+          
         } else if (latest[i] < current[i]) {
           return false; // Current version is greater
         }

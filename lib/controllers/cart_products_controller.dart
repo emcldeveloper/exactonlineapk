@@ -1,3 +1,4 @@
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/utils/shared_preferences.dart';
 import 'package:dio/dio.dart';
@@ -25,14 +26,19 @@ class CartProductController extends GetxController {
 
   Future getOnCartproducts() async {
     try {
-      print("🆑");
-      print(userController.user.value["id"]);
+      // print("🆑");
+      // print(userController.user.value["id"]);
       var response = await dio.get(
           "/cart-products/user/${userController.user.value["id"]}",
-          options: Options(headers: {
-            "Authorization":
-                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
-          }));
+          options: CacheOptions(
+            store: MemCacheStore(),
+            policy: CachePolicy.noCache, // Disable caching for this request
+          ).toOptions().copyWith(
+            headers: {
+              "Authorization":
+                  "Bearer ${await SharedPreferencesUtil.getAccessToken()}",
+            },
+          ));
       var data = response.data["body"]["rows"];
       productsOnCart.value = data;
       print(data.length);
@@ -45,10 +51,15 @@ class CartProductController extends GetxController {
   Future getUserOrderproducts(id) async {
     try {
       var response = await dio.get("/cart-products/order/$id",
-          options: Options(headers: {
-            "Authorization":
-                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
-          }));
+          options: CacheOptions(
+            store: MemCacheStore(),
+            policy: CachePolicy.noCache, // Disable caching for this request
+          ).toOptions().copyWith(
+            headers: {
+              "Authorization":
+                  "Bearer ${await SharedPreferencesUtil.getAccessToken()}",
+            },
+          ));
       var data = response.data["body"]["rows"];
       return data;
     } on DioException catch (e) {
@@ -64,10 +75,15 @@ class CartProductController extends GetxController {
         await SharedPreferencesUtil.saveSelectedBusiness(shopId!);
       }
       var response = await dio.get("/cart-products/order/$id/$shopId",
-          options: Options(headers: {
-            "Authorization":
-                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
-          }));
+          options: CacheOptions(
+            store: MemCacheStore(),
+            policy: CachePolicy.noCache, // Disable caching for this request
+          ).toOptions().copyWith(
+            headers: {
+              "Authorization":
+                  "Bearer ${await SharedPreferencesUtil.getAccessToken()}",
+            },
+          ));
       var data = response.data["body"]["rows"];
       return data;
     } on DioException catch (e) {

@@ -1,6 +1,7 @@
 // ignore_for_file: non_constant_identifier_names, empty_catches
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:e_online/models/message.dart';
 import 'package:e_online/utils/shared_preferences.dart';
 import 'package:dio/dio.dart';
@@ -36,10 +37,15 @@ class MessageController extends GetxController {
     try {
       var response = await dio.get(
         "/messages/topic/$topicId",
-        options: Options(headers: {
-          "Authorization":
-              "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
-        }),
+        options: CacheOptions(
+          store: MemCacheStore(),
+          policy: CachePolicy.noCache, // Disable caching for this request
+        ).toOptions().copyWith(
+          headers: {
+            "Authorization":
+                "Bearer ${await SharedPreferencesUtil.getAccessToken()}",
+          },
+        ),
       );
       var data = response.data["body"];
       return data;
