@@ -22,7 +22,6 @@ class OrderedProductController extends GetxController {
     }
   }
 
- 
   Future getUserOrderproducts(id) async {
     try {
       var response = await dio.get("/ordered-products/order/$id",
@@ -39,11 +38,8 @@ class OrderedProductController extends GetxController {
 
   Future getShopOrderproducts(id) async {
     try {
-      var shopId = await SharedPreferencesUtil.getSelectedBusiness();
-      if (shopId == null) {
-        shopId = userController.user.value["Shops"][0]["id"];
-        await SharedPreferencesUtil.saveSelectedBusiness(shopId!);
-      }
+      var shopId = await SharedPreferencesUtil.getCurrentShopId(
+          userController.user.value["Shops"] ?? []);
       var response = await dio.get("/ordered-products/order/$id/$shopId",
           options: Options(headers: {
             "Authorization":
@@ -69,6 +65,4 @@ class OrderedProductController extends GetxController {
       print(e.response);
     }
   }
-
- 
 }

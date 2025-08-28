@@ -11,11 +11,8 @@ class ProductController extends GetxController {
   Future getShopProducts({id, page, limit, keyword}) async {
     var shopId;
     if (id == null) {
-      shopId = await SharedPreferencesUtil.getSelectedBusiness();
-      if (shopId == null) {
-        shopId = userController.user.value["Shops"][0]["id"];
-        await SharedPreferencesUtil.saveSelectedBusiness(shopId!);
-      }
+      shopId = await SharedPreferencesUtil.getCurrentShopId(
+          userController.user.value["Shops"] ?? []);
     } else {
       shopId = id;
     }

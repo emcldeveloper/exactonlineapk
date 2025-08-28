@@ -69,11 +69,8 @@ class CartProductController extends GetxController {
 
   Future getShopOrderproducts(id) async {
     try {
-      var shopId = await SharedPreferencesUtil.getSelectedBusiness();
-      if (shopId == null) {
-        shopId = userController.user.value["Shops"][0]["id"];
-        await SharedPreferencesUtil.saveSelectedBusiness(shopId!);
-      }
+      var shopId = await SharedPreferencesUtil.getCurrentShopId(
+          userController.user.value["Shops"] ?? []);
       var response = await dio.get("/cart-products/order/$id/$shopId",
           options: CacheOptions(
             store: MemCacheStore(),

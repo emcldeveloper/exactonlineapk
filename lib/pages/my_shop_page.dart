@@ -39,6 +39,7 @@ class _MyShopPageState extends State<MyShopPage> {
   Rx<Map<String, dynamic>> shopDetails = Rx<Map<String, dynamic>>({});
   List<dynamic> availableShops = [];
   bool loading = true;
+  Key _tabViewKey = UniqueKey(); // Add this to force refresh of tab content
   final List<Map<String, dynamic>> tilesItems = [
     {'title': "Followers"},
     {'title': "Impressions"},
@@ -121,10 +122,31 @@ class _MyShopPageState extends State<MyShopPage> {
       _showDetailModal();
     } else {
       print("Going to: $page"); // Debug print
-      await Get.to(() => Container(
+      final result = await Get.to(() => Container(
             child: page,
           ));
-      setState(() {});
+
+      // Refresh the page if an item was successfully added
+      if (result == true || result == null) {
+        // Force refresh the current tab data
+        await _refreshCurrentTab();
+        setState(() {});
+      }
+    }
+  }
+
+  Future<void> _refreshCurrentTab() async {
+    try {
+      // Force refresh the current tab data by regenerating the TabBarView key
+      // This will cause the tab widgets to be rebuilt with fresh data
+      _tabViewKey = UniqueKey();
+
+      // Also refresh shop details to update metrics (followers, impressions, etc.)
+      await _initializeShopDetails();
+
+      print("Tab $_currentIndex refreshed after adding item");
+    } catch (e) {
+      print("Error refreshing tab: $e");
     }
   }
 
@@ -413,14 +435,16 @@ class _MyShopPageState extends State<MyShopPage> {
                     ),
                     spacer1(),
                     Expanded(
-                      child: TabBarView(children: [
-                        ShopProducts(),
-                        ShopMasonryGrid(),
-                        ShopOrders(),
-                        ShopServices(),
-                        noData(),
-                        noData()
-                      ]),
+                      child: TabBarView(
+                          key: _tabViewKey, // Use the key to force refresh
+                          children: [
+                            ShopProducts(),
+                            ShopMasonryGrid(),
+                            ShopOrders(),
+                            ShopServices(),
+                            noData(),
+                            noData()
+                          ]),
                     ),
                   ],
                 ),

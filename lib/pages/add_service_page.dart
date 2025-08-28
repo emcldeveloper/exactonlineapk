@@ -5,6 +5,7 @@ import 'package:e_online/controllers/service_controller.dart';
 import 'package:e_online/controllers/service_image_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/utils/page_analytics.dart';
+import 'package:e_online/utils/shared_preferences.dart';
 import 'package:e_online/utils/snackbars.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/custom_loader.dart';
@@ -334,13 +335,25 @@ class _AddServicePageState extends State<AddServicePage> {
                         return;
                       }
 
+                      final shopId =
+                          await SharedPreferencesUtil.getCurrentShopId(
+                              userController.user.value["Shops"] ?? []);
+
+                      if (shopId == null) {
+                        showErrorSnackbar(
+                          title: "No Shop Selected",
+                          description: "Please select a shop first",
+                        );
+                        return;
+                      }
+
                       var payload = {
                         "name": nameController.text,
                         "price": priceController.text,
                         "serviceLink": linkController.text,
                         "description": descriptionController.text,
                         "CategoryId": categoryController.text,
-                        "ShopId": userController.user.value["Shops"][0]["id"],
+                        "ShopId": shopId,
                       };
                       setState(() => loading = true);
                       await analytics.logEvent(
@@ -350,7 +363,7 @@ class _AddServicePageState extends State<AddServicePage> {
                           "description": descriptionController.text,
                           'category': categoryController.text,
                           'price': priceController.text,
-                          "ShopId": userController.user.value["Shops"][0]["id"],
+                          "ShopId": shopId,
                         },
                       );
 
@@ -369,7 +382,8 @@ class _AddServicePageState extends State<AddServicePage> {
                         });
                         await Future.wait(imagePayload);
                         setState(() => loading = false);
-                        Get.back();
+                        Get.back(
+                            result: true); // Return true to indicate success
                         showSuccessSnackbar(
                           title: "Added successfully",
                           description: "Service is added successfully",

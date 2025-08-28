@@ -10,11 +10,8 @@ class ReelController extends GetxController {
     try {
       var shopId;
       if (id == null) {
-        shopId = await SharedPreferencesUtil.getSelectedBusiness();
-        if (shopId == null) {
-          shopId = userController.user.value["Shops"][0]["id"];
-          await SharedPreferencesUtil.saveSelectedBusiness(shopId!);
-        }
+        shopId = await SharedPreferencesUtil.getCurrentShopId(
+            userController.user.value["Shops"] ?? []);
       } else {
         shopId = id;
       }
@@ -32,6 +29,7 @@ class ReelController extends GetxController {
       return e.response;
     }
   }
+
   Future getReels({page, limit, keyword}) async {
     try {
       var response = await dio.get(

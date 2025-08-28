@@ -323,10 +323,28 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                                         });
                                       }),
                                 ),
-                                Expanded(
-                                  child: ParagraphText(
-                                      "Agreed on this price ? press here to confirm order or continue negotiation with seller using buttons below "),
-                                )
+                                Builder(builder: (context) {
+                                  // Calculate if there's a discount
+                                  num subtotal = orderedProducts.fold<num>(
+                                    0,
+                                    (prev, item) =>
+                                        prev +
+                                        double.parse(item["Product"]
+                                                ["sellingPrice"]
+                                            .toString()),
+                                  );
+                                  num orderPrice = widget.order["totalPrice"];
+                                  bool hasDiscount = subtotal != orderPrice;
+
+                                  // Only show the agreement message if seller has given a discount
+                                  return hasDiscount
+                                      ? Expanded(
+                                          child: ParagraphText(
+                                              "Agreed on this price? Press here to confirm order or continue negotiation with seller using buttons below"),
+                                        )
+                                      : const SizedBox
+                                          .shrink(); // Show nothing if no discount
+                                })
                               ],
                             ),
                           ),

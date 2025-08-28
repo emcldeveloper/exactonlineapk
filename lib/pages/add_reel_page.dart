@@ -2,6 +2,7 @@ import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/reel_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/utils/page_analytics.dart';
+import 'package:e_online/utils/shared_preferences.dart';
 import 'package:e_online/utils/snackbars.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/custom_loader.dart';
@@ -70,13 +71,16 @@ class _AddReelPageState extends State<AddReelPage> {
           loading = true;
         });
 
+        final shopId = await SharedPreferencesUtil.getCurrentShopId(
+            userController.user.value["Shops"] ?? []);
+
         final dio.FormData videoPayload = dio.FormData.fromMap({
           "file": await dio.MultipartFile.fromFile(
             _videos.first.path,
             filename: _videos.first.path.split("/").last,
           ),
           "caption": captionController.text,
-          "ShopId": userController.user.value["Shops"][0]["id"],
+          "ShopId": shopId,
         });
 
         // Upload reel with the video file
@@ -86,7 +90,7 @@ class _AddReelPageState extends State<AddReelPage> {
           loading = false;
         });
 
-        Get.back();
+        Get.back(result: true); // Return true to indicate success
         showSuccessSnackbar(
           title: "Added successfully",
           description: "Reel added successfully",

@@ -26,23 +26,20 @@ class ChatController extends GetxController {
 
   Future getShopChats(page, limit, keyword) async {
     try {
-      var shopId = await SharedPreferencesUtil.getSelectedBusiness();
-      if (shopId == null) {
-        shopId = userController.user.value["Shops"][0]["id"];
-        await SharedPreferencesUtil.saveSelectedBusiness(shopId!);
-      }
+      var shopId = await SharedPreferencesUtil.getCurrentShopId(
+          userController.user.value["Shops"] ?? []);
       print("Shop ${shopId}");
       var response = await dio.get(
           "/chats/shop/$shopId/?page=$page&limit=$limit&keyword=$keyword",
           options: CacheOptions(
-                store: MemCacheStore(),
-                policy: CachePolicy.noCache, // Disable caching for this request
-              ).toOptions().copyWith(
-                headers: {
-                  "Authorization":
-                      "Bearer ${await SharedPreferencesUtil.getAccessToken()}",
-                },
-              ));
+            store: MemCacheStore(),
+            policy: CachePolicy.noCache, // Disable caching for this request
+          ).toOptions().copyWith(
+            headers: {
+              "Authorization":
+                  "Bearer ${await SharedPreferencesUtil.getAccessToken()}",
+            },
+          ));
 
       var data = response.data["body"]["rows"];
       print(data);

@@ -401,10 +401,25 @@ class _SellerOrderViewPageState extends State<SellerOrderViewPage> {
                                       });
                                     }),
                               ),
-                              Expanded(
-                                child: ParagraphText(
-                                    "Agreed on this price ? press here to confirm order or continue negotiation with customer using buttons below "),
-                              )
+                              Builder(builder: (context) {
+                                // Calculate if there's a discount
+                                num subtotal = orderedProducts.fold<num>(
+                                  0,
+                                  (prev, item) =>
+                                      prev +
+                                      double.parse(item["Product"]
+                                              ["sellingPrice"]
+                                          .toString()),
+                                );
+                                num orderPrice = widget.order["totalPrice"];
+                                bool hasDiscount = subtotal != orderPrice;
+
+                                return Expanded(
+                                  child: ParagraphText(hasDiscount
+                                      ? "Agreed on this discounted price? Press here to confirm order or continue negotiation with customer using buttons below"
+                                      : "Continue with product price if you are not giving discount"),
+                                );
+                              })
                             ],
                           ),
                         ),
