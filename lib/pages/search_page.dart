@@ -6,13 +6,14 @@ import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/controllers/categories_controller.dart';
 import 'package:e_online/controllers/product_controller.dart';
 import 'package:e_online/pages/categories_products_page.dart';
-import 'package:e_online/pages/searched_products.dart';
 import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:e_online/widgets/search_function.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:e_online/widgets/product_card.dart';
 
 class SearchPage extends StatefulWidget {
   SearchPage({super.key});
@@ -103,42 +104,20 @@ class _SearchPageState extends State<SearchPage> {
                             ),
                           ))
                         : products.value.isNotEmpty
-                            ? Column(
-                                children: [
-                                  ListView.builder(
-                                      shrinkWrap: true,
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      itemCount: products.value.length,
-                                      itemBuilder: (context, index) {
-                                        return Padding(
-                                          padding:
-                                              const EdgeInsets.only(bottom: 10),
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              Get.to(() => SearchedProductsPage(
-                                                  keyword: products.value[index]
-                                                      ["name"]));
-                                            },
-                                            child: Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.search,
-                                                  size: 18,
-                                                ),
-                                                SizedBox(
-                                                  width: 10,
-                                                ),
-                                                ParagraphText(
-                                                    fontWeight: FontWeight.bold,
-                                                    products.value[index]
-                                                        ["name"]),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      })
-                                ],
+                            ? MasonryGridView.count(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                crossAxisCount: 2,
+                                mainAxisSpacing: 10,
+                                crossAxisSpacing: 10,
+                                itemCount: products.value.length,
+                                itemBuilder: (context, index) {
+                                  final product = products.value[index];
+                                  return ProductCard(
+                                    isStagger: true,
+                                    data: product,
+                                  );
+                                },
                               )
                             : Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -153,7 +132,7 @@ class _SearchPageState extends State<SearchPage> {
                                     gridDelegate:
                                         const SliverGridDelegateWithFixedCrossAxisCount(
                                       crossAxisCount: 4,
-                                      childAspectRatio: 0.75,
+                                      childAspectRatio: 0.65,
                                       crossAxisSpacing: 10,
                                       mainAxisSpacing: 10,
                                     ),
@@ -210,6 +189,18 @@ class _SearchPageState extends State<SearchPage> {
                                               overflow: TextOverflow.ellipsis,
                                               fontWeight: FontWeight.w400,
                                               fontSize: 12.0,
+                                            ),
+                                            ParagraphText(
+                                              categories.value[index]
+                                                          ['productsCount'] !=
+                                                      null
+                                                  ? "(${categories.value[index]['productsCount']}) products"
+                                                  : "",
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              color: Colors.grey[600],
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 10.0,
                                             ),
                                           ],
                                         ),

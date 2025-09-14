@@ -402,7 +402,7 @@ class _HomePageState extends State<HomePage>
                                                       horizontal: 14,
                                                       vertical: 3),
                                               child: Text(
-                                                category["name"],
+                                                "${category["name"]} ${category["name"] != "All" ? "(${category["productsCount"] ?? 0})" : ""}",
                                                 style: GoogleFonts.inter(
                                                     fontSize: 15,
                                                     color: page.value ==

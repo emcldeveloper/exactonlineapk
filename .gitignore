@@ -33,6 +33,7 @@ android/gradle/wrapper/gradle-wrapper.properties
 .pub-cache/
 .pub/
 /build/
+android/
 
 # Symbolication related
 app.*.symbols

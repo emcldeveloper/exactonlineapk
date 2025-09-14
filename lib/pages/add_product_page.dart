@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/categories_controller.dart';
-import 'package:e_online/controllers/product_color_controller.dart';
 import 'package:e_online/controllers/product_controller.dart';
 import 'package:e_online/controllers/product_image_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
@@ -9,7 +8,6 @@ import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/utils/shared_preferences.dart';
 import 'package:e_online/utils/snackbars.dart';
 import 'package:e_online/widgets/custom_button.dart';
-import 'package:e_online/widgets/custom_loader.dart';
 import 'package:e_online/widgets/editimage.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
@@ -18,7 +16,6 @@ import 'package:e_online/widgets/spacer.dart';
 import 'package:e_online/widgets/text_form.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -42,7 +39,9 @@ class _AddProductPageState extends State<AddProductPage> {
   UserController userController = Get.find();
   FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   TextEditingController nameController = TextEditingController();
-  TextEditingController categoryController = TextEditingController(text: "All");
+  TextEditingController categoryController =
+      TextEditingController(); // Initialize empty until categories load
+  TextEditingController subcategoryController = TextEditingController();
   TextEditingController priceController = TextEditingController();
   TextEditingController linkController = TextEditingController();
   TextEditingController deliveryScopeController = TextEditingController();
@@ -50,47 +49,15 @@ class _AddProductPageState extends State<AddProductPage> {
   Rx<List<dynamic>> categorySpecifications = Rx<List<dynamic>>([]);
   Rx<Map<String, String>> customSpecifications = Rx<Map<String, String>>({});
   Rx<List<dynamic>> categories = Rx<List<dynamic>>([]);
+  Rx<List<dynamic>> subcategories = Rx<List<dynamic>>([]);
+  // Map to store specification controllers
+  Map<String, TextEditingController> specificationControllers = {};
   final _formKey = GlobalKey<FormState>();
   bool loading = false;
 
   TextEditingController unitController = TextEditingController(text: "No Unit");
   TextEditingController labelController = TextEditingController();
   TextEditingController valueController = TextEditingController();
-
-  void _openColorPicker() {
-    Color pickedColor = Colors.blue;
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Pick a Color"),
-          content: SingleChildScrollView(
-            child: ColorPicker(
-              pickerColor: pickedColor,
-              onColorChanged: (Color color) {
-                pickedColor = color;
-              },
-            ),
-          ),
-          actions: [
-            TextButton(
-              child: const Text("Cancel"),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-            TextButton(
-              child: const Text("Select"),
-              onPressed: () {
-                setState(() {
-                  selectedColors.add(pickedColor);
-                });
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   Future<void> _pickImages() async {
     try {
@@ -160,8 +127,334 @@ class _AddProductPageState extends State<AddProductPage> {
         categoryController.text = res[0]["id"].toString();
         categorySpecifications.value =
             res[0]["CategoryProductSpecifications"] ?? [];
+        subcategories.value = res[0]["Subcategories"] ?? [];
+        subcategoryController.text = "";
+        print(
+            "Initial load: Found ${categorySpecifications.value.length} specifications for ${res[0]["name"]}"); // Debug log
+
+        // Clear old specification controllers
+        specificationControllers.clear();
+
+        // Initialize specification values based on inputStyle
+        for (var spec in categorySpecifications.value) {
+          final specId = spec["id"] ?? spec["label"];
+          if (spec["inputStyle"] == "multi-select") {
+            spec["value"] = <String>[];
+          } else if (spec["inputStyle"] == "toggle") {
+            spec["value"] = false;
+          } else if (spec["inputStyle"] == "range") {
+            spec["value"] = 0.0;
+          } else {
+            spec["value"] = "";
+          }
+
+          // Initialize controller for single-select fields
+          if (spec["inputStyle"] == "single-select") {
+            specificationControllers[specId] = TextEditingController(text: "");
+          }
+        }
       }
     });
+  }
+
+  // Build specification field based on inputStyle
+  Widget _buildSpecificationField(Map<String, dynamic> spec) {
+    final String inputStyle = spec["inputStyle"] ?? "text";
+    final String label = spec["label"] ?? "";
+    final Map<String, dynamic>? values = spec["values"];
+
+    switch (inputStyle) {
+      case "single-select":
+        // Create or get existing controller for this specification
+        final specId = spec["id"] ?? spec["label"];
+        if (!specificationControllers.containsKey(specId)) {
+          specificationControllers[specId] = TextEditingController(text: "");
+        }
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 2.0),
+          child: selectForm(
+            label: label,
+            textEditingController: specificationControllers[specId]!,
+            onChanged: (value) {
+              spec["value"] = value;
+              specificationControllers[specId]!.text = value ?? "";
+              print(
+                  "Specification ${spec["label"]} set to: $value"); // Debug log
+            },
+            items: _buildDropdownItems(values),
+          ),
+        );
+
+      case "multi-select":
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0),
+          child: _buildMultiSelectField(spec),
+        );
+
+      case "toggle":
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0),
+          child: _buildToggleField(spec),
+        );
+
+      case "range":
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0),
+          child: _buildRangeField(spec),
+        );
+
+      default: // text, number, or any other type
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0),
+          child: TextForm(
+            label: label,
+            textInputType: spec["expectedDataType"] == "number"
+                ? TextInputType.number
+                : TextInputType.text,
+            onChanged: (value) {
+              spec["value"] = value;
+            },
+            hint: "Enter ${label.toLowerCase()}",
+          ),
+        );
+    }
+  }
+
+  // Build dropdown items from values object
+  List<DropdownMenuItem<String>> _buildDropdownItems(
+      Map<String, dynamic>? values) {
+    if (values == null)
+      return [
+        DropdownMenuItem<String>(
+          value: "",
+          child: ParagraphText("No options available"),
+        ),
+      ];
+
+    return [
+      DropdownMenuItem<String>(
+        value: "",
+        child: ParagraphText("Select an option"),
+      ),
+      ...values.entries
+          .map((entry) => DropdownMenuItem<String>(
+                value: entry.value.toString(),
+                child: ParagraphText(entry.value.toString()),
+              ))
+          .toList(),
+    ];
+  }
+
+  // Build multi-select field with chips
+  Widget _buildMultiSelectField(Map<String, dynamic> spec) {
+    final String label = spec["label"] ?? "";
+    final Map<String, dynamic>? values = spec["values"];
+    final List<String> selectedValues = (spec["value"] as List<String>?) ?? [];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ParagraphText(
+          label,
+          fontWeight: FontWeight.bold,
+          fontSize: 14,
+        ),
+        const SizedBox(height: 8),
+        if (values != null)
+          Wrap(
+            spacing: 8.0,
+            runSpacing: 4.0,
+            children: values.entries.map((entry) {
+              final String value = entry.value.toString();
+              final bool isSelected = selectedValues.contains(value);
+
+              return FilterChip(
+                label: ParagraphText(
+                  value,
+                  fontSize: 12,
+                  color: isSelected ? Colors.white : Colors.black87,
+                ),
+                selected: isSelected,
+                backgroundColor: Colors.grey[200],
+                selectedColor: Colors.orange,
+                checkmarkColor: Colors.white,
+                onSelected: (bool selected) {
+                  setState(() {
+                    if (selected) {
+                      selectedValues.add(value);
+                    } else {
+                      selectedValues.remove(value);
+                    }
+                    spec["value"] = selectedValues;
+                  });
+                },
+              );
+            }).toList(),
+          ),
+        if (selectedValues.isNotEmpty) ...[
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.orange.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Wrap(
+              spacing: 4.0,
+              children: selectedValues
+                  .map((value) => Chip(
+                        label: ParagraphText(value, fontSize: 11),
+                        backgroundColor: Colors.orange,
+                        labelStyle: const TextStyle(color: Colors.white),
+                        deleteIconColor: Colors.white,
+                        onDeleted: () {
+                          setState(() {
+                            selectedValues.remove(value);
+                            spec["value"] = selectedValues;
+                          });
+                        },
+                      ))
+                  .toList(),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  // Build toggle field with switch
+  Widget _buildToggleField(Map<String, dynamic> spec) {
+    final String label = spec["label"] ?? "";
+    final bool currentValue = spec["value"] ?? false;
+
+    return Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ParagraphText(
+                label,
+                fontWeight: FontWeight.bold,
+              ),
+              ParagraphText(
+                "Enable or disable ${label.toLowerCase()}",
+                fontSize: 12,
+                color: Colors.grey[600],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 20),
+        Switch(
+          value: currentValue,
+          activeColor: Colors.white,
+          inactiveTrackColor: Colors.white,
+          activeTrackColor: Colors.orange,
+          focusColor: Colors.black,
+          inactiveThumbColor: Colors.black,
+          onChanged: (bool value) {
+            setState(() {
+              spec["value"] = value;
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+  // Build range field with slider
+  Widget _buildRangeField(Map<String, dynamic> spec) {
+    final String label = spec["label"] ?? "";
+    final double currentValue = (spec["value"] as double?) ?? 0.0;
+    final double maxValue =
+        spec["expectedDataType"] == "number" ? 200000.0 : 100.0;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ParagraphText(
+              label,
+              fontWeight: FontWeight.bold,
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.orange.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: ParagraphText(
+                "${currentValue.round()}",
+                fontWeight: FontWeight.bold,
+                color: Colors.orange,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        SliderTheme(
+          data: SliderTheme.of(context).copyWith(
+            activeTrackColor: Colors.orange,
+            inactiveTrackColor: Colors.orange.withOpacity(0.3),
+            thumbColor: Colors.orange,
+            overlayColor: Colors.orange.withOpacity(0.2),
+          ),
+          child: Slider(
+            value: currentValue,
+            min: 0,
+            max: maxValue,
+            divisions: 100,
+            label: currentValue.round().toString(),
+            onChanged: (double value) {
+              setState(() {
+                spec["value"] =
+                    value.round().toDouble(); // Store as rounded double
+              });
+            },
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ParagraphText("0", fontSize: 12, color: Colors.grey[600]),
+            ParagraphText("${maxValue.round()}",
+                fontSize: 12, color: Colors.grey[600]),
+          ],
+        ),
+      ],
+    );
+  }
+
+  // Format specification value based on inputStyle for API submission
+  dynamic _formatSpecificationValue(Map<String, dynamic> spec) {
+    final String inputStyle = spec["inputStyle"] ?? "text";
+    final dynamic value = spec["value"];
+
+    switch (inputStyle) {
+      case "multi-select":
+        // Return array of selected values
+        return (value as List<String>?) ?? [];
+
+      case "toggle":
+        // Return boolean value
+        return value ?? false;
+
+      case "range":
+        // Return rounded integer value
+        final double doubleValue = (value ?? 0.0) as double;
+        return doubleValue.round();
+
+      case "single-select":
+        // Return selected string value
+        return value?.toString() ?? "";
+
+      default: // text, number, or any other type
+        return value?.toString() ?? "";
+    }
   }
 
   @override
@@ -292,24 +585,84 @@ class _AddProductPageState extends State<AddProductPage> {
                 Obx(
                   () => selectForm(
                     textEditingController: categoryController,
-                    onChanged: () {
+                    onChanged: (value) {
+                      print("Category changed to: $value"); // Debug log
                       final selectedCategory = categories.value.firstWhere(
                         (item) =>
                             item["id"].toString() == categoryController.text,
                         orElse: () => {},
                       );
+                      print(
+                          "Selected category: ${selectedCategory["name"]}"); // Debug log
                       categorySpecifications.value =
                           selectedCategory["CategoryProductSpecifications"] ??
                               [];
+                      print(
+                          "Found ${categorySpecifications.value.length} specifications"); // Debug log
+
+                      // Update subcategories for the selected category
+                      subcategories.value =
+                          selectedCategory["Subcategories"] ?? [];
+                      subcategoryController.text = "";
+
+                      // Clear old specification controllers
+                      specificationControllers.clear();
+
+                      // Initialize specification values based on inputStyle
+                      for (var spec in categorySpecifications.value) {
+                        final specId = spec["id"] ?? spec["label"];
+                        if (spec["inputStyle"] == "multi-select") {
+                          spec["value"] = <String>[];
+                        } else if (spec["inputStyle"] == "toggle") {
+                          spec["value"] = false;
+                        } else if (spec["inputStyle"] == "range") {
+                          spec["value"] = 0.0;
+                        } else {
+                          spec["value"] = "";
+                        }
+
+                        // Initialize controller for single-select fields
+                        if (spec["inputStyle"] == "single-select") {
+                          specificationControllers[specId] =
+                              TextEditingController(text: "");
+                        }
+                      }
                     },
                     label: "Product Category",
-                    items: categories.value
-                        .map((item) => DropdownMenuItem(
-                              value: item["id"].toString(),
-                              child: Text(item["name"]),
-                            ))
-                        .toList(),
+                    items: [
+                      // Add a placeholder item
+                      DropdownMenuItem(
+                        value: "",
+                        child: Text("Select a category"),
+                      ),
+                      ...categories.value
+                          .map((item) => DropdownMenuItem(
+                                value: item["id"].toString(),
+                                child: Text(item["name"]),
+                              ))
+                          .toList(),
+                    ],
                   ),
+                ),
+                Obx(
+                  () => subcategories.value.isNotEmpty
+                      ? selectForm(
+                          label: "Subcategory",
+                          textEditingController: subcategoryController,
+                          items: [
+                            DropdownMenuItem(
+                              value: "",
+                              child: Text("Select a subcategory"),
+                            ),
+                            ...subcategories.value
+                                .map((item) => DropdownMenuItem(
+                                      value: item["id"].toString(),
+                                      child: Text(item["name"] ?? ""),
+                                    ))
+                                .toList(),
+                          ],
+                        )
+                      : const SizedBox.shrink(),
                 ),
                 TextForm(
                   label: "Product price",
@@ -415,7 +768,7 @@ class _AddProductPageState extends State<AddProductPage> {
 
                 spacer1(),
 
-                // Category-based specifications
+                // Category-based specifications with different input styles
                 Obx(
                   () => Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -426,13 +779,7 @@ class _AddProductPageState extends State<AddProductPage> {
                           fontWeight: FontWeight.bold,
                         ),
                       ...categorySpecifications.value.map(
-                        (item) => TextForm(
-                          label: item["label"],
-                          onChanged: (value) {
-                            item["value"] = value;
-                          },
-                          hint: "Enter product ${item["label"]}",
-                        ),
+                        (item) => _buildSpecificationField(item),
                       ),
                     ],
                   ),
@@ -596,10 +943,10 @@ class _AddProductPageState extends State<AddProductPage> {
                       }
 
                       // Combine category and custom specifications
-                      Map<String, String> combinedSpecifications = {
+                      Map<String, dynamic> combinedSpecifications = {
                         ...{
                           for (var item in categorySpecifications.value)
-                            item["label"]: item["value"] ?? ""
+                            item["label"]: _formatSpecificationValue(item)
                         },
                         ...customSpecifications.value,
                       };
@@ -614,6 +961,7 @@ class _AddProductPageState extends State<AddProductPage> {
                         "specifications": combinedSpecifications,
                         "deliveryScope": deliveryScopeController.text,
                         "CategoryId": categoryController.text,
+                        "SubcategoryId": subcategoryController.text,
                         "ShopId": shopId,
                       };
                       print("🆚");

@@ -78,15 +78,15 @@ class ProductController extends GetxController {
     // print(shopId);
     try {
       var response = await dio.get("/products/$id",
-         options: CacheOptions(
-                store: MemCacheStore(),
-                policy: CachePolicy.noCache, // Disable caching for this request
-              ).toOptions().copyWith(
-                headers: {
-                  "Authorization":
-                      "Bearer ${await SharedPreferencesUtil.getAccessToken()}",
-                },
-              ));
+          options: CacheOptions(
+            store: MemCacheStore(),
+            policy: CachePolicy.noCache, // Disable caching for this request
+          ).toOptions().copyWith(
+            headers: {
+              "Authorization":
+                  "Bearer ${await SharedPreferencesUtil.getAccessToken()}",
+            },
+          ));
 
       var data = response.data["body"];
       return data;

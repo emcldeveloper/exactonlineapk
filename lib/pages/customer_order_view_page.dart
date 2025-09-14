@@ -296,59 +296,60 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                         ),
                       // ParagraphText(widget.order["status"]),
                       if (widget.order["status"] == "NEW ORDER")
-                        Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.orange.withAlpha(30),
-                              border: Border.all(
-                                  color: Colors.orange.withAlpha(60))),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Row(
-                              children: [
-                                Obx(
-                                  () => Checkbox(
-                                      activeColor: Colors.orange,
-                                      value: status.value == "IN PROGRESS",
-                                      onChanged: (value) {
-                                        status.value = "IN PROGRESS";
-                                        OrdersController().editOrder(
-                                            widget.order["id"], {
-                                          "status": "IN PROGRESS"
-                                        }).then((res) {
-                                          setState(() {
-                                            widget.order["status"] =
-                                                "IN PROGRESS";
-                                          });
-                                        });
-                                      }),
-                                ),
-                                Builder(builder: (context) {
-                                  // Calculate if there's a discount
-                                  num subtotal = orderedProducts.fold<num>(
-                                    0,
-                                    (prev, item) =>
-                                        prev +
-                                        double.parse(item["Product"]
-                                                ["sellingPrice"]
-                                            .toString()),
-                                  );
-                                  num orderPrice = widget.order["totalPrice"];
-                                  bool hasDiscount = subtotal != orderPrice;
+                        Builder(builder: (context) {
+                          // Calculate if there's a discount
+                          num subtotal = orderedProducts.fold<num>(
+                            0,
+                            (prev, item) =>
+                                prev +
+                                double.parse(
+                                    item["Product"]["sellingPrice"].toString()),
+                          );
+                          num orderPrice = widget.order["totalPrice"];
+                          bool hasDiscount = subtotal != orderPrice;
 
-                                  // Only show the agreement message if seller has given a discount
-                                  return hasDiscount
-                                      ? Expanded(
+                          // Only show the whole container if seller has given a discount
+                          return hasDiscount
+                              ? Container(
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Colors.orange.withAlpha(30),
+                                      border: Border.all(
+                                          color: Colors.orange.withAlpha(60))),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10),
+                                    child: Row(
+                                      children: [
+                                        Obx(
+                                          () => Checkbox(
+                                              activeColor: Colors.orange,
+                                              value:
+                                                  status.value == "IN PROGRESS",
+                                              onChanged: (value) {
+                                                status.value = "IN PROGRESS";
+                                                OrdersController().editOrder(
+                                                    widget.order["id"], {
+                                                  "status": "IN PROGRESS"
+                                                }).then((res) {
+                                                  setState(() {
+                                                    widget.order["status"] =
+                                                        "IN PROGRESS";
+                                                  });
+                                                });
+                                              }),
+                                        ),
+                                        Expanded(
                                           child: ParagraphText(
                                               "Agreed on this price? Press here to confirm order or continue negotiation with seller using buttons below"),
                                         )
-                                      : const SizedBox
-                                          .shrink(); // Show nothing if no discount
-                                })
-                              ],
-                            ),
-                          ),
-                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              : const SizedBox
+                                  .shrink(); // Hide entire container if no discount
+                        }),
+
                       spacer1(),
                       if (widget.order["status"] == "IN PROGRESS")
                         Container(

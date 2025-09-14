@@ -54,6 +54,7 @@ class SmartCacheInterceptor extends Interceptor {
       '/orders', // Orders change frequently
       '/favorites', // Favorites change when users like/unlike
       '/following', // Following status changes
+      '/categories',
       '/shop-calendar', // Calendar data changes
     ];
 

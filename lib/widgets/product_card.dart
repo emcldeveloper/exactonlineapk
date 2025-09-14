@@ -144,7 +144,7 @@ class _ProductCardState extends State<ProductCard> {
                     "TZS ${toMoneyFormmat(widget.data['sellingPrice'])}",
                     fontWeight: FontWeight.bold,
                     maxLines: 1,
-                    fontSize: 15.0,
+                    fontSize: 13.0,
                   ),
                   if (widget.data['shipping'] == "Free Shipping")
                     ParagraphText(
