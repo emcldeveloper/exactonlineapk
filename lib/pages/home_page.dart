@@ -5,6 +5,7 @@ import 'package:e_online/controllers/cart_products_controller.dart';
 import 'package:e_online/controllers/categories_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/cart_page.dart';
+import 'package:e_online/pages/categories_products_page.dart';
 import 'package:e_online/pages/home_page_sections/all_for_you_products.dart';
 import 'package:e_online/pages/home_page_sections/all_new_arrival_products.dart';
 import 'package:e_online/pages/home_page_sections/all_products.dart';
@@ -435,8 +436,9 @@ class _HomePageState extends State<HomePage>
                                 ? buildProductList(category["id"])
                                 : Padding(
                                     padding: const EdgeInsets.only(top: 10),
-                                    child: HomeCategoriesProducts(
-                                      category: category["id"],
+                                    child: CategoriesProductsPage(
+                                      category: category,
+                                      hideAppBar: true,
                                     ),
                                   );
                           }).toList(),
