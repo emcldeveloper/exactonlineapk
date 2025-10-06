@@ -14,6 +14,7 @@ import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:video_player/video_player.dart';
 
 // ReelsPage remains unchanged
 class ReelsPage extends StatelessWidget {
@@ -91,6 +92,8 @@ class _ProductMasonryGridState extends State<ProductMasonryGrid> {
   final int _limit = 10;
   final RxBool _isLoading = false.obs;
   final RxBool _hasMore = true.obs;
+  final Map<String, VideoPlayerController> _preloadedControllers = {};
+  bool _isPreloading = false;
 
   @override
   void initState() {
@@ -117,8 +120,10 @@ class _ProductMasonryGridState extends State<ProductMasonryGrid> {
 
       if (page == 1) {
         reels.value = newReels;
+        _preloadVisibleReels();
       } else {
         reels.addAll(newReels);
+        _preloadVisibleReels(limit: 4, offset: reels.length - newReels.length);
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -141,8 +146,39 @@ class _ProductMasonryGridState extends State<ProductMasonryGrid> {
 
   @override
   void dispose() {
+    for (final c in _preloadedControllers.values) {
+      c.dispose();
+    }
     _scrollController.dispose();
     super.dispose();
+  }
+
+  Future<void> _preloadVisibleReels({int limit = 6, int offset = 0}) async {
+    if (_isPreloading) return;
+    _isPreloading = true;
+    try {
+      final list = reels;
+      final end =
+          (offset + limit) > list.length ? list.length : (offset + limit);
+      for (int i = offset; i < end; i++) {
+        final reel = list[i];
+        final id = reel['id'];
+        final url = reel['videoUrl'];
+        if (url == null || url.toString().isEmpty) continue;
+        if (_preloadedControllers.containsKey(id)) continue;
+        try {
+          final controller = VideoPlayerController.network(url);
+          await controller.initialize();
+          controller.setLooping(true);
+          _preloadedControllers[id] = controller;
+        } catch (e) {
+          debugPrint('Failed to preload video $id: $e');
+        }
+      }
+      if (mounted) setState(() {});
+    } finally {
+      _isPreloading = false;
+    }
   }
 
   @override
@@ -168,7 +204,14 @@ class _ProductMasonryGridState extends State<ProductMasonryGrid> {
                                 minHeight: 200,
                                 maxHeight: double.infinity,
                               ),
-                              child: ReelCard(data: reel),
+                              child: ReelCard(
+                                data: reel,
+                                preloadedController:
+                                    _preloadedControllers[reel['id']],
+                                onConsumePreloaded: () {
+                                  _preloadedControllers.remove(reel['id']);
+                                },
+                              ),
                             )),
                         if (_isLoading.value) ...[
                           for (var i = 0; i < 2; i++)
@@ -195,8 +238,15 @@ class _ProductMasonryGridState extends State<ProductMasonryGrid> {
 // ReelCard remains unchanged
 class ReelCard extends StatelessWidget {
   final Map<String, dynamic> data;
+  final VideoPlayerController? preloadedController;
+  final VoidCallback? onConsumePreloaded;
 
-  const ReelCard({required this.data, super.key});
+  const ReelCard({
+    required this.data,
+    this.preloadedController,
+    this.onConsumePreloaded,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -229,10 +279,14 @@ class ReelCard extends StatelessWidget {
             children: [
               GestureDetector(
                 onTap: () {
+                  onConsumePreloaded?.call();
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => PreviewReelPage(reel: data),
+                      builder: (context) => PreviewReelPage(
+                        reel: data,
+                        preloadedController: preloadedController,
+                      ),
                     ),
                   );
                 },

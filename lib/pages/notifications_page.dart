@@ -9,11 +9,25 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-class NotificationsPage extends StatelessWidget {
+class NotificationsPage extends StatefulWidget {
   NotificationsPage({super.key});
 
+  @override
+  State<NotificationsPage> createState() => _NotificationsPageState();
+}
+
+class _NotificationsPageState extends State<NotificationsPage> {
   final NotificationController notificationController =
-      Get.put(NotificationController());
+      Get.find<NotificationController>();
+
+  @override
+  void initState() {
+    super.initState();
+    // Mark all notifications as read when page opens
+    Future.delayed(Duration.zero, () {
+      notificationController.markAllAsRead();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,11 +87,13 @@ class NotificationsPage extends StatelessWidget {
                     return Column(
                       children: [
                         NotificationCard(data: {
+                          "title": item["title"] ?? "",
                           "message": item["message"] ?? "No message",
                           "time": item["createdAt"] != null
-                              ? timeago.format(DateTime.parse(item[
-                                  "createdAt"])) 
-                              : "Unknown time"
+                              ? timeago
+                                  .format(DateTime.parse(item["createdAt"]))
+                              : "Unknown time",
+                          "isRead": item["isRead"] ?? true,
                         }),
                         spacer2(),
                       ],

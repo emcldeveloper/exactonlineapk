@@ -1,5 +1,4 @@
 import 'package:e_online/constants/colors.dart';
-import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/controllers/chat_controller.dart';
 import 'package:e_online/controllers/order_controller.dart';
 import 'package:e_online/controllers/ordered_products_controller.dart';
@@ -30,12 +29,6 @@ class SellerOrderViewPage extends StatefulWidget {
 
 class _SellerOrderViewPageState extends State<SellerOrderViewPage> {
   FirebaseAnalytics analytics = FirebaseAnalytics.instance;
-
-  void _removeProduct(int index) {
-    setState(() {
-      productItems.removeAt(index);
-    });
-  }
 
   @override
   void initState() {
@@ -230,6 +223,9 @@ class _SellerOrderViewPageState extends State<SellerOrderViewPage> {
                             var currentStep = steps.firstWhere((element) =>
                                 element["value"] == widget.order["status"]);
                             return Timeline(
+                              // Disable internal scrolling so only the outer SingleChildScrollView handles scroll
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
                               properties: const TimelineProperties(
                                   iconSize: 20,
                                   iconAlignment: MarkerIconAlignment.center),
@@ -526,7 +522,7 @@ class _SellerOrderViewPageState extends State<SellerOrderViewPage> {
                                     });
                                   });
                                 },
-                                text: "Approve order",
+                                text: "Approve",
                               ),
                             ),
                         ],

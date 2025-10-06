@@ -3,6 +3,7 @@ import 'package:e_online/constants/colors.dart';
 import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/controllers/cart_products_controller.dart';
 import 'package:e_online/controllers/categories_controller.dart';
+import 'package:e_online/controllers/notification_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/cart_page.dart';
 import 'package:e_online/pages/categories_products_page.dart';
@@ -40,6 +41,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   UserController userController = Get.find();
+  NotificationController notificationController =
+      Get.put(NotificationController());
   int _currentPage = 0;
   final List<String> carouselImages = [
     "assets/ads/ad1.jpg",
@@ -56,6 +59,8 @@ class _HomePageState extends State<HomePage>
   void initState() {
     super.initState();
     Get.put(cartProductController);
+    // Fetch unread notifications count
+    notificationController.getUnreadCount();
     CategoriesController()
         .getCategories(page: 1, limit: 50, keyword: "")
         .then((res) {
@@ -303,13 +308,45 @@ class _HomePageState extends State<HomePage>
               ),
               const SizedBox(width: 12),
               InkWell(
-                onTap: () {
-                  Get.to(NotificationsPage());
+                onTap: () async {
+                  await Get.to(NotificationsPage());
+                  // Refresh unread count when returning from notifications page
+                  notificationController.getUnreadCount();
                 },
-                child: const Icon(
-                  Bootstrap.bell,
-                  color: Colors.black,
-                  size: 20.0,
+                child: Stack(
+                  children: [
+                    const Icon(
+                      Bootstrap.bell,
+                      color: Colors.black,
+                      size: 20.0,
+                    ),
+                    Obx(() => notificationController.unreadCount.value > 0
+                        ? Positioned(
+                            right: 0,
+                            top: 0,
+                            child: Container(
+                              padding: const EdgeInsets.all(2),
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              constraints: const BoxConstraints(
+                                minWidth: 16,
+                                minHeight: 16,
+                              ),
+                              child: Text(
+                                '${notificationController.unreadCount.value}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          )
+                        : const SizedBox()),
+                  ],
                 ),
               ),
               const SizedBox(width: 12),

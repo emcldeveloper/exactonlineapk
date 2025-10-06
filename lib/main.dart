@@ -27,59 +27,99 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
 
-  await setupFirebaseMessaging();
-  await initializeFirebaseMessaging();
-  await getToken();
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
 
-// Initialize local notifications
-  var initializationSettingsAndroid =
-      const AndroidInitializationSettings('@mipmap/ic_launcher');
-  var initializationSettings =
-      InitializationSettings(android: initializationSettingsAndroid);
+    // Initialize Firebase services with error handling
+    try {
+      await setupFirebaseMessaging();
+      await initializeFirebaseMessaging();
+      await getToken();
+    } catch (e) {
+      print('Firebase messaging initialization failed: $e');
+      // Continue without messaging if it fails
+    }
 
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    // Initialize local notifications
+    try {
+      var initializationSettingsAndroid =
+          const AndroidInitializationSettings('@mipmap/ic_launcher');
+      var initializationSettings =
+          InitializationSettings(android: initializationSettingsAndroid);
 
-  // setup crashlytics
-  FlutterError.onError = (FlutterErrorDetails details) {
-    FirebaseCrashlytics.instance.recordFlutterFatalError(details);
-  };
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    } catch (e) {
+      print('Local notifications initialization failed: $e');
+      // Continue without local notifications if it fails
+    }
 
-  PlatformDispatcher.instance.onError = (error, stack) {
-    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-    return true;
-  };
+    // setup crashlytics
+    FlutterError.onError = (FlutterErrorDetails details) {
+      try {
+        FirebaseCrashlytics.instance.recordFlutterFatalError(details);
+      } catch (e) {
+        print('Crashlytics error: $e');
+      }
+    };
+
+    PlatformDispatcher.instance.onError = (error, stack) {
+      try {
+        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      } catch (e) {
+        print('Crashlytics error: $e');
+      }
+      return true;
+    };
+  } catch (e) {
+    print('Firebase initialization failed: $e');
+    // Continue without Firebase if it fails
+  }
 
   runApp(const MyApp());
 }
 
 // 🔑 Get FCM Token
 Future<void> getToken() async {
-  String? token = await FirebaseMessaging.instance.getToken();
-  print("📌 FCM Token: $token");
+  try {
+    String? token = await FirebaseMessaging.instance
+        .getToken()
+        .timeout(Duration(seconds: 5));
+    print("📌 FCM Token: $token");
+  } catch (e) {
+    print("FCM Token fetch failed: $e");
+  }
 }
 
 final UserController userController = Get.put(UserController());
 
 Future<bool> checkIfUserIsLoggedIn() async {
-  String? token = await SharedPreferencesUtil.getAccessToken();
-  if (token != null && token.isNotEmpty) {
-    try {
-      var response = await userController.getUserDetails();
-      var userDetails = response["body"];
-      print(userDetails);
+  try {
+    String? token = await SharedPreferencesUtil.getAccessToken();
+    if (token != null && token.isNotEmpty) {
+      try {
+        var response = await userController
+            .getUserDetails()
+            .timeout(Duration(seconds: 10));
+        var userDetails = response["body"];
+        print(userDetails);
 
-      userController.user.value = userDetails;
-      return true;
-    } catch (e) {
-      await SharedPreferencesUtil.removeAccessToken();
-      Get.offAll(() => WayPage());
+        userController.user.value = userDetails;
+        return true;
+      } catch (e) {
+        print('User details fetch failed: $e');
+        await SharedPreferencesUtil.removeAccessToken();
+        // Don't navigate here as it might cause issues during app startup
+        return false;
+      }
     }
+    return false;
+  } catch (e) {
+    print('Login check failed: $e');
+    return false;
   }
-  return false;
 }
 
 class MyApp extends StatelessWidget {
@@ -113,12 +153,11 @@ class MyApp extends StatelessWidget {
 
       while (latest.length < maxLength) latest.add(0);
       while (current.length < maxLength) current.add(0);
-      
+
       // Compare version numbers
       for (int i = 0; i < maxLength; i++) {
         if (latest[i] > current[i]) {
           return true; // Latest version is greater
-          
         } else if (latest[i] < current[i]) {
           return false; // Current version is greater
         }

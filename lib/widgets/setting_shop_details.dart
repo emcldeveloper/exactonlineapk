@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/spacer.dart';
+import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class SettingShopDetails extends StatefulWidget {
   final Function(TimeOfDay? openTime, TimeOfDay? closeTime, bool is24Hours,
@@ -215,22 +217,51 @@ class _SettingShopDetailsBottomSheetState extends State<SettingShopDetails> {
                 if (!isClosed &&
                     !is24Hours &&
                     (openTime == null || closeTime == null)) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content:
-                          Text("Please select both opening and closing times"),
-                      backgroundColor: Colors.red,
+                  Get.snackbar(
+                    "Error",
+                    "Please select both opening and closing times",
+                    backgroundColor: Colors.redAccent,
+                    colorText: Colors.white,
+                    snackPosition: SnackPosition.TOP,
+                    icon: const HugeIcon(
+                      icon: HugeIcons.strokeRoundedCancel02,
+                      color: Colors.white,
                     ),
                   );
                   return;
                 }
 
-                // Validate that at least one day is selected when applying to all
-                if (applyToAll && selectedDays.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Please select at least one day"),
-                      backgroundColor: Colors.red,
+                // Validate that at least one day is selected
+                if (selectedDays.isEmpty) {
+                  Get.snackbar(
+                    "Error",
+                    "Please select at least one day",
+                    backgroundColor: Colors.redAccent,
+                    colorText: Colors.white,
+                    snackPosition: SnackPosition.TOP,
+                    icon: const HugeIcon(
+                      icon: HugeIcons.strokeRoundedCancel02,
+                      color: Colors.white,
+                    ),
+                  );
+                  return;
+                }
+
+                // Validate that when days are selected, user has specified time settings
+                if (selectedDays.isNotEmpty &&
+                    !isClosed &&
+                    !is24Hours &&
+                    (openTime == null || closeTime == null)) {
+                  Get.snackbar(
+                    "Error",
+                    "Please specify time settings: select 'Open 24 Hours', 'Closed', or set specific opening and closing times",
+                    backgroundColor: Colors.redAccent,
+                    colorText: Colors.white,
+                    snackPosition: SnackPosition.TOP,
+                    duration: const Duration(seconds: 4),
+                    icon: const HugeIcon(
+                      icon: HugeIcons.strokeRoundedCancel02,
+                      color: Colors.white,
                     ),
                   );
                   return;
@@ -241,10 +272,15 @@ class _SettingShopDetailsBottomSheetState extends State<SettingShopDetails> {
                 if (mounted) Navigator.pop(context);
               } catch (e) {
                 debugPrint("Error during onSave: $e");
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text("Error saving: ${e.toString()}"),
-                    backgroundColor: Colors.red,
+                Get.snackbar(
+                  "Error",
+                  "Error saving: ${e.toString()}",
+                  backgroundColor: Colors.redAccent,
+                  colorText: Colors.white,
+                  snackPosition: SnackPosition.TOP,
+                  icon: const HugeIcon(
+                    icon: HugeIcons.strokeRoundedCancel02,
+                    color: Colors.white,
                   ),
                 );
               }

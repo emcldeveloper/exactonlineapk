@@ -18,8 +18,10 @@ import 'package:video_player/video_player.dart';
 
 class PreviewReelPage extends StatefulWidget {
   final Map<String, dynamic> reel; // Kept as a single reel for initial input
+  final VideoPlayerController? preloadedController;
 
-  const PreviewReelPage({required this.reel, super.key});
+  const PreviewReelPage(
+      {required this.reel, this.preloadedController, super.key});
 
   @override
   State<PreviewReelPage> createState() => _PreviewReelPageState();
@@ -54,6 +56,11 @@ class _PreviewReelPageState extends State<PreviewReelPage> {
     trackScreenView("PreviewReelPage");
     _pageController = PageController(initialPage: 0);
     userId = userController.user.value['id'] ?? "";
+    if (widget.preloadedController != null &&
+        widget.preloadedController!.value.isInitialized) {
+      _videoController = widget.preloadedController!;
+      isLoading.value = false;
+    }
     _initializeReelDetails(widget.reel['id']);
     ever(reelDetails, (value) {
       print('Reel details updated: $value');

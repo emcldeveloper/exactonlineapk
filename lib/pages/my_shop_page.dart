@@ -11,7 +11,6 @@ import 'package:e_online/pages/shop_tabs/shop_orders.dart';
 import 'package:e_online/pages/shop_tabs/shop_products.dart';
 import 'package:e_online/pages/shop_tabs/shop_reels.dart';
 import 'package:e_online/pages/shop_tabs/shop_services.dart';
-import 'package:e_online/pages/subscription_page.dart';
 import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/utils/shared_preferences.dart';
 import 'package:e_online/widgets/comingSoon.dart';
@@ -19,6 +18,7 @@ import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/newShopDetails.dart';
 import 'package:e_online/widgets/no_data.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
+import 'package:e_online/widgets/shop_password_dialog.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -77,32 +77,45 @@ class _MyShopPageState extends State<MyShopPage> {
       final response = await shopController.getShopDetails(businessId);
       print("🆑 ${businessId} ${response}");
       if (response != null) {
-        // bool isSubscribed = response["isSubscribed"];
-        bool isSubscribed = true;
-
-        if (!isSubscribed) {
-          Get.to(() => const SubscriptionPage());
+        // Check if shop has password protection
+        if (response['password'] != null) {
+          _showPasswordDialog(response);
+          return;
         }
-        shopDetails.value = response;
-        setState(() {
-          loading = false;
-          tilesItems[0]['points'] =
-              shopDetails.value['followers']?.toString() ?? "0";
-          tilesItems[1]['points'] =
-              shopDetails.value['impressions']?.toString() ?? "0";
-          tilesItems[2]['points'] =
-              shopDetails.value['shares']?.toString() ?? "0";
-          tilesItems[3]['points'] =
-              shopDetails.value['calls']?.toString() ?? "0";
-          tilesItems[4]['points'] =
-              shopDetails.value['reelLikes']?.toString() ?? "0";
-          tilesItems[5]['points'] =
-              shopDetails.value['profileViews']?.toString() ?? "0";
-        });
+
+        _processShopDetails(response);
       }
     } catch (e) {
       print("Error fetching shop details: $e");
     }
+  }
+
+  void _showPasswordDialog(Map<String, dynamic> shopData) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => ShopPasswordDialog(
+        shopData: shopData,
+        onPasswordCorrect: () => _processShopDetails(shopData),
+      ),
+    );
+  }
+
+  void _processShopDetails(Map<String, dynamic> response) {
+    shopDetails.value = response;
+    setState(() {
+      loading = false;
+      tilesItems[0]['points'] =
+          shopDetails.value['followers']?.toString() ?? "0";
+      tilesItems[1]['points'] =
+          shopDetails.value['impressions']?.toString() ?? "0";
+      tilesItems[2]['points'] = shopDetails.value['shares']?.toString() ?? "0";
+      tilesItems[3]['points'] = shopDetails.value['calls']?.toString() ?? "0";
+      tilesItems[4]['points'] =
+          shopDetails.value['reelLikes']?.toString() ?? "0";
+      tilesItems[5]['points'] =
+          shopDetails.value['profileViews']?.toString() ?? "0";
+    });
   }
 
   void _showDetailModal() {

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 class ActiveBusinessSelection extends StatefulWidget {
   const ActiveBusinessSelection({super.key});
@@ -105,10 +106,16 @@ class _ActiveBusinessSelectionState extends State<ActiveBusinessSelection> {
                       selectedBusiness!);
                   Navigator.pop(context, selectedBusiness);
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Please select a business."),
-                      duration: Duration(seconds: 2),
+                  Get.snackbar(
+                    "Error",
+                    "Please select a business.",
+                    backgroundColor: Colors.redAccent,
+                    colorText: Colors.white,
+                    snackPosition: SnackPosition.TOP,
+                    duration: const Duration(seconds: 2),
+                    icon: const HugeIcon(
+                      icon: HugeIcons.strokeRoundedCancel02,
+                      color: Colors.white,
                     ),
                   );
                 }

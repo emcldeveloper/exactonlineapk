@@ -16,7 +16,6 @@ import 'package:e_online/widgets/spacer.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:timeline_list/timeline_list.dart';
 
@@ -199,6 +198,9 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                               var currentStep = steps.firstWhere((element) =>
                                   element["value"] == widget.order["status"]);
                               return Timeline(
+                                // Disable internal scrolling so only the outer SingleChildScrollView handles scroll
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
                                 properties: const TimelineProperties(
                                     iconSize: 20,
                                     iconAlignment: MarkerIconAlignment.center),
@@ -440,14 +442,142 @@ class _CustomerOrderViewPageState extends State<CustomerOrderViewPage> {
                               ),
                             if (widget.order["status"] == "DELIVERED")
                               customButton(
-                                onTap: () {
-                                  OrdersController().editOrder(
-                                      widget.order["id"],
-                                      {"status": "CLOSED"}).then((res) {
-                                    setState(() {
-                                      widget.order["status"] = "CLOSED";
-                                    });
-                                  });
+                                onTap: () async {
+                                  final otpController = TextEditingController();
+                                  final formKey = GlobalKey<FormState>();
+                                  await showDialog(
+                                      context: context,
+                                      builder: (ctx) {
+                                        return AlertDialog(
+                                          backgroundColor: Colors.white,
+                                          title: const Text('Confirm Delivery'),
+                                          content: Form(
+                                            key: formKey,
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                const Text(
+                                                    'Enter the  OTP code sent to you to confirm delivery.'),
+                                                const SizedBox(height: 12),
+                                                TextFormField(
+                                                  controller: otpController,
+                                                  keyboardType:
+                                                      TextInputType.number,
+                                                  decoration: InputDecoration(
+                                                      focusColor: primary,
+                                                      labelStyle: TextStyle(
+                                                          color:
+                                                              Colors.black87),
+                                                      focusedBorder:
+                                                          OutlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color: primary),
+                                                      ),
+                                                      labelText: 'OTP Code',
+                                                      border:
+                                                          OutlineInputBorder()),
+                                                  validator: (v) {
+                                                    if (v == null ||
+                                                        v.trim().isEmpty) {
+                                                      return 'OTP required';
+                                                    }
+                                                    if (v.trim().length < 4) {
+                                                      return 'OTP seems too short';
+                                                    }
+                                                    return null;
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                                onPressed: () =>
+                                                    Navigator.pop(ctx),
+                                                child: const Text(
+                                                  'Cancel',
+                                                  style: TextStyle(
+                                                      color: Colors.black),
+                                                )),
+                                            ElevatedButton(
+                                                style: ButtonStyle(
+                                                  backgroundColor:
+                                                      MaterialStateProperty.all(
+                                                          primary),
+                                                  foregroundColor:
+                                                      MaterialStateProperty.all(
+                                                          Colors.white),
+                                                ),
+                                                onPressed: () async {
+                                                  if (!formKey.currentState!
+                                                      .validate()) return;
+                                                  Navigator.pop(
+                                                      ctx); // close dialog before request
+                                                  final otp =
+                                                      otpController.text.trim();
+                                                  try {
+                                                    var res =
+                                                        await OrdersController()
+                                                            .editOrder(
+                                                                widget.order[
+                                                                    "id"],
+                                                                {
+                                                          "status": "CLOSED",
+                                                          "otp": otp
+                                                        });
+                                                    // If backend returns a recognizable invalid OTP shape, handle it.
+                                                    if (res == null) {
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                              const SnackBar(
+                                                                  content: Text(
+                                                                      'Failed to confirm delivery. Please try again.')));
+                                                      return;
+                                                    }
+                                                    // Expecting success body; if backend sends status:false we check.
+                                                    if (res is Map &&
+                                                        ((res['status'] ==
+                                                                false) ||
+                                                            (res['message']
+                                                                    ?.toString()
+                                                                    .toLowerCase()
+                                                                    .contains(
+                                                                        'invalid otp') ??
+                                                                false))) {
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(SnackBar(
+                                                              content: Text(res[
+                                                                      'message'] ??
+                                                                  'Invalid OTP')));
+                                                      return;
+                                                    }
+                                                    setState(() {
+                                                      widget.order["status"] =
+                                                          "CLOSED";
+                                                    });
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                            const SnackBar(
+                                                                content: Text(
+                                                                    'Delivery confirmed. Thank you!')));
+                                                  } catch (e) {
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                            const SnackBar(
+                                                                content: Text(
+                                                                    'Error confirming delivery')));
+                                                  }
+                                                },
+                                                child: const Text('Confirm',
+                                                    style: TextStyle(
+                                                        color: Colors.white))),
+                                          ],
+                                        );
+                                      });
                                 },
                                 text: "Confirm Delivery",
                                 buttonColor: Colors.amber,

@@ -36,6 +36,7 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
   final ShopController shopController = Get.put(ShopController());
   final LocationController locationController = Get.put(LocationController());
   var _location = null;
+  bool _isPasswordVisible = false;
   final List<String> daysOfWeek = [
     'Monday',
     'Tuesday',
@@ -137,6 +138,7 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
             Get.snackbar(
                 "Error", "Please select both opening and closing times",
                 backgroundColor: Colors.redAccent,
+                snackPosition: SnackPosition.TOP,
                 colorText: Colors.white,
                 icon: const HugeIcon(
                     icon: HugeIcons.strokeRoundedCancel02,
@@ -458,6 +460,151 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
     }
   }
 
+  void _showPasswordManagementDialog() {
+    final currentPassword =
+        selectedBusiness?.value['password']?.toString() ?? '';
+    final TextEditingController passwordController =
+        TextEditingController(text: currentPassword);
+
+    // Reset password visibility when dialog opens
+    _isPasswordVisible = false;
+
+    Get.dialog(
+      AlertDialog(
+        backgroundColor: mainColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        title: Text(
+          'Shop Password',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Set or update your shop password. Leave empty to remove password protection.',
+              style: TextStyle(color: mutedTextColor, fontSize: 12),
+            ),
+            spacer2(),
+            StatefulBuilder(
+              builder: (context, setDialogState) {
+                return TextFormField(
+                  controller: passwordController,
+                  keyboardType: TextInputType.number,
+                  obscureText: !_isPasswordVisible,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    hintText: 'Enter numeric password',
+                    fillColor: primaryColor,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none,
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isPasswordVisible
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        color: mutedTextColor,
+                      ),
+                      onPressed: () {
+                        setDialogState(() {
+                          _isPasswordVisible = !_isPasswordVisible;
+                        });
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text('Cancel', style: TextStyle(color: mutedTextColor)),
+          ),
+          ElevatedButton(
+            onPressed: () => _updatePassword(passwordController.text.trim()),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: primary,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)),
+            ),
+            child: Text('Update', style: TextStyle(color: mainColor)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _updatePassword(String password) async {
+    try {
+      Get.back(); // Close dialog
+
+      // Show loading
+      Get.dialog(
+        AlertDialog(
+          content: Row(
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 16),
+              Text("Updating password..."),
+            ],
+          ),
+        ),
+        barrierDismissible: false,
+      );
+
+      final businessId = selectedBusiness?.value['id'];
+      if (businessId == null) {
+        throw Exception('No business selected');
+      }
+
+      // If password is empty, send null to remove password protection
+      final passwordToSend = password.isEmpty ? null : password;
+
+      await shopController.updateShopPassword(businessId, passwordToSend ?? '');
+
+      // Close loading dialog
+      Get.back();
+
+      // Update local data
+      setState(() {
+        selectedBusiness?.value['password'] = passwordToSend;
+      });
+
+      Get.snackbar(
+        "Success",
+        password.isEmpty
+            ? "Password protection removed"
+            : "Password updated successfully",
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        icon: const HugeIcon(
+            icon: HugeIcons.strokeRoundedTick01, color: Colors.white),
+      );
+    } catch (e) {
+      // Close loading dialog if open
+      if (Get.isDialogOpen == true) {
+        Get.back();
+      }
+
+      Get.snackbar(
+        "Error",
+        "Failed to update password: ${e.toString()}",
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+        icon: const HugeIcon(
+            icon: HugeIcons.strokeRoundedCancel02, color: Colors.white),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -703,6 +850,83 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                                 );
                               });
                             },
+                          ),
+                        ],
+                      ),
+                    ),
+                    spacer2(),
+                    // Password Settings Section
+                    Container(
+                      padding: const EdgeInsets.all(12.0),
+                      decoration: BoxDecoration(
+                        color: primaryColor,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ParagraphText(
+                            "Shop Password",
+                            fontWeight: FontWeight.bold,
+                          ),
+                          spacer(),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Obx(() {
+                                      final password =
+                                          selectedBusiness?.value['password'];
+                                      return Row(
+                                        children: [
+                                          ParagraphText(
+                                            password != null
+                                                ? "Password: ${_isPasswordVisible ? password : '••••••'}"
+                                                : "No password set",
+                                            color: mutedTextColor,
+                                          ),
+                                          if (password != null) ...[
+                                            SizedBox(width: 8),
+                                            InkWell(
+                                              onTap: () {
+                                                setState(() {
+                                                  _isPasswordVisible =
+                                                      !_isPasswordVisible;
+                                                });
+                                              },
+                                              child: Icon(
+                                                _isPasswordVisible
+                                                    ? Icons.visibility_off
+                                                    : Icons.visibility,
+                                                color: mutedTextColor,
+                                                size: 18,
+                                              ),
+                                            ),
+                                          ],
+                                        ],
+                                      );
+                                    }),
+                                    spacer(),
+                                    ParagraphText(
+                                      "Protect your shop with a password",
+                                      color: mutedTextColor,
+                                      fontSize: 12,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              InkWell(
+                                onTap: _showPasswordManagementDialog,
+                                child: HugeIcon(
+                                  icon: HugeIcons.strokeRoundedPencilEdit02,
+                                  color: Colors.grey,
+                                  size: 22.0,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),

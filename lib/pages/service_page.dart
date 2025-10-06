@@ -24,7 +24,6 @@ import 'package:e_online/widgets/custom_button.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/related_services.dart';
-import 'package:e_online/widgets/report_seller.dart';
 import 'package:e_online/widgets/reviews.dart';
 import 'package:e_online/widgets/spacer.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -117,13 +116,9 @@ class _ServicePageState extends State<ServicePage> {
 
   void _shareService() async {
     isSharing.value = true;
-
     await _sendServiceStats("share");
 
     const String appLink = "https://api.exactonline.co.tz/open-app/";
-    const String playStoreLink =
-        "https://play.google.com/store/apps/details?id=com.exactonline.exactonline";
-    const String appStoreLink = "https://apps.apple.com/app/idYOUR_APP_ID";
 
     String serviceId = widget.serviceData['id'];
     String serviceName =
@@ -159,36 +154,62 @@ class _ServicePageState extends State<ServicePage> {
     isSharing.value = false;
   }
 
+  Future<void> _launchServiceLink(String? rawLink) async {
+    if (rawLink == null || rawLink.trim().isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No link available for this service')),
+        );
+      }
+      return;
+    }
+
+    String link = rawLink.trim();
+    if (!link.startsWith('http://') && !link.startsWith('https://')) {
+      link = 'https://$link';
+    }
+
+    late final Uri uri;
+    try {
+      uri = Uri.parse(link);
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Invalid link format')),
+        );
+      }
+      return;
+    }
+
+    try {
+      final launched =
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (!launched && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not open link')),
+        );
+      } else {
+        analytics.logEvent(name: 'service_learn_more', parameters: {
+          'service_id': widget.serviceData['id'],
+          'url': link,
+        });
+        _sendServiceStats("learn_more");
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Error launching link')),
+        );
+      }
+    }
+  }
+
   double calculateAverageRating(List<Map<String, dynamic>> reviews) {
     if (reviews.isEmpty) return 0.0;
 
     double totalRating = reviews.fold(
         0.0, (sum, review) => sum + (review['rating'] as num).toDouble());
     return totalRating / reviews.length;
-  }
-
-  void _showReviewsBottomSheet() async {
-    var serviceId = widget.serviceData['id'];
-
-    double averageRating = calculateAverageRating(reviews);
-
-    setState(() {});
-  }
-
-  void _showReportSellerBottomSheet() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-        ),
-        child: const ReportSellerBottomSheet(),
-      ),
-    );
   }
 
   var addingToCart = false.obs;
@@ -315,15 +336,11 @@ class _ServicePageState extends State<ServicePage> {
                                   if (service["Shop"]["following"] == false)
                                     GestureDetector(
                                       onTap: () {
-                                        var payload = {
+                                        FollowingController().followShop({
                                           "ShopId": service["Shop"]["id"],
                                           "UserId":
                                               userController.user.value["id"]
-                                        };
-                                        // print(payload);
-                                        FollowingController()
-                                            .followShop(payload)
-                                            .then((res) => {setState(() {})});
+                                        }).then((res) => {setState(() {})});
                                       },
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.circular(40),
@@ -501,50 +518,54 @@ class _ServicePageState extends State<ServicePage> {
                                 left: 16, right: 16, bottom: 50, top: 20),
                             child: Row(
                               children: [
-                                Expanded(
-                                  child: customButton(
-                                      textColor: Colors.black87,
-                                      buttonColor: Colors.grey[200],
-                                      onTap: () async {
-                                        await analytics.logEvent(
-                                          name: 'chat_seller',
-                                          parameters: {
-                                            'Shop_Id': service["Shop"]["id"],
-                                            'service_id': service["id"],
-                                            'service_name': service['name'],
-                                            'service_description':
-                                                service['description'],
-                                            'price': service['price'],
-                                            'shopName': service["Shop"]["name"],
-                                            'shopPhone': service["Shop"]
-                                                ["phone"],
-                                            'from_page': 'ServicePage'
-                                          },
-                                        );
-                                        // _sendServiceStats("message");
-                                        ChatController().addChat({
-                                          "ShopId": service["Shop"]["id"],
-                                          "ServiceId": service["id"],
-                                          "UserId":
-                                              userController.user.value["id"]
-                                        }).then((res) {
-                                          print(res);
-                                          Get.to(() => ConversationPage(res));
-                                        });
-                                      },
-                                      text: "Message"),
-                                ),
+                                GestureDetector(
+                                    onTap: () async {
+                                      await analytics.logEvent(
+                                        name: 'chat_seller',
+                                        parameters: {
+                                          'Shop_Id': service["Shop"]["id"],
+                                          'service_id': service["id"],
+                                          'service_name': service['name'],
+                                          'service_description':
+                                              service['description'],
+                                          'price': service['price'],
+                                          'shopName': service["Shop"]["name"],
+                                          'shopPhone': service["Shop"]["phone"],
+                                          'from_page': 'ServicePage'
+                                        },
+                                      );
+                                      // _sendServiceStats("message");
+                                      ChatController().addChat({
+                                        "ShopId": service["Shop"]["id"],
+                                        "ServiceId": service["id"],
+                                        "UserId":
+                                            userController.user.value["id"]
+                                      }).then((res) {
+                                        print(res);
+                                        Get.to(() => ConversationPage(res));
+                                      });
+                                    },
+                                    child: Icon(Icons.message)),
                                 SizedBox(
-                                  width: 10,
+                                  width: 20,
+                                ),
+                                GestureDetector(
+                                    onTap: () async {
+                                      await launchUrl(Uri(
+                                          scheme: "tel",
+                                          path: service["Shop"]["phone"]));
+                                    },
+                                    child: Icon(Icons.call)),
+                                SizedBox(
+                                  width: 20,
                                 ),
                                 Expanded(
                                   child: customButton(
                                       onTap: () async {
-                                        await launchUrl(Uri(
-                                            scheme: "tel",
-                                            path: service["Shop"]["phone"]));
+                                        await _launchServiceLink(
+                                            service["serviceLink"]);
                                       },
-                                      text: "Call Us"),
+                                      text: "Learn more"),
                                 ),
                               ],
                             ),

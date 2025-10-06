@@ -192,4 +192,44 @@ class ShopController extends GetxController {
       throw Exception(e);
     }
   }
+
+  Future resetShopPassword(String shopId) async {
+    try {
+      var response = await dio.patch("/shops/reset-password/$shopId",
+          options: Options(headers: {
+            "Authorization":
+                "Bearer ${await SharedPreferencesUtil.getAccessToken()}",
+          }));
+      var data = response.data;
+      return data;
+    } on DioException catch (e) {
+      print(e);
+      Get.snackbar("Error", "Error resetting shop password",
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+          icon: const HugeIcon(
+              icon: HugeIcons.strokeRoundedCancel02, color: Colors.white));
+      throw Exception(e);
+    }
+  }
+
+  Future updateShopPassword(String shopId, String password) async {
+    try {
+      var response = await dio.patch("/shops/$shopId",
+          data: {"password": password},
+          options: Options(headers: {
+            "Authorization":
+                "Bearer ${await SharedPreferencesUtil.getAccessToken()}",
+          }));
+      var data = response.data;
+      return data;
+    } on DioException catch (e) {
+      Get.snackbar("Error", "Error updating shop password",
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+          icon: const HugeIcon(
+              icon: HugeIcons.strokeRoundedCancel02, color: Colors.white));
+      throw Exception(e);
+    }
+  }
 }
