@@ -123,11 +123,18 @@ class _ServicePageState extends State<ServicePage> {
     String serviceId = widget.serviceData['id'];
     String serviceName =
         widget.serviceData['name'] ?? 'Check out this service!';
-    String price = widget.serviceData['sellingPrice'] != null
-        ? " TZS ${toMoneyFormmat(widget.serviceData['sellingPrice'])}"
-        : '';
 
-    String shareText = "$serviceName for a price of $price";
+    // Check if price is 0 or null and show appropriate text
+    String price = '';
+    if (widget.serviceData['price'] == 0 ||
+        widget.serviceData['price'] == "0") {
+      price = " (Contact for price)";
+    } else if (widget.serviceData['price'] != null) {
+      price =
+          " for a price of TZS ${toMoneyFormmat(widget.serviceData['price'])}";
+    }
+
+    String shareText = "$serviceName$price";
 
     String fullAppLink = "$appLink?serviceId=$serviceId";
 
@@ -478,9 +485,17 @@ class _ServicePageState extends State<ServicePage> {
                                             fontSize: 20.0,
                                           ),
                                           ParagraphText(
-                                              "TZS ${toMoneyFormmat(service['price'])}",
-                                              color: primary,
-                                              fontSize: 16.0),
+                                            service['price'] == 0 ||
+                                                    service['price'] == "0"
+                                                ? "Contact for price"
+                                                : "TZS ${toMoneyFormmat(service['price'])}",
+                                            color: primary,
+                                            fontSize: 16.0,
+                                            fontWeight: service['price'] == 0 ||
+                                                    service['price'] == "0"
+                                                ? FontWeight.normal
+                                                : FontWeight.bold,
+                                          ),
                                         ],
                                       ),
                                     ),

@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'package:e_online/utils/app_badge_util.dart';
+import 'package:e_online/utils/notification_router.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -19,7 +22,14 @@ Future<void> initLocalNotifications() async {
     initializationSettings,
     onDidReceiveNotificationResponse: (NotificationResponse response) {
       // Handle notification tap
-      print('Local notification tapped: ${response.payload}');
+      try {
+        final payload = response.payload;
+        if (payload != null && payload.isNotEmpty) {
+          final Map<String, dynamic> data = jsonDecode(payload);
+          AppBadgeUtil.clear();
+          handleNotificationNavigation(data);
+        }
+      } catch (_) {}
     },
   );
 
@@ -36,7 +46,8 @@ Future<void> initLocalNotifications() async {
 
 // Function to show local notification
 Future<void> showLocalNotification(RemoteMessage message) async {
-  const AndroidNotificationDetails androidPlatformChannelSpecifics =
+  final int nextBadge = AppBadgeUtil.count + 1;
+  final AndroidNotificationDetails androidPlatformChannelSpecifics =
       AndroidNotificationDetails(
     'high_importance_channel', // Channel ID
     'High Importance Notifications', // Channel name
@@ -44,10 +55,12 @@ Future<void> showLocalNotification(RemoteMessage message) async {
     importance: Importance.max,
     priority: Priority.high,
     showWhen: true,
+    channelShowBadge: true,
+    number: nextBadge,
   );
   const DarwinNotificationDetails iOSPlatformChannelSpecifics =
       DarwinNotificationDetails();
-  const NotificationDetails platformChannelSpecifics = NotificationDetails(
+  final NotificationDetails platformChannelSpecifics = NotificationDetails(
     android: androidPlatformChannelSpecifics,
     iOS: iOSPlatformChannelSpecifics,
   );
@@ -57,6 +70,8 @@ Future<void> showLocalNotification(RemoteMessage message) async {
     message.notification?.title ?? 'No Title',
     message.notification?.body ?? 'No Body',
     platformChannelSpecifics,
-    payload: message.data.toString(), // Optional payload for tap handling
+    payload: jsonEncode(message.data), // JSON payload for tap handling
   );
+
+  // Do not update app icon badge here; only update badge when app is not opened (handled in background handler)
 }

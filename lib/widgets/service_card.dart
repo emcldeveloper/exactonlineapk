@@ -121,24 +121,19 @@ class _ServiceCardState extends State<ServiceCard> {
                     ],
                   ),
                   ParagraphText(
-                    "TZS ${toMoneyFormmat(widget.data['price'])}",
+                    widget.data['price'] == 0 || widget.data['price'] == "0"
+                        ? "Contact for price"
+                        : "TZS ${toMoneyFormmat(widget.data['price'])}",
                     fontWeight: FontWeight.bold,
                     maxLines: 1,
-                    fontSize: 15.0,
-                  ),
-                  if (widget.data['shipping'] == "Free Shipping")
-                    ParagraphText(
-                      widget.data['shipping'],
-                      fontSize: 12,
-                      maxLines: 1,
-                      color: Colors.red,
-                    ),
-                  ParagraphText(
-                    widget.data["Shop"]?["name"] ?? "",
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    maxLines: 1,
-                    color: primary,
+                    fontSize:
+                        widget.data['price'] == 0 || widget.data['price'] == "0"
+                            ? 12.0
+                            : 15.0,
+                    color:
+                        widget.data['price'] == 0 || widget.data['price'] == "0"
+                            ? primary
+                            : null,
                   ),
                 ],
               ),

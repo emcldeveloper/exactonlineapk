@@ -1,10 +1,8 @@
-import 'package:e_online/controllers/order_controller.dart';
-import 'package:e_online/pages/customer_order_view_page.dart';
-import 'package:e_online/pages/seller_order_view_page.dart';
+import 'package:e_online/utils/app_badge_util.dart';
+import 'package:e_online/utils/notification_router.dart';
 import 'package:e_online/utils/local_notifications_util.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:get/get.dart';
 
 Future<void> initializeFirebaseMessaging() async {
   await Firebase.initializeApp();
@@ -37,6 +35,8 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   print('Handling a background message: ${message.messageId}');
   print('Notification Data: ${message.data}');
+  // Increment app badge count for background messages
+  await AppBadgeUtil.increment();
 }
 
 Future<void> setupFirebaseMessaging() async {
@@ -63,22 +63,17 @@ Future<void> setupFirebaseMessaging() async {
 
   // Handle background and terminated states
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    var data = message.data;
-    if (data["type"] == "order") {
-      OrdersController().getOrder(id: data["orderId"]).then((order) {
-        if (order != null) {
-          if (data["to"] == "user") {
-            Get.to(() => CustomerOrderViewPage(order: order));
-          } else {
-            Get.to(() => SellerOrderViewPage(order: order));
-          }
-        } else {
-          print("Order not found");
-          return;
-        }
-      });
-    }
+  // Handle notification taps when app in background
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+    await AppBadgeUtil.clear();
+    await handleNotificationNavigation(message.data);
     print('Notification clicked: ${message.data}');
   });
+
+  // Handle notification when app was terminated
+  final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+  if (initialMessage != null) {
+    await AppBadgeUtil.clear();
+    await handleNotificationNavigation(initialMessage.data);
+  }
 }

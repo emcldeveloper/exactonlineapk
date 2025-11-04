@@ -28,4 +28,18 @@ class ProductImageController extends GetxController {
       return e.response;
     }
   }
+
+  Future deleteProductImage(String id) async {
+    try {
+      var response = await dio.delete("/product-images/$id",
+          options: Options(headers: {
+            "Authorization":
+                "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
+          }));
+      var data = response.data["body"];
+      return data;
+    } on DioException catch (e) {
+      return e.response;
+    }
+  }
 }

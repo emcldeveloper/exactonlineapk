@@ -62,11 +62,14 @@ class _ProductEditBottomSheetState extends State<ProductEditBottomSheet> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ParagraphText(
-                        "Product visibility",
+                        "Hide product",
                         fontWeight: FontWeight.bold,
                       ),
                       ParagraphText(
-                        "When you hide product, customers won't see it ",
+                        widget.selectedProduct["isHidden"]
+                            ? "Product is now hidden to customers"
+                            : "Product is visible to customers",
+                        fontSize: 12.0,
                       ),
                     ],
                   ),
@@ -87,27 +90,27 @@ class _ProductEditBottomSheetState extends State<ProductEditBottomSheet> {
                 ),
               ],
             ),
-            spacer1(),
-            customButton(
-              onTap: () {
-                // Example product data
-                Map<String, dynamic> productData = {
-                  "title": "Sample Product",
-                  "price": "TZS 250,000",
-                  "description": "This is a sample product."
-                };
+            // spacer1(),
+            // customButton(
+            //   onTap: () {
+            //     // Example product data
+            //     Map<String, dynamic> productData = {
+            //       "title": "Sample Product",
+            //       "price": "TZS 250,000",
+            //       "description": "This is a sample product."
+            //     };
 
-                Get.bottomSheet(Container(
-                  color: Colors.white,
-                  child: CommingSoon(),
-                ));
-              },
-              text: "Promote Product",
-              vertical: 8.0,
-              buttonColor: primaryColor,
-              textColor: Colors.black,
-            ),
-            spacer1(),
+            //     Get.bottomSheet(Container(
+            //       color: Colors.white,
+            //       child: CommingSoon(),
+            //     ));
+            //   },
+            //   text: "Promote Product",
+            //   vertical: 8.0,
+            //   buttonColor: primaryColor,
+            //   textColor: Colors.black,
+            // ),
+            // spacer1(),
             // GestureDetector(
             //   onTap: () {
             //     Get.to(const PromoteProductInsightsBottomSheet());

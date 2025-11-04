@@ -34,6 +34,8 @@ class AddServicePage extends StatefulWidget {
 class _AddServicePageState extends State<AddServicePage> {
   Rx<bool> priceIncludeDelivery = true.obs;
   Rx<bool> isHidden = false.obs;
+  Rx<bool> contactForPrice =
+      true.obs; // Default checked for "Contact for price"
   final List<XFile> _images = [];
   final ImagePicker _picker = ImagePicker();
   List<Color> selectedColors = [];
@@ -150,6 +152,10 @@ class _AddServicePageState extends State<AddServicePage> {
   void initState() {
     super.initState();
     trackScreenView("AddServicePage");
+
+    // Set initial price to 0 since contact for price is checked by default
+    priceController.text = "0";
+
     CategoriesController()
         .getCategories(keyword: "", page: 1, type: "service", limit: 100)
         .then((res) {
@@ -303,11 +309,39 @@ class _AddServicePageState extends State<AddServicePage> {
                         .toList(),
                   ),
                 ),
-                TextForm(
-                  label: "Service price",
-                  textEditingController: priceController,
-                  textInputType: TextInputType.number,
-                  hint: "Enter service price",
+                // Contact for price checkbox
+                Obx(
+                  () => CheckboxListTile(
+                    title: ParagraphText("Contact for price"),
+                    subtitle: ParagraphText(
+                      "Check this if customers should contact you for pricing",
+                      fontSize: 12,
+                      color: Colors.grey[600],
+                    ),
+                    value: contactForPrice.value,
+                    onChanged: (bool? value) {
+                      contactForPrice.value = value ?? true;
+                      // Set price to 0 when contact for price is checked
+                      if (contactForPrice.value) {
+                        priceController.text = "0";
+                      } else {
+                        priceController.text = "";
+                      }
+                    },
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ),
+                // Show price field only when contact for price is unchecked
+                Obx(
+                  () => contactForPrice.value
+                      ? Container() // Hide price field
+                      : TextForm(
+                          label: "Service price",
+                          textEditingController: priceController,
+                          textInputType: TextInputType.number,
+                          hint: "Enter service price",
+                        ),
                 ),
                 TextForm(
                   label: "Service Link (optional)",
@@ -326,7 +360,21 @@ class _AddServicePageState extends State<AddServicePage> {
                 customButton(
                   loading: loading,
                   onTap: () async {
-                    if (_formKey.currentState!.validate()) {
+                    // Validate form, but skip price validation if contact for price is checked
+                    bool isFormValid = _formKey.currentState!.validate();
+
+                    // Additional validation for price when contact for price is unchecked
+                    if (!contactForPrice.value &&
+                        priceController.text.isEmpty) {
+                      showErrorSnackbar(
+                        title: "Price Required",
+                        description:
+                            "Please enter service price or enable 'Contact for price'",
+                      );
+                      return;
+                    }
+
+                    if (isFormValid) {
                       if (_images.isEmpty) {
                         showErrorSnackbar(
                           title: "No Service Images",

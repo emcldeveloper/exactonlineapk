@@ -3,16 +3,14 @@ import 'package:e_online/constants/colors.dart';
 import 'package:e_online/constants/product_items.dart';
 import 'package:e_online/controllers/cart_products_controller.dart';
 import 'package:e_online/controllers/categories_controller.dart';
+import 'package:e_online/controllers/order_controller.dart';
+import 'package:e_online/controllers/ordered_products_controller.dart';
 import 'package:e_online/controllers/notification_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
-import 'package:e_online/pages/cart_page.dart';
 import 'package:e_online/pages/categories_products_page.dart';
-import 'package:e_online/pages/home_page_sections/all_for_you_products.dart';
 import 'package:e_online/pages/home_page_sections/all_new_arrival_products.dart';
 import 'package:e_online/pages/home_page_sections/all_products.dart';
 import 'package:e_online/pages/home_page_sections/all_services.dart';
-import 'package:e_online/pages/home_page_sections/for_you_products.dart';
-import 'package:e_online/pages/home_page_sections/home_categories_products.dart';
 import 'package:e_online/pages/home_page_sections/new_arrival_products.dart';
 import 'package:e_online/pages/home_page_sections/popular_services.dart';
 import 'package:e_online/pages/notifications_page.dart';
@@ -43,6 +41,7 @@ class _HomePageState extends State<HomePage>
   UserController userController = Get.find();
   NotificationController notificationController =
       Get.put(NotificationController());
+  bool _checkedDeliveredPrompt = false;
   int _currentPage = 0;
   final List<String> carouselImages = [
     "assets/ads/ad1.jpg",
@@ -53,6 +52,7 @@ class _HomePageState extends State<HomePage>
   Rx<List> categories = Rx<List>([]);
   CartProductController cartProductController = CartProductController();
   late TabController _tabController; // Add TabController
+  bool _tabReady = false; // Tracks initialization of TabController
   RxInt page = 0.obs; // Reactive page variable
 
   @override
@@ -61,6 +61,10 @@ class _HomePageState extends State<HomePage>
     Get.put(cartProductController);
     // Fetch unread notifications count
     notificationController.getUnreadCount();
+    // After first frame, check for delivered orders and prompt for OTP confirmation
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _maybePromptDeliveredOrder();
+    });
     CategoriesController()
         .getCategories(page: 1, limit: 50, keyword: "")
         .then((res) {
@@ -76,6 +80,13 @@ class _HomePageState extends State<HomePage>
         page.value = _tabController.index; // Update page when tab changes
         print("Tab changed to: ${page.value}");
       });
+      if (mounted) {
+        setState(() {
+          _tabReady = true;
+        });
+      } else {
+        _tabReady = true;
+      }
     });
     trackScreenView("HomePage");
   }
@@ -84,6 +95,263 @@ class _HomePageState extends State<HomePage>
   void dispose() {
     _tabController.dispose(); // Clean up TabController
     super.dispose();
+  }
+
+  Future<void> _maybePromptDeliveredOrder() async {
+    if (_checkedDeliveredPrompt) return; // avoid repeated prompts
+    _checkedDeliveredPrompt = true;
+    try {
+      // Only customers confirm delivery
+      final role = userController.user.value['role']?.toString().toLowerCase();
+      if (role != 'customer') return;
+
+      // Fetch orders with status DELIVERED (backend returns DELIVERED + CLOSED, we'll filter)
+      final List<dynamic>? rows =
+          await OrdersController().getMyOrders(1, 10, "", "DELIVERED");
+      if (rows == null || rows.isEmpty) return;
+      final delivered = rows
+          .where((o) =>
+              ((o['status']?.toString().toUpperCase()) ?? '') == 'DELIVERED')
+          .toList();
+      if (delivered.isEmpty) return;
+
+      // Pick the most recently updated delivered order if available
+      delivered.sort((a, b) {
+        final aTime = DateTime.tryParse(a['updatedAt']?.toString() ?? '') ??
+            DateTime.fromMillisecondsSinceEpoch(0);
+        final bTime = DateTime.tryParse(b['updatedAt']?.toString() ?? '') ??
+            DateTime.fromMillisecondsSinceEpoch(0);
+        return bTime.compareTo(aTime);
+      });
+      final order = delivered.first;
+
+      final otpController = TextEditingController();
+      final formKey = GlobalKey<FormState>();
+      await showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (ctx) {
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('Confirm Delivery'),
+                const SizedBox(height: 4),
+                Text(
+                  'Order #${order['id'].toString().split('-').first}',
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: Colors.black54,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+            content: SizedBox(
+              width: double.maxFinite,
+              child: Form(
+                key: formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    FutureBuilder(
+                      future: OrderedProductController()
+                          .getUserOrderproducts(order['id']),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const SizedBox(
+                            height: 56,
+                            child: Center(
+                              child: SizedBox(
+                                width: 18,
+                                height: 18,
+                                child:
+                                    CircularProgressIndicator(strokeWidth: 2),
+                              ),
+                            ),
+                          );
+                        }
+                        if (!snapshot.hasData ||
+                            (snapshot.data as List).isEmpty) {
+                          return const SizedBox.shrink();
+                        }
+                        final products = snapshot.data as List<dynamic>;
+                        final displayCount =
+                            products.length > 8 ? 8 : products.length;
+                        final hasMore = products.length > displayCount;
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12.0),
+                          child: SizedBox(
+                            height: 100,
+                            child: ListView.separated(
+                              shrinkWrap: true,
+                              primary: false,
+                              scrollDirection: Axis.horizontal,
+                              itemCount: displayCount,
+                              separatorBuilder: (_, __) =>
+                                  const SizedBox(width: 8),
+                              itemBuilder: (context, index) {
+                                final item = products[index];
+                                String? imageUrl;
+                                try {
+                                  imageUrl = item["Product"]["ProductImages"][0]
+                                          ["image"]
+                                      ?.toString();
+                                } catch (_) {}
+                                final tile = ClipRRect(
+                                  borderRadius: BorderRadius.circular(6),
+                                  child: Container(
+                                    width: 100,
+                                    height: 100,
+                                    color: const Color(0xFFF2F2F2),
+                                    child: imageUrl != null &&
+                                            imageUrl.isNotEmpty
+                                        ? CachedNetworkImage(
+                                            imageUrl: imageUrl,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : const Icon(Icons.image_not_supported,
+                                            size: 20, color: Colors.grey),
+                                  ),
+                                );
+                                if (hasMore && index == displayCount - 1) {
+                                  final remaining =
+                                      products.length - displayCount;
+                                  return Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      tile,
+                                      Container(
+                                        width: 56,
+                                        height: 56,
+                                        decoration: BoxDecoration(
+                                          color: Colors.black45,
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                        ),
+                                      ),
+                                      Text(
+                                        "+$remaining",
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }
+                                return tile;
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    const Text(
+                        'Enter the OTP code sent to you to confirm delivery.'),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: otpController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        focusColor: primary,
+                        labelStyle: const TextStyle(color: Colors.black87),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: primary),
+                        ),
+                        labelText: 'OTP Code',
+                        border: const OutlineInputBorder(),
+                      ),
+                      validator: (v) {
+                        if (v == null || v.trim().isEmpty) {
+                          return 'OTP required';
+                        }
+                        if (v.trim().length < 4) {
+                          return 'OTP seems too short';
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text(
+                  'Later',
+                  style: TextStyle(color: Colors.black),
+                ),
+              ),
+              ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(primary),
+                  foregroundColor: MaterialStateProperty.all(Colors.white),
+                ),
+                onPressed: () async {
+                  if (!formKey.currentState!.validate()) return;
+                  Navigator.pop(ctx); // close dialog before request
+                  final otp = otpController.text.trim();
+                  try {
+                    final res =
+                        await OrdersController().editOrder(order['id'], {
+                      'status': 'CLOSED',
+                      'otp': otp,
+                    });
+                    if (res == null) {
+                      // ignore: use_build_context_synchronously
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                              'Failed to confirm delivery. Please try again.'),
+                        ),
+                      );
+                      return;
+                    }
+                    if (res is Map &&
+                        ((res['status'] == false) ||
+                            (res['message']
+                                    ?.toString()
+                                    .toLowerCase()
+                                    .contains('invalid otp') ??
+                                false))) {
+                      // ignore: use_build_context_synchronously
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(res['message'] ?? 'Invalid OTP'),
+                        ),
+                      );
+                      return;
+                    }
+                    // Success
+                    // ignore: use_build_context_synchronously
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Delivery confirmed. Thank you!')),
+                    );
+                  } catch (e) {
+                    // ignore: use_build_context_synchronously
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Error confirming delivery')),
+                    );
+                  }
+                },
+                child: const Text('Confirm',
+                    style: TextStyle(color: Colors.white)),
+              ),
+            ],
+          );
+        },
+      );
+    } catch (_) {
+      // ignore errors silently to not block home page
+    }
   }
 
   @override
@@ -279,7 +547,7 @@ class _HomePageState extends State<HomePage>
     return GetX<CategoriesController>(
       init: CategoriesController(),
       builder: (find) {
-        if (categories.value.isEmpty || _tabController == null) {
+        if (categories.value.isEmpty || !_tabReady) {
           return const Center(
             child: CircularProgressIndicator(color: Colors.black),
           );

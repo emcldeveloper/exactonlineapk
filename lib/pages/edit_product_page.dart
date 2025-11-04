@@ -1,10 +1,16 @@
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart' as dio;
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/categories_controller.dart';
 import 'package:e_online/controllers/product_controller.dart';
+import 'package:e_online/controllers/product_image_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/utils/snackbars.dart';
 import 'package:e_online/widgets/custom_button.dart';
+import 'package:e_online/widgets/editimage.dart';
 import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/select_form.dart';
@@ -13,6 +19,7 @@ import 'package:e_online/widgets/text_form.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:image_picker/image_picker.dart';
 
 class EditProductPage extends StatefulWidget {
   final dynamic product;
@@ -49,6 +56,12 @@ class _EditProductPageState extends State<EditProductPage> {
   final _formKey = GlobalKey<FormState>();
 
   bool loading = false;
+
+  // Image handling variables
+  final List<XFile> _newImages = []; // New images to be uploaded
+  final List<dynamic> _existingImages = []; // Existing product images
+  final ImagePicker _picker = ImagePicker();
+  final List<String> _imagesToDelete = []; // Track images marked for deletion
 
   // Build specification field based on inputStyle
   Widget _buildSpecificationField(Map<String, dynamic> spec) {
@@ -501,7 +514,124 @@ class _EditProductPageState extends State<EditProductPage> {
       }
     });
 
+    // Initialize existing images
+    _existingImages.clear();
+    if (widget.product["ProductImages"] != null) {
+      _existingImages.addAll(widget.product["ProductImages"]);
+    }
+
     super.initState();
+  }
+
+  // Image management methods
+  Future<void> _pickImages() async {
+    try {
+      final List<XFile> selectedImages = await _picker.pickMultiImage();
+      if (selectedImages.isNotEmpty) {
+        setState(() {
+          _newImages.addAll(selectedImages);
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error picking images')),
+      );
+    }
+  }
+
+  Future<void> _pickSingleImage() async {
+    try {
+      final XFile? pickedFile =
+          await _picker.pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        setState(() {
+          _newImages.add(pickedFile);
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error picking image')),
+      );
+    }
+  }
+
+  void _openImageEditBottomSheet(int index, bool isExisting) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => ImageEditBottomSheet(
+        onReplace: () async {
+          final XFile? newImage =
+              await _picker.pickImage(source: ImageSource.gallery);
+          if (newImage != null) {
+            setState(() {
+              if (isExisting) {
+                // Mark existing image for deletion and add new one
+                final existingImage = _existingImages[index];
+                _imagesToDelete.add(existingImage["id"].toString());
+                _existingImages.removeAt(index);
+                _newImages.add(newImage);
+              } else {
+                // Replace new image
+                _newImages[index] = newImage;
+              }
+            });
+          }
+        },
+        onDelete: () {
+          setState(() {
+            if (isExisting) {
+              // Mark existing image for deletion
+              final existingImage = _existingImages[index];
+              _imagesToDelete.add(existingImage["id"].toString());
+              _existingImages.removeAt(index);
+            } else {
+              // Remove new image
+              _newImages.removeAt(index);
+            }
+          });
+        },
+      ),
+    );
+  }
+
+  Future<void> _uploadNewImages(String productId) async {
+    if (_newImages.isEmpty) return;
+
+    try {
+      for (var item in _newImages) {
+        var formData = dio.FormData.fromMap({
+          "ProductId": productId,
+          "file": await dio.MultipartFile.fromFile(
+            item.path,
+            filename: item.path.split("/").last,
+          ),
+        });
+        await ProductImageController().addProductImage(formData);
+      }
+    } catch (e) {
+      print('Error uploading new images: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error uploading images: $e')),
+      );
+    }
+  }
+
+  Future<void> _deleteMarkedImages() async {
+    if (_imagesToDelete.isEmpty) return;
+
+    try {
+      for (var imageId in _imagesToDelete) {
+        await ProductImageController().deleteProductImage(imageId);
+      }
+    } catch (e) {
+      print('Error deleting images: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error deleting images: $e')),
+      );
+    }
   }
 
   // Format specification value for display
@@ -555,6 +685,124 @@ class _EditProductPageState extends State<EditProductPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Product Images Section
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ParagraphText(
+                          "Product Images",
+                          fontWeight: FontWeight.bold,
+                        ),
+                        const SizedBox(height: 10),
+                        if (_existingImages.isEmpty && _newImages.isEmpty)
+                          Container(
+                            height: 150,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: primaryColor,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: Colors.grey.shade300),
+                            ),
+                            child: InkWell(
+                              onTap: _pickImages,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  HugeIcon(
+                                    icon: HugeIcons.strokeRoundedAdd01,
+                                    color: Colors.grey,
+                                    size: 40.0,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  ParagraphText(
+                                    "Add Images",
+                                    color: Colors.grey,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        else
+                          Column(
+                            children: [
+                              SizedBox(
+                                height: 200,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: _existingImages.length +
+                                      _newImages.length,
+                                  itemBuilder: (context, index) {
+                                    bool isExisting =
+                                        index < _existingImages.length;
+                                    int adjustedIndex = isExisting
+                                        ? index
+                                        : index - _existingImages.length;
+
+                                    return GestureDetector(
+                                      onTap: () => _openImageEditBottomSheet(
+                                          adjustedIndex, isExisting),
+                                      child: Container(
+                                        margin: const EdgeInsets.only(right: 8),
+                                        width: 200,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          border: Border.all(
+                                              color: Colors.grey.shade300),
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          child: isExisting
+                                              ? CachedNetworkImage(
+                                                  imageUrl: _existingImages[
+                                                      adjustedIndex]["image"],
+                                                  fit: BoxFit.cover,
+                                                  errorWidget:
+                                                      (context, url, error) =>
+                                                          Container(
+                                                    color: Colors.grey.shade200,
+                                                    child: const Icon(
+                                                        Icons.error,
+                                                        color: Colors.red),
+                                                  ),
+                                                )
+                                              : Image.file(
+                                                  File(_newImages[adjustedIndex]
+                                                      .path),
+                                                  fit: BoxFit.cover,
+                                                ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ElevatedButton.icon(
+                                    onPressed: _pickSingleImage,
+                                    icon: HugeIcon(
+                                      icon: HugeIcons.strokeRoundedAdd01,
+                                      color: Colors.white,
+                                      size: 22.0,
+                                    ),
+                                    label: ParagraphText(
+                                      "Add More",
+                                      color: Colors.white,
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: secondaryColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                      ],
+                    ),
                     spacer1(),
                     TextForm(
                         label: "Product Name",
@@ -1076,13 +1324,29 @@ class _EditProductPageState extends State<EditProductPage> {
                           ProductController()
                               .editProduct(widget.product["id"], payload)
                               .then((res) async {
-                            setState(() {
-                              loading = false;
-                            });
-                            Get.back();
-                            showSuccessSnackbar(
-                                title: "Changed successfully",
-                                description: "Product is edited successfully");
+                            try {
+                              // Handle image changes after product update
+                              await _deleteMarkedImages();
+                              await _uploadNewImages(widget.product["id"]);
+
+                              setState(() {
+                                loading = false;
+                              });
+                              Get.back();
+                              showSuccessSnackbar(
+                                  title: "Changed successfully",
+                                  description: "Product updated successfully");
+                            } catch (imageError) {
+                              setState(() {
+                                loading = false;
+                              });
+                              print("Image update error: $imageError");
+                              // Show success for product update but warn about image issues
+                              showSuccessSnackbar(
+                                  title: "Product updated",
+                                  description:
+                                      "Product updated but some image changes failed");
+                            }
                           }).catchError((error) {
                             setState(() {
                               loading = false;

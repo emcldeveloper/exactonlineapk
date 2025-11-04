@@ -40,6 +40,10 @@ class _MyShopPageState extends State<MyShopPage> {
   List<dynamic> availableShops = [];
   bool loading = true;
   Key _tabViewKey = UniqueKey(); // Add this to force refresh of tab content
+
+  // Static map to store authenticated shops across the session
+  static final Map<String, bool> _authenticatedShops = {};
+
   final List<Map<String, dynamic>> tilesItems = [
     {'title': "Followers"},
     {'title': "Impressions"},
@@ -77,8 +81,9 @@ class _MyShopPageState extends State<MyShopPage> {
       final response = await shopController.getShopDetails(businessId);
       print("🆑 ${businessId} ${response}");
       if (response != null) {
-        // Check if shop has password protection
-        if (response['password'] != null) {
+        // Check if shop has password protection AND hasn't been authenticated in this session
+        if (response['password'] != null &&
+            !(_authenticatedShops[businessId] ?? false)) {
           _showPasswordDialog(response);
           return;
         }
@@ -96,7 +101,11 @@ class _MyShopPageState extends State<MyShopPage> {
       barrierDismissible: false,
       builder: (context) => ShopPasswordDialog(
         shopData: shopData,
-        onPasswordCorrect: () => _processShopDetails(shopData),
+        onPasswordCorrect: () {
+          // Mark this shop as authenticated for this session
+          _authenticatedShops[shopData['id']] = true;
+          _processShopDetails(shopData);
+        },
       ),
     );
   }

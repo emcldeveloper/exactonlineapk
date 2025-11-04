@@ -6,6 +6,7 @@ import 'package:e_online/pages/splashscreen_page.dart';
 import 'package:e_online/pages/update_page.dart';
 import 'package:e_online/pages/way_page.dart';
 import 'package:e_online/utils/fcm_messaging_utils.dart';
+import 'package:e_online/utils/app_badge_util.dart';
 import 'package:e_online/utils/shared_preferences.dart';
 import 'package:e_online/utils/update_checker.dart';
 import 'package:e_online/widgets/network_listener.dart';
@@ -38,6 +39,8 @@ void main() async {
       await setupFirebaseMessaging();
       await initializeFirebaseMessaging();
       await getToken();
+      // Clear any stale app badge on startup
+      await AppBadgeUtil.clear();
     } catch (e) {
       print('Firebase messaging initialization failed: $e');
       // Continue without messaging if it fails
