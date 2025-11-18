@@ -63,6 +63,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '773239040686',
     projectId: 'eonline-e4ef3',
     storageBucket: 'eonline-e4ef3.firebasestorage.app',
-    iosBundleId: 'com.example.eOnline',
+    iosBundleId: 'com.exactonline.exactonline',
   );
 }

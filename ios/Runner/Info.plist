@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>E Online</string>
+	<string>Exact Online</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -71,6 +71,12 @@
 	<key>NSAllowsArbitraryLoads</key>
 	<true/>
 	</dict>
+
+	<!-- Privacy usage descriptions required by App Store -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Exact Online needs access to your photo library so you can choose photos and videos for your products, services, and profile.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Exact Online needs access to your camera so you can take photos and videos for your products, services, and profile.</string>
 
 </dict>
 </plist>

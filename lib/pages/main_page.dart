@@ -7,6 +7,8 @@ import 'package:e_online/pages/my_orders_page.dart';
 import 'package:e_online/pages/profile_page.dart';
 import 'package:e_online/pages/reels_page.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/instance_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -23,12 +25,73 @@ class _MainPageState extends State<MainPage> {
   int activeTab = 0;
   UserController userController = Get.find();
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  StreamSubscription<String>? _tokenSub;
+
+  @override
+  void initState() {
+    super.initState();
+    _initMessagingToken();
+  }
+
+  Future<void> _initMessagingToken() async {
+    try {
+      // Ensure Messaging auto-initializes (Info.plist sets AutoInit to false)
+      await FirebaseMessaging.instance.setAutoInitEnabled(true);
+
+      // iOS: request permissions and wait briefly for APNs token
+      if (Platform.isIOS) {
+        await _firebaseMessaging.requestPermission(
+          alert: true,
+          badge: true,
+          sound: true,
+          provisional: false,
+        );
+
+        // Ensure notifications show in foreground on iOS
+        await FirebaseMessaging.instance
+            .setForegroundNotificationPresentationOptions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
+
+        // Retry a few times for APNs token to be set (simulator may never get one)
+        for (int i = 0; i < 5; i++) {
+          final apns = await _firebaseMessaging.getAPNSToken();
+          if (apns != null) break;
+          await Future.delayed(const Duration(seconds: 1));
+        }
+      }
+
+      final token = await _firebaseMessaging.getToken();
+      if (token != null && token.isNotEmpty) {
+        final uid = userController.user.value["id"];
+        if (uid != null && uid.toString().isNotEmpty) {
+          await userController.updateUserData(uid, {"token": token});
+        }
+      }
+
+      // Keep token up-to-date
+      _tokenSub = _firebaseMessaging.onTokenRefresh.listen((t) async {
+        final uid = userController.user.value["id"];
+        if (uid != null && uid.toString().isNotEmpty) {
+          await userController.updateUserData(uid, {"token": t});
+        }
+      });
+    } catch (e) {
+      debugPrint('FCM init error: $e');
+    }
+  }
+
+  @override
+  void dispose() {
+    _tokenSub?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    _firebaseMessaging.getToken().then((value) {
-      userController
-          .updateUserData(userController.user.value["id"], {"token": value});
-    });
+    // Token is initialized in initState; avoid calling getToken from build
     List<Widget> pages = [
       const HomePage(),
       const ReelsPage(),
