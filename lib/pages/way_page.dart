@@ -1,6 +1,7 @@
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/auth/login_page.dart';
 import 'package:e_online/pages/main_page.dart';
+import 'package:e_online/pages/shop_home_page.dart';
 import 'package:e_online/utils/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -45,7 +46,14 @@ class WayPage extends StatelessWidget {
         }
         var result = snapshot.requireData;
         if (snapshot.hasData && result == true) {
-          return const MainPage();
+          // Check if user has at least one shop
+          List shops = userController.user.value['Shops'] ?? [];
+          if (shops.isEmpty) {
+            // No shops, navigate directly to MainPage (Shopping Center)
+            return const MainPage();
+          }
+          // Has shops, navigate to shop home page
+          return const ShopHomePage();
         }
 
         return const LoginPage();

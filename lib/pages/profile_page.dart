@@ -151,12 +151,12 @@ class _ProfilePageState extends State<ProfilePage> {
                       bool hasShop = shops != null && shops.isNotEmpty;
 
                       final List<Map<String, dynamic>> settingItems = [
-                        if (hasShop)
-                          {
-                            'icon': Bootstrap.cart,
-                            'title': 'My Shop',
-                            'page': const MyShopPage(),
-                          },
+                        // if (hasShop)
+                        //   {
+                        //     'icon': Bootstrap.cart,
+                        //     'title': 'My Shop',
+                        //     'page': const MyShopPage(),
+                        //   },
                         {
                           'icon': Icons.favorite_outline,
                           'title': 'Favorites',

@@ -15,6 +15,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:e_online/constants/colors.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -182,8 +183,12 @@ class MyApp extends StatelessWidget {
       title: "ExactOnline",
       navigatorObservers: [observer],
       theme: ThemeData(
-        primaryColor: Colors.black,
-        textTheme: GoogleFonts.interTextTheme(),
+        primaryColor: primary,
+        textTheme: GoogleFonts.poppinsTextTheme(),
+        appBarTheme: AppBarTheme(backgroundColor: primary),
+        floatingActionButtonTheme:
+            FloatingActionButtonThemeData(backgroundColor: primary),
+        progressIndicatorTheme: ProgressIndicatorThemeData(color: primary),
       ),
       home: Stack(
         children: [
