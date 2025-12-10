@@ -16,6 +16,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:e_online/constants/colors.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -262,7 +263,8 @@ class EntryPoint extends StatelessWidget {
         }
         var result = snapshot.requireData;
         if (result == true) {
-          return WayPage();
+          return AnnotatedRegion<SystemUiOverlayStyle>(
+              value: SystemUiOverlayStyle.dark, child: WayPage());
         }
         return const OnboardingPage();
       },

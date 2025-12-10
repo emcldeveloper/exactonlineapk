@@ -283,225 +283,236 @@ class _ShopHomePageState extends State<ShopHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light,
-      child: Scaffold(
-        backgroundColor: Colors.grey.shade50,
-        appBar: AppBar(
-          backgroundColor: primary,
-          foregroundColor: Colors.white,
-          title: Obx(() => InkWell(
-                onTap: () {
-                  if (availableShops.length > 0) {
-                    _showBusinessDropdown();
-                  }
-                },
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Flexible(
-                      child: Text(
-                        shopDetails.value['name'] ?? "My Shop",
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+    return Builder(builder: (context) {
+      return AnnotatedRegion<SystemUiOverlayStyle>(
+        value: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
+        ),
+        child: Scaffold(
+          backgroundColor: Colors.grey.shade50,
+          appBar: AppBar(
+            backgroundColor: primary,
+            foregroundColor: Colors.white,
+            systemOverlayStyle: const SystemUiOverlayStyle(
+              statusBarColor: Colors.transparent,
+              statusBarIconBrightness: Brightness.light,
+              statusBarBrightness: Brightness.dark,
+            ),
+            title: Obx(() => InkWell(
+                  onTap: () {
+                    if (availableShops.length > 0) {
+                      _showBusinessDropdown();
+                    }
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          shopDetails.value['name'] ?? "My Shop",
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      if (availableShops.length > 1) ...[
+                        const SizedBox(width: 4),
+                        const Icon(
+                          Icons.keyboard_arrow_down,
                           color: Colors.white,
+                          size: 20,
                         ),
-                      ),
+                      ],
+                    ],
+                  ),
+                )),
+            centerTitle: true,
+            actions: _currentIndex == 0
+                ? [
+                    IconButton(
+                      icon: const Icon(Icons.notifications),
+                      onPressed: () {
+                        Get.to(() => const InventoryAlertsPage());
+                      },
+                      tooltip: 'Inventory Alerts',
                     ),
-                    if (availableShops.length > 1) ...[
-                      const SizedBox(width: 4),
-                      const Icon(
-                        Icons.keyboard_arrow_down,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                    ],
-                  ],
-                ),
-              )),
-          centerTitle: true,
-          actions: _currentIndex == 0
-              ? [
-                  IconButton(
-                    icon: const Icon(Icons.notifications),
-                    onPressed: () {
-                      Get.to(() => const InventoryAlertsPage());
-                    },
-                    tooltip: 'Inventory Alerts',
+                    PopupMenuButton<String>(
+                      icon: const Icon(Icons.more_vert),
+                      onSelected: (value) {
+                        switch (value) {
+                          case 'count':
+                            Get.to(() => const InventoryCountPage());
+                            break;
+                          case 'reports':
+                            Get.to(() => InventoryStockReportsPage(
+                                  shopId: shopDetails.value['id'] ?? '',
+                                  shopName:
+                                      shopDetails.value['name'] ?? 'My Shop',
+                                ));
+                            break;
+                          case 'shop_users':
+                            Get.to(() => ShopUsersPage(
+                                  shopId: shopDetails.value['id'] ?? '',
+                                  shopName:
+                                      shopDetails.value['name'] ?? 'My Shop',
+                                ));
+                            break;
+                        }
+                      },
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          value: 'shop_users',
+                          child: Row(
+                            children: [
+                              Icon(Icons.people, color: primary),
+                              const SizedBox(width: 8),
+                              const Text('Shop Users'),
+                            ],
+                          ),
+                        ),
+                        PopupMenuItem(
+                          value: 'count',
+                          child: Row(
+                            children: [
+                              Icon(Icons.checklist, color: primary),
+                              const SizedBox(width: 8),
+                              const Text('Count Inventory'),
+                            ],
+                          ),
+                        ),
+                        PopupMenuItem(
+                          value: 'reports',
+                          child: Row(
+                            children: [
+                              Icon(Icons.assessment, color: primary),
+                              const SizedBox(width: 8),
+                              const Text('Stock Reports'),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ]
+                : null,
+          ),
+          body: loading
+              ? Center(
+                  child: CircularProgressIndicator(
+                    color: primary,
                   ),
-                  PopupMenuButton<String>(
-                    icon: const Icon(Icons.more_vert),
-                    onSelected: (value) {
-                      switch (value) {
-                        case 'count':
-                          Get.to(() => const InventoryCountPage());
-                          break;
-                        case 'reports':
-                          Get.to(() => InventoryStockReportsPage(
-                                shopId: shopDetails.value['id'] ?? '',
-                                shopName:
-                                    shopDetails.value['name'] ?? 'My Shop',
-                              ));
-                          break;
-                        case 'shop_users':
-                          Get.to(() => ShopUsersPage(
-                                shopId: shopDetails.value['id'] ?? '',
-                                shopName:
-                                    shopDetails.value['name'] ?? 'My Shop',
-                              ));
-                          break;
-                      }
-                    },
-                    itemBuilder: (context) => [
-                      PopupMenuItem(
-                        value: 'shop_users',
-                        child: Row(
-                          children: [
-                            Icon(Icons.people, color: primary),
-                            const SizedBox(width: 8),
-                            const Text('Shop Users'),
-                          ],
-                        ),
+                )
+              : _buildCurrentPage(),
+          floatingActionButton: _currentIndex == 0
+              ? FloatingActionButton.extended(
+                  heroTag: 'shop_home_fab',
+                  onPressed: () {
+                    _handleAddAction(
+                      context: context,
+                      page: AddInventoryProductPage(
+                        shopId: shopDetails.value['id'] ?? '',
+                        shopName: shopDetails.value['name'] ?? 'My Shop',
                       ),
-                      PopupMenuItem(
-                        value: 'count',
-                        child: Row(
-                          children: [
-                            Icon(Icons.checklist, color: primary),
-                            const SizedBox(width: 8),
-                            const Text('Count Inventory'),
-                          ],
-                        ),
-                      ),
-                      PopupMenuItem(
-                        value: 'reports',
-                        child: Row(
-                          children: [
-                            Icon(Icons.assessment, color: primary),
-                            const SizedBox(width: 8),
-                            const Text('Stock Reports'),
-                          ],
-                        ),
-                      ),
-                    ],
+                    );
+                  },
+                  backgroundColor: primary,
+                  icon: const Icon(Icons.add, color: Colors.white),
+                  label: const Text(
+                    'Add Product',
+                    style: TextStyle(color: Colors.white),
                   ),
-                ]
+                )
               : null,
-        ),
-        body: loading
-            ? Center(
-                child: CircularProgressIndicator(
-                  color: primary,
+          bottomNavigationBar: Container(
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.shade300,
+                  blurRadius: 10,
+                  offset: const Offset(0, -2),
                 ),
-              )
-            : _buildCurrentPage(),
-        floatingActionButton: _currentIndex == 0
-            ? FloatingActionButton.extended(
-                heroTag: 'shop_home_fab',
-                onPressed: () {
-                  _handleAddAction(
-                    context: context,
-                    page: AddInventoryProductPage(
-                      shopId: shopDetails.value['id'] ?? '',
-                      shopName: shopDetails.value['name'] ?? 'My Shop',
-                    ),
-                  );
-                },
-                backgroundColor: primary,
-                icon: const Icon(Icons.add, color: Colors.white),
-                label: const Text(
-                  'Add Product',
-                  style: TextStyle(color: Colors.white),
+              ],
+            ),
+            child: BottomNavigationBar(
+              currentIndex: _currentIndex,
+              onTap: (index) {
+                setState(() {
+                  _currentIndex = index;
+                });
+              },
+              type: BottomNavigationBarType.fixed,
+              selectedItemColor: primary,
+              unselectedItemColor: Colors.grey.shade600,
+              selectedFontSize: 12,
+              unselectedFontSize: 11,
+              backgroundColor: Colors.white,
+              elevation: 0,
+              items: [
+                BottomNavigationBarItem(
+                  icon: const HugeIcon(
+                    icon: HugeIcons.strokeRoundedPackage,
+                    color: Colors.grey,
+                  ),
+                  activeIcon: HugeIcon(
+                    icon: HugeIcons.strokeRoundedPackage,
+                    color: primary,
+                  ),
+                  label: 'Products',
                 ),
-              )
-            : null,
-        bottomNavigationBar: Container(
-          decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.shade300,
-                blurRadius: 10,
-                offset: const Offset(0, -2),
-              ),
-            ],
-          ),
-          child: BottomNavigationBar(
-            currentIndex: _currentIndex,
-            onTap: (index) {
-              setState(() {
-                _currentIndex = index;
-              });
-            },
-            type: BottomNavigationBarType.fixed,
-            selectedItemColor: primary,
-            unselectedItemColor: Colors.grey.shade600,
-            selectedFontSize: 12,
-            unselectedFontSize: 11,
-            backgroundColor: Colors.white,
-            elevation: 0,
-            items: [
-              BottomNavigationBarItem(
-                icon: const HugeIcon(
-                  icon: HugeIcons.strokeRoundedPackage,
-                  color: Colors.grey,
+                BottomNavigationBarItem(
+                  icon: const HugeIcon(
+                    icon: HugeIcons.strokeRoundedStore01,
+                    color: Colors.grey,
+                  ),
+                  activeIcon: HugeIcon(
+                    icon: HugeIcons.strokeRoundedStore01,
+                    color: primary,
+                  ),
+                  label: 'POS',
                 ),
-                activeIcon: HugeIcon(
-                  icon: HugeIcons.strokeRoundedPackage,
-                  color: primary,
+                BottomNavigationBarItem(
+                  icon: const HugeIcon(
+                    icon: HugeIcons.strokeRoundedShoppingBag01,
+                    color: Colors.grey,
+                  ),
+                  activeIcon: HugeIcon(
+                    icon: HugeIcons.strokeRoundedShoppingBag01,
+                    color: primary,
+                  ),
+                  label: 'Orders',
                 ),
-                label: 'Products',
-              ),
-              BottomNavigationBarItem(
-                icon: const HugeIcon(
-                  icon: HugeIcons.strokeRoundedStore01,
-                  color: Colors.grey,
+                BottomNavigationBarItem(
+                  icon: const HugeIcon(
+                    icon: HugeIcons.strokeRoundedMessageMultiple02,
+                    color: Colors.grey,
+                  ),
+                  activeIcon: HugeIcon(
+                    icon: HugeIcons.strokeRoundedMessageMultiple02,
+                    color: primary,
+                  ),
+                  label: 'Chats',
                 ),
-                activeIcon: HugeIcon(
-                  icon: HugeIcons.strokeRoundedStore01,
-                  color: primary,
+                BottomNavigationBarItem(
+                  icon: const HugeIcon(
+                    icon: HugeIcons.strokeRoundedSettings02,
+                    color: Colors.grey,
+                  ),
+                  activeIcon: HugeIcon(
+                    icon: HugeIcons.strokeRoundedSettings02,
+                    color: primary,
+                  ),
+                  label: 'Settings',
                 ),
-                label: 'POS',
-              ),
-              BottomNavigationBarItem(
-                icon: const HugeIcon(
-                  icon: HugeIcons.strokeRoundedShoppingBag01,
-                  color: Colors.grey,
-                ),
-                activeIcon: HugeIcon(
-                  icon: HugeIcons.strokeRoundedShoppingBag01,
-                  color: primary,
-                ),
-                label: 'Orders',
-              ),
-              BottomNavigationBarItem(
-                icon: const HugeIcon(
-                  icon: HugeIcons.strokeRoundedMessageMultiple02,
-                  color: Colors.grey,
-                ),
-                activeIcon: HugeIcon(
-                  icon: HugeIcons.strokeRoundedMessageMultiple02,
-                  color: primary,
-                ),
-                label: 'Chats',
-              ),
-              BottomNavigationBarItem(
-                icon: const HugeIcon(
-                  icon: HugeIcons.strokeRoundedSettings02,
-                  color: Colors.grey,
-                ),
-                activeIcon: HugeIcon(
-                  icon: HugeIcons.strokeRoundedSettings02,
-                  color: primary,
-                ),
-                label: 'Settings',
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }

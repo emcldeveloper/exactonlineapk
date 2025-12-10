@@ -148,7 +148,7 @@ class POSReceiptPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                              'Cashier: ${receiptData['cashier']?['fullName'] ?? 'N/A'}',
+                              'Cashier: ${receiptData['cashier']?['name'] ?? receiptData['cashier']?['fullName'] ?? 'N/A'}',
                               style: const TextStyle(fontSize: 11)),
                           Text(
                             'Payment: ${receiptData['paymentMethod']?.toString().replaceAll('_', ' ') ?? 'CASH'}',
@@ -206,20 +206,22 @@ class POSReceiptPage extends StatelessWidget {
                                 Row(
                                   children: [
                                     Text(
-                                      '${item['quantity']} x \$${item['price'].toStringAsFixed(2)}',
+                                      '${itemQty} x TZS ${MoneyFormatter(amount: itemPrice).output.withoutFractionDigits}',
                                       style: TextStyle(
                                         fontSize: 12,
                                         color: Colors.grey.shade600,
                                       ),
                                     ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      item['sku'],
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        color: Colors.grey.shade500,
+                                    if (item['productSKU'] != null && item['productSKU'].toString().isNotEmpty) ...[
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        item['productSKU'],
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          color: Colors.grey.shade500,
+                                        ),
                                       ),
-                                    ),
+                                    ],
                                   ],
                                 ),
                               ],

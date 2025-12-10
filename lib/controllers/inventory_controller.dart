@@ -83,7 +83,8 @@ class InventoryController extends GetxController {
         }),
       );
 
-      transactions.value = response.data['data'] ?? [];
+      final data = response.data['body'];
+      transactions.value = data['transactions'] ?? [];
       return transactions;
     } on DioException catch (e) {
       print(e.response);
@@ -163,7 +164,7 @@ class InventoryController extends GetxController {
         }),
       );
 
-      batches.value = response.data['data'] ?? [];
+      batches.value = response.data['body'] ?? [];
       return batches;
     } on DioException catch (e) {
       print(e.response);
@@ -196,7 +197,8 @@ class InventoryController extends GetxController {
         }),
       );
 
-      alerts.value = response.data['alerts'] ?? [];
+      final data = response.data['body'];
+      alerts.value = data['alerts'] ?? [];
       return alerts;
     } on DioException catch (e) {
       print(e.response);
@@ -250,8 +252,8 @@ class InventoryController extends GetxController {
         }),
       );
 
-      inventorySettings.value = response.data['data'];
-      return response.data['data'];
+      inventorySettings.value = response.data['body'];
+      return response.data['body'];
     } on DioException catch (e) {
       print(e.response);
       Get.snackbar('Error', 'Failed to fetch inventory settings');

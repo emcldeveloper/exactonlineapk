@@ -1,8 +1,139 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:e_online/constants/colors.dart';
+import 'package:e_online/controllers/inventory_controller.dart';
+import 'package:e_online/utils/shared_preferences.dart';
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
-class InventoryAlertsPage extends StatelessWidget {
+class InventoryAlertsPage extends StatefulWidget {
   const InventoryAlertsPage({Key? key}) : super(key: key);
+
+  @override
+  State<InventoryAlertsPage> createState() => _InventoryAlertsPageState();
+}
+
+class _InventoryAlertsPageState extends State<InventoryAlertsPage> {
+  final InventoryController _inventoryController =
+      Get.put(InventoryController());
+  bool _isLoading = false;
+  List<dynamic> _alerts = [];
+  Map<String, List<dynamic>> _groupedAlerts = {
+    'CRITICAL': [],
+    'WARNING': [],
+    'INFO': [],
+  };
+
+  // Alert preferences
+  bool _enableOutOfStockAlerts = true;
+  bool _enableLowStockAlerts = true;
+  bool _enablePriceChangeAlerts = true;
+  bool _enableDailySummary = false;
+  bool _enableEmailNotifications = false;
+  bool _enablePushNotifications = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAlertPreferences();
+    _loadAlerts();
+  }
+
+  Future<void> _loadAlertPreferences() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      setState(() {
+        _enableOutOfStockAlerts = prefs.getBool('alert_out_of_stock') ?? true;
+        _enableLowStockAlerts = prefs.getBool('alert_low_stock') ?? true;
+        _enablePriceChangeAlerts = prefs.getBool('alert_price_change') ?? true;
+        _enableDailySummary = prefs.getBool('alert_daily_summary') ?? false;
+        _enableEmailNotifications = prefs.getBool('alert_email') ?? false;
+        _enablePushNotifications = prefs.getBool('alert_push') ?? true;
+      });
+    } catch (e) {
+      print('Error loading alert preferences: $e');
+    }
+  }
+
+  Future<void> _saveAlertPreferences() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('alert_out_of_stock', _enableOutOfStockAlerts);
+      await prefs.setBool('alert_low_stock', _enableLowStockAlerts);
+      await prefs.setBool('alert_price_change', _enablePriceChangeAlerts);
+      await prefs.setBool('alert_daily_summary', _enableDailySummary);
+      await prefs.setBool('alert_email', _enableEmailNotifications);
+      await prefs.setBool('alert_push', _enablePushNotifications);
+
+      Get.snackbar(
+        'Success',
+        'Alert preferences saved',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      print('Error saving alert preferences: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to save preferences',
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  Future<void> _loadAlerts() async {
+    setState(() => _isLoading = true);
+    try {
+      final businessId = await SharedPreferencesUtil.getSelectedBusiness();
+      if (businessId != null) {
+        final alerts = await _inventoryController.getInventoryAlerts(
+          shopId: businessId,
+          isResolved: false, // Only show unresolved alerts
+        );
+
+        setState(() {
+          _alerts = alerts;
+          // Group alerts by severity
+          _groupedAlerts = {
+            'CRITICAL':
+                alerts.where((a) => a['severity'] == 'CRITICAL').toList(),
+            'WARNING': alerts.where((a) => a['severity'] == 'WARNING').toList(),
+            'INFO': alerts.where((a) => a['severity'] == 'INFO').toList(),
+          };
+        });
+      }
+    } catch (e) {
+      print('Error loading alerts: $e');
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _dismissAlert(String alertId) async {
+    try {
+      final success = await _inventoryController.updateInventoryAlert(
+        alertId: alertId,
+        isResolved: true,
+      );
+
+      if (success) {
+        _loadAlerts(); // Reload alerts
+      }
+    } catch (e) {
+      print('Error dismissing alert: $e');
+    }
+  }
+
+  String _getTimeAgo(String dateString) {
+    try {
+      final date = DateTime.parse(dateString);
+      return timeago.format(date);
+    } catch (e) {
+      return dateString;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +147,10 @@ class InventoryAlertsPage extends StatelessWidget {
         foregroundColor: Colors.white,
         actions: [
           IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _loadAlerts,
+          ),
+          IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
               _showAlertSettings(context);
@@ -23,116 +158,114 @@ class InventoryAlertsPage extends StatelessWidget {
           ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          // Summary Cards
-          Row(
-            children: [
-              Expanded(
-                child: _buildSummaryCard(
-                  'Critical',
-                  '5',
-                  Icons.error,
-                  Colors.red,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildSummaryCard(
-                  'Warning',
-                  '23',
-                  Icons.warning,
-                  Colors.orange,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildSummaryCard(
-                  'Info',
-                  '12',
-                  Icons.info,
-                  Colors.blue,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-          // Alert Types Tabs
-          _buildSectionHeader('Critical Alerts', Colors.red),
-          const SizedBox(height: 12),
-          _buildAlertCard(
-            context: context,
-            title: 'Out of Stock',
-            message: 'Product ABC is out of stock',
-            time: '5 minutes ago',
-            type: AlertType.critical,
-            icon: Icons.remove_shopping_cart,
-          ),
-          _buildAlertCard(
-            context: context,
-            title: 'Out of Stock',
-            message: 'Product XYZ has 0 units remaining',
-            time: '1 hour ago',
-            type: AlertType.critical,
-            icon: Icons.remove_shopping_cart,
-          ),
-          _buildAlertCard(
-            context: context,
-            title: 'Critical Stock Level',
-            message: 'Product DEF has only 2 units left',
-            time: '2 hours ago',
-            type: AlertType.critical,
-            icon: Icons.priority_high,
-          ),
-          const SizedBox(height: 24),
-          _buildSectionHeader('Low Stock Warnings', Colors.orange),
-          const SizedBox(height: 12),
-          _buildAlertCard(
-            context: context,
-            title: 'Low Stock',
-            message: 'Product GHI below reorder level (8 units)',
-            time: '3 hours ago',
-            type: AlertType.warning,
-            icon: Icons.warning,
-          ),
-          _buildAlertCard(
-            context: context,
-            title: 'Low Stock',
-            message: 'Product JKL needs reordering (12 units)',
-            time: '5 hours ago',
-            type: AlertType.warning,
-            icon: Icons.warning,
-          ),
-          const SizedBox(height: 24),
-          _buildSectionHeader('Inventory Updates', Colors.blue),
-          const SizedBox(height: 12),
-          _buildAlertCard(
-            context: context,
-            title: 'Stock Received',
-            message: '50 units of Product MNO added to inventory',
-            time: '1 day ago',
-            type: AlertType.info,
-            icon: Icons.add_shopping_cart,
-          ),
-          _buildAlertCard(
-            context: context,
-            title: 'Inventory Count',
-            message: 'Weekly inventory count completed',
-            time: '2 days ago',
-            type: AlertType.info,
-            icon: Icons.checklist,
-          ),
-          _buildAlertCard(
-            context: context,
-            title: 'Price Update',
-            message: 'Prices updated for 15 products',
-            time: '3 days ago',
-            type: AlertType.info,
-            icon: Icons.attach_money,
-          ),
-        ],
-      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : RefreshIndicator(
+              onRefresh: _loadAlerts,
+              child: _alerts.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.notifications_none,
+                            size: 80,
+                            color: Colors.grey.shade400,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No Active Alerts',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.grey.shade600,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'All your inventory is in good shape!',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey.shade500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : ListView(
+                      padding: const EdgeInsets.all(16),
+                      children: [
+                        // Summary Cards
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _buildSummaryCard(
+                                'Critical',
+                                _groupedAlerts['CRITICAL']!.length.toString(),
+                                Icons.error,
+                                Colors.red,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _buildSummaryCard(
+                                'Warning',
+                                _groupedAlerts['WARNING']!.length.toString(),
+                                Icons.warning,
+                                Colors.orange,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _buildSummaryCard(
+                                'Info',
+                                _groupedAlerts['INFO']!.length.toString(),
+                                Icons.info,
+                                Colors.blue,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 24),
+                        // Critical Alerts
+                        if (_groupedAlerts['CRITICAL']!.isNotEmpty) ...[
+                          _buildSectionHeader('Critical Alerts', Colors.red),
+                          const SizedBox(height: 12),
+                          ..._groupedAlerts['CRITICAL']!
+                              .map((alert) => _buildAlertCard(
+                                    context: context,
+                                    alert: alert,
+                                    type: AlertType.critical,
+                                  )),
+                          const SizedBox(height: 24),
+                        ],
+                        // Warning Alerts
+                        if (_groupedAlerts['WARNING']!.isNotEmpty) ...[
+                          _buildSectionHeader(
+                              'Low Stock Warnings', Colors.orange),
+                          const SizedBox(height: 12),
+                          ..._groupedAlerts['WARNING']!
+                              .map((alert) => _buildAlertCard(
+                                    context: context,
+                                    alert: alert,
+                                    type: AlertType.warning,
+                                  )),
+                          const SizedBox(height: 24),
+                        ],
+                        // Info Alerts
+                        if (_groupedAlerts['INFO']!.isNotEmpty) ...[
+                          _buildSectionHeader('Inventory Updates', Colors.blue),
+                          const SizedBox(height: 12),
+                          ..._groupedAlerts['INFO']!
+                              .map((alert) => _buildAlertCard(
+                                    context: context,
+                                    alert: alert,
+                                    type: AlertType.info,
+                                  )),
+                        ],
+                      ],
+                    ),
+            ),
     );
   }
 
@@ -196,12 +329,36 @@ class InventoryAlertsPage extends StatelessWidget {
 
   Widget _buildAlertCard({
     required BuildContext context,
-    required String title,
-    required String message,
-    required String time,
+    required Map<String, dynamic> alert,
     required AlertType type,
-    required IconData icon,
   }) {
+    final alertType = alert['alertType'] ?? '';
+    final message = alert['message'] ?? '';
+    final createdAt = alert['createdAt'] ?? '';
+    final productName = alert['product']?['name'] ?? 'Unknown Product';
+
+    // Determine icon based on alert type
+    IconData icon;
+    switch (alertType) {
+      case 'OUT_OF_STOCK':
+        icon = Icons.remove_shopping_cart;
+        break;
+      case 'LOW_STOCK':
+        icon = Icons.warning;
+        break;
+      case 'REORDER_LEVEL':
+        icon = Icons.priority_high;
+        break;
+      case 'EXPIRING_SOON':
+        icon = Icons.access_time;
+        break;
+      case 'EXPIRED':
+        icon = Icons.dangerous;
+        break;
+      default:
+        icon = Icons.info;
+    }
+
     Color color;
     switch (type) {
       case AlertType.critical:
@@ -224,7 +381,7 @@ class InventoryAlertsPage extends StatelessWidget {
       ),
       child: InkWell(
         onTap: () {
-          // Navigate to product details or take action
+          // Could navigate to product details
         },
         borderRadius: BorderRadius.circular(12),
         child: Padding(
@@ -245,7 +402,7 @@ class InventoryAlertsPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      title,
+                      productName,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -259,7 +416,7 @@ class InventoryAlertsPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      time,
+                      _getTimeAgo(createdAt),
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey.shade600,
@@ -271,7 +428,7 @@ class InventoryAlertsPage extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.close, size: 20),
                 onPressed: () {
-                  // Dismiss alert
+                  _dismissAlert(alert['id']);
                 },
                 color: Colors.grey,
               ),
@@ -285,58 +442,138 @@ class InventoryAlertsPage extends StatelessWidget {
   void _showAlertSettings(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Alert Settings'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: Row(
             children: [
-              SwitchListTile(
-                value: true,
-                onChanged: (value) {},
-                title: const Text('Out of Stock Alerts'),
-                subtitle: const Text('Notify when products are out of stock'),
-              ),
-              SwitchListTile(
-                value: true,
-                onChanged: (value) {},
-                title: const Text('Low Stock Alerts'),
-                subtitle: const Text('Notify when below reorder level'),
-              ),
-              SwitchListTile(
-                value: true,
-                onChanged: (value) {},
-                title: const Text('Price Changes'),
-                subtitle: const Text('Notify on price updates'),
-              ),
-              SwitchListTile(
-                value: false,
-                onChanged: (value) {},
-                title: const Text('Daily Summary'),
-                subtitle: const Text('Daily inventory report'),
-              ),
-              const SizedBox(height: 16),
-              const Divider(),
-              const SizedBox(height: 8),
-              ListTile(
-                title: const Text('Email Notifications'),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                onTap: () {},
-              ),
-              ListTile(
-                title: const Text('Push Notifications'),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                onTap: () {},
-              ),
+              Icon(Icons.settings, color: primary),
+              const SizedBox(width: 8),
+              const Text('Alert Settings'),
             ],
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Alert Types',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                SwitchListTile(
+                  value: _enableOutOfStockAlerts,
+                  onChanged: (value) {
+                    setDialogState(() {
+                      setState(() {
+                        _enableOutOfStockAlerts = value;
+                      });
+                    });
+                  },
+                  title: const Text('Out of Stock Alerts'),
+                  subtitle: const Text('Notify when products are out of stock'),
+                  activeColor: primary,
+                ),
+                SwitchListTile(
+                  value: _enableLowStockAlerts,
+                  onChanged: (value) {
+                    setDialogState(() {
+                      setState(() {
+                        _enableLowStockAlerts = value;
+                      });
+                    });
+                  },
+                  title: const Text('Low Stock Alerts'),
+                  subtitle: const Text('Notify when below reorder level'),
+                  activeColor: primary,
+                ),
+                SwitchListTile(
+                  value: _enablePriceChangeAlerts,
+                  onChanged: (value) {
+                    setDialogState(() {
+                      setState(() {
+                        _enablePriceChangeAlerts = value;
+                      });
+                    });
+                  },
+                  title: const Text('Price Changes'),
+                  subtitle: const Text('Notify on price updates'),
+                  activeColor: primary,
+                ),
+                SwitchListTile(
+                  value: _enableDailySummary,
+                  onChanged: (value) {
+                    setDialogState(() {
+                      setState(() {
+                        _enableDailySummary = value;
+                      });
+                    });
+                  },
+                  title: const Text('Daily Summary'),
+                  subtitle: const Text('Daily inventory report'),
+                  activeColor: primary,
+                ),
+                const SizedBox(height: 16),
+                const Divider(),
+                const SizedBox(height: 16),
+                const Text(
+                  'Notification Channels',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                SwitchListTile(
+                  value: _enableEmailNotifications,
+                  onChanged: (value) {
+                    setDialogState(() {
+                      setState(() {
+                        _enableEmailNotifications = value;
+                      });
+                    });
+                  },
+                  title: const Text('Email Notifications'),
+                  subtitle: const Text('Receive alerts via email'),
+                  activeColor: primary,
+                ),
+                SwitchListTile(
+                  value: _enablePushNotifications,
+                  onChanged: (value) {
+                    setDialogState(() {
+                      setState(() {
+                        _enablePushNotifications = value;
+                      });
+                    });
+                  },
+                  title: const Text('Push Notifications'),
+                  subtitle: const Text('Receive alerts in-app'),
+                  activeColor: primary,
+                ),
+              ],
+            ),
           ),
-        ],
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _saveAlertPreferences();
+                Navigator.pop(context);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primary,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Save'),
+            ),
+          ],
+        ),
       ),
     );
   }

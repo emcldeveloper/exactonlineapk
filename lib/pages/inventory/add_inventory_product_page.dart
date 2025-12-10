@@ -5,6 +5,8 @@ import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/categories_controller.dart';
 import 'package:e_online/controllers/product_controller.dart';
 import 'package:e_online/controllers/product_image_controller.dart';
+import 'package:e_online/controllers/user_controller.dart';
+import 'package:e_online/controllers/inventory_controller.dart';
 import 'package:e_online/utils/shared_preferences.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,11 +15,13 @@ import 'package:dio/dio.dart' as dio;
 class AddInventoryProductPage extends StatefulWidget {
   final String shopId;
   final String shopName;
+  final Map<String, dynamic>? product; // Optional for editing
 
   const AddInventoryProductPage({
     Key? key,
     required this.shopId,
     required this.shopName,
+    this.product,
   }) : super(key: key);
 
   @override
@@ -26,6 +30,7 @@ class AddInventoryProductPage extends StatefulWidget {
 }
 
 class _AddInventoryProductPageState extends State<AddInventoryProductPage> {
+  bool get isEditing => widget.product != null;
   int _currentStep = 0; // 0 for Product Info, 1 for Inventory Settings
   final _formKey = GlobalKey<FormState>();
   final _inventoryFormKey = GlobalKey<FormState>();
@@ -84,7 +89,132 @@ class _AddInventoryProductPageState extends State<AddInventoryProductPage> {
   @override
   void initState() {
     super.initState();
-    _fetchCategories();
+    if (isEditing) {
+      _loadProductDataForEditing();
+    } else {
+      _fetchCategories();
+    }
+  }
+
+  Future<void> _loadProductDataForEditing() async {
+    // First fetch categories so dropdowns are populated
+    await _fetchCategories();
+
+    // Then load product data
+    _loadProductData();
+
+    // Load inventory settings from API
+    await _loadInventorySettings();
+  }
+
+  Future<void> _loadInventorySettings() async {
+    if (widget.product == null) return;
+
+    try {
+      final productId = widget.product!['id'];
+      final InventoryController inventoryController =
+          Get.put(InventoryController());
+      final settings =
+          await inventoryController.getInventorySettings(productId);
+
+      if (settings != null) {
+        setState(() {
+          // Inventory fields from settings
+          _buyingPriceController.text =
+              settings['buyingPrice']?.toString() ?? '';
+          _lowStockAlertController.text =
+              settings['lowStockThreshold']?.toString() ?? '10';
+          _reorderLevelController.text =
+              settings['reorderLevel']?.toString() ?? '15';
+          _maxStockLevelController.text =
+              settings['maxStockLevel']?.toString() ?? '100';
+          _locationController.text = settings['location'] ?? '';
+          _supplierController.text = settings['supplier'] ?? '';
+          _trackInventory = settings['trackInventory'] ?? true;
+          _allowBackorder = settings['allowBackorder'] ?? false;
+          _enableLowStockAlert = settings['enableLowStockAlert'] ?? true;
+          _stockValuationMethod = settings['stockValuationMethod'] ?? 'FIFO';
+        });
+      }
+    } catch (e) {
+      print('Error loading inventory settings: $e');
+    }
+  }
+
+  void _loadProductData() {
+    if (widget.product == null) return;
+
+    final product = widget.product!;
+
+    // Basic product info
+    _nameController.text = product['name'] ?? '';
+    _descriptionController.text = product['description'] ?? '';
+    _sellingPriceController.text = product['sellingPrice']?.toString() ?? '';
+    _linkController.text = product['productLink'] ?? '';
+    _deliveryScopeController.text = product['deliveryScope'] ?? '';
+    _skuController.text = product['productSKU'] ?? '';
+
+    // Initial stock (from product quantity)
+    _initialStockController.text =
+        product['productQuantity']?.toString() ?? '0';
+
+    // Category - set and fetch subcategories
+    if (product['CategoryId'] != null &&
+        product['CategoryId'].toString().isNotEmpty) {
+      _categoryController.text = product['CategoryId'];
+
+      // Load subcategories and specifications for the selected category
+      final selectedCategory = categories.value.firstWhere(
+        (item) => item["id"].toString() == product['CategoryId'],
+        orElse: () => {},
+      );
+
+      if (selectedCategory.isNotEmpty) {
+        categorySpecifications.value =
+            selectedCategory["CategoryProductSpecifications"] ?? [];
+        subcategories.value = selectedCategory["Subcategories"] ?? [];
+
+        // Initialize specification controllers
+        for (var spec in categorySpecifications.value) {
+          final specId = spec["id"] ?? spec["label"];
+          if (spec["inputStyle"] == "multi-select") {
+            spec["value"] = <String>[];
+          } else if (spec["inputStyle"] == "toggle") {
+            spec["value"] = false;
+          } else if (spec["inputStyle"] == "range") {
+            spec["value"] = 0.0;
+          } else {
+            spec["value"] = "";
+          }
+          if (spec["inputStyle"] == "single-select") {
+            specificationControllers[specId] = TextEditingController(text: "");
+          }
+        }
+
+        // Set subcategory after subcategories are loaded
+        if (product['SubcategoryId'] != null) {
+          Future.delayed(const Duration(milliseconds: 100), () {
+            setState(() {
+              _subcategoryController.text = product['SubcategoryId'];
+            });
+          });
+        }
+      }
+    }
+
+    // State variables
+    setState(() {
+      priceIncludeDelivery.value = product['priceIncludesDelivery'] ?? true;
+      isHidden.value = product['isHidden'] ?? false;
+      isNegotiable.value = product['isNegotiable'] ?? true;
+    });
+
+    // Specifications
+    if (product['specifications'] != null && product['specifications'] is Map) {
+      final specs = product['specifications'] as Map<String, dynamic>;
+      customSpecifications.value =
+          specs.map((key, value) => MapEntry(key, value.toString()));
+    }
   }
 
   @override
@@ -206,22 +336,17 @@ class _AddInventoryProductPageState extends State<AddInventoryProductPage> {
   }
 
   Future<void> _saveProduct() async {
-    if (!_formKey.currentState!.validate()) {
-      setState(() => _currentStep = 0);
-      return;
-    }
-    if (!_inventoryFormKey.currentState!.validate()) {
-      setState(() => _currentStep = 1);
-      return;
-    }
-    if (_images.isEmpty) {
+    // Only validate inventory form since product info was already validated when clicking "Next"
+    final isInventoryValid =
+        _inventoryFormKey.currentState?.validate() ?? false;
+    if (!isInventoryValid) {
       Get.snackbar(
-        "Error",
-        "Please add at least one product image",
-        backgroundColor: Colors.redAccent,
+        "Validation Error",
+        "Please check the inventory fields - errors are shown below each field",
+        backgroundColor: Colors.orangeAccent,
         colorText: Colors.white,
+        duration: const Duration(seconds: 3),
       );
-      setState(() => _currentStep = 0);
       return;
     }
 
@@ -231,6 +356,8 @@ class _AddInventoryProductPageState extends State<AddInventoryProductPage> {
 
     try {
       final businessId = await SharedPreferencesUtil.getSelectedBusiness();
+      final UserController userController = Get.find<UserController>();
+      final userId = userController.user.value["id"];
       ProductController productController = Get.put(ProductController());
       ProductImageController productImageController =
           Get.put(ProductImageController());
@@ -252,16 +379,15 @@ class _AddInventoryProductPageState extends State<AddInventoryProductPage> {
             ? null
             : _subcategoryController.text,
         "ShopId": businessId,
-        "productPrice": _sellingPriceController.text,
-        "buyingPrice": _buyingPriceController.text,
+        "UserId": userId,
+        "sellingPrice": _sellingPriceController.text.trim(),
+        "buyingPrice": _buyingPriceController.text.trim(),
         "description": _descriptionController.text.trim(),
-        "unit": _unitController.text,
-        "measurementUnit": _measurementUnitController.text,
         "productSKU": _skuController.text.trim(),
-        "productQuantity": _initialStockController.text,
-        "lowStockAlert": _lowStockAlertController.text,
-        "reorderLevel": _reorderLevelController.text,
-        "maxStockLevel": _maxStockLevelController.text,
+        "initialStock": _initialStockController.text.trim(),
+        "lowStockAlert": _lowStockAlertController.text.trim(),
+        "reorderLevel": _reorderLevelController.text.trim(),
+        "maxStockLevel": _maxStockLevelController.text.trim(),
         "trackInventory": _trackInventory.toString(),
         "allowBackorder": _allowBackorder.toString(),
         "enableLowStockAlert": _enableLowStockAlert.toString(),
@@ -276,36 +402,65 @@ class _AddInventoryProductPageState extends State<AddInventoryProductPage> {
         "specifications": combinedSpecifications,
       };
 
-      final productResponse =
-          await productController.addProduct(productPayload);
+      final dynamic productResponse;
+      final String productId;
+
+      if (isEditing) {
+        // Update existing product
+        productId = widget.product!['id'];
+        productResponse =
+            await productController.editProduct(productId, productPayload);
+      } else {
+        // Create new product
+        productResponse = await productController.addProduct(productPayload);
+        productId = productResponse["id"];
+      }
 
       if (productResponse != null) {
-        final productId = productResponse["body"]["id"];
-
-        // Upload images
-        for (var image in _images) {
-          dio.FormData formData = dio.FormData.fromMap({
-            "ProductId": productId,
-            "image": await dio.MultipartFile.fromFile(
-              image.path,
-              filename: image.name,
-            ),
-          });
-          await productImageController.addProductImage(formData);
+        // Upload new images if any
+        if (_images.isNotEmpty) {
+          print('Uploading ${_images.length} images for product $productId');
+          for (var image in _images) {
+            try {
+              dio.FormData formData = dio.FormData.fromMap({
+                "ProductId": productId,
+                "file": await dio.MultipartFile.fromFile(
+                  image.path,
+                  filename: image.name,
+                ),
+              });
+              var response =
+                  await productImageController.addProductImage(formData);
+              print("Image added successfully: ${response}");
+            } catch (imageError) {
+              print("Error uploading image ${image.name}: $imageError");
+              Get.snackbar(
+                "Image Upload Warning",
+                "Failed to upload image ${image.name}",
+                backgroundColor: Colors.orangeAccent,
+                colorText: Colors.white,
+              );
+            }
+          }
         }
 
         Get.back(result: true);
         Get.snackbar(
           "Success",
-          "Product added successfully to inventory",
+          isEditing
+              ? "Product updated successfully"
+              : "Product added successfully to inventory",
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
       }
     } catch (e) {
+      print(e);
       Get.snackbar(
         "Error",
-        "Failed to add product: ${e.toString()}",
+        isEditing
+            ? "Failed to update product: ${e.toString()}"
+            : "Failed to add product: ${e.toString()}",
         backgroundColor: Colors.redAccent,
         colorText: Colors.white,
       );
@@ -324,7 +479,11 @@ class _AddInventoryProductPageState extends State<AddInventoryProductPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              _currentStep == 0 ? 'Product Info' : 'Inventory Settings',
+              isEditing
+                  ? (_currentStep == 0
+                      ? 'Edit Product Info'
+                      : 'Edit Inventory Settings')
+                  : (_currentStep == 0 ? 'Product Info' : 'Inventory Settings'),
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             Text(
@@ -354,9 +513,9 @@ class _AddInventoryProductPageState extends State<AddInventoryProductPage> {
           else if (_currentStep == 1)
             TextButton(
               onPressed: _saveProduct,
-              child: const Text(
-                'Save',
-                style: TextStyle(
+              child: Text(
+                isEditing ? 'Update' : 'Save',
+                style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 15,
@@ -383,18 +542,34 @@ class _AddInventoryProductPageState extends State<AddInventoryProductPage> {
               ),
               child: ElevatedButton(
                 onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    if (_images.isEmpty) {
-                      Get.snackbar(
-                        "Error",
-                        "Please add at least one product image",
-                        backgroundColor: Colors.redAccent,
-                        colorText: Colors.white,
-                      );
-                      return;
-                    }
-                    setState(() => _currentStep = 1);
+                  // Validate product info form
+                  final isValid = _formKey.currentState?.validate() ?? false;
+
+                  if (!isValid) {
+                    Get.snackbar(
+                      "Validation Error",
+                      "Please fill in all required fields - errors are shown below each field",
+                      backgroundColor: Colors.orangeAccent,
+                      colorText: Colors.white,
+                      duration: const Duration(seconds: 3),
+                    );
+                    return;
                   }
+
+                  // Check for images (only for new products, not when editing)
+                  if (!isEditing && _images.isEmpty) {
+                    Get.snackbar(
+                      "Missing Images",
+                      "Please add at least one product image",
+                      backgroundColor: Colors.redAccent,
+                      colorText: Colors.white,
+                      duration: const Duration(seconds: 3),
+                    );
+                    return;
+                  }
+
+                  // All validations passed, move to inventory settings
+                  setState(() => _currentStep = 1);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: primary,

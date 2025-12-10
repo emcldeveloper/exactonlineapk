@@ -83,6 +83,7 @@ class SmartCacheInterceptor extends Interceptor {
 // Create Dio instance with smart caching
 final dio = Dio(BaseOptions(
   baseUrl: "https://api.exactonline.co.tz",
+  // baseUrl: "http://192.168.1.194:6000",
   connectTimeout: const Duration(seconds: 30),
   receiveTimeout: const Duration(seconds: 30),
 ))

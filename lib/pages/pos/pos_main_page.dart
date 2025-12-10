@@ -61,6 +61,13 @@ class _POSMainPageState extends State<POSMainPage> {
         page: 1,
         limit: 100,
       );
+
+      print('Fetched products count: ${response.length}');
+      if (response.isNotEmpty) {
+        print('First product structure: ${response[0]}');
+        print('First product ID: ${response[0]['id']}');
+      }
+
       setState(() {
         products = List<Map<String, dynamic>>.from(response);
         filteredProducts = products;
@@ -84,7 +91,7 @@ class _POSMainPageState extends State<POSMainPage> {
         filteredProducts = products;
       } else {
         filteredProducts = products.where((product) {
-          final name = (product['productName'] ?? '').toLowerCase();
+          final name = (product['name'] ?? '').toLowerCase();
           final sku = (product['productSKU'] ?? '').toLowerCase();
           return name.contains(query) || sku.contains(query);
         }).toList();
@@ -99,96 +106,99 @@ class _POSMainPageState extends State<POSMainPage> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.9,
-        minChildSize: 0.5,
-        maxChildSize: 0.95,
-        expand: false,
-        builder: (context, scrollController) => Column(
-          children: [
-            // Modal Header
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: primary.withOpacity(0.05),
-                border: Border(
-                  bottom: BorderSide(color: Colors.grey.shade200),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) => DraggableScrollableSheet(
+          initialChildSize: 0.9,
+          minChildSize: 0.5,
+          maxChildSize: 0.95,
+          expand: false,
+          builder: (context, scrollController) => Column(
+            children: [
+              // Modal Header
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: primary.withOpacity(0.05),
+                  border: Border(
+                    bottom: BorderSide(color: Colors.grey.shade200),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: _searchController,
+                      autofocus: true,
+                      style: const TextStyle(fontSize: 14),
+                      decoration: InputDecoration(
+                        hintText: 'Search products...',
+                        hintStyle: const TextStyle(fontSize: 13),
+                        prefixIcon: const Icon(Icons.search, size: 20),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade300),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade300),
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              child: Column(
-                children: [
-                  Container(
-                    width: 40,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: _searchController,
-                    autofocus: true,
-                    style: const TextStyle(fontSize: 14),
-                    decoration: InputDecoration(
-                      hintText: 'Search products...',
-                      hintStyle: const TextStyle(fontSize: 13),
-                      prefixIcon: const Icon(Icons.search, size: 20),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
-                      ),
-                      filled: true,
-                      fillColor: Colors.white,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // Products List
-            Expanded(
-              child: _isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : filteredProducts.isEmpty
-                      ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.inventory_2_outlined,
-                                size: 60,
-                                color: Colors.grey.shade400,
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                'No products found',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey.shade600,
+              // Products List
+              Expanded(
+                child: _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : filteredProducts.isEmpty
+                        ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.inventory_2_outlined,
+                                  size: 60,
+                                  color: Colors.grey.shade400,
                                 ),
-                              ),
-                            ],
+                                const SizedBox(height: 16),
+                                Text(
+                                  'No products found',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey.shade600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : ListView.builder(
+                            controller: scrollController,
+                            padding: const EdgeInsets.all(16),
+                            itemCount: filteredProducts.length,
+                            itemBuilder: (context, index) {
+                              final product = filteredProducts[index];
+                              return _buildProductHorizontalCardWithState(
+                                  product, setModalState);
+                            },
                           ),
-                        )
-                      : ListView.builder(
-                          controller: scrollController,
-                          padding: const EdgeInsets.all(16),
-                          itemCount: filteredProducts.length,
-                          itemBuilder: (context, index) {
-                            final product = filteredProducts[index];
-                            return _buildProductHorizontalCard(product);
-                          },
-                        ),
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -373,7 +383,7 @@ class _POSMainPageState extends State<POSMainPage> {
           // Totals and Checkout
           SafeArea(
             child: Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: Colors.white,
                 boxShadow: [
@@ -384,111 +394,109 @@ class _POSMainPageState extends State<POSMainPage> {
                   ),
                 ],
               ),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildTotalRow('Subtotal:',
-                        'TZS ${MoneyFormatter(amount: _subtotal).output.withoutFractionDigits}'),
-                    const SizedBox(height: 12),
-                    // Discount Section
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: _discountController,
-                            keyboardType: TextInputType.number,
-                            style: const TextStyle(fontSize: 13),
-                            decoration: InputDecoration(
-                              labelText: 'Discount',
-                              labelStyle: const TextStyle(fontSize: 12),
-                              hintText: '0',
-                              hintStyle: const TextStyle(fontSize: 13),
-                              prefixText: 'TZS ',
-                              prefixStyle: TextStyle(
-                                fontSize: 13,
-                                color: Colors.grey.shade700,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 10,
-                              ),
-                              isDense: true,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildTotalRow('Subtotal:',
+                      'TZS ${MoneyFormatter(amount: _subtotal).output.withoutFractionDigits}'),
+                  const SizedBox(height: 8),
+                  // Discount Section
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _discountController,
+                          keyboardType: TextInputType.number,
+                          style: const TextStyle(fontSize: 13),
+                          decoration: InputDecoration(
+                            labelText: 'Discount',
+                            labelStyle: const TextStyle(fontSize: 12),
+                            hintText: '0',
+                            hintStyle: const TextStyle(fontSize: 13),
+                            prefixText: 'TZS ',
+                            prefixStyle: TextStyle(
+                              fontSize: 13,
+                              color: Colors.grey.shade700,
                             ),
-                            onChanged: (value) {
-                              setState(() {
-                                _discount = double.tryParse(value) ?? 0.0;
-                                _calculateTotals();
-                              });
-                            },
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                            isDense: true,
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        ElevatedButton(
-                          onPressed: () {
+                          onChanged: (value) {
                             setState(() {
-                              _discountController.clear();
-                              _discount = 0.0;
+                              _discount = double.tryParse(value) ?? 0.0;
                               _calculateTotals();
                             });
                           },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.grey.shade200,
-                            foregroundColor: Colors.grey.shade700,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 10,
-                            ),
-                            minimumSize: Size.zero,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: const Text('Clear',
-                              style: TextStyle(fontSize: 12)),
                         ),
-                      ],
-                    ),
-                    if (_discount > 0) ...[
-                      const SizedBox(height: 8),
-                      _buildTotalRow(
-                        'Discount:',
-                        '- TZS ${MoneyFormatter(amount: _discount).output.withoutFractionDigits}',
-                        isDiscount: true,
+                      ),
+                      const SizedBox(width: 8),
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            _discountController.clear();
+                            _discount = 0.0;
+                            _calculateTotals();
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey.shade200,
+                          foregroundColor: Colors.grey.shade700,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                          minimumSize: Size.zero,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child:
+                            const Text('Clear', style: TextStyle(fontSize: 12)),
                       ),
                     ],
-                    const Divider(height: 24),
+                  ),
+                  if (_discount > 0) ...[
+                    const SizedBox(height: 6),
                     _buildTotalRow(
-                      'Total:',
-                      'TZS ${MoneyFormatter(amount: _total).output.withoutFractionDigits}',
-                      isTotal: true,
+                      'Discount:',
+                      '- TZS ${MoneyFormatter(amount: _discount).output.withoutFractionDigits}',
+                      isDiscount: true,
                     ),
-                    const SizedBox(height: 16),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton.icon(
-                        onPressed:
-                            _cartItems.isEmpty ? null : _showCheckoutDialog,
-                        icon: const Icon(Icons.payment, color: Colors.white),
-                        label: const Text(
-                          'Checkout',
-                          style: TextStyle(color: Colors.white, fontSize: 15),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          backgroundColor: primary,
-                          disabledBackgroundColor: Colors.grey.shade300,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+                  ],
+                  const Divider(height: 16),
+                  _buildTotalRow(
+                    'Total:',
+                    'TZS ${MoneyFormatter(amount: _total).output.withoutFractionDigits}',
+                    isTotal: true,
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed:
+                          _cartItems.isEmpty ? null : _showCheckoutDialog,
+                      icon: const Icon(Icons.payment, color: Colors.white),
+                      label: const Text(
+                        'Checkout',
+                        style: TextStyle(color: Colors.white, fontSize: 15),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        backgroundColor: primary,
+                        disabledBackgroundColor: Colors.grey.shade300,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -497,7 +505,8 @@ class _POSMainPageState extends State<POSMainPage> {
     );
   }
 
-  Widget _buildProductHorizontalCard(Map<String, dynamic> product) {
+  Widget _buildProductHorizontalCardWithState(
+      Map<String, dynamic> product, StateSetter setModalState) {
     final productName = product['name'] ?? 'Unknown';
     final productPrice =
         double.tryParse(product['sellingPrice']?.toString() ?? '0') ?? 0;
@@ -631,13 +640,15 @@ class _POSMainPageState extends State<POSMainPage> {
                         icon: const Icon(Icons.remove_circle_outline, size: 22),
                         color: primary,
                         onPressed: () {
-                          setState(() {
-                            if (currentQuantity > 1) {
-                              cartItem['quantity']--;
-                            } else {
-                              _cartItems.remove(cartItem);
-                            }
-                            _calculateTotals();
+                          setModalState(() {
+                            setState(() {
+                              if (currentQuantity > 1) {
+                                cartItem['quantity']--;
+                              } else {
+                                _cartItems.remove(cartItem);
+                              }
+                              _calculateTotals();
+                            });
                           });
                         },
                         padding: EdgeInsets.zero,
@@ -661,20 +672,22 @@ class _POSMainPageState extends State<POSMainPage> {
                         icon: const Icon(Icons.add_circle_outline, size: 22),
                         color: primary,
                         onPressed: () {
-                          setState(() {
-                            if (currentQuantity < productQuantity) {
-                              cartItem['quantity']++;
-                              _calculateTotals();
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                      'Only $productQuantity units available'),
-                                  backgroundColor: Colors.orange,
-                                  duration: const Duration(seconds: 1),
-                                ),
-                              );
-                            }
+                          setModalState(() {
+                            setState(() {
+                              if (currentQuantity < productQuantity) {
+                                cartItem['quantity']++;
+                                _calculateTotals();
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                        'Only $productQuantity units available'),
+                                    backgroundColor: Colors.orange,
+                                    duration: const Duration(seconds: 1),
+                                  ),
+                                );
+                              }
+                            });
                           });
                         },
                         padding: EdgeInsets.zero,
@@ -691,9 +704,7 @@ class _POSMainPageState extends State<POSMainPage> {
                   icon: const Icon(Icons.add_circle, size: 32),
                   color: primary,
                   onPressed: () {
-                    setState(() {
-                      _addToCart(product);
-                    });
+                    _addToCart(product, setModalState);
                   },
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
@@ -852,9 +863,23 @@ class _POSMainPageState extends State<POSMainPage> {
     );
   }
 
-  void _addToCart(Map<String, dynamic> product) {
-    setState(() {
-      final productId = product['id'];
+  void _addToCart(Map<String, dynamic> product, [StateSetter? setModalState]) {
+    final productId = product['id'];
+
+    // Validate product ID exists
+    if (productId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Error: Product ID is missing. Cannot add to cart.'),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 2),
+        ),
+      );
+      print('Error: Product has no ID: $product');
+      return;
+    }
+
+    final updateState = () {
       final existingItem = _cartItems.firstWhere(
         (item) => item['id'] == productId,
         orElse: () => {},
@@ -876,9 +901,9 @@ class _POSMainPageState extends State<POSMainPage> {
       } else {
         _cartItems.add({
           'id': productId,
-          'name': product['productName'] ?? 'Unknown',
+          'name': product['name'] ?? 'Unknown',
           'price':
-              double.tryParse(product['productPrice']?.toString() ?? '0') ?? 0,
+              double.tryParse(product['sellingPrice']?.toString() ?? '0') ?? 0,
           'sku': product['productSKU'] ?? '',
           'quantity': 1,
           'stock': product['productQuantity'] ?? 0,
@@ -886,11 +911,19 @@ class _POSMainPageState extends State<POSMainPage> {
         });
       }
       _calculateTotals();
-    });
+    };
+
+    if (setModalState != null) {
+      setModalState(() {
+        setState(updateState);
+      });
+    } else {
+      setState(updateState);
+    }
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('${product['productName']} added to cart'),
+        content: Text('${product['name'] ?? 'Product'} added to cart'),
         duration: const Duration(milliseconds: 800),
         backgroundColor: Colors.green,
       ),
@@ -991,6 +1024,21 @@ class _POSMainPageState extends State<POSMainPage> {
   }
 
   void _completeSale(String paymentMethod) async {
+    // Validate cart items have all required fields
+    for (var item in _cartItems) {
+      if (item['id'] == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+                'Error: Invalid product in cart. Please remove and re-add the product.'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 3),
+          ),
+        );
+        return;
+      }
+    }
+
     // Show loading
     showDialog(
       context: context,
@@ -1011,6 +1059,8 @@ class _POSMainPageState extends State<POSMainPage> {
               'notes': null,
             })
         .toList();
+
+    print('Cart items being sent: $items'); // Debug log
 
     // Create sale
     final saleData = await posController.createSale(

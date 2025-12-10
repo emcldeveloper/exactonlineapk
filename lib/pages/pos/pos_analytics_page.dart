@@ -49,6 +49,22 @@ class _POSAnalyticsPageState extends State<POSAnalyticsPage> {
     return fmf.output.symbolOnLeft;
   }
 
+  int _toInt(dynamic value) {
+    if (value == null) return 0;
+    if (value is int) return value;
+    if (value is String) return int.tryParse(value) ?? 0;
+    if (value is double) return value.toInt();
+    return 0;
+  }
+
+  double _toDouble(dynamic value) {
+    if (value == null) return 0.0;
+    if (value is double) return value;
+    if (value is String) return double.tryParse(value) ?? 0.0;
+    if (value is int) return value.toDouble();
+    return 0.0;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -174,20 +190,20 @@ class _POSAnalyticsPageState extends State<POSAnalyticsPage> {
                       children: [
                         Expanded(
                           child: _buildMetricCard(
-                            'Avg. Sale',
-                            _formatMoney(analytics['averageSale'] ?? 0),
-                            Icons.trending_up,
-                            Colors.green,
+                            'Items Sold',
+                            '${analytics['totalItemsSold'] ?? 0}',
+                            Icons.inventory_2,
+                            Colors.blue,
                             null,
                           ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: _buildMetricCard(
-                            'Items Sold',
-                            '${analytics['totalItemsSold'] ?? 0}',
-                            Icons.inventory_2,
-                            Colors.blue,
+                            'Total Discount',
+                            _formatMoney(analytics['totalDiscount'] ?? 0),
+                            Icons.discount,
+                            Colors.purple,
                             null,
                           ),
                         ),
@@ -208,8 +224,8 @@ class _POSAnalyticsPageState extends State<POSAnalyticsPage> {
                         .map((pm) => _buildPaymentMethodCard(
                               pm['method']?.toString().replaceAll('_', ' ') ??
                                   'Unknown',
-                              pm['count'] ?? 0,
-                              (pm['total'] ?? 0).toDouble(),
+                              _toInt(pm['count']),
+                              _toDouble(pm['total']),
                               primary,
                             ))
                         .toList(),
@@ -229,7 +245,7 @@ class _POSAnalyticsPageState extends State<POSAnalyticsPage> {
                         .entries
                         .map((entry) => _buildTopProductCard(
                               entry.value['productName'] ?? 'Unknown',
-                              entry.value['totalQuantity'] ?? 0,
+                              _toInt(entry.value['totalQuantity']),
                               _formatMoney(entry.value['totalRevenue'] ?? 0),
                               entry.key + 1,
                             ))

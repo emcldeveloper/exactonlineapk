@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:e_online/constants/colors.dart';
+import 'package:get/get.dart';
+import 'package:e_online/controllers/product_controller.dart';
+import 'package:e_online/controllers/user_controller.dart';
+import 'package:e_online/utils/shared_preferences.dart';
+import 'package:e_online/utils/dio.dart';
+import 'package:dio/dio.dart';
 
 class InventoryCountPage extends StatefulWidget {
   const InventoryCountPage({Key? key}) : super(key: key);
@@ -9,8 +15,74 @@ class InventoryCountPage extends StatefulWidget {
 }
 
 class _InventoryCountPageState extends State<InventoryCountPage> {
+  final ProductController productController = Get.put(ProductController());
+  final UserController userController = Get.find();
   final Map<String, int> _countedProducts = {};
   bool _isCountMode = false;
+  bool _isLoading = false;
+  bool _isSaving = false;
+  List<dynamic> _products = [];
+  String? shopId;
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProducts();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadProducts() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      shopId = await SharedPreferencesUtil.getCurrentShopId(
+          userController.user.value["Shops"] ?? []);
+
+      if (shopId != null) {
+        final products = await productController.getShopProducts(
+          id: shopId,
+          page: 1,
+          limit: 1000,
+          keyword: _searchController.text,
+        );
+
+        setState(() {
+          _products = products;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      Get.snackbar('Error', 'Failed to load products');
+    }
+  }
+
+  int _getDiscrepancyCount() {
+    int count = 0;
+    for (var product in _products) {
+      final productId = product['id'].toString();
+      if (_countedProducts.containsKey(productId)) {
+        final countedStock = _countedProducts[productId] ?? 0;
+        final systemStock = (product['productQuantity'] ?? 0) is int
+            ? product['productQuantity']
+            : int.tryParse(product['productQuantity'].toString()) ?? 0;
+        if (countedStock != systemStock) {
+          count++;
+        }
+      }
+    }
+    return count;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,24 +96,55 @@ class _InventoryCountPageState extends State<InventoryCountPage> {
         foregroundColor: Colors.white,
         actions: [
           IconButton(
-            icon: const Icon(Icons.qr_code_scanner),
-            onPressed: () {
-              // Open scanner
-            },
-            tooltip: 'Scan Product',
+            icon: const Icon(Icons.refresh),
+            onPressed: _isLoading ? null : _loadProducts,
+            tooltip: 'Refresh',
           ),
           if (_countedProducts.isNotEmpty)
             IconButton(
-              icon: const Icon(Icons.save),
-              onPressed: () {
-                _saveCount();
-              },
+              icon: _isSaving
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Icon(Icons.save),
+              onPressed: _isSaving ? null : _saveCount,
               tooltip: 'Save Count',
             ),
         ],
       ),
       body: Column(
         children: [
+          // Search Bar
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Search products...',
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: _searchController.text.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          _searchController.clear();
+                          _loadProducts();
+                        },
+                      )
+                    : null,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                filled: true,
+                fillColor: Colors.white,
+              ),
+              onSubmitted: (value) => _loadProducts(),
+            ),
+          ),
           // Count Session Info
           Container(
             padding: const EdgeInsets.all(16),
@@ -76,9 +179,9 @@ class _InventoryCountPageState extends State<InventoryCountPage> {
                     Expanded(
                       child: _buildStatCard(
                         'Discrepancies',
-                        '3',
+                        '${_getDiscrepancyCount()}',
                         Icons.warning,
-                        primary,
+                        Colors.orange,
                       ),
                     ),
                   ],
@@ -103,201 +206,253 @@ class _InventoryCountPageState extends State<InventoryCountPage> {
           ),
           // Products to Count
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: 20,
-              itemBuilder: (context, index) {
-                final productId = 'product_$index';
-                final productName = 'Product ${index + 1}';
-                final sku = 'SKU-${1000 + index}';
-                final systemStock = 50 - index;
-                final countedStock = _countedProducts[productId] ?? 0;
-                final hasCounted = _countedProducts.containsKey(productId);
-                final hasDiscrepancy =
-                    hasCounted && countedStock != systemStock;
-
-                return Card(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  elevation: hasDiscrepancy ? 4 : 1,
-                  color: hasDiscrepancy
-                      ? Colors.orange.shade50
-                      : hasCounted
-                          ? Colors.green.shade50
-                          : null,
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : _products.isEmpty
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Container(
-                              width: 50,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade200,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Icon(
-                                Icons.inventory_2,
-                                color: Colors.grey.shade400,
+                            Icon(Icons.inventory_2,
+                                size: 64, color: Colors.grey.shade400),
+                            const SizedBox(height: 16),
+                            Text(
+                              'No products found',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey.shade600,
                               ),
                             ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    productName,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(
-                                    'SKU: $sku',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey.shade600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            if (hasCounted)
-                              Icon(
-                                hasDiscrepancy
-                                    ? Icons.warning
-                                    : Icons.check_circle,
-                                color: hasDiscrepancy
-                                    ? Colors.orange
-                                    : Colors.green,
-                              ),
                           ],
                         ),
-                        const SizedBox(height: 12),
-                        const Divider(),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Expanded(
+                      )
+                    : ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        itemCount: _products.length,
+                        itemBuilder: (context, index) {
+                          final product = _products[index];
+                          final productId = product['id'].toString();
+                          final productName =
+                              product['name'] ?? 'Unknown Product';
+                          final sku = product['productSKU'] ?? 'N/A';
+                          final systemStock = (product['productQuantity'] ?? 0)
+                                  is int
+                              ? product['productQuantity']
+                              : int.tryParse(
+                                      product['productQuantity'].toString()) ??
+                                  0;
+                          final countedStock = _countedProducts[productId] ?? 0;
+                          final hasCounted =
+                              _countedProducts.containsKey(productId);
+                          final hasDiscrepancy =
+                              hasCounted && countedStock != systemStock;
+                          final imageUrl =
+                              (product['ProductImages'] as List?)?.isNotEmpty ==
+                                      true
+                                  ? product['ProductImages'][0]['image']
+                                  : null;
+
+                          return Card(
+                            margin: const EdgeInsets.only(bottom: 12),
+                            elevation: hasDiscrepancy ? 4 : 1,
+                            color: hasDiscrepancy
+                                ? Colors.orange.shade50
+                                : hasCounted
+                                    ? Colors.green.shade50
+                                    : null,
+                            child: Padding(
+                              padding: const EdgeInsets.all(12),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    'System Stock',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey.shade600,
-                                    ),
-                                  ),
-                                  Text(
-                                    '$systemStock units',
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Counted',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey.shade600,
-                                    ),
-                                  ),
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      IconButton(
-                                        icon: const Icon(Icons.remove_circle),
-                                        onPressed: hasCounted &&
-                                                countedStock > 0
-                                            ? () {
-                                                setState(() {
-                                                  _countedProducts[productId] =
-                                                      countedStock - 1;
-                                                });
-                                              }
+                                      Container(
+                                        width: 50,
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey.shade200,
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          image: imageUrl != null
+                                              ? DecorationImage(
+                                                  image: NetworkImage(imageUrl),
+                                                  fit: BoxFit.cover,
+                                                )
+                                              : null,
+                                        ),
+                                        child: imageUrl == null
+                                            ? Icon(
+                                                Icons.inventory_2,
+                                                color: Colors.grey.shade400,
+                                              )
                                             : null,
-                                        color: Colors.red,
                                       ),
-                                      Text(
-                                        '$countedStock',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: hasDiscrepancy
-                                              ? Colors.orange.shade700
-                                              : hasCounted
-                                                  ? Colors.green.shade700
-                                                  : Colors.grey.shade600,
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              productName,
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            Text(
+                                              'SKU: $sku',
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey.shade600,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                      IconButton(
-                                        icon: const Icon(Icons.add_circle),
-                                        onPressed: () {
-                                          setState(() {
-                                            _countedProducts[productId] =
-                                                countedStock + 1;
-                                          });
-                                        },
-                                        color: Colors.green,
+                                      if (hasCounted)
+                                        Icon(
+                                          hasDiscrepancy
+                                              ? Icons.warning
+                                              : Icons.check_circle,
+                                          color: hasDiscrepancy
+                                              ? Colors.orange
+                                              : Colors.green,
+                                        ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12),
+                                  const Divider(),
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'System Stock',
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey.shade600,
+                                              ),
+                                            ),
+                                            Text(
+                                              '$systemStock units',
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              'Counted',
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey.shade600,
+                                              ),
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                IconButton(
+                                                  icon: const Icon(
+                                                      Icons.remove_circle),
+                                                  onPressed: hasCounted &&
+                                                          countedStock > 0
+                                                      ? () {
+                                                          setState(() {
+                                                            _countedProducts[
+                                                                    productId] =
+                                                                countedStock -
+                                                                    1;
+                                                          });
+                                                        }
+                                                      : null,
+                                                  color: Colors.red,
+                                                ),
+                                                Text(
+                                                  '$countedStock',
+                                                  style: TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: hasDiscrepancy
+                                                        ? Colors.orange.shade700
+                                                        : hasCounted
+                                                            ? Colors
+                                                                .green.shade700
+                                                            : Colors
+                                                                .grey.shade600,
+                                                  ),
+                                                ),
+                                                IconButton(
+                                                  icon: const Icon(
+                                                      Icons.add_circle),
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      _countedProducts[
+                                                              productId] =
+                                                          countedStock + 1;
+                                                    });
+                                                  },
+                                                  color: Colors.green,
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            Text(
+                                              'Difference',
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey.shade600,
+                                              ),
+                                            ),
+                                            Text(
+                                              hasCounted
+                                                  ? '${countedStock - systemStock > 0 ? '+' : ''}${countedStock - systemStock}'
+                                                  : '-',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                color: hasDiscrepancy
+                                                    ? Colors.orange.shade700
+                                                    : Colors.grey.shade600,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ],
                                   ),
                                 ],
                               ),
                             ),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    'Difference',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey.shade600,
-                                    ),
-                                  ),
-                                  Text(
-                                    hasCounted
-                                        ? '${countedStock - systemStock > 0 ? '+' : ''}${countedStock - systemStock}'
-                                        : '-',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: hasDiscrepancy
-                                          ? Colors.orange.shade700
-                                          : Colors.grey.shade600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
+                          );
+                        },
+                      ),
           ),
         ],
       ),
-      floatingActionButton: _countedProducts.isNotEmpty
+      floatingActionButton: _countedProducts.isNotEmpty && !_isSaving
           ? FloatingActionButton.extended(
-              onPressed: () {
-                _saveCount();
-              },
+              onPressed: _saveCount,
               backgroundColor: primary,
               icon: const Icon(Icons.save),
               label: const Text('Save Count',
@@ -349,8 +504,10 @@ class _InventoryCountPageState extends State<InventoryCountPage> {
     );
   }
 
-  void _saveCount() {
-    showDialog(
+  Future<void> _saveCount() async {
+    final discrepancies = _getDiscrepancyCount();
+
+    final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Save Inventory Count'),
@@ -359,6 +516,15 @@ class _InventoryCountPageState extends State<InventoryCountPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Save count for ${_countedProducts.length} products?'),
+            if (discrepancies > 0) const SizedBox(height: 8),
+            if (discrepancies > 0)
+              Text(
+                'Found $discrepancies discrepancies.',
+                style: const TextStyle(
+                    fontSize: 12,
+                    color: Colors.orange,
+                    fontWeight: FontWeight.bold),
+              ),
             const SizedBox(height: 8),
             const Text(
               'This will update the system stock levels.',
@@ -368,24 +534,13 @@ class _InventoryCountPageState extends State<InventoryCountPage> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(context, false),
             child: const Text('Cancel'),
           ),
           ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Inventory count saved successfully'),
-                  backgroundColor: Colors.green,
-                ),
-              );
-              setState(() {
-                _countedProducts.clear();
-              });
-            },
+            onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.purple.shade700,
+              backgroundColor: primary,
               foregroundColor: Colors.white,
             ),
             child: const Text('Save'),
@@ -393,5 +548,55 @@ class _InventoryCountPageState extends State<InventoryCountPage> {
         ],
       ),
     );
+
+    if (confirmed != true) return;
+
+    setState(() {
+      _isSaving = true;
+    });
+
+    try {
+      int successCount = 0;
+      int failCount = 0;
+
+      for (var entry in _countedProducts.entries) {
+        try {
+          final productId = entry.key;
+          final newQuantity = entry.value;
+
+          await dio.patch(
+            '/products/$productId',
+            data: {'productQuantity': newQuantity},
+            options: Options(headers: {
+              'Authorization':
+                  'Bearer ${await SharedPreferencesUtil.getAccessToken()}'
+            }),
+          );
+          successCount++;
+        } catch (e) {
+          failCount++;
+        }
+      }
+
+      setState(() {
+        _isSaving = false;
+        _countedProducts.clear();
+      });
+
+      // Reload products to show updated quantities
+      await _loadProducts();
+
+      Get.snackbar(
+        'Success',
+        '$successCount products updated successfully${failCount > 0 ? ", $failCount failed" : ""}',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      setState(() {
+        _isSaving = false;
+      });
+      Get.snackbar('Error', 'Failed to save inventory count');
+    }
   }
 }

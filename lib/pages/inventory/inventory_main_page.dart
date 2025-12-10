@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:e_online/pages/inventory/product_inventory_history_page.dart';
@@ -29,6 +30,7 @@ class _InventoryMainPageState extends State<InventoryMainPage> {
   List products = [];
   bool _isLoading = true;
   final ProductController productController = ProductController();
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -36,13 +38,20 @@ class _InventoryMainPageState extends State<InventoryMainPage> {
     _fetchProducts();
   }
 
-  Future<void> _fetchProducts() async {
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _fetchProducts({String? keyword}) async {
     setState(() => _isLoading = true);
     try {
       final res = await productController.getShopProducts(
         id: widget.shopId,
         page: 1,
         limit: 100,
+        keyword: keyword,
       );
       setState(() {
         products = res ?? [];
@@ -54,6 +63,18 @@ class _InventoryMainPageState extends State<InventoryMainPage> {
         SnackBar(content: Text('Error loading products: $e')),
       );
     }
+  }
+
+  void _onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+    setState(() {
+      _searchQuery = query;
+    });
+
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      _fetchProducts(keyword: query.isEmpty ? null : query);
+    });
   }
 
   @override
@@ -100,11 +121,7 @@ class _InventoryMainPageState extends State<InventoryMainPage> {
         Padding(
           padding: const EdgeInsets.all(16),
           child: TextField(
-            onChanged: (value) {
-              setState(() {
-                _searchQuery = value;
-              });
-            },
+            onChanged: _onSearchChanged,
             decoration: InputDecoration(
               hintText: 'Search products...',
               hintStyle: TextStyle(fontSize: 14, color: Colors.grey.shade400),
@@ -114,11 +131,7 @@ class _InventoryMainPageState extends State<InventoryMainPage> {
                   ? IconButton(
                       icon: Icon(Icons.clear,
                           size: 20, color: Colors.grey.shade400),
-                      onPressed: () {
-                        setState(() {
-                          _searchQuery = '';
-                        });
-                      },
+                      onPressed: () => _onSearchChanged(''),
                     )
                   : null,
               border: OutlineInputBorder(
@@ -241,8 +254,13 @@ class _InventoryMainPageState extends State<InventoryMainPage> {
     final isLowStock = productQuantity < 10 && productQuantity > 0;
 
     return GestureDetector(
-      onTap: () {
-        Get.to(() => ProductInventoryHistoryPage(product: product));
+      onTap: () async {
+        final result =
+            await Get.to(() => ProductInventoryHistoryPage(product: product));
+        if (result == true) {
+          // Refresh products after deletion or changes
+          _fetchProducts(keyword: _searchQuery.isEmpty ? null : _searchQuery);
+        }
       },
       child: Container(
         decoration: BoxDecoration(

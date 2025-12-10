@@ -30,25 +30,54 @@ class POSController extends GetxController {
     try {
       isLoading.value = true;
 
+      // Validate items before sending
+      for (var item in items) {
+        if (item['id'] == null) {
+          Get.snackbar('Error', 'Invalid product in cart (missing ID)');
+          print('Invalid item in cart: $item');
+          return null;
+        }
+      }
+
+      final mappedItems = items
+          .map((item) => {
+                'ProductId': item['id'],
+                'quantity': item['quantity'],
+                'unitPrice': item['price'],
+                'discount': item['discount'] ?? 0,
+                'tax': item['tax'] ?? 0,
+                'notes': item['notes'],
+              })
+          .toList();
+
+      print('Mapped items to send: $mappedItems');
+
+      // Map payment method to valid enum values
+      String mappedPaymentMethod;
+      if (paymentMethod.toLowerCase().contains('cash')) {
+        mappedPaymentMethod = 'CASH';
+      } else if (paymentMethod.toLowerCase().contains('card')) {
+        mappedPaymentMethod = 'CARD';
+      } else if (paymentMethod.toLowerCase().contains('mobile')) {
+        mappedPaymentMethod = 'MOBILE_MONEY';
+      } else if (paymentMethod.toLowerCase().contains('credit')) {
+        mappedPaymentMethod = 'CREDIT';
+      } else {
+        mappedPaymentMethod = 'CASH'; // Default to CASH
+      }
+
+      print('Payment method: $paymentMethod -> $mappedPaymentMethod');
+
       final response = await dio.post(
         '/pos/sales',
         data: {
           'ShopId': shopId,
-          'items': items
-              .map((item) => {
-                    'ProductId': item['id'],
-                    'quantity': item['quantity'],
-                    'unitPrice': item['price'],
-                    'discount': item['discount'] ?? 0,
-                    'tax': item['tax'] ?? 0,
-                    'notes': item['notes'],
-                  })
-              .toList(),
+          'items': mappedItems,
           'subtotal': subtotal,
           'discount': discount,
           'tax': tax,
           'total': total,
-          'paymentMethod': paymentMethod.toUpperCase().replaceAll(' ', '_'),
+          'paymentMethod': mappedPaymentMethod,
           'amountPaid': amountPaid ?? total,
           'customerName': customerName,
           'customerPhone': customerPhone,

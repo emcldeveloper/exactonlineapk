@@ -3,6 +3,9 @@ import 'package:get/get.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:e_online/controllers/inventory_controller.dart';
+import 'package:e_online/controllers/product_controller.dart';
+import 'package:e_online/utils/shared_preferences.dart';
 
 class ProductInventorySettingsPage extends StatefulWidget {
   final Map<String, dynamic> product;
@@ -20,6 +23,10 @@ class ProductInventorySettingsPage extends StatefulWidget {
 class _ProductInventorySettingsPageState
     extends State<ProductInventorySettingsPage> {
   final _formKey = GlobalKey<FormState>();
+  final InventoryController _inventoryController =
+      Get.put(InventoryController());
+  final ProductController _productController = Get.put(ProductController());
+
   late TextEditingController _sellingPriceController;
   late TextEditingController _buyingPriceController;
   late TextEditingController _lowStockAlertController;
@@ -35,16 +42,56 @@ class _ProductInventorySettingsPageState
   bool _enableLowStockAlert = true;
   bool _enableExpiryTracking = false;
   String _stockValuationMethod = 'FIFO';
+  bool _isLoading = false;
+  Map<String, dynamic>? _inventorySettings;
 
   @override
   void initState() {
     super.initState();
     _initializeControllers();
+    _loadInventorySettings();
+  }
+
+  Future<void> _loadInventorySettings() async {
+    setState(() => _isLoading = true);
+    try {
+      final productId = widget.product['id'];
+      final settings =
+          await _inventoryController.getInventorySettings(productId);
+
+      if (settings != null) {
+        setState(() {
+          _inventorySettings = settings;
+          _trackInventory = settings['trackInventory'] ?? true;
+          _allowBackorder = settings['allowBackorder'] ?? false;
+          _enableLowStockAlert = settings['enableLowStockAlert'] ?? true;
+          _enableExpiryTracking = settings['enableExpiryTracking'] ?? false;
+          _stockValuationMethod = settings['stockValuationMethod'] ?? 'FIFO';
+
+          _lowStockAlertController.text =
+              settings['lowStockThreshold']?.toString() ?? '10';
+          _reorderLevelController.text =
+              settings['reorderLevel']?.toString() ?? '15';
+          _maxStockLevelController.text =
+              settings['maxStockLevel']?.toString() ?? '100';
+          _locationController.text = settings['location'] ?? '';
+          _supplierController.text = settings['supplier'] ?? '';
+          _leadTimeController.text =
+              settings['leadTimeDays']?.toString() ?? '7';
+          _buyingPriceController.text =
+              settings['buyingPrice']?.toString() ?? '';
+        });
+      }
+    } catch (e) {
+      print('Error loading settings: $e');
+    } finally {
+      setState(() => _isLoading = false);
+    }
   }
 
   void _initializeControllers() {
     _sellingPriceController = TextEditingController(
-      text: widget.product['productPrice']?.toString() ?? '',
+      text: widget.product['sellingPrice']?.toString() ?? '',
     );
     _buyingPriceController = TextEditingController(
       text: widget.product['buyingPrice']?.toString() ?? '',
@@ -78,16 +125,58 @@ class _ProductInventorySettingsPageState
     super.dispose();
   }
 
-  void _saveSettings() {
-    if (_formKey.currentState!.validate()) {
-      // TODO: Call API to save settings
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Settings saved successfully'),
-          backgroundColor: primary,
-        ),
+  Future<void> _saveSettings() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    setState(() => _isLoading = true);
+
+    try {
+      final productId = widget.product['id'];
+
+      // Update product basic info (price, SKU)
+      await _productController.editProduct(productId, {
+        'sellingPrice': _sellingPriceController.text.trim(),
+        'productSKU': _skuController.text.trim(),
+      });
+
+      // Update inventory settings
+      final success = await _inventoryController.updateInventorySettings(
+        productId: productId,
+        trackInventory: _trackInventory,
+        lowStockThreshold: int.tryParse(_lowStockAlertController.text),
+        reorderLevel: int.tryParse(_reorderLevelController.text),
+        maxStockLevel: int.tryParse(_maxStockLevelController.text),
+        allowBackorder: _allowBackorder,
+        enableLowStockAlert: _enableLowStockAlert,
+        enableExpiryTracking: _enableExpiryTracking,
+        stockValuationMethod: _stockValuationMethod,
+        sku: _skuController.text.trim(),
+        barcode: _barcodeController.text.trim(),
+        location: _locationController.text.trim(),
+        supplier: _supplierController.text.trim(),
+        leadTimeDays: int.tryParse(_leadTimeController.text),
+        buyingPrice: double.tryParse(_buyingPriceController.text),
       );
-      Navigator.pop(context);
+
+      if (success) {
+        Get.back(result: true);
+        Get.snackbar(
+          'Success',
+          'Settings saved successfully',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      print('Error saving settings: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to save settings',
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+    } finally {
+      setState(() => _isLoading = false);
     }
   }
 
@@ -105,17 +194,29 @@ class _ProductInventorySettingsPageState
         backgroundColor: primary,
         foregroundColor: Colors.white,
         actions: [
-          TextButton(
-            onPressed: _saveSettings,
-            child: const Text(
-              'Save',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-              ),
-            ),
-          ),
+          _isLoading
+              ? const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  ),
+                )
+              : TextButton(
+                  onPressed: _saveSettings,
+                  child: const Text(
+                    'Save',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
         ],
       ),
       body: Form(

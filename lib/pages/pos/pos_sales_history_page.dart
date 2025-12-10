@@ -4,6 +4,8 @@ import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/pos_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/utils/shared_preferences.dart';
+import 'package:money_formatter/money_formatter.dart';
+import 'package:intl/intl.dart';
 
 class POSSalesHistoryPage extends StatefulWidget {
   const POSSalesHistoryPage({Key? key}) : super(key: key);
@@ -28,8 +30,72 @@ class _POSSalesHistoryPageState extends State<POSSalesHistoryPage> {
     shopId = await SharedPreferencesUtil.getCurrentShopId(
         userController.user.value["Shops"] ?? []);
     if (shopId != null) {
-      await posController.getSales(shopId: shopId!);
+      DateTime? startDate;
+      DateTime? endDate;
+      String? status;
+
+      // Apply filter based on selected filter
+      final now = DateTime.now();
+      switch (_selectedFilter) {
+        case 'Today':
+          startDate = DateTime(now.year, now.month, now.day);
+          endDate = DateTime(now.year, now.month, now.day, 23, 59, 59);
+          break;
+        case 'This Week':
+          final weekStart = now.subtract(Duration(days: now.weekday - 1));
+          startDate = DateTime(weekStart.year, weekStart.month, weekStart.day);
+          break;
+        case 'This Month':
+          startDate = DateTime(now.year, now.month, 1);
+          break;
+        case 'Refunded':
+          status = 'REFUNDED';
+          break;
+      }
+
+      await posController.getSales(
+        shopId: shopId!,
+        startDate: startDate,
+        endDate: endDate,
+        status: status,
+      );
     }
+  }
+
+  String _formatMoney(dynamic amount) {
+    MoneyFormatter fmf = MoneyFormatter(
+      amount: double.tryParse(amount.toString()) ?? 0.0,
+      settings: MoneyFormatterSettings(
+        symbol: 'TZS',
+        thousandSeparator: ',',
+        decimalSeparator: '.',
+        symbolAndNumberSeparator: ' ',
+      ),
+    );
+    return fmf.output.symbolOnLeft;
+  }
+
+  Map<String, dynamic> _calculateSummary() {
+    double todayTotal = 0;
+    int todayCount = 0;
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    for (var sale in posController.sales) {
+      final saleDate = DateTime.parse(sale['createdAt']);
+      if (saleDate.year == today.year &&
+          saleDate.month == today.month &&
+          saleDate.day == today.day &&
+          sale['status'] == 'COMPLETED') {
+        todayTotal += (sale['total'] ?? 0).toDouble();
+        todayCount++;
+      }
+    }
+
+    return {
+      'todayTotal': todayTotal,
+      'todayCount': todayCount,
+    };
   }
 
   @override
@@ -58,35 +124,38 @@ class _POSSalesHistoryPageState extends State<POSSalesHistoryPage> {
       body: Column(
         children: [
           // Summary Bar
-          Container(
-            padding: const EdgeInsets.all(16),
-            color: primary.withOpacity(0.06),
-            child: Row(
-              children: [
-                Expanded(
-                  child: _buildSummaryItem(
-                    'Today\'s Sales',
-                    'TZS 2,450,500',
-                    Icons.today,
-                    primary,
+          Obx(() {
+            final summary = _calculateSummary();
+            return Container(
+              padding: const EdgeInsets.all(16),
+              color: primary.withOpacity(0.06),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _buildSummaryItem(
+                      'Today\'s Sales',
+                      _formatMoney(summary['todayTotal'] ?? 0),
+                      Icons.today,
+                      primary,
+                    ),
                   ),
-                ),
-                Container(
-                  width: 1,
-                  height: 40,
-                  color: Colors.grey.shade300,
-                ),
-                Expanded(
-                  child: _buildSummaryItem(
-                    'Transactions',
-                    '48',
-                    Icons.receipt_long,
-                    primary,
+                  Container(
+                    width: 1,
+                    height: 40,
+                    color: Colors.grey.shade300,
                   ),
-                ),
-              ],
-            ),
-          ),
+                  Expanded(
+                    child: _buildSummaryItem(
+                      'Transactions',
+                      '${summary['todayCount'] ?? 0}',
+                      Icons.receipt_long,
+                      primary,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
           // Filter Chips
           Padding(
             padding: const EdgeInsets.all(16),
@@ -124,6 +193,7 @@ class _POSSalesHistoryPageState extends State<POSSalesHistoryPage> {
                   itemBuilder: (context, index) {
                     final sale = posController.sales[index];
                     return _buildSaleCard(
+                      sale: sale,
                       receiptNumber: sale['receiptNumber'] ?? 'N/A',
                       date: DateTime.parse(sale['createdAt']),
                       items: (sale['items'] as List?)?.length ?? 0,
@@ -132,7 +202,9 @@ class _POSSalesHistoryPageState extends State<POSSalesHistoryPage> {
                               ?.toString()
                               .replaceAll('_', ' ') ??
                           'CASH',
-                      cashier: sale['cashier']?['fullName'] ?? 'Unknown',
+                      cashier: sale['cashier']?['name'] ??
+                          sale['cashier']?['fullName'] ??
+                          'Unknown',
                       isRefunded: sale['status'] == 'REFUNDED',
                     );
                   },
@@ -181,6 +253,7 @@ class _POSSalesHistoryPageState extends State<POSSalesHistoryPage> {
         onSelected: (selected) {
           setState(() {
             _selectedFilter = label;
+            _loadData();
           });
         },
         backgroundColor: Colors.grey.shade100,
@@ -196,6 +269,7 @@ class _POSSalesHistoryPageState extends State<POSSalesHistoryPage> {
   }
 
   Widget _buildSaleCard({
+    required Map<String, dynamic> sale,
     required String receiptNumber,
     required DateTime date,
     required int items,
@@ -270,7 +344,7 @@ class _POSSalesHistoryPageState extends State<POSSalesHistoryPage> {
                     ],
                   ),
                   Text(
-                    'TZS ${(total * 1000).toStringAsFixed(0)}',
+                    _formatMoney(total),
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -286,7 +360,7 @@ class _POSSalesHistoryPageState extends State<POSSalesHistoryPage> {
                       size: 13, color: Colors.grey.shade600),
                   const SizedBox(width: 4),
                   Text(
-                    '${date.toString().substring(0, 16)}',
+                    DateFormat('MMM dd, yyyy HH:mm').format(date),
                     style: TextStyle(
                       fontSize: 11,
                       color: Colors.grey.shade600,
@@ -490,7 +564,15 @@ class _POSSalesHistoryPageState extends State<POSSalesHistoryPage> {
     );
   }
 
-  void _showSaleDetails(String receiptNumber) {
+  void _showSaleDetails(String receiptNumber) async {
+    // Find sale from current list
+    final sale = posController.sales.firstWhere(
+      (s) => s['receiptNumber'] == receiptNumber,
+      orElse: () => {},
+    );
+
+    if (sale.isEmpty) return;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -503,13 +585,29 @@ class _POSSalesHistoryPageState extends State<POSSalesHistoryPage> {
               const Text('Items:',
                   style: TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
-              _buildDetailItem('Product A', 2, 29.99),
-              _buildDetailItem('Product B', 1, 49.99),
+              ...((sale['items'] as List?) ?? []).map((item) {
+                return _buildDetailItem(
+                  item['productName'] ?? 'Unknown Product',
+                  (item['quantity'] ?? 0) is int
+                      ? item['quantity']
+                      : int.tryParse(item['quantity'].toString()) ?? 0,
+                  (item['unitPrice'] ?? 0).toDouble(),
+                );
+              }).toList(),
               const Divider(),
-              _buildDetailRow('Subtotal:', 'TZS 109,970'),
-              _buildDetailRow('Discount:', 'TZS 0'),
+              _buildDetailRow('Subtotal:', _formatMoney(sale['subtotal'] ?? 0)),
+              _buildDetailRow('Discount:', _formatMoney(sale['discount'] ?? 0)),
+              _buildDetailRow('Tax:', _formatMoney(sale['tax'] ?? 0)),
               const SizedBox(height: 8),
-              _buildDetailRow('Total:', 'TZS 109,970', isBold: true),
+              _buildDetailRow('Total:', _formatMoney(sale['total'] ?? 0),
+                  isBold: true),
+              const Divider(),
+              _buildDetailRow(
+                  'Payment:',
+                  sale['paymentMethod']?.toString().replaceAll('_', ' ') ??
+                      'CASH'),
+              _buildDetailRow(
+                  'Cashier:', sale['cashier']?['name'] ?? 'Unknown'),
             ],
           ),
         ),
@@ -537,8 +635,14 @@ class _POSSalesHistoryPageState extends State<POSSalesHistoryPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text('$name x$quantity', style: const TextStyle(fontSize: 12)),
-          Text('TZS ${((price * quantity) * 1000).toStringAsFixed(0)}',
+          Expanded(
+            child: Text(
+              '$name x$quantity',
+              style: const TextStyle(fontSize: 12),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          Text(_formatMoney(price * quantity),
               style: const TextStyle(fontSize: 12)),
         ],
       ),
