@@ -23,6 +23,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled true
     }
 
     kotlinOptions {
@@ -34,7 +35,7 @@ android {
         applicationId = "com.exactonline.exactonline"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = 21
+        minSdkVersion = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -64,4 +65,5 @@ flutter {
 
 dependencies {
     implementation 'com.google.firebase:firebase-messaging-ktx:23.3.1'
+    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:2.0.4"
 }

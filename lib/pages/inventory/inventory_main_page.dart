@@ -354,9 +354,9 @@ class _InventoryMainPageState extends State<InventoryMainPage> {
                       children: [
                         Icon(
                           isOutOfStock
-                              ? HugeIcons.strokeRoundedUserWarning01
+                              ? HugeIcons.strokeRoundedAlert02
                               : isLowStock
-                                  ? HugeIcons.strokeRoundedUserWarning01
+                                  ? HugeIcons.strokeRoundedAlert02
                                   : HugeIcons.strokeRoundedCheckmarkBadge01,
                           size: 14,
                           color: isOutOfStock
