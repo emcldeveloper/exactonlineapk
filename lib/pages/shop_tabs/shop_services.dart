@@ -1,7 +1,9 @@
+import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/service_controller.dart';
+import 'package:e_online/pages/add_service_page.dart';
 import 'package:e_online/widgets/no_data.dart';
 import 'package:flutter/material.dart';
-import 'package:money_formatter/money_formatter.dart';
+import 'package:get/get.dart';
 import '../../widgets/shop_service_card.dart';
 
 class ShopServices extends StatefulWidget {
@@ -94,6 +96,30 @@ class _ShopServicesState extends State<ShopServices> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: primary,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          "Services",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(
+              Icons.add,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              Get.to(() => const AddServicePage());
+            },
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: _isLoading

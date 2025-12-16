@@ -1,7 +1,5 @@
-import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/order_controller.dart';
 import 'package:e_online/pages/seller_order_view_page.dart';
-import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/no_data.dart';
 import 'package:e_online/widgets/order_card.dart';
 import 'package:e_online/widgets/spacer.dart';
@@ -99,12 +97,12 @@ class _ShopOrdersState extends State<ShopOrders> {
     return DefaultTabController(
       length: 5,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.grey.shade50,
         appBar: AppBar(
           backgroundColor: Colors.white,
           centerTitle: false,
           leading: Container(),
-          shadowColor: Colors.white,
+          shadowColor: Colors.transparent,
           foregroundColor: Colors.white,
           toolbarHeight: 0,
           elevation: 0.0,
@@ -114,42 +112,45 @@ class _ShopOrdersState extends State<ShopOrders> {
             indicatorSize: TabBarIndicatorSize.label,
             labelColor: Colors.black,
             indicatorColor: Colors.black,
-            dividerColor: Colors.white,
-            labelStyle: GoogleFonts.inter(
-              fontSize: 16,
+            indicatorWeight: 3,
+            dividerColor: Colors.transparent,
+            labelStyle: GoogleFonts.poppins(
+              fontSize: 15,
               fontWeight: FontWeight.bold,
             ),
-            unselectedLabelStyle: GoogleFonts.inter(
-              fontSize: 16,
+            unselectedLabelStyle: GoogleFonts.poppins(
+              fontSize: 15,
               fontWeight: FontWeight.normal,
             ),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            labelPadding: const EdgeInsets.symmetric(horizontal: 12),
             onTap: (index) {
               // Update status based on tab selection
               switch (index) {
-                case 0: // Pending tab
+                case 0:
                   status.value = "NEW ORDER";
                   break;
-                case 1: // Active tab
+                case 1:
                   status.value = "IN PROGRESS";
                   break;
-                case 2: // Delivered tab
+                case 2:
                   status.value = "CONFIRMED";
                   break;
-                case 3: // Delivered tab
+                case 3:
                   status.value = "DELIVERED";
                   break;
-                case 4: // Delivered tab
+                case 4:
                   status.value = "CANCELED";
                   break;
               }
-              _refreshOrders(); // Fetch orders with new status
+              _refreshOrders();
             },
             tabs: const [
               Tab(text: "New Orders"),
               Tab(text: "In Progress"),
-              Tab(text: "Confirmed Orders"),
-              Tab(text: "Delivered Orders"),
-              Tab(text: "Canceled Orders"),
+              Tab(text: "Confirmed"),
+              Tab(text: "Delivered"),
+              Tab(text: "Canceled"),
             ],
           ),
         ),

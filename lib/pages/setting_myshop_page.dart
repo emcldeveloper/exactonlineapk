@@ -4,15 +4,15 @@ import 'package:e_online/controllers/shop_controller.dart';
 import 'package:e_online/controllers/user_controller.dart';
 import 'package:e_online/pages/edit_register_as_seller_page.dart';
 import 'package:e_online/pages/main_page.dart';
-import 'package:e_online/pages/profile_page.dart';
 import 'package:e_online/pages/register_as_seller_page.dart';
+import 'package:e_online/pages/inventory/shop_users_page.dart';
+import 'package:e_online/pages/shop_tabs/shop_reels.dart';
+import 'package:e_online/pages/shop_tabs/shop_services.dart';
 import 'package:e_online/utils/page_analytics.dart';
 import 'package:e_online/utils/shared_preferences.dart';
-import 'package:e_online/widgets/custom_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/widgets/active_business_selection.dart';
-import 'package:e_online/widgets/heading_text.dart';
 import 'package:e_online/widgets/paragraph_text.dart';
 import 'package:e_online/widgets/setting_shop_details.dart';
 import 'package:e_online/widgets/spacer.dart';
@@ -36,6 +36,7 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
   final ShopController shopController = Get.put(ShopController());
   final LocationController locationController = Get.put(LocationController());
   var _location = null;
+  bool _isPasswordVisible = false;
   final List<String> daysOfWeek = [
     'Monday',
     'Tuesday',
@@ -137,6 +138,7 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
             Get.snackbar(
                 "Error", "Please select both opening and closing times",
                 backgroundColor: Colors.redAccent,
+                snackPosition: SnackPosition.TOP,
                 colorText: Colors.white,
                 icon: const HugeIcon(
                     icon: HugeIcons.strokeRoundedCancel02,
@@ -458,42 +460,158 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
     }
   }
 
+  void _showPasswordManagementDialog() {
+    final currentPassword =
+        selectedBusiness?.value['password']?.toString() ?? '';
+    final TextEditingController passwordController =
+        TextEditingController(text: currentPassword);
+
+    // Reset password visibility when dialog opens
+    _isPasswordVisible = false;
+
+    Get.dialog(
+      AlertDialog(
+        backgroundColor: mainColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        title: Text(
+          'Shop Password',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Set or update your shop password. Leave empty to remove password protection.',
+              style: TextStyle(color: mutedTextColor, fontSize: 12),
+            ),
+            spacer2(),
+            StatefulBuilder(
+              builder: (context, setDialogState) {
+                return TextFormField(
+                  controller: passwordController,
+                  keyboardType: TextInputType.number,
+                  obscureText: !_isPasswordVisible,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    hintText: 'Enter numeric password',
+                    fillColor: primaryColor,
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none,
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isPasswordVisible
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        color: mutedTextColor,
+                      ),
+                      onPressed: () {
+                        setDialogState(() {
+                          _isPasswordVisible = !_isPasswordVisible;
+                        });
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text('Cancel', style: TextStyle(color: mutedTextColor)),
+          ),
+          ElevatedButton(
+            onPressed: () => _updatePassword(passwordController.text.trim()),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: primary,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)),
+            ),
+            child: Text('Update', style: TextStyle(color: mainColor)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _updatePassword(String password) async {
+    try {
+      Get.back(); // Close dialog
+
+      // Show loading
+      Get.dialog(
+        AlertDialog(
+          content: Row(
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(width: 16),
+              Text("Updating password..."),
+            ],
+          ),
+        ),
+        barrierDismissible: false,
+      );
+
+      final businessId = selectedBusiness?.value['id'];
+      if (businessId == null) {
+        throw Exception('No business selected');
+      }
+
+      // If password is empty, send null to remove password protection
+      final passwordToSend = password.isEmpty ? null : password;
+
+      await shopController.updateShopPassword(businessId, passwordToSend ?? '');
+
+      // Close loading dialog
+      Get.back();
+
+      // Update local data
+      setState(() {
+        selectedBusiness?.value['password'] = passwordToSend;
+      });
+
+      Get.snackbar(
+        "Success",
+        password.isEmpty
+            ? "Password protection removed"
+            : "Password updated successfully",
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        icon: const HugeIcon(
+            icon: HugeIcons.strokeRoundedTick01, color: Colors.white),
+      );
+    } catch (e) {
+      // Close loading dialog if open
+      if (Get.isDialogOpen == true) {
+        Get.back();
+      }
+
+      Get.snackbar(
+        "Error",
+        "Failed to update password: ${e.toString()}",
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+        icon: const HugeIcon(
+            icon: HugeIcons.strokeRoundedCancel02, color: Colors.white),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: mainColor,
-      appBar: AppBar(
-        backgroundColor: mainColor,
-        elevation: 0,
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios,
-            color: Colors.black,
-            size: 16,
-          ),
-          onPressed: () {
-            if (widget.from == 'shoppingPage') {
-              Get.back();
-            } else if (widget.from == 'formPage') {
-              Get.offAll(() => const ProfilePage());
-            } else {
-              Get.offAll(() => const MainPage());
-            }
-          },
-        ),
-        title: HeadingText("Settings"),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1.0),
-          child: Container(
-            color: const Color.fromARGB(255, 242, 242, 242),
-            height: 1.0,
-          ),
-        ),
-      ),
+      backgroundColor: Colors.grey.shade50,
       body: isLoadingTime.value
-          ? Center(
-              child: const CircularProgressIndicator(
+          ? const Center(
+              child: CircularProgressIndicator(
                 color: Colors.black,
               ),
             )
@@ -503,34 +621,35 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Obx(() => selectedBusiness?.value['isSubscribed'] == true
-                    //     ? ShopSubscriptionCard(
-                    //         data: selectedBusiness?.value['ShopSubscription'])
-                    //     : ParagraphText("No Active Subscription",
-                    //         color: mutedTextColor)),
                     spacer1(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        ParagraphText(
+                        const Text(
                           "Current business",
-                          fontWeight: FontWeight.bold,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Colors.black87,
+                          ),
                         ),
                         InkWell(
                           onTap: showSelectBusinessBottomSheet,
                           child: Container(
                             decoration: BoxDecoration(
-                              color: Colors.black,
-                              borderRadius: BorderRadius.circular(15.0),
+                              color: primary,
+                              borderRadius: BorderRadius.circular(20.0),
                             ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 5, horizontal: 10),
-                              child: ParagraphText(
+                            child: const Padding(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 8, horizontal: 16),
+                              child: Text(
                                 "Switch",
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12.0,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13.0,
+                                ),
                               ),
                             ),
                           ),
@@ -539,10 +658,17 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                     ),
                     spacer1(),
                     Container(
-                      padding: const EdgeInsets.all(12.0),
+                      padding: const EdgeInsets.all(16.0),
                       decoration: BoxDecoration(
-                        color: primaryColor,
-                        borderRadius: BorderRadius.circular(12),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.shade200,
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -550,35 +676,44 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Obx(() => ParagraphText(
-                                        selectedBusiness?.value['name'] ??
-                                            "Name",
-                                        fontWeight: FontWeight.bold,
-                                      )),
-                                  spacer(),
-                                  Obx(() => ParagraphText(
-                                        selectedBusiness?.value['createdAt'] ??
-                                            "Date",
-                                        color: mutedTextColor,
-                                      )),
-                                ],
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Obx(() => Text(
+                                          selectedBusiness?.value['name'] ??
+                                              "Name",
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18,
+                                            color: Colors.black87,
+                                          ),
+                                        )),
+                                    const SizedBox(height: 6),
+                                    Obx(() => Text(
+                                          selectedBusiness
+                                                  ?.value['createdAt'] ??
+                                              "Date",
+                                          style: TextStyle(
+                                            color: Colors.grey.shade600,
+                                            fontSize: 13,
+                                          ),
+                                        )),
+                                  ],
+                                ),
                               ),
                               Row(
                                 children: [
-                                  InkWell(
-                                    onTap: () => _confirmDeleteShop(),
-                                    child: HugeIcon(
-                                      icon: HugeIcons.strokeRoundedDelete01,
+                                  IconButton(
+                                    onPressed: () => _confirmDeleteShop(),
+                                    icon: const Icon(
+                                      Icons.delete_outline,
                                       color: Colors.red,
-                                      size: 22.0,
+                                      size: 24.0,
                                     ),
                                   ),
-                                  const SizedBox(width: 8),
-                                  InkWell(
-                                    onTap: () {
+                                  IconButton(
+                                    onPressed: () {
                                       if (selectedBusiness != null &&
                                           selectedBusiness?.value["id"] !=
                                               null) {
@@ -588,62 +723,80 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                                         print("No business selected");
                                       }
                                     },
-                                    child: HugeIcon(
-                                      icon: HugeIcons.strokeRoundedPencilEdit02,
-                                      color: Colors.grey,
-                                      size: 22.0,
+                                    icon: Icon(
+                                      Icons.edit_outlined,
+                                      color: Colors.grey.shade700,
+                                      size: 24.0,
                                     ),
                                   ),
                                 ],
                               ),
                             ],
                           ),
-                          spacer(),
+                          const SizedBox(height: 16),
+                          Divider(color: Colors.grey.shade200, height: 1),
+                          const SizedBox(height: 16),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ParagraphText(
-                                    "Location",
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  spacer(),
-                                  ParagraphText(
-                                    ((_location != null) &&
-                                            _location?["shopLat"] != null &&
-                                            _location?["shopLong"] != null)
-                                        ? 'Lat: ${_location?["shopLat"]}, Long: ${_location?["shopLong"]}'
-                                        : 'No selected',
-                                    color: mutedTextColor,
-                                  ),
-                                ],
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      "Location",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                        color: Colors.black87,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Text(
+                                      ((_location != null) &&
+                                              _location?["shopLat"] != null &&
+                                              _location?["shopLong"] != null)
+                                          ? 'Lat: ${_location?["shopLat"]}, Long: ${_location?["shopLong"]}'
+                                          : 'No location set',
+                                      style: TextStyle(
+                                        color: Colors.grey.shade600,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                               Obx(() {
                                 return isLoading.value
-                                    ? const CustomLoader(
-                                        color: Colors.black,
-                                        size: 12.0,
+                                    ? const SizedBox(
+                                        width: 24,
+                                        height: 24,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: Colors.black,
+                                        ),
                                       )
-                                    : InkWell(
-                                        onTap: _updateLocation,
-                                        child: HugeIcon(
-                                          icon:
-                                              HugeIcons.strokeRoundedLocation01,
-                                          color: Colors.grey,
-                                          size: 22.0,
+                                    : IconButton(
+                                        onPressed: _updateLocation,
+                                        icon: Icon(
+                                          Icons.location_on_outlined,
+                                          color: primary,
+                                          size: 24.0,
                                         ),
                                       );
                               }),
                             ],
                           ),
-                          spacer(),
-                          ParagraphText(
+                          const SizedBox(height: 16),
+                          const Text(
                             "Calendar",
-                            fontWeight: FontWeight.bold,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: Colors.black87,
+                            ),
                           ),
-                          spacer(),
+                          const SizedBox(height: 12),
                           LayoutBuilder(
                             builder: (context, constraints) {
                               return Obx(() {
@@ -665,34 +818,47 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
 
                                     return Container(
                                       width: constraints.maxWidth,
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 8),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12),
                                       decoration: BoxDecoration(
                                         border: Border(
                                           bottom: BorderSide(
-                                              color: Colors.grey.shade300),
+                                              color: Colors.grey.shade200),
                                         ),
                                       ),
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          ParagraphText(day,
-                                              color: mutedTextColor),
+                                          Text(
+                                            day,
+                                            style: TextStyle(
+                                              color: Colors.grey.shade700,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
                                           Row(
                                             children: [
-                                              ParagraphText(statusText,
-                                                  color: mutedTextColor),
-                                              const SizedBox(width: 8),
-                                              InkWell(
-                                                onTap: () =>
-                                                    showSetTimeBottomSheet(day),
-                                                child: HugeIcon(
-                                                  icon: HugeIcons
-                                                      .strokeRoundedPencilEdit02,
-                                                  color: Colors.grey,
-                                                  size: 22.0,
+                                              Text(
+                                                statusText,
+                                                style: TextStyle(
+                                                  color: Colors.grey.shade600,
+                                                  fontSize: 13,
                                                 ),
+                                              ),
+                                              const SizedBox(width: 8),
+                                              IconButton(
+                                                onPressed: () =>
+                                                    showSetTimeBottomSheet(day),
+                                                icon: Icon(
+                                                  Icons.edit_outlined,
+                                                  color: primary,
+                                                  size: 20.0,
+                                                ),
+                                                padding: EdgeInsets.zero,
+                                                constraints:
+                                                    const BoxConstraints(),
                                               ),
                                             ],
                                           ),
@@ -707,183 +873,460 @@ class _SettingMyshopPageState extends State<SettingMyshopPage> {
                         ],
                       ),
                     ),
-                    spacer1(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: ParagraphText(
-                            "All businesses",
-                            fontWeight: FontWeight.bold,
+                    spacer2(),
+                    // Password Settings Section
+                    Container(
+                      padding: const EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.shade200,
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
                           ),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            Get.to(() => const RegisterAsSellerPage());
-                          },
-                          child: HugeIcon(
-                            icon: HugeIcons.strokeRoundedAdd01,
-                            color: Colors.black,
-                            size: 22.0,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                      ],
-                    ),
-                    spacer1(),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: shopList.length,
-                      itemBuilder: (context, index) {
-                        final shop = shopList[index];
-                        bool isCurrentShop =
-                            shop['id'] == selectedBusiness?.value['id'];
-
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: isCurrentShop
-                                  ? Colors.orange.withOpacity(0.1)
-                                  : Colors.transparent,
-                              borderRadius: BorderRadius.circular(8),
-                              border: isCurrentShop
-                                  ? Border.all(color: Colors.orange, width: 1)
-                                  : null,
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Shop Password",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: Colors.black87,
                             ),
-                            child: Row(
-                              children: [
-                                shop['shopImage'] != null
-                                    ? ClipOval(
-                                        child: CachedNetworkImage(
-                                          imageUrl: shop['shopImage'],
-                                          height: 40,
-                                          width: 40,
-                                          fit: BoxFit.cover,
-                                          errorWidget: (context, url, error) =>
-                                              Container(
-                                            height: 40,
-                                            width: 40,
-                                            color: Colors.grey[200],
-                                            child: const Icon(
-                                                Icons.image_outlined),
-                                          ),
-                                        ),
-                                      )
-                                    : ClipOval(
-                                        child: Container(
-                                          height: 40,
-                                          color: Colors.grey[200],
-                                          width: 40,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Icon(Icons.business,
-                                                color: Colors.grey[600]),
-                                          ),
-                                        ),
-                                      ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Obx(() {
+                                      final password =
+                                          selectedBusiness?.value['password'];
+                                      return Row(
                                         children: [
-                                          Expanded(
-                                            child: ParagraphText(
-                                              shop["name"] ?? "Unknown Shop",
-                                              fontWeight: FontWeight.bold,
-                                              color: isCurrentShop
-                                                  ? Colors.orange
-                                                  : Colors.black,
-                                            ),
+                                          ParagraphText(
+                                            password != null
+                                                ? "Password: ${_isPasswordVisible ? password : '••••••'}"
+                                                : "No password set",
+                                            color: mutedTextColor,
                                           ),
-                                          if (isCurrentShop)
-                                            Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 2),
-                                              decoration: BoxDecoration(
-                                                color: Colors.orange,
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
-                                              child: const Text(
-                                                "Current",
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
+                                          if (password != null) ...[
+                                            SizedBox(width: 8),
+                                            InkWell(
+                                              onTap: () {
+                                                setState(() {
+                                                  _isPasswordVisible =
+                                                      !_isPasswordVisible;
+                                                });
+                                              },
+                                              child: Icon(
+                                                _isPasswordVisible
+                                                    ? Icons.visibility_off
+                                                    : Icons.visibility,
+                                                color: mutedTextColor,
+                                                size: 18,
                                               ),
                                             ),
+                                          ],
                                         ],
+                                      );
+                                    }),
+                                    spacer(),
+                                    ParagraphText(
+                                      "Protect your shop with a password",
+                                      color: mutedTextColor,
+                                      fontSize: 12,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              InkWell(
+                                onTap: _showPasswordManagementDialog,
+                                child: HugeIcon(
+                                  icon: HugeIcons.strokeRoundedPencilEdit02,
+                                  color: Colors.grey,
+                                  size: 22.0,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    spacer2(),
+                    // Reels Section
+                    Container(
+                      padding: const EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.shade200,
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Shop Reels",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ParagraphText(
+                                      "Showcase your products with video reels",
+                                      color: mutedTextColor,
+                                    ),
+                                    spacer(),
+                                    ParagraphText(
+                                      "Create engaging content for customers",
+                                      color: mutedTextColor,
+                                      fontSize: 12,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  if (selectedBusiness?.value['id'] != null) {
+                                    Get.to(() => const ShopReels());
+                                  } else {
+                                    Get.snackbar(
+                                      "Error",
+                                      "No business selected",
+                                      backgroundColor: Colors.redAccent,
+                                      colorText: Colors.white,
+                                      icon: const HugeIcon(
+                                        icon: HugeIcons.strokeRoundedCancel02,
+                                        color: Colors.white,
                                       ),
-                                      spacer(),
+                                    );
+                                  }
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: primary,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      HugeIcon(
+                                        icon: HugeIcons.strokeRoundedVideo02,
+                                        color: Colors.white,
+                                        size: 18.0,
+                                      ),
+                                      const SizedBox(width: 6),
                                       ParagraphText(
-                                        shop['createdAt'] != null
-                                            ? "Created on: ${shop['createdAt']}"
-                                            : "No Date available",
-                                        fontSize: 12,
-                                        color: Colors.grey[600],
+                                        "View",
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13,
                                       ),
                                     ],
                                   ),
                                 ),
-                                const SizedBox(width: 8),
-                                Row(
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    spacer2(),
+                    // Services Section
+                    Container(
+                      padding: const EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.shade200,
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Shop Services",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    InkWell(
-                                      onTap: () {
-                                        if (shop["id"] != null) {
-                                          Get.to(() => EditRegisterAsSellerPage(
-                                              shop["id"]));
-                                        }
-                                      },
-                                      child: Container(
-                                        padding: const EdgeInsets.all(8),
-                                        decoration: BoxDecoration(
-                                          color: Colors.blue.withOpacity(0.1),
-                                          borderRadius:
-                                              BorderRadius.circular(6),
-                                        ),
-                                        child: HugeIcon(
-                                          icon: HugeIcons
-                                              .strokeRoundedPencilEdit02,
-                                          color: Colors.blue,
-                                          size: 18.0,
-                                        ),
-                                      ),
+                                    ParagraphText(
+                                      "Manage services you offer",
+                                      color: mutedTextColor,
                                     ),
-                                    const SizedBox(width: 8),
-                                    InkWell(
-                                      onTap: () =>
-                                          _confirmDeleteSpecificShop(shop),
-                                      child: Container(
-                                        padding: const EdgeInsets.all(8),
-                                        decoration: BoxDecoration(
-                                          color: Colors.red.withOpacity(0.1),
-                                          borderRadius:
-                                              BorderRadius.circular(6),
-                                        ),
-                                        child: HugeIcon(
-                                          icon: HugeIcons.strokeRoundedDelete01,
-                                          color: Colors.red,
-                                          size: 18.0,
-                                        ),
-                                      ),
+                                    spacer(),
+                                    ParagraphText(
+                                      "Add and edit available services",
+                                      color: mutedTextColor,
+                                      fontSize: 12,
                                     ),
                                   ],
                                 ),
-                              ],
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  if (selectedBusiness?.value['id'] != null) {
+                                    Get.to(() => const ShopServices());
+                                  } else {
+                                    Get.snackbar(
+                                      "Error",
+                                      "No business selected",
+                                      backgroundColor: Colors.redAccent,
+                                      colorText: Colors.white,
+                                      icon: const HugeIcon(
+                                        icon: HugeIcons.strokeRoundedCancel02,
+                                        color: Colors.white,
+                                      ),
+                                    );
+                                  }
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: primary,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      HugeIcon(
+                                        icon: HugeIcons
+                                            .strokeRoundedCustomerService,
+                                        color: Colors.white,
+                                        size: 18.0,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      ParagraphText(
+                                        "Manage",
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    spacer2(),
+                    // Marketplace Section
+                    Container(
+                      padding: const EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.shade200,
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Marketplace",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: Colors.black87,
                             ),
                           ),
-                        );
-                      },
+                          const SizedBox(height: 12),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ParagraphText(
+                                      "Browse and explore the marketplace",
+                                      color: mutedTextColor,
+                                    ),
+                                    spacer(),
+                                    ParagraphText(
+                                      "View all shops, products and services",
+                                      color: mutedTextColor,
+                                      fontSize: 12,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  Get.to(() => const MainPage());
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: primary,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      HugeIcon(
+                                        icon: HugeIcons.strokeRoundedStore04,
+                                        color: Colors.white,
+                                        size: 18.0,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      ParagraphText(
+                                        "View",
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    spacer2(),
+                    // User Management Section
+                    Container(
+                      padding: const EdgeInsets.all(12.0),
+                      decoration: BoxDecoration(
+                        color: primaryColor,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ParagraphText(
+                            "User Management",
+                            fontWeight: FontWeight.bold,
+                          ),
+                          spacer(),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ParagraphText(
+                                      "Invite users to access your system",
+                                      color: mutedTextColor,
+                                    ),
+                                    spacer(),
+                                    ParagraphText(
+                                      "Grant access to POS or Inventory",
+                                      color: mutedTextColor,
+                                      fontSize: 12,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  if (selectedBusiness?.value['id'] != null) {
+                                    Get.to(() => ShopUsersPage(
+                                          shopId: selectedBusiness!.value['id'],
+                                          shopName:
+                                              selectedBusiness!.value['name'] ??
+                                                  'Shop',
+                                        ));
+                                  } else {
+                                    Get.snackbar(
+                                      "Error",
+                                      "No business selected",
+                                      backgroundColor: Colors.redAccent,
+                                      colorText: Colors.white,
+                                      icon: const HugeIcon(
+                                        icon: HugeIcons.strokeRoundedCancel02,
+                                        color: Colors.white,
+                                      ),
+                                    );
+                                  }
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: primary,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      HugeIcon(
+                                        icon:
+                                            HugeIcons.strokeRoundedUserMultiple,
+                                        color: Colors.white,
+                                        size: 18.0,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      ParagraphText(
+                                        "Manage",
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
