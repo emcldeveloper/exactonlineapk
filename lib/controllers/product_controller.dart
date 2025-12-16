@@ -51,9 +51,29 @@ class ProductController extends GetxController {
     }
   }
 
-  Future<List> getProducts({page, limit, keyword, category}) async {
-    var response = await dio.get(
-        "/products/?page=${page ?? 1}&limit=${limit ?? 10}&keyword=${keyword ?? ""}&category=${category ?? "All"}",
+  Future<List> getProducts(
+      {page,
+      limit,
+      keyword,
+      category,
+      Map<String, dynamic>? specFilters}) async {
+    String url =
+        "/products/?page=${page ?? 1}&limit=${limit ?? 10}&keyword=${keyword ?? ""}&category=${category ?? "All"}";
+
+    // Add specification filters to URL
+    if (specFilters != null && specFilters.isNotEmpty) {
+      for (String key in specFilters.keys) {
+        if (specFilters[key] != null &&
+            specFilters[key].toString().isNotEmpty) {
+          // Replace spaces with underscores in the key for URL parameter
+          String formattedKey = key.replaceAll(' ', '_');
+          url +=
+              "&spec_$formattedKey=${Uri.encodeComponent(specFilters[key].toString())}";
+        }
+      }
+    }
+    print(url);
+    var response = await dio.get(url,
         options: Options(headers: {
           "Authorization":
               "Bearer ${await SharedPreferencesUtil.getAccessToken()}"
@@ -78,15 +98,15 @@ class ProductController extends GetxController {
     // print(shopId);
     try {
       var response = await dio.get("/products/$id",
-         options: CacheOptions(
-                store: MemCacheStore(),
-                policy: CachePolicy.noCache, // Disable caching for this request
-              ).toOptions().copyWith(
-                headers: {
-                  "Authorization":
-                      "Bearer ${await SharedPreferencesUtil.getAccessToken()}",
-                },
-              ));
+          options: CacheOptions(
+            store: MemCacheStore(),
+            policy: CachePolicy.noCache, // Disable caching for this request
+          ).toOptions().copyWith(
+            headers: {
+              "Authorization":
+                  "Bearer ${await SharedPreferencesUtil.getAccessToken()}",
+            },
+          ));
 
       var data = response.data["body"];
       return data;

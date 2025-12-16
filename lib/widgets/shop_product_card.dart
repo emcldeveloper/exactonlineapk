@@ -87,7 +87,14 @@ class _ShopProductCardState extends State<ShopProductCard> {
                       ? CachedNetworkImage(
                           fit: BoxFit.cover,
                           imageUrl: widget.data['ProductImages'][0]["image"])
-                      : Container()),
+                      : Container(
+                          color: Colors.grey[200],
+                          child: const Icon(
+                            Icons.image_outlined,
+                            size: 40,
+                            color: Colors.grey,
+                          ),
+                        )),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -104,8 +111,7 @@ class _ShopProductCardState extends State<ShopProductCard> {
                         child: Row(
                           children: [
                             ParagraphText(
-                              "TZS ${MoneyFormatter(amount: double.parse(widget.data['sellingPrice'].toString())).output.withoutFractionDigits}" ??
-                                  "N/A",
+                              "TZS ${MoneyFormatter(amount: double.parse(widget.data['sellingPrice'].toString())).output.withoutFractionDigits}",
                               fontWeight: FontWeight.bold,
                               fontSize: 16.0,
                             ),

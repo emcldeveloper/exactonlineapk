@@ -103,11 +103,23 @@ class _ShopServiceCardState extends State<ShopServiceCard> {
                       Expanded(
                         child: Row(
                           children: [
-                            ParagraphText(
-                              "TZS ${MoneyFormatter(amount: double.parse(widget.data['price'])).output.withoutFractionDigits}" ??
-                                  "N/A",
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16.0,
+                            Expanded(
+                              child: ParagraphText(
+                                widget.data['price'] == 0 ||
+                                        widget.data['price'] == "0"
+                                    ? "Contact for price"
+                                    : "TZS ${MoneyFormatter(amount: double.parse(widget.data['price'].toString())).output.withoutFractionDigits}",
+                                fontWeight: FontWeight.bold,
+                                fontSize: widget.data['price'] == 0 ||
+                                        widget.data['price'] == "0"
+                                    ? 13.0
+                                    : 16.0,
+                                maxLines: 1,
+                                color: widget.data['price'] == 0 ||
+                                        widget.data['price'] == "0"
+                                    ? primary
+                                    : null,
+                              ),
                             ),
                           ],
                         ),

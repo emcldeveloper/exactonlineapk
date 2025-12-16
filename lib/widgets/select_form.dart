@@ -33,7 +33,7 @@ Widget selectForm(
           onChanged: (value) {
             textEditingController.text = value.toString();
             if (onChanged != null) {
-              onChanged();
+              onChanged(value);
             }
           },
           style: TextStyle(color: Colors.black),
