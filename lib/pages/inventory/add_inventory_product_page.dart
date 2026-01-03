@@ -420,31 +420,38 @@ class _AddInventoryProductPageState extends State<AddInventoryProductPage> {
         // Upload new images if any
         if (_images.isNotEmpty) {
           print('Uploading ${_images.length} images for product $productId');
-          for (var image in _images) {
+          // Upload images in parallel using Future.wait, similar to add_product_page.dart
+          var imageUploadFutures = _images.map((image) async {
             try {
-              dio.FormData formData = dio.FormData.fromMap({
+              var formData = dio.FormData.fromMap({
                 "ProductId": productId,
                 "file": await dio.MultipartFile.fromFile(
                   image.path,
-                  filename: image.name,
+                  filename: image.path.split("/").last,
                 ),
               });
               var response =
                   await productImageController.addProductImage(formData);
-              print("Image added successfully: ${response}");
+              print("Image uploaded successfully: ${response}");
+              return response;
             } catch (imageError) {
-              print("Error uploading image ${image.name}: $imageError");
+              print(
+                  "Error uploading image ${image.path.split("/").last}: $imageError");
               Get.snackbar(
                 "Image Upload Warning",
-                "Failed to upload image ${image.name}",
+                "Failed to upload image ${image.path.split("/").last}",
                 backgroundColor: Colors.orangeAccent,
                 colorText: Colors.white,
               );
+              return null;
             }
-          }
+          });
+          await Future.wait(imageUploadFutures);
+          print('All images uploaded successfully');
         }
 
-        Get.back(result: true);
+        // Navigate back to home
+        Get.until((route) => route.isFirst);
         Get.snackbar(
           "Success",
           isEditing

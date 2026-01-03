@@ -175,6 +175,37 @@ class InventoryController extends GetxController {
     }
   }
 
+  // Get product by batch number
+  Future<Map<String, dynamic>?> getProductByBatchNumber(
+      String batchNumber) async {
+    try {
+      final token = await SharedPreferencesUtil.getAccessToken();
+      final response = await dio.get(
+        '/inventory/batch/$batchNumber/product',
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return response.data['body'];
+      }
+      return null;
+    } on DioException catch (e) {
+      print(
+          'Error fetching product by batch: ${e.response?.data ?? e.message}');
+      if (e.response?.statusCode == 404) {
+        // Batch not found - return null silently
+        return null;
+      }
+      Get.snackbar(
+        'Error',
+        e.response?.data['message'] ?? 'Failed to fetch product by batch',
+      );
+      return null;
+    }
+  }
+
   // Get inventory alerts
   Future<List> getInventoryAlerts({
     String? shopId,

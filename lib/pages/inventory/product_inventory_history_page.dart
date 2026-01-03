@@ -543,20 +543,16 @@ class _ProductInventoryHistoryPageState
       final productSKU = widget.product['productSKU'] ?? '';
       final productPrice = widget.product['sellingPrice'] ?? 0;
       final quantity = batch['quantity'] ?? 1;
-      final batchId = batch['id']?.toString() ?? batchNumber;
 
-      // Generate batch-specific barcode - use batch ID as the scannable content
-      final barcodeData = batchId;
+      // Generate batch-specific barcode - use batch number (e.g., BATCH-1234567890)
+      final barcodeData = batchNumber;
 
-      // Ensure barcode data is numeric and 10-11 digits for UPC-A
+      // Extract numeric part only (remove "BATCH-" prefix)
       String upcData = barcodeData.replaceAll(RegExp(r'[^0-9]'), '');
 
-      // Pad or truncate to exactly 11 digits (UPC-A format, 12th digit is checksum)
-      if (upcData.length > 11) {
-        upcData = upcData.substring(0, 11);
-      } else if (upcData.length < 11) {
-        upcData = upcData.padLeft(11, '0');
-      }
+      // Don't pad - use the actual batch number as-is
+      // UPC-A requires 11 digits + 1 checksum, but we'll use CODE128 format instead
+      // which is more flexible and doesn't require padding
 
       // Print multiple labels based on quantity
       for (int i = 0; i < quantity; i++) {
@@ -575,10 +571,10 @@ class _ProductInventoryHistoryPageState
             [0x1D, 0x68, 0x50]); // GS h 80 - Height (smaller for sticker)
         bytes.addAll([0x1D, 0x77, 0x03]); // GS w 3 - Width (wider bars)
 
-        // Print UPC-A barcode (type 0, most basic and compatible)
-        bytes.addAll([0x1D, 0x6B, 0x00]); // GS k 0 (UPC-A)
+        // Print CODE128 barcode (type 73, supports variable length)
+        bytes.addAll([0x1D, 0x6B, 0x49]); // GS k 73 (CODE128)
+        bytes.add(upcData.length); // Length of data
         bytes.addAll(upcData.codeUnits);
-        bytes.add(0x00); // NUL terminator
 
         bytes.add(0x0A);
 
@@ -737,10 +733,10 @@ class _ProductInventoryHistoryPageState
         : null;
     final productName = widget.product['name'] ?? 'Unknown Product';
     final productSKU = widget.product['productSKU'] ?? '';
-    final batchId = batch['id']?.toString() ?? batchNumber;
 
-    // Generate batch-specific barcode - use batch ID as the scannable content
-    final barcodeData = batchId;
+    // Generate batch-specific barcode - use the actual batchNumber (e.g., BATCH-1234567890)
+    // This is what will be scanned and used to lookup the product
+    final barcodeData = batchNumber;
 
     showDialog(
       context: context,

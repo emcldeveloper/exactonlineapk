@@ -7,6 +7,7 @@ import 'package:e_online/pages/pos/pos_receipt_page.dart';
 import 'package:e_online/constants/colors.dart';
 import 'package:e_online/controllers/product_controller.dart';
 import 'package:e_online/controllers/pos_controller.dart';
+import 'package:e_online/controllers/inventory_controller.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:money_formatter/money_formatter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -28,6 +29,8 @@ class POSMainPage extends StatefulWidget {
 class _POSMainPageState extends State<POSMainPage> {
   final ProductController productController = Get.put(ProductController());
   final POSController posController = Get.put(POSController());
+  final InventoryController inventoryController =
+      Get.put(InventoryController());
   final TextEditingController _searchController = TextEditingController();
 
   List<Map<String, dynamic>> products = [];
@@ -135,11 +138,10 @@ class _POSMainPageState extends State<POSMainPage> {
 
     print('Scanned barcode: $barcode');
 
-    // Search for product by barcode or batch number
+    // First, try to find product by exact barcode match
     final product = products.firstWhereOrNull((p) {
       final productBarcode = p['barcode']?.toString() ?? '';
       final productSKU = p['productSKU']?.toString() ?? '';
-      // Also check if barcode matches a batch number pattern
       return productBarcode == barcode || productSKU == barcode;
     });
 
@@ -153,46 +155,77 @@ class _POSMainPageState extends State<POSMainPage> {
         duration: const Duration(seconds: 1),
       );
     } else {
-      // Try to find by batch number in inventory batches
-      _searchByBatchNumber(barcode);
+      // If not found, check if it's a batch number
+      // Batch numbers are in format: BATCH-xxxxxxxxxx or just the number part
+      String batchNumber = barcode;
+
+      // If it already starts with BATCH-, use as-is
+      // Otherwise, if it's just digits, add BATCH- prefix
+      if (!batchNumber.startsWith('BATCH-') &&
+          RegExp(r'^\d+$').hasMatch(barcode)) {
+        batchNumber = 'BATCH-$barcode';
+      }
+
+      print('Searching for batch: $batchNumber');
+      _searchByBatchNumber(batchNumber);
     }
   }
 
-  void _searchByBatchNumber(String batchNumber) {
-    // Extract numeric part from barcode (remove leading zeros added for UPC-A)
-    final numericBatch = batchNumber.replaceAll(RegExp(r'^0+'), '');
+  void _searchByBatchNumber(String batchNumber) async {
+    // Show loading indicator
+    Get.dialog(
+      const Center(child: CircularProgressIndicator()),
+      barrierDismissible: false,
+    );
 
-    // Search through products for matching batch
-    for (var product in products) {
-      // Check if this could be a batch number (BATCH-xxxxxxxxxx format)
-      final possibleBatchNumber = 'BATCH-$numericBatch';
+    try {
+      // Search for product by batch number via API
+      final result =
+          await inventoryController.getProductByBatchNumber(batchNumber);
 
-      // For now, just search by the batch number pattern
-      // You may need to fetch batch info from inventory controller
-      print('Searching for batch: $possibleBatchNumber');
+      // Close loading
+      Get.back();
 
-      // If product barcode contains the batch number, add it
-      final productBarcode = product['barcode']?.toString() ?? '';
-      if (productBarcode.contains(numericBatch)) {
+      if (result != null && result['product'] != null) {
+        final product = result['product'];
+        final batch = result['batch'];
+
+        // Add product to cart
         _addToCart(product);
+
+        // Show success message with batch info
         Get.snackbar(
-          'Product Added (Batch)',
-          '${product['name']} - Batch: $possibleBatchNumber',
+          'Product Added',
+          '${product['name']}\nBatch: ${batch['batchNumber']}\nExpiry: ${batch['expiryDate'] != null ? batch['expiryDate'].toString().substring(0, 10) : 'N/A'}',
           backgroundColor: Colors.green,
           colorText: Colors.white,
-          duration: const Duration(seconds: 2),
+          duration: const Duration(seconds: 3),
+          icon: const Icon(Icons.check_circle, color: Colors.white),
         );
-        return;
+      } else {
+        // No product found for this batch
+        Get.snackbar(
+          'Not Found',
+          'No product found for batch: $batchNumber',
+          backgroundColor: Colors.orange,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 2),
+          icon: const Icon(Icons.warning, color: Colors.white),
+        );
       }
-    }
+    } catch (e) {
+      // Close loading if still open
+      if (Get.isDialogOpen ?? false) Get.back();
 
-    Get.snackbar(
-      'Not Found',
-      'No product found for barcode: $batchNumber',
-      backgroundColor: Colors.orange,
-      colorText: Colors.white,
-      duration: const Duration(seconds: 2),
-    );
+      Get.snackbar(
+        'Error',
+        'Failed to search for batch: $e',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 2),
+        icon: const Icon(Icons.error, color: Colors.white),
+      );
+    }
   }
 
   void _onKey(KeyEvent event) {
