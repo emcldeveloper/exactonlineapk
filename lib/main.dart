@@ -27,6 +27,9 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Configure Google Fonts to avoid AssetManifest.json error
+  GoogleFonts.config.allowRuntimeFetching = false;
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -113,12 +116,11 @@ class MyApp extends StatelessWidget {
 
       while (latest.length < maxLength) latest.add(0);
       while (current.length < maxLength) current.add(0);
-      
+
       // Compare version numbers
       for (int i = 0; i < maxLength; i++) {
         if (latest[i] > current[i]) {
           return true; // Latest version is greater
-          
         } else if (latest[i] < current[i]) {
           return false; // Current version is greater
         }

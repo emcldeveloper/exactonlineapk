@@ -9,6 +9,10 @@ import 'package:intl/intl.dart';
 import 'package:e_online/controllers/inventory_controller.dart';
 import 'package:e_online/controllers/product_controller.dart';
 import 'package:e_online/utils/shared_preferences.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:barcode_widget/barcode_widget.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'dart:typed_data';
 
 class ProductInventoryHistoryPage extends StatefulWidget {
   final Map<String, dynamic> product;
@@ -34,10 +38,13 @@ class _ProductInventoryHistoryPageState
   final InventoryController _inventoryController =
       Get.put(InventoryController());
   final ProductController _productController = Get.put(ProductController());
+
   bool _isLoading = false;
   List<dynamic> _batches = [];
   List<dynamic> _transactions = [];
-
+  List<BluetoothDevice> _devices = [];
+  BluetoothDevice? _selectedDevice;
+  BluetoothCharacteristic? _printerCharacteristic;
   @override
   void initState() {
     super.initState();
@@ -211,8 +218,10 @@ class _ProductInventoryHistoryPageState
 
   void _showRestockDialog() {
     _selectedExpiryDate = null;
+    // Generate 10-digit batch number with BATCH- prefix
+    final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
     _batchNumberController.text =
-        'BATCH-${DateTime.now().millisecondsSinceEpoch}';
+        'BATCH-${timestamp.substring(timestamp.length - 10)}';
     _restockController.clear();
     _costPerUnitController.clear();
     _locationController.clear();
@@ -396,6 +405,328 @@ class _ProductInventoryHistoryPageState
     );
   }
 
+  Future<void> _scanForBluetoothDevices() async {
+    try {
+      // Request Bluetooth permissions
+      if (await Permission.bluetoothConnect.request().isGranted &&
+          await Permission.bluetoothScan.request().isGranted) {
+        // Check if Bluetooth is on
+        if (await FlutterBluePlus.isSupported == false) {
+          Get.snackbar(
+            'Not Supported',
+            'Bluetooth is not supported on this device',
+            backgroundColor: Colors.redAccent,
+            colorText: Colors.white,
+          );
+          return;
+        }
+
+        // Turn on Bluetooth if off
+        if (await FlutterBluePlus.adapterState.first !=
+            BluetoothAdapterState.on) {
+          Get.snackbar(
+            'Bluetooth Disabled',
+            'Please enable Bluetooth and try again',
+            backgroundColor: Colors.orangeAccent,
+            colorText: Colors.white,
+          );
+          return;
+        }
+
+        // Get bonded/connected devices
+        List<BluetoothDevice> bondedDevices =
+            await FlutterBluePlus.bondedDevices;
+        List<BluetoothDevice> connectedDevices =
+            FlutterBluePlus.connectedDevices;
+
+        setState(() {
+          _devices = [...bondedDevices, ...connectedDevices].toSet().toList();
+        });
+
+        if (_devices.isEmpty) {
+          Get.snackbar(
+            'No Devices Found',
+            'No paired Bluetooth devices found. Please pair your printer first.',
+            backgroundColor: Colors.orangeAccent,
+            colorText: Colors.white,
+          );
+        }
+      } else {
+        Get.snackbar(
+          'Permission Denied',
+          'Bluetooth permissions are required to connect to printers',
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+        );
+      }
+    } catch (e) {
+      print('Error scanning for Bluetooth devices: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to scan for Bluetooth devices: $e',
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  Future<void> _connectToPrinter(BluetoothDevice device) async {
+    try {
+      // Disconnect if already connected
+      if (device.isConnected) {
+        await device.disconnect();
+      }
+
+      // Connect to the device
+      await device.connect(timeout: const Duration(seconds: 15));
+
+      // Discover services
+      List<BluetoothService> services = await device.discoverServices();
+
+      // Find a writable characteristic (usually for Serial Port Profile)
+      for (BluetoothService service in services) {
+        for (BluetoothCharacteristic characteristic
+            in service.characteristics) {
+          if (characteristic.properties.write ||
+              characteristic.properties.writeWithoutResponse) {
+            _printerCharacteristic = characteristic;
+            break;
+          }
+        }
+        if (_printerCharacteristic != null) break;
+      }
+
+      setState(() {
+        _selectedDevice = device;
+      });
+
+      Get.snackbar(
+        'Connected',
+        'Successfully connected to ${device.platformName.isNotEmpty ? device.platformName : 'Printer'}',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      print('Error connecting to printer: $e');
+      Get.snackbar(
+        'Connection Failed',
+        'Failed to connect to printer: $e',
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  Future<void> _printBatchBarcode(Map<String, dynamic> batch) async {
+    try {
+      // Check if connected and characteristic is available
+      if (_selectedDevice == null ||
+          !_selectedDevice!.isConnected ||
+          _printerCharacteristic == null) {
+        Get.snackbar(
+          'Not Connected',
+          'Please connect to a printer first',
+          backgroundColor: Colors.orangeAccent,
+          colorText: Colors.white,
+        );
+        return;
+      }
+
+      final batchNumber = batch['batchNumber'] as String;
+      final expiryDateRaw = batch['expiryDate'];
+      final expiryDate = expiryDateRaw != null
+          ? (expiryDateRaw is DateTime
+              ? expiryDateRaw
+              : DateTime.parse(expiryDateRaw.toString()))
+          : null;
+      final productName = widget.product['name'] ?? 'Unknown Product';
+      final productSKU = widget.product['productSKU'] ?? '';
+      final productPrice = widget.product['sellingPrice'] ?? 0;
+      final quantity = batch['quantity'] ?? 1;
+      final batchId = batch['id']?.toString() ?? batchNumber;
+
+      // Generate batch-specific barcode - use batch ID as the scannable content
+      final barcodeData = batchId;
+
+      // Ensure barcode data is numeric and 10-11 digits for UPC-A
+      String upcData = barcodeData.replaceAll(RegExp(r'[^0-9]'), '');
+
+      // Pad or truncate to exactly 11 digits (UPC-A format, 12th digit is checksum)
+      if (upcData.length > 11) {
+        upcData = upcData.substring(0, 11);
+      } else if (upcData.length < 11) {
+        upcData = upcData.padLeft(11, '0');
+      }
+
+      // Print multiple labels based on quantity
+      for (int i = 0; i < quantity; i++) {
+        // ESC/POS commands for thermal printer (P58H40 compatible)
+        List<int> bytes = [];
+
+        // Initialize printer
+        bytes.addAll([0x1B, 0x40]); // ESC @ - Initialize
+
+        // Center alignment
+        bytes.addAll([0x1B, 0x61, 0x01]); // ESC a 1 - Center alignment
+
+        // Barcode configuration - larger to fill sticker width
+        bytes.addAll([0x1D, 0x48, 0x02]); // GS H 2 - HRI below
+        bytes.addAll(
+            [0x1D, 0x68, 0x50]); // GS h 80 - Height (smaller for sticker)
+        bytes.addAll([0x1D, 0x77, 0x03]); // GS w 3 - Width (wider bars)
+
+        // Print UPC-A barcode (type 0, most basic and compatible)
+        bytes.addAll([0x1D, 0x6B, 0x00]); // GS k 0 (UPC-A)
+        bytes.addAll(upcData.codeUnits);
+        bytes.add(0x00); // NUL terminator
+
+        bytes.add(0x0A);
+
+        // Print price in normal size
+        bytes.addAll(
+            'Price: TZS ${MoneyFormatter(amount: double.tryParse(productPrice.toString()) ?? 0).output.withoutFractionDigits}'
+                .codeUnits);
+        bytes.add(0x0A);
+        bytes.add(0x0A);
+
+        // Cut paper
+        bytes.addAll([0x1D, 0x56, 0x00]);
+
+        // Send to printer in chunks (max 512 bytes per write for BLE)
+        const chunkSize = 512;
+        for (var j = 0; j < bytes.length; j += chunkSize) {
+          final end =
+              (j + chunkSize < bytes.length) ? j + chunkSize : bytes.length;
+          final chunk = bytes.sublist(j, end);
+          await _printerCharacteristic!.write(chunk,
+              withoutResponse:
+                  _printerCharacteristic!.properties.writeWithoutResponse);
+          await Future.delayed(
+              const Duration(milliseconds: 100)); // Small delay between chunks
+        }
+
+        // Delay between labels
+        if (i < quantity - 1) {
+          await Future.delayed(const Duration(milliseconds: 500));
+        }
+      }
+
+      Get.snackbar(
+        'Success',
+        'Printed $quantity barcode${quantity > 1 ? 's' : ''} successfully',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      print('Error printing: $e');
+      Get.snackbar(
+        'Printing Failed',
+        'Failed to print barcode: $e',
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  void _showPrinterSelectionDialog(Map<String, dynamic> batch) async {
+    // First scan for devices
+    await _scanForBluetoothDevices();
+
+    if (!mounted) return;
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: Row(
+            children: [
+              Icon(Icons.print, color: primary),
+              const SizedBox(width: 8),
+              const Text('Select Printer'),
+            ],
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (_devices.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        Icon(Icons.bluetooth_disabled,
+                            size: 48, color: Colors.grey.shade400),
+                        const SizedBox(height: 16),
+                        Text(
+                          'No paired Bluetooth devices found',
+                          style: TextStyle(color: Colors.grey.shade600),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Please pair your printer in Bluetooth settings',
+                          style: TextStyle(
+                              fontSize: 12, color: Colors.grey.shade500),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  )
+                else
+                  Column(
+                    children: _devices.map((device) {
+                      final isConnected =
+                          _selectedDevice?.remoteId == device.remoteId;
+                      return ListTile(
+                        leading: Icon(
+                          Icons.print,
+                          color: isConnected ? Colors.green : primary,
+                        ),
+                        title: Text(device.platformName.isNotEmpty
+                            ? device.platformName
+                            : 'Unknown Device'),
+                        subtitle: Text(device.remoteId.toString()),
+                        trailing: isConnected
+                            ? const Icon(Icons.check_circle,
+                                color: Colors.green)
+                            : null,
+                        onTap: () async {
+                          Navigator.pop(context);
+                          await _connectToPrinter(device);
+                          // After successful connection, print
+                          await _printBatchBarcode(batch);
+                        },
+                      );
+                    }).toList(),
+                  ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            if (_devices.isNotEmpty)
+              ElevatedButton.icon(
+                onPressed: () async {
+                  Navigator.pop(context);
+                  await _scanForBluetoothDevices();
+                  if (_devices.isNotEmpty) {
+                    _showPrinterSelectionDialog(batch);
+                  }
+                },
+                icon: const Icon(Icons.refresh, color: Colors.white),
+                label: const Text('Refresh',
+                    style: TextStyle(color: Colors.white)),
+                style: ElevatedButton.styleFrom(backgroundColor: primary),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _showBatchBarcodeDialog(Map<String, dynamic> batch) {
     final batchNumber = batch['batchNumber'] as String;
     final expiryDateRaw = batch['expiryDate'];
@@ -406,12 +737,10 @@ class _ProductInventoryHistoryPageState
         : null;
     final productName = widget.product['name'] ?? 'Unknown Product';
     final productSKU = widget.product['productSKU'] ?? '';
+    final batchId = batch['id']?.toString() ?? batchNumber;
 
-    // Generate batch-specific barcode
-    // Format: PRODUCTSKU-BATCHNUMBER-EXPIRYDATE
-    final barcodeData = expiryDate != null
-        ? '$productSKU-$batchNumber-${DateFormat('ddMMyyyy').format(expiryDate)}'
-        : '$productSKU-$batchNumber';
+    // Generate batch-specific barcode - use batch ID as the scannable content
+    final barcodeData = batchId;
 
     showDialog(
       context: context,
@@ -491,30 +820,17 @@ class _ProductInventoryHistoryPageState
                   ),
                   child: Column(
                     children: [
-                      // Barcode visualization (placeholder)
+                      // Actual Barcode Widget
                       Container(
-                        height: 80,
+                        height: 100,
                         width: double.infinity,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey.shade400),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.barcode_reader,
-                                  size: 40, color: Colors.grey.shade700),
-                              const SizedBox(height: 4),
-                              Text(
-                                'Barcode Placeholder',
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: Colors.grey.shade600,
-                                ),
-                              ),
-                            ],
-                          ),
+                        padding: const EdgeInsets.all(8),
+                        child: BarcodeWidget(
+                          barcode: Barcode.code128(),
+                          data: barcodeData,
+                          drawText: false,
+                          color: Colors.black,
+                          backgroundColor: Colors.white,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -570,13 +886,8 @@ class _ProductInventoryHistoryPageState
           ),
           ElevatedButton.icon(
             onPressed: () {
-              // TODO: Implement actual printing
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Printing barcode for $batchNumber...'),
-                  backgroundColor: primary,
-                ),
-              );
+              Navigator.pop(context);
+              _showPrinterSelectionDialog(batch);
             },
             icon: const Icon(Icons.print, color: Colors.white),
             label: const Text(
@@ -1199,6 +1510,7 @@ class _ProductInventoryHistoryPageState
   void dispose() {
     _restockController.dispose();
     _batchNumberController.dispose();
+    _selectedDevice?.disconnect();
     super.dispose();
   }
 }

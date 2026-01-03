@@ -55,6 +55,7 @@ class _MainPageState extends State<MainPage> {
             activeTab = value;
           });
         },
+        // ignore: prefer_const_literals_to_create_immutables
         items: [
           const BottomNavigationBarItem(
             icon: Padding(

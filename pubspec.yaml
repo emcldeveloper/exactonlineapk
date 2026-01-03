@@ -70,6 +70,9 @@ dependencies:
   timelines: ^0.1.0
   timeline_list: ^0.1.1
   dio_cache_interceptor: ^4.0.3
+  flutter_blue_plus: ^1.32.12
+  barcode_widget: ^2.0.4
+  permission_handler: ^11.3.1
   # uni_links5: ^0.5.4
 
 dev_dependencies:
